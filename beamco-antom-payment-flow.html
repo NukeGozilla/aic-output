@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beamco — Payment User Flow (Mixed Approach)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 40px 20px; }
+
+  h1 { text-align: center; font-size: 28px; margin-bottom: 8px; }
+  .subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 40px; }
+
+  .flow-container { max-width: 1200px; margin: 0 auto; }
+
+  /* Decision box */
+  .decision-box {
+    max-width: 1200px; margin: 0 auto 40px; padding: 20px 24px;
+    background: #111; border: 1px solid #333; border-radius: 12px;
+  }
+  .decision-box h3 { font-size: 15px; margin-bottom: 12px; color: #fff; }
+  .decision-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .decision-card {
+    flex: 1; min-width: 200px; padding: 14px 16px; border-radius: 10px;
+    border: 1px solid #333;
+  }
+  .decision-card.stripe { border-color: #635bff; background: rgba(99,91,255,0.08); }
+  .decision-card.antom { border-color: #3b82f6; background: rgba(59,130,246,0.08); }
+  .decision-card .label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-weight: 700; }
+  .decision-card.stripe .label { color: #635bff; }
+  .decision-card.antom .label { color: #3b82f6; }
+  .decision-card .methods { font-size: 13px; color: #ccc; line-height: 1.6; }
+  .decision-card .reason { font-size: 11px; color: #888; margin-top: 6px; font-style: italic; }
+
+  /* Section headers */
+  .section-title {
+    font-size: 18px; font-weight: 700; margin-bottom: 24px; padding-left: 16px;
+    border-left: 3px solid #3b82f6;
+  }
+  .section-title.stripe { border-left-color: #635bff; }
+
+  /* Legend */
+  .legend { display: flex; gap: 24px; justify-content: center; margin-bottom: 40px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #aaa; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .legend-dot.beamco { background: #ff2d78; }
+  .legend-dot.antom { background: #3b82f6; }
+  .legend-dot.wallet { background: #8b5cf6; }
+  .legend-dot.stripe { background: #635bff; }
+
+  /* Flow row */
+  .flow-row {
+    display: flex; align-items: flex-start; gap: 0; margin-bottom: 56px;
+    overflow-x: auto; padding-bottom: 16px; justify-content: center;
+  }
+
+  /* Step */
+  .step { display: flex; flex-direction: column; align-items: center; min-width: 200px; flex-shrink: 0; }
+
+  /* Arrow */
+  .arrow { display: flex; align-items: center; justify-content: center; min-width: 48px; flex-shrink: 0; padding-top: 60px; }
+  .arrow svg { width: 32px; height: 32px; }
+
+  /* Owner badge */
+  .owner-badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    padding: 4px 12px; border-radius: 12px; margin-bottom: 12px;
+  }
+  .owner-badge.beamco { background: #ff2d78; color: #fff; }
+  .owner-badge.antom { background: #3b82f6; color: #fff; }
+  .owner-badge.wallet { background: #8b5cf6; color: #fff; }
+  .owner-badge.stripe-badge { background: #635bff; color: #fff; }
+
+  /* Phone mockup */
+  .phone {
+    width: 180px; height: 320px; background: #1a1a1a; border: 2px solid #333;
+    border-radius: 24px; padding: 12px 10px; position: relative;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .phone.light { background: #f8f9fa; border-color: #ddd; }
+  .phone.wallet-app { background: #1e293b; border-color: #475569; }
+  .phone::before {
+    content: ''; position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 6px; background: #333; border-radius: 3px;
+  }
+  .phone.light::before { background: #ccc; }
+
+  .screen { flex: 1; display: flex; flex-direction: column; margin-top: 8px; overflow: hidden; }
+
+  /* Beamco checkout elements */
+  .product-img { width: 100%; height: 50px; background: #2a2a2a; border-radius: 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; }
+  .product-img .emoji { font-size: 24px; }
+  .product-name { font-size: 10px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+  .product-price { font-size: 14px; font-weight: 700; color: #ff2d78; margin-bottom: 6px; }
+
+  .pm-section-label { font-size: 9px; color: #888; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .payment-method-item {
+    display: flex; align-items: center; gap: 6px; padding: 5px 8px;
+    background: #222; border: 1.5px solid #333; border-radius: 8px; margin-bottom: 3px;
+  }
+  .payment-method-item.selected { border-color: #3b82f6; background: #1a2744; }
+  .payment-method-item.selected-stripe { border-color: #635bff; background: #1e1a3a; }
+  .pm-icon { width: 18px; height: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 6px; font-weight: 700; color: #fff; }
+  .pm-icon.gcash { background: #0057ff; }
+  .pm-icon.maya { background: #2dd06e; }
+  .pm-icon.jko { background: #ff6b00; }
+  .pm-icon.alipayhk { background: #1677ff; }
+  .pm-icon.visa { background: #1a1f71; }
+  .pm-icon.apple { background: #000; font-size: 10px; }
+  .pm-icon.google { background: #fff; font-size: 8px; }
+  .pm-icon.octopus { background: #ff6600; }
+  .pm-name { font-size: 9px; color: #ccc; font-weight: 500; flex: 1; }
+  .pm-tag { font-size: 6px; padding: 2px 4px; border-radius: 3px; font-weight: 700; }
+  .pm-tag.stripe-tag { background: rgba(99,91,255,0.2); color: #a5a0ff; }
+  .pm-tag.antom-tag { background: rgba(59,130,246,0.2); color: #93bbfc; }
+  .pm-radio { width: 12px; height: 12px; border: 2px solid #555; border-radius: 50%; }
+  .pm-radio.checked { border-color: #3b82f6; background: #3b82f6; box-shadow: inset 0 0 0 2px #1a2744; }
+  .pm-radio.checked-stripe { border-color: #635bff; background: #635bff; box-shadow: inset 0 0 0 2px #1e1a3a; }
+
+  .cta-btn {
+    width: 100%; padding: 8px; border: none; border-radius: 8px; font-size: 11px; font-weight: 700;
+    cursor: pointer; text-align: center; margin-top: 4px;
+  }
+  .cta-btn.pink { background: #ff2d78; color: #fff; }
+  .cta-btn.blue { background: #3b82f6; color: #fff; }
+  .cta-btn.purple { background: #635bff; color: #fff; }
+  .cta-btn.green { background: #10b981; color: #fff; }
+
+  /* Wallet app */
+  .wallet-header { font-size: 10px; color: #94a3b8; text-align: center; margin-bottom: 12px; font-weight: 600; }
+  .wallet-amount { font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 4px; color: #fff; }
+  .wallet-merchant { font-size: 9px; color: #94a3b8; text-align: center; margin-bottom: 16px; }
+  .wallet-pin { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+  .pin-dot { width: 12px; height: 12px; background: #475569; border-radius: 50%; }
+  .pin-dot.filled { background: #3b82f6; }
+
+  /* Stripe checkout */
+  .stripe-header { font-size: 8px; color: #666; text-align: center; margin-bottom: 8px; padding: 4px; background: #eee; border-radius: 4px; }
+  .stripe-logo { font-size: 10px; color: #635bff; font-weight: 700; text-align: center; margin-bottom: 8px; }
+
+  /* Success */
+  .success-icon { width: 48px; height: 48px; background: #10b981; border-radius: 50%; margin: 24px auto 12px; display: flex; align-items: center; justify-content: center; }
+  .success-icon svg { width: 24px; height: 24px; }
+  .success-text { font-size: 13px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+  .success-sub { font-size: 9px; color: #888; text-align: center; margin-bottom: 16px; }
+  .success-detail { font-size: 8px; color: #aaa; text-align: center; margin-bottom: 4px; }
+  .success-detail strong { color: #fff; }
+
+  /* Step label */
+  .step-label { font-size: 11px; color: #888; margin-top: 12px; text-align: center; max-width: 180px; }
+  .step-number {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; background: #333; border-radius: 50%;
+    font-size: 9px; font-weight: 700; color: #fff; margin-right: 4px;
+  }
+
+  /* Notes */
+  .notes {
+    max-width: 1200px; margin: 0 auto 48px; padding: 20px 24px;
+    background: #111; border: 1px solid #222; border-radius: 12px;
+  }
+  .notes h3 { font-size: 14px; margin-bottom: 12px; color: #ff2d78; }
+  .notes p { font-size: 13px; color: #aaa; line-height: 1.6; margin-bottom: 8px; }
+  .notes .highlight { color: #3b82f6; font-weight: 600; }
+  .notes .stripe-hl { color: #635bff; font-weight: 600; }
+
+  /* Divider */
+  .flow-divider { border: none; border-top: 1px solid #222; margin: 16px auto 40px; max-width: 1200px; }
+</style>
+</head>
+<body>
+
+<h1>Beamco — Payment User Flow</h1>
+<p class="subtitle">Mixed approach: Stripe (Cards/Apple/Google Pay) + Antom API-only (Local Wallets)</p>
+
+<div class="decision-box">
+  <h3>Integration Decision</h3>
+  <div class="decision-row">
+    <div class="decision-card stripe">
+      <div class="label">Stripe (keep existing)</div>
+      <div class="methods">Credit Cards, Apple Pay, Google Pay</div>
+      <div class="reason">Already compliant. Antom CC/Apple/Google Pay requires separate compliance check — don't block rollout.</div>
+    </div>
+    <div class="decision-card antom">
+      <div class="label">Antom API-only (new)</div>
+      <div class="methods">GCash, Maya, JKOPay, AlipayHK, Octopus, Alipay CN</div>
+      <div class="reason">Local wallets across PH, TW, HK. API-only = direct redirect to wallet app, no Antom page in between.</div>
+    </div>
+    <div class="decision-card stripe">
+      <div class="label">Stripe (crowdfunding only)</div>
+      <div class="methods">Future/scheduled payments for crowdfund feature</div>
+      <div class="reason">Antom doesn't support future payments. Stripe stays for crowdfunding.</div>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot beamco"></div> Beamco</div>
+  <div class="legend-item"><div class="legend-dot wallet"></div> Wallet App</div>
+  <div class="legend-item"><div class="legend-dot stripe"></div> Stripe</div>
+</div>
+
+<div class="flow-container">
+
+  <!-- FLOW A: Antom wallet (API-only, direct redirect) -->
+  <div class="section-title">Flow A — Local Wallet via Antom (GCash, Maya, JKOPay, AlipayHK)</div>
+
+  <div class="flow-row">
+    <!-- Step 1: Beamco Checkout with payment list -->
+    <div class="step">
+      <div class="owner-badge beamco">Beamco</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="product-img"><span class="emoji">🎵</span></div>
+          <div class="product-name">HowZ — test test</div>
+          <div class="product-price">TWD $52.00</div>
+
+          <div class="pm-section-label">Payment method</div>
+          <div class="payment-method-item selected">
+            <div class="pm-icon jko">JKO</div>
+            <div class="pm-name">JKOPay</div>
+            <div class="pm-tag antom-tag">ANTOM</div>
+            <div class="pm-radio checked"></div>
+          </div>
+          <div class="payment-method-item">
+            <div class="pm-icon visa">VISA</div>
+            <div class="pm-name">Credit Card</div>
+            <div class="pm-tag stripe-tag">STRIPE</div>
+            <div class="pm-radio"></div>
+          </div>
+          <div class="payment-method-item">
+            <div class="pm-icon apple"></div>
+            <div class="pm-name">Apple Pay</div>
+            <div class="pm-tag stripe-tag">STRIPE</div>
+            <div class="pm-radio"></div>
+          </div>
+
+          <div class="cta-btn pink" style="margin-top: auto;">Place Order</div>
+        </div>
+      </div>
+      <div class="step-label"><span class="step-number">1</span>User picks JKOPay on Beamco checkout & taps "Place Order"</div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 32 32" fill="none"><path d="M6 16h20M20 10l6 6-6 6" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Step 2: Direct to wallet app (no Antom page!) -->
+    <div class="step">
+      <div class="owner-badge wallet">Wallet App</div>
+      <div class="phone wallet-app">
+        <div class="screen">
+          <div class="wallet-header">JKOPay</div>
+          <div class="wallet-amount">$52.00</div>
+          <div class="wallet-merchant">Beamco via Antom</div>
+          <div style="font-size: 9px; color: #94a3b8; text-align: center; margin-bottom: 12px;">Enter your PIN to confirm</div>
+          <div class="wallet-pin">
+            <div class="pin-dot filled"></div>
+            <div class="pin-dot filled"></div>
+            <div class="pin-dot filled"></div>
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+          </div>
+          <div class="cta-btn blue" style="margin-top: auto;">Confirm Payment</div>
+        </div>
+      </div>
+      <div class="step-label"><span class="step-number">2</span>Antom API redirects directly to JKOPay app. No Antom page.</div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 32 32" fill="none"><path d="M6 16h20M20 10l6 6-6 6" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Step 3: Beamco success -->
+    <div class="step">
+      <div class="owner-badge beamco">Beamco</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="success-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="success-text">Payment successful</div>
+          <div class="success-sub">Thank you for your purchase!</div>
+          <div class="success-detail"><strong>HowZ — test test</strong></div>
+          <div class="success-detail">TWD $52.00 via JKOPay</div>
+          <div class="cta-btn pink" style="margin-top: auto;">Check My Order</div>
+        </div>
+      </div>
+      <div class="step-label"><span class="step-number">3</span>Back to Beamco. Done! Only 3 screens.</div>
+    </div>
+  </div>
+
+  <hr class="flow-divider">
+
+  <!-- FLOW B: Stripe card payment -->
+  <div class="section-title stripe">Flow B — Card / Apple Pay / Google Pay via Stripe (existing)</div>
+
+  <div class="flow-row">
+    <!-- Step 1: Beamco Checkout -->
+    <div class="step">
+      <div class="owner-badge beamco">Beamco</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="product-img"><span class="emoji">🎵</span></div>
+          <div class="product-name">HowZ — concert ticket</div>
+          <div class="product-price">HKD $42.00</div>
+
+          <div class="pm-section-label">Payment method</div>
+          <div class="payment-method-item">
+            <div class="pm-icon alipayhk">Alipay</div>
+            <div class="pm-name">AlipayHK</div>
+            <div class="pm-tag antom-tag">ANTOM</div>
+            <div class="pm-radio"></div>
+          </div>
+          <div class="payment-method-item">
+            <div class="pm-icon octopus">OCT</div>
+            <div class="pm-name">Octopus</div>
+            <div class="pm-tag antom-tag">ANTOM</div>
+            <div class="pm-radio"></div>
+          </div>
+          <div class="payment-method-item selected-stripe">
+            <div class="pm-icon visa">VISA</div>
+            <div class="pm-name">Credit Card</div>
+            <div class="pm-tag stripe-tag">STRIPE</div>
+            <div class="pm-radio checked-stripe"></div>
+          </div>
+          <div class="cta-btn pink" style="margin-top: auto;">Place Order</div>
+        </div>
+      </div>
+      <div class="step-label"><span class="step-number">1</span>User picks Credit Card on Beamco checkout (HK market)</div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 32 32" fill="none"><path d="M6 16h20M20 10l6 6-6 6" stroke="#635bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Step 2: Stripe checkout -->
+    <div class="step">
+      <div class="owner-badge stripe-badge">Stripe</div>
+      <div class="phone light">
+        <div class="screen">
+          <div class="stripe-header">checkout.stripe.com</div>
+          <div class="stripe-logo">stripe</div>
+          <div style="font-size: 11px; color: #111; font-weight: 600; margin-bottom: 12px;">Card details</div>
+          <div style="margin-bottom: 8px;">
+            <div style="font-size: 8px; color: #666; margin-bottom: 3px;">Card number</div>
+            <div style="padding: 7px 8px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 6px; font-size: 9px; color: #111;">4242 •••• •••• 4242</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <div style="flex: 1;">
+              <div style="font-size: 8px; color: #666; margin-bottom: 3px;">Expiry</div>
+              <div style="padding: 7px 8px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 6px; font-size: 9px; color: #111;">12/27</div>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-size: 8px; color: #666; margin-bottom: 3px;">CVC</div>
+              <div style="padding: 7px 8px; background: #fff; border: 1.5px solid #d1d5db; border-radius: 6px; font-size: 9px; color: #111;">•••</div>
+            </div>
+          </div>
+          <div class="cta-btn purple" style="margin-top: 12px;">Pay HKD $42.00</div>
+          <div style="font-size: 7px; color: #999; text-align: center; margin-top: 6px;">Powered by Stripe</div>
+        </div>
+      </div>
+      <div class="step-label"><span class="step-number">2</span>Stripe handles card input + 3DS (same as today)</div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 32 32" fill="none"><path d="M6 16h20M20 10l6 6-6 6" stroke="#635bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Step 3: Beamco success -->
+    <div class="step">
+      <div class="owner-badge beamco">Beamco</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="success-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="success-text">Payment successful</div>
+          <div class="success-sub">Thank you for your purchase!</div>
+          <div class="success-detail"><strong>HowZ — concert ticket</strong></div>
+          <div class="success-detail">HKD $42.00 via Visa</div>
+          <div class="cta-btn pink" style="margin-top: auto;">Check My Order</div>
+        </div>
+      </div>
+      <div class="step-label"><span class="step-number">3</span>Beamco order confirmation. Same flow as today.</div>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="notes">
+    <h3>Summary</h3>
+    <p><strong>Checkout page redesign:</strong> Payment method list now shows on Beamco's page with wallet logos. Each method is tagged as <span class="highlight">ANTOM</span> or <span class="stripe-hl">STRIPE</span> behind the scenes (users don't see this). Methods auto-filter by currency.</p>
+    <p><strong>Antom flow (wallets):</strong> 3 screens only. Beamco → Wallet App → Beamco. No Antom hosted page. Antom <code>pay</code> API returns a direct redirect URL to the wallet.</p>
+    <p><strong>Stripe flow (cards):</strong> Unchanged from today. Beamco → Stripe checkout → Beamco.</p>
+    <p><strong>Crowdfunding:</strong> Stays entirely on Stripe (future/scheduled payments).</p>
+    <p><strong>Why mixed:</strong> Antom requires separate compliance for CC/Apple/Google Pay. Stripe is already compliant. Don't block the local wallet rollout.</p>
+  </div>
+
+</div>
+
+</body>
+</html>

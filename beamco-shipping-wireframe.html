@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beamco Back Office — Shipping Status Wireframe</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0a;
+      color: #e1e4ea;
+      line-height: 1.5;
+    }
+
+    /* ───── Wireframe Annotation ───── */
+    .wireframe-annotation {
+      background: #6c5ce7;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .wireframe-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .wireframe-desc {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+
+    .section-wrap {
+      padding: 40px;
+      padding-bottom: 20px;
+    }
+
+    .section-wrap+.section-wrap {
+      border-top: 2px dashed #2a2d3a;
+    }
+
+    /* ═══════════════════════════════════════════
+     SECTION A — Full Orders Listing Page
+     ═══════════════════════════════════════════ */
+
+    /* Breadcrumb */
+    .breadcrumb {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+
+    .breadcrumb a {
+      color: #6b7280;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      color: #9ca3af;
+    }
+
+    .breadcrumb .current {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1px solid #2a2d3a;
+      color: #e1e4ea;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .filter-btn svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.7;
+    }
+
+    .search-input {
+      background: #1a1d27;
+      border: 1px solid #2a2d3a;
+      color: #9ca3af;
+      padding: 8px 14px 8px 36px;
+      border-radius: 6px;
+      font-size: 13px;
+      width: 340px;
+      position: relative;
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap::before {
+      content: '\1F50D';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      opacity: 0.5;
+    }
+
+    .btn-pink {
+      background: #f472b6;
+      color: #000;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-pink:hover {
+      background: #f9a8d4;
+    }
+
+    .btn-pink-outline {
+      background: transparent;
+      color: #f472b6;
+      border: 1px solid #f472b6;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #2a2d3a;
+      margin-bottom: 0;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      font-size: 14px;
+      color: #6b7280;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      color: #9ca3af;
+    }
+
+    .tab.active {
+      color: #fff;
+      border-bottom-color: #fff;
+      font-weight: 600;
+    }
+
+    /* Table */
+    .table-wrap {
+      background: #141418;
+      border: 1px solid #1f1f26;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin-top: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1200px;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      font-style: italic;
+      color: #e1e4ea;
+      border-bottom: 1px solid #1f1f26;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 18px 16px;
+      border-bottom: 1px solid #1a1a20;
+      vertical-align: top;
+      font-size: 13px;
+      color: #d1d5db;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #18181f;
+    }
+
+    .order-num {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      color: #9ca3af;
+      letter-spacing: -0.3px;
+    }
+
+    .date-col {
+      color: #d1d5db;
+      white-space: nowrap;
+    }
+
+    .shop-col {
+      color: #d1d5db;
+    }
+
+    .email-col {
+      color: #d1d5db;
+      font-size: 12px;
+    }
+
+    .phone-col {
+      color: #d1d5db;
+    }
+
+    .customer-block {}
+
+    .customer-name {
+      color: #fbbf24;
+      font-weight: 500;
+    }
+
+    .customer-sub {
+      font-size: 11px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    .price-col {
+      color: #d1d5db;
+      white-space: nowrap;
+    }
+
+    .items-col {
+      text-align: center;
+      color: #d1d5db;
+    }
+
+    .note-col {
+      color: #9ca3af;
+      font-size: 12px;
+      max-width: 120px;
+    }
+
+    .chevron-col {
+      color: #4b5563;
+      font-size: 18px;
+      cursor: pointer;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .chevron-col:hover {
+      color: #9ca3af;
+    }
+
+    /* Status Enhancement (NEW column) */
+    .status-cell {
+      min-width: 200px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      line-height: 1;
+    }
+
+    .badge-delivered {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .badge-out-for-delivery {
+      background: #1e40af;
+      color: #93c5fd;
+    }
+
+    .badge-action {
+      background: rgba(251, 146, 60, 0.15);
+      border: 1px solid #f97316;
+      color: #fb923c;
+    }
+
+    .badge-preparing {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid #fbbf24;
+      color: #fbbf24;
+    }
+
+    .badge-processing {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid #3b82f6;
+      color: #60a5fa;
+    }
+
+    .status-meta {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+
+    .status-meta.urgent {
+      color: #ef4444;
+    }
+
+    /* Pagination */
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .page-nums {
+      display: flex;
+      gap: 4px;
+    }
+
+    .page-num {
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .page-num:hover {
+      color: #fff;
+    }
+
+    .page-num.active {
+      background: #6c5ce7;
+      color: #fff;
+    }
+
+    /* Annotation highlight */
+    .highlight-new {
+      position: relative;
+    }
+
+    .highlight-new::after {
+      content: 'NEW';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ef4444;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ═══════════════════════════════════════════
+     SECTION B — Order Detail Page
+     ═══════════════════════════════════════════ */
+
+    /* Detail Page Cards (matching Beamco style) */
+    .detail-page {
+      max-width: 860px;
+    }
+
+    .detail-top-btn {
+      display: inline-block;
+      background: #2a2d3a;
+      color: #9ca3af;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #141418;
+      border: 1px solid #1f1f26;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 6px 0;
+    }
+
+    .card-row-label {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .card-row-value {
+      font-size: 13px;
+      color: #fbbf24;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .card-row-value.white {
+      color: #e1e4ea;
+    }
+
+    /* Product line item */
+    .product-line {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 0;
+    }
+
+    .product-thumb {
+      width: 56px;
+      height: 56px;
+      background: #2a2d3a;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #6b7280;
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-name {
+      font-size: 13px;
+      color: #e1e4ea;
+    }
+
+    .product-origin {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .product-right {
+      text-align: right;
+    }
+
+    .product-badge {
+      display: inline-block;
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid #fbbf24;
+      color: #fbbf24;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+
+    .product-price {
+      font-size: 13px;
+      color: #d1d5db;
+      margin-top: 4px;
+    }
+
+    .create-logistics-btn {
+      border: 1px solid #6b7280;
+      background: transparent;
+      color: #e1e4ea;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    /* ─── NEW: Shipping Tracking Card ─── */
+    .card.tracking-card {
+      border: 1px solid #6c5ce7;
+      position: relative;
+    }
+
+    .card-new-badge {
+      position: absolute;
+      top: -10px;
+      left: 24px;
+      background: #6c5ce7;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Tracking Header */
+    .tracking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #1f1f26;
+    }
+
+    .tracking-id-label {
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 2px;
+    }
+
+    .tracking-id-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .tracking-status-sub {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .tracking-status-sub.delivered {
+      color: #22c55e;
+    }
+
+    .tracking-status-sub.in-transit {
+      color: #3b82f6;
+    }
+
+    .btn-waybill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f472b6;
+      color: #000;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-waybill:hover {
+      background: #f9a8d4;
+    }
+
+    /* Courier meta row */
+    .courier-meta {
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #1f1f26;
+    }
+
+    .courier-meta-item {
+      flex: 1;
+    }
+
+    .courier-meta-item+.courier-meta-item {
+      border-left: 1px solid #1f1f26;
+      padding-left: 20px;
+    }
+
+    .courier-meta-label {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
+
+    .courier-meta-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e1e4ea;
+    }
+
+    /* Progress Stepper */
+    .stepper-wrap {
+      margin-bottom: 24px;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      z-index: 1;
+    }
+
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .step-dot.done {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .step-dot.current {
+      background: #3b82f6;
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+      animation: pulse-ring 2s ease-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+      }
+
+      50% {
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.08);
+      }
+
+      100% {
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+      }
+    }
+
+    .step-dot.pending {
+      background: #2a2d3a;
+      color: #4b5563;
+    }
+
+    .step-text {
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      max-width: 80px;
+    }
+
+    .step-text.done {
+      color: #22c55e;
+    }
+
+    .step-text.current {
+      color: #60a5fa;
+    }
+
+    .step-text.pending {
+      color: #4b5563;
+    }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      margin-bottom: 22px;
+      z-index: 0;
+    }
+
+    .step-line.done {
+      background: #16a34a;
+    }
+
+    .step-line.current {
+      background: linear-gradient(90deg, #16a34a, #3b82f6);
+    }
+
+    .step-line.pending {
+      background: #2a2d3a;
+    }
+
+    /* Timeline */
+    .timeline-label {
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #1f1f26;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 13px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: #1f1f26;
+    }
+
+    .tl-event {
+      position: relative;
+      padding-bottom: 20px;
+    }
+
+    .tl-event:last-child {
+      padding-bottom: 0;
+    }
+
+    .tl-dot {
+      position: absolute;
+      left: -40px;
+      top: 2px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1a1d27;
+      border: 2px solid #2a2d3a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      z-index: 1;
+    }
+
+    .tl-event:first-child .tl-dot {
+      border-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.12);
+    }
+
+    .tl-date {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 1px;
+    }
+
+    .tl-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .tl-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 1px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+     SECTION A — Orders Listing Page (with Shipping Status)
+     ═══════════════════════════════════════════════════════════ -->
+  <div class="section-wrap">
+    <div class="wireframe-annotation">Orders Listing</div>
+    <div class="wireframe-title">Orders Listing — Enhanced Status Column</div>
+    <div class="wireframe-desc">The existing Status column is replaced with a rich shipping status badge + metadata
+      line.</div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="#">Home</a> &gt; <span class="current">Orders</span>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <button class="filter-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+        Filter
+      </button>
+      <div class="search-wrap">
+        <input class="search-input" type="text" placeholder="Search order number, Customer, Email ...">
+      </div>
+      <button class="btn-pink">Search</button>
+      <button class="btn-pink-outline">Export</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active">All</div>
+      <div class="tab">Processing</div>
+      <div class="tab">Completed</div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Order Number</th>
+            <th>Date</th>
+            <th>Shop Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Customer</th>
+            <th>Price</th>
+            <th>Items</th>
+            <th>Note</th>
+            <th style="position:relative" class="highlight-new">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1: Delivered -->
+          <tr>
+            <td class="order-num">20260304094755793275...</td>
+            <td class="date-col">2026/03/03</td>
+            <td class="shop-col">2020</td>
+            <td class="email-col">2969440493@qq.com</td>
+            <td class="phone-col">98765432</td>
+            <td class="customer-block">
+              <div class="customer-name">yi&#26032;&#21152;&#22369; tf&#22320;&#22336;</div>
+              <div class="customer-sub">98765432<br>2969440493@qq.com</div>
+            </td>
+            <td class="price-col">MYR82.31</td>
+            <td class="items-col">1</td>
+            <td class="note-col">&#36825;&#26159;&#22791;&#27880;&#20449;&#24687;&#31995;</td>
+            <td class="status-cell">
+              <span class="badge badge-delivered">Delivered</span>
+              <div class="status-meta">Mar 27, 14:20 &middot; Received by Customer</div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <!-- Row 2: Out for Delivery -->
+          <tr>
+            <td class="order-num">20260304093844527548...</td>
+            <td class="date-col">2026/03/03</td>
+            <td class="shop-col">2020</td>
+            <td class="email-col">2969440493@qq.com</td>
+            <td class="phone-col">98765432</td>
+            <td class="customer-block">
+              <div class="customer-name">yi&#26032;&#21152;&#22369; tf&#22320;&#22336;</div>
+              <div class="customer-sub">98765432<br>2969440493@qq.com</div>
+            </td>
+            <td class="price-col">MYR142.31</td>
+            <td class="items-col">1</td>
+            <td class="note-col">-</td>
+            <td class="status-cell">
+              <span class="badge badge-out-for-delivery">Out for Delivery</span>
+              <div class="status-meta">Arrived at Destination Hub (Tangerang)</div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <!-- Row 3: Action Required -->
+          <tr>
+            <td class="order-num">20260304092403419920...</td>
+            <td class="date-col">2026/03/03</td>
+            <td class="shop-col">2020</td>
+            <td class="email-col">2969440493@qq.com</td>
+            <td class="phone-col"></td>
+            <td class="customer-block">
+              <div class="customer-name">29 69</div>
+              <div class="customer-sub">2969440493@qq.com</div>
+            </td>
+            <td class="price-col">MYR100.00</td>
+            <td class="items-col">1</td>
+            <td class="note-col">-</td>
+            <td class="status-cell">
+              <span class="badge badge-action">Action Required</span>
+              <div class="status-meta urgent">Failure: Nobody at Location</div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <!-- Row 4: Preparing -->
+          <tr>
+            <td class="order-num">20260130093756663827...</td>
+            <td class="date-col">2026/01/29</td>
+            <td class="shop-col">2020</td>
+            <td class="email-col">2744901308@qq.com</td>
+            <td class="phone-col">987654321</td>
+            <td class="customer-block">
+              <div class="customer-name">2744 901308</div>
+              <div class="customer-sub">987654321<br>2744901308@qq.com</div>
+            </td>
+            <td class="price-col">MYR300.00</td>
+            <td class="items-col">5</td>
+            <td class="note-col">-</td>
+            <td class="status-cell">
+              <span class="badge badge-preparing">Preparing</span>
+              <div class="status-meta">Awaiting logistics creation</div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <!-- Row 5: Processing -->
+          <tr>
+            <td class="order-num">20260128134923629551...</td>
+            <td class="date-col">2026/01/28</td>
+            <td class="shop-col">2020</td>
+            <td class="email-col">2744901308@qq.com</td>
+            <td class="phone-col">987654321</td>
+            <td class="customer-block">
+              <div class="customer-name">2744 901308</div>
+              <div class="customer-sub">987654321<br>2744901308@qq.com</div>
+            </td>
+            <td class="price-col">MYR100.00</td>
+            <td class="items-col">1</td>
+            <td class="note-col">-</td>
+            <td class="status-cell">
+              <span class="badge badge-processing">Processing</span>
+              <div class="status-meta">Order creation in progress</div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination-bar">
+        <div>Displaying 1-10 of 1275 orders</div>
+        <div class="page-nums">
+          <span class="page-num active">1</span>
+          <span class="page-num">2</span>
+          <span class="page-num">3</span>
+          <span class="page-num">4</span>
+          <span class="page-num">5</span>
+          <span class="page-num">...</span>
+          <span class="page-num">128</span>
+          <span class="page-num">&rsaquo;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+     SECTION B — Order Detail Page (with Shipping Tracker)
+     ═══════════════════════════════════════════════════════════ -->
+  <div class="section-wrap">
+    <div class="wireframe-annotation">Order Detail</div>
+    <div class="wireframe-title">Order Detail Page — New Shipping Tracker Card</div>
+    <div class="wireframe-desc">A new "Shipping Tracking" card is inserted between the existing Shipping and Order Log
+      sections.</div>
+
+    <div class="detail-page">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="#">Home</a> &gt; <a href="#">Orders</a> &gt; <span class="current">20260304094755793275...</span>
+      </div>
+
+      <button class="detail-top-btn">Create Logistics</button>
+
+      <!-- Product Card (existing) -->
+      <div class="card">
+        <div class="card-title" style="display:flex;align-items:center;gap:12px;">
+          &#23454;&#29289;
+          <button
+            style="background:transparent;border:1px solid #6b7280;color:#e1e4ea;padding:3px 10px;border-radius:4px;font-size:11px;cursor:pointer;">Resend
+            Email</button>
+        </div>
+        <div class="product-line">
+          <div class="product-thumb">&#128230;</div>
+          <div class="product-info">
+            <div class="product-name">&#23454;&#29289;</div>
+            <div class="product-origin">FORM: 79000 &#39532;&#26469;&#35199;&#20122;&#35814;&#32454;&#22320;&#22336;00
+            </div>
+          </div>
+          <div class="product-right">
+            <div class="product-badge">Preparing</div>
+            <button class="create-logistics-btn">Create Logistics</button>
+            <div class="product-price">MYR120.00 &times; 1 &nbsp; MYR120</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Card (existing) -->
+      <div class="card">
+        <div class="card-title">Payment</div>
+        <div class="card-row"><span class="card-row-label">Total items</span><span class="card-row-value white">1 items
+            &nbsp; MYR 60.00</span></div>
+        <div class="card-row"><span class="card-row-label">Discount</span><span class="card-row-value white">MYR
+            0</span></div>
+        <div class="card-row"><span class="card-row-label">Promo Code</span><span
+            class="card-row-value white">4TF3OOFR2P</span></div>
+        <div class="card-row"><span class="card-row-label">Promo Code Discount</span><span
+            class="card-row-value white">50%</span></div>
+        <div class="card-row"><span class="card-row-label">Discount Amount</span><span class="card-row-value white">MYR
+            60.00</span></div>
+        <div class="card-row"><span class="card-row-label">Shipping fee</span><span class="card-row-value white">MYR
+            22.31</span></div>
+        <div class="card-row"><span class="card-row-label">Tax 0%</span><span class="card-row-value white">MYR 0</span>
+        </div>
+        <div class="card-row" style="padding-top:12px;border-top:1px solid #1f1f26;margin-top:6px;">
+          <span class="card-row-label" style="font-weight:700;color:#fff;font-size:15px;">Total</span>
+          <span class="card-row-value white" style="font-weight:700;font-size:15px;">MYR 82.31</span>
+        </div>
+        <div class="card-row" style="padding-top:12px;border-top:1px solid #1f1f26;margin-top:6px;">
+          <span class="card-row-label" style="font-weight:600;">Paid by Customer</span>
+          <span class="card-row-value white" style="font-weight:600;">MYR82.31</span>
+        </div>
+      </div>
+
+      <!-- Platform Fees (existing) -->
+      <div class="card">
+        <div class="card-title">Platform Fees</div>
+        <div class="card-row"><span class="card-row-label">Platform Fees</span><span class="card-row-value white">MYR
+            12.61</span></div>
+      </div>
+
+      <!-- Shipping (existing) -->
+      <div class="card">
+        <div class="card-title">Shipping</div>
+        <div class="card-row"><span class="card-row-label">Addressee</span><span
+            class="card-row-value">yi&#26032;&#21152;&#22369; tf&#22320;&#22336;</span></div>
+        <div class="card-row"><span class="card-row-label">Phone Number</span><span class="card-row-value white">+SG-65
+            98765432</span></div>
+        <div class="card-row"><span class="card-row-label">Email</span><span
+            class="card-row-value white">2969440493@qq.com</span></div>
+        <div class="card-row"><span class="card-row-label">Postal Code</span><span
+            class="card-row-value white">560000</span></div>
+        <div class="card-row"><span class="card-row-label">Delivery Address</span><span
+            class="card-row-value">&#26032;&#21152;&#22369;&#35814;&#32454;&#22320;&#22336;1(-Singapore)</span></div>
+      </div>
+
+      <!-- ★★★ NEW: Shipping Tracking Card ★★★ -->
+      <div class="card tracking-card">
+        <div class="card-new-badge">New Component</div>
+        <div class="card-title" style="margin-top:4px;">Shipping Tracking</div>
+
+        <!-- Tracking Header -->
+        <div class="tracking-header">
+          <div>
+            <div class="tracking-id-label">Tracking ID</div>
+            <div class="tracking-id-value">NVSG0001</div>
+            <div class="tracking-status-sub in-transit">&#9679; In Transit</div>
+          </div>
+          <button class="btn-waybill">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="2" style="width:14px;height:14px">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3" />
+            </svg>
+            Download Label
+          </button>
+        </div>
+
+        <!-- Courier Info -->
+        <div class="courier-meta">
+          <div class="courier-meta-item">
+            <div class="courier-meta-label">Courier</div>
+            <div class="courier-meta-value">Ninja Van</div>
+          </div>
+          <div class="courier-meta-item">
+            <div class="courier-meta-label">Service</div>
+            <div class="courier-meta-value">Standard</div>
+          </div>
+          <div class="courier-meta-item">
+            <div class="courier-meta-label">Est. Delivery</div>
+            <div class="courier-meta-value">Mar 28, 2026</div>
+          </div>
+          <div class="courier-meta-item">
+            <div class="courier-meta-label">Weight</div>
+            <div class="courier-meta-value">1.2 kg</div>
+          </div>
+        </div>
+
+        <!-- Progress Stepper -->
+        <div class="stepper-wrap">
+          <div class="stepper">
+            <div class="step">
+              <div class="step-dot done">&#10003;</div>
+              <div class="step-text done">Created</div>
+            </div>
+            <div class="step-line done"></div>
+            <div class="step">
+              <div class="step-dot done">&#10003;</div>
+              <div class="step-text done">Pending Pickup</div>
+            </div>
+            <div class="step-line done"></div>
+            <div class="step">
+              <div class="step-dot done">&#10003;</div>
+              <div class="step-text done">Picked Up</div>
+            </div>
+            <div class="step-line current"></div>
+            <div class="step">
+              <div class="step-dot current">&#8674;</div>
+              <div class="step-text current">In Transit</div>
+            </div>
+            <div class="step-line pending"></div>
+            <div class="step">
+              <div class="step-dot pending">&#9679;</div>
+              <div class="step-text pending">Delivered</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-label">Tracking History</div>
+        <div class="timeline">
+          <div class="tl-event">
+            <div class="tl-dot">&#128666;</div>
+            <div class="tl-date">Mar 27, 2026 &middot; 09:15 AM</div>
+            <div class="tl-title">On Vehicle for Delivery</div>
+            <div class="tl-sub">Package loaded onto delivery vehicle — Tangerang Hub</div>
+          </div>
+          <div class="tl-event">
+            <div class="tl-dot">&#128230;</div>
+            <div class="tl-date">Mar 26, 2026 &middot; 08:00 PM</div>
+            <div class="tl-title">Arrived at Destination Hub</div>
+            <div class="tl-sub">Tangerang Distribution Center</div>
+          </div>
+          <div class="tl-event">
+            <div class="tl-dot">&#128666;</div>
+            <div class="tl-date">Mar 26, 2026 &middot; 10:30 AM</div>
+            <div class="tl-title">In Transit to Destination</div>
+            <div class="tl-sub">Departed from Jakarta Sorting Facility</div>
+          </div>
+          <div class="tl-event">
+            <div class="tl-dot">&#128230;</div>
+            <div class="tl-date">Mar 25, 2026 &middot; 02:00 PM</div>
+            <div class="tl-title">Picked Up, In Transit to Origin Hub</div>
+            <div class="tl-sub">Package collected from seller</div>
+          </div>
+          <div class="tl-event">
+            <div class="tl-dot">&#127915;</div>
+            <div class="tl-date">Mar 24, 2026 &middot; 11:30 AM</div>
+            <div class="tl-title">Order Creation Processed</div>
+            <div class="tl-sub">Shipping label generated &middot; Pending Pickup webhook triggered</div>
+          </div>
+        </div>
+      </div>
+      <!-- ★★★ END NEW CARD ★★★ -->
+
+      <!-- Order Log (existing) -->
+      <div class="card">
+        <div class="card-title">Order Log</div>
+        <div class="card-row"><span class="card-row-label">Order Number</span><span class="card-row-value white"
+            style="font-family:monospace;font-size:12px;">Copy &nbsp; 20260304094755793275191136</span></div>
+        <div class="card-row"><span class="card-row-label">Customer Name</span><span
+            class="card-row-value">yi&#26032;&#21152;&#22369; tf&#22320;&#22336;</span></div>
+        <div class="card-row"><span class="card-row-label">Payment Method</span><span
+            class="card-row-value white">Stripe</span></div>
+        <div class="card-row"><span class="card-row-label">Creation Time</span><span class="card-row-value">2026/03/03
+            20:47</span></div>
+        <div class="card-row"><span class="card-row-label">Payment Time</span><span class="card-row-value">2026/03/03
+            20:48</span></div>
+        <div class="card-row"><span class="card-row-label">Completion Time</span><span
+            class="card-row-value white"></span></div>
+      </div>
+
+      <!-- Note (existing) -->
+      <div class="card">
+        <div class="card-title">Note</div>
+        <div
+          style="background:#0a0a0a;border:1px solid #2a2d3a;border-radius:8px;padding:12px 14px;font-size:13px;color:#9ca3af;min-height:60px;">
+          &#36825;&#26159;&#22791;&#27880;&#20449;&#24687;&#31995;
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>

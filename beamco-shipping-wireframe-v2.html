@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beamco Back Office — Shipping Status Wireframe v2</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0a;
+      color: #e1e4ea;
+      line-height: 1.5;
+    }
+
+    /* ───── Wireframe Annotation ───── */
+    .wireframe-annotation {
+      background: #6c5ce7; color: #fff; font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 4px; display: inline-block; margin-bottom: 12px;
+    }
+    .wireframe-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .wireframe-desc { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+    .section-wrap { padding: 40px; padding-bottom: 20px; }
+    .section-wrap + .section-wrap { border-top: 2px dashed #2a2d3a; }
+
+    /* ───── Annotation highlight ───── */
+    .highlight-new { position: relative; }
+    .highlight-new::after {
+      content: 'NEW'; position: absolute; top: -8px; right: -8px;
+      background: #ef4444; color: #fff; font-size: 9px; font-weight: 700;
+      padding: 2px 5px; border-radius: 3px; letter-spacing: 0.5px;
+    }
+    .enhanced-badge {
+      position: absolute; top: -10px; left: 24px;
+      background: #6c5ce7; color: #fff; font-size: 10px; font-weight: 700;
+      padding: 2px 10px; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase;
+    }
+
+    /* ═══════════════════════════════════════════
+       SECTION A — Full Orders Listing Page
+       ═══════════════════════════════════════════ */
+
+    .breadcrumb { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+    .breadcrumb a { color: #6b7280; text-decoration: none; }
+    .breadcrumb a:hover { color: #9ca3af; }
+    .breadcrumb .current { color: #fff; font-weight: 600; }
+
+    .filter-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .filter-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; border: 1px solid #2a2d3a; color: #e1e4ea;
+      padding: 8px 14px; border-radius: 6px; font-size: 13px; cursor: pointer;
+    }
+    .filter-btn svg { width: 14px; height: 14px; opacity: 0.7; }
+    .search-input {
+      background: #1a1d27; border: 1px solid #2a2d3a; color: #9ca3af;
+      padding: 8px 14px 8px 36px; border-radius: 6px; font-size: 13px; width: 340px;
+    }
+    .search-wrap { position: relative; }
+    .search-wrap::before {
+      content: '🔍'; position: absolute; left: 12px; top: 50%;
+      transform: translateY(-50%); font-size: 13px; opacity: 0.5;
+    }
+    .btn-pink {
+      background: #f472b6; color: #000; border: none; padding: 8px 20px;
+      border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .btn-pink:hover { background: #f9a8d4; }
+    .btn-pink-outline {
+      background: transparent; color: #f472b6; border: 1px solid #f472b6;
+      padding: 8px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+
+    .tabs { display: flex; gap: 0; border-bottom: 1px solid #2a2d3a; margin-bottom: 0; }
+    .tab {
+      padding: 12px 24px; font-size: 14px; color: #6b7280; cursor: pointer;
+      border-bottom: 2px solid transparent; transition: all 0.2s;
+    }
+    .tab:hover { color: #9ca3af; }
+    .tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+    /* Status filter chips — NEW */
+    .status-chips { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1px solid #2a2d3a; background: transparent; color: #9ca3af;
+      transition: all 0.2s;
+    }
+    .status-chip:hover { border-color: #4b5563; }
+    .status-chip.active { background: #1a1d27; border-color: #6b7280; color: #fff; }
+    .status-chip .chip-count {
+      background: #2a2d3a; color: #9ca3af; font-size: 10px; font-weight: 700;
+      padding: 1px 6px; border-radius: 8px; min-width: 20px; text-align: center;
+    }
+    .status-chip.chip-action { border-color: #f97316; color: #fb923c; }
+    .status-chip.chip-action .chip-count { background: rgba(249,115,22,0.2); color: #fb923c; }
+
+    /* Table */
+    .table-wrap {
+      background: #141418; border: 1px solid #1f1f26;
+      border-radius: 10px; overflow-x: auto; margin-top: 0;
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+    thead th {
+      text-align: left; padding: 14px 16px; font-size: 13px; font-weight: 600;
+      color: #e1e4ea; border-bottom: 1px solid #1f1f26; white-space: nowrap;
+    }
+    thead th.sortable { cursor: pointer; user-select: none; }
+    thead th.sortable:hover { color: #fff; }
+    thead th .sort-arrow { font-size: 10px; opacity: 0.4; margin-left: 4px; }
+    thead th.sorted .sort-arrow { opacity: 1; color: #f472b6; }
+    tbody td {
+      padding: 16px 16px; border-bottom: 1px solid #1a1a20;
+      vertical-align: top; font-size: 13px; color: #d1d5db;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #18181f; }
+
+    /* NEW: row checkbox */
+    .row-check { width: 36px; text-align: center; vertical-align: middle; }
+    .row-check input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: #f472b6; cursor: pointer;
+    }
+
+    .order-num { font-family: 'SF Mono','Fira Code',monospace; font-size: 12px; color: #9ca3af; letter-spacing: -0.3px; }
+    .date-col { color: #d1d5db; white-space: nowrap; }
+    .customer-name { color: #fbbf24; font-weight: 500; }
+    .customer-sub { font-size: 11px; color: #6b7280; line-height: 1.4; }
+    .price-col { color: #d1d5db; white-space: nowrap; }
+    .items-col { text-align: center; color: #d1d5db; }
+    .chevron-col { color: #4b5563; font-size: 18px; cursor: pointer; text-align: center; vertical-align: middle; }
+    .chevron-col:hover { color: #9ca3af; }
+
+    .status-cell { min-width: 220px; }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.3px; line-height: 1;
+    }
+    .badge-delivered { background: #16a34a; color: #fff; }
+    .badge-out-for-delivery { background: #1e40af; color: #93c5fd; }
+    .badge-in-transit { background: rgba(59,130,246,0.12); border: 1px solid #3b82f6; color: #60a5fa; }
+    .badge-action { background: rgba(251,146,60,0.15); border: 1px solid #f97316; color: #fb923c; }
+    .badge-preparing { background: rgba(251,191,36,0.15); border: 1px solid #fbbf24; color: #fbbf24; }
+    .badge-processing { background: rgba(59,130,246,0.12); border: 1px solid #3b82f6; color: #60a5fa; }
+    .badge-returned { background: rgba(239,68,68,0.12); border: 1px solid #ef4444; color: #f87171; }
+    .badge-cancelled { background: rgba(107,114,128,0.15); border: 1px solid #6b7280; color: #9ca3af; }
+
+    .status-meta { font-size: 11px; color: #6b7280; margin-top: 4px; line-height: 1.3; }
+    .status-meta.urgent { color: #ef4444; }
+    /* NEW: relative time */
+    .status-meta .time-ago { color: #9ca3af; }
+
+    .pagination-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 16px; font-size: 12px; color: #6b7280;
+    }
+    .page-nums { display: flex; gap: 4px; }
+    .page-num { padding: 4px 10px; border-radius: 4px; cursor: pointer; color: #6b7280; font-size: 12px; }
+    .page-num:hover { color: #fff; }
+    .page-num.active { background: #6c5ce7; color: #fff; }
+
+    /* NEW: Bulk action bar */
+    .bulk-bar {
+      display: none; /* shown via JS when rows selected */
+      background: #1e1e2a; border: 1px solid #6c5ce7; border-radius: 10px;
+      padding: 12px 20px; margin-bottom: 16px;
+      align-items: center; gap: 16px; justify-content: space-between;
+    }
+    .bulk-bar.show { display: flex; }
+    .bulk-bar-info { font-size: 13px; color: #e1e4ea; }
+    .bulk-bar-actions { display: flex; gap: 8px; }
+    .bulk-btn {
+      padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1px solid #2a2d3a; background: transparent; color: #e1e4ea;
+    }
+    .bulk-btn:hover { border-color: #6b7280; }
+    .bulk-btn.primary { background: #f472b6; color: #000; border: none; }
+
+
+    /* ═══════════════════════════════════════════
+       SECTION B — Order Detail Page (Seller BO)
+       ═══════════════════════════════════════════ */
+
+    .detail-page { max-width: 920px; }
+
+    /* Order header — matching seller BO */
+    .order-header { margin-bottom: 24px; }
+    .order-header-id {
+      font-size: 18px; font-weight: 700; color: #fff;
+      font-family: 'SF Mono','Fira Code',monospace;
+    }
+    .order-header-id::before { content: '#'; color: #6b7280; }
+    .order-header-date { font-size: 13px; color: #6b7280; margin-left: 16px; }
+    .order-header-user {
+      font-size: 12px; color: #6b7280; margin-top: 4px;
+    }
+    .order-header-user span { color: #9ca3af; }
+
+    .card {
+      background: #141418; border: 1px solid #1f1f26;
+      border-radius: 10px; padding: 24px 28px; margin-bottom: 16px;
+    }
+    .card-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 16px; }
+
+    /* Product Card — seller BO style */
+    .product-card-title { font-size: 18px; font-weight: 700; color: #fbbf24; margin-bottom: 16px; }
+    .product-line { display: flex; align-items: center; gap: 16px; padding: 12px 0; }
+    .product-thumb {
+      width: 72px; height: 72px; background: #2a2d3a; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 32px; color: #6b7280;
+      overflow: hidden;
+    }
+    .product-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .product-info { flex: 1; }
+    .product-name { font-size: 14px; color: #e1e4ea; font-weight: 500; }
+    .product-right { text-align: right; display: flex; align-items: center; gap: 24px; }
+    .product-badge {
+      display: inline-block; background: rgba(251,191,36,0.15); border: 1px solid #fbbf24;
+      color: #fbbf24; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 12px;
+    }
+    .product-pricing { text-align: right; }
+    .product-pricing-label { font-size: 11px; color: #6b7280; }
+    .product-pricing-value { font-size: 14px; color: #fff; font-weight: 600; }
+    .product-pricing-qty { font-size: 14px; color: #6b7280; margin: 0 12px; }
+
+    /* ─── Shipping Log (existing, now collapsible header) ─── */
+    .shipping-log-toggle {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #1a1d27; border: 1px solid #2a2d3a; border-radius: 8px;
+      padding: 12px 16px; cursor: pointer; margin-top: 16px;
+      transition: all 0.2s;
+    }
+    .shipping-log-toggle:hover { border-color: #4b5563; }
+    .shipping-log-toggle-title { font-size: 14px; font-weight: 600; color: #fff; }
+    .shipping-log-toggle-arrow { font-size: 14px; color: #6b7280; transition: transform 0.2s; }
+    .shipping-log-toggle.open .shipping-log-toggle-arrow { transform: rotate(180deg); }
+
+    /* ─── ENHANCED: Shipping Tracking Card ─── */
+    .card.tracking-card { border: 1.5px solid #6c5ce7; position: relative; }
+
+    /* Tracking Header Row */
+    .tracking-row-1 {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #1f1f26;
+    }
+    .product-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #2a2d3a; padding: 4px 12px; border-radius: 6px;
+      font-size: 12px; color: #e1e4ea;
+    }
+    .product-pill img { width: 20px; height: 20px; border-radius: 4px; }
+    .tracking-label { font-size: 11px; color: #6b7280; }
+    .tracking-value {
+      font-size: 15px; font-weight: 700; color: #fff;
+      font-family: 'SF Mono','Fira Code',monospace; letter-spacing: 0.3px;
+    }
+    .btn-copy {
+      background: transparent; border: 1px solid #2a2d3a; color: #9ca3af;
+      padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+    }
+    .btn-copy:hover { border-color: #6b7280; color: #fff; }
+    .tracking-status-inline {
+      font-size: 12px; font-weight: 600; padding: 4px 12px;
+      border-radius: 4px; margin-left: auto;
+    }
+    .tracking-status-inline.in-transit {
+      background: rgba(59,130,246,0.12); border: 1px solid #3b82f6; color: #60a5fa;
+    }
+    .tracking-status-inline.delivered {
+      background: #16a34a; color: #fff;
+    }
+    .tracking-status-inline.action-required {
+      background: rgba(251,146,60,0.15); border: 1px solid #f97316; color: #fb923c;
+    }
+    .tracking-status-inline.returned {
+      background: rgba(239,68,68,0.12); border: 1px solid #ef4444; color: #f87171;
+    }
+    .btn-waybill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #f472b6; color: #000; border: none;
+      padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .btn-waybill:hover { background: #f9a8d4; }
+
+    /* Courier meta row */
+    .courier-meta {
+      display: flex; gap: 0; margin-bottom: 20px;
+      padding-bottom: 16px; border-bottom: 1px solid #1f1f26;
+    }
+    .courier-meta-item { flex: 1; }
+    .courier-meta-item + .courier-meta-item { border-left: 1px solid #1f1f26; padding-left: 20px; }
+    .courier-meta-label { font-size: 11px; color: #6b7280; margin-bottom: 2px; }
+    .courier-meta-value { font-size: 13px; font-weight: 600; color: #e1e4ea; }
+    .courier-meta-value.on-track { color: #22c55e; }
+    .courier-meta-value.at-risk { color: #fbbf24; }
+    .courier-meta-value.delayed { color: #ef4444; }
+
+    /* Progress Stepper — 6 steps */
+    .stepper-wrap { margin-bottom: 24px; }
+    .stepper { display: flex; align-items: center; }
+    .step { display: flex; flex-direction: column; align-items: center; flex: 1; z-index: 1; }
+    .step-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; margin-bottom: 6px;
+    }
+    .step-dot.done { background: #16a34a; color: #fff; }
+    .step-dot.current {
+      background: #3b82f6; color: #fff;
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
+      animation: pulse-ring 2s ease-out infinite;
+    }
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 4px rgba(59,130,246,0.25); }
+      50% { box-shadow: 0 0 0 8px rgba(59,130,246,0.08); }
+      100% { box-shadow: 0 0 0 4px rgba(59,130,246,0.25); }
+    }
+    .step-dot.pending { background: #2a2d3a; color: #4b5563; }
+    .step-dot.error { background: #ef4444; color: #fff; }
+    .step-text { font-size: 10px; font-weight: 600; text-align: center; max-width: 80px; }
+    .step-text.done { color: #22c55e; }
+    .step-text.current { color: #60a5fa; }
+    .step-text.pending { color: #4b5563; }
+    .step-text.error { color: #f87171; }
+    .step-line { flex: 1; height: 2px; margin-bottom: 22px; z-index: 0; }
+    .step-line.done { background: #16a34a; }
+    .step-line.current { background: linear-gradient(90deg, #16a34a, #3b82f6); }
+    .step-line.pending { background: #2a2d3a; }
+
+    /* Timeline */
+    .timeline-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 16px; border-top: 1px solid #1f1f26; margin-bottom: 16px;
+    }
+    .timeline-label {
+      font-size: 11px; color: #6b7280; text-transform: uppercase;
+      letter-spacing: 0.8px; font-weight: 600;
+    }
+    .timeline-expand {
+      font-size: 12px; color: #60a5fa; cursor: pointer; background: none; border: none;
+    }
+    .timeline-expand:hover { color: #93c5fd; text-decoration: underline; }
+    .timeline { position: relative; padding-left: 40px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 13px; top: 4px; bottom: 4px;
+      width: 2px; background: #1f1f26;
+    }
+    .tl-event { position: relative; padding-bottom: 20px; }
+    .tl-event:last-child { padding-bottom: 0; }
+    .tl-event.collapsed { display: none; }
+    .tl-dot {
+      position: absolute; left: -40px; top: 2px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #1a1d27; border: 2px solid #2a2d3a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; z-index: 1;
+    }
+    .tl-event:first-child .tl-dot { border-color: #3b82f6; background: rgba(59,130,246,0.12); }
+    .tl-date { font-size: 11px; color: #6b7280; margin-bottom: 1px; }
+    .tl-date .time-ago { color: #9ca3af; margin-left: 6px; }
+    .tl-title { font-size: 13px; font-weight: 600; color: #fff; }
+    .tl-sub { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+
+    /* ─── Existing cards ─── */
+    .card-row { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; }
+    .card-row-label { font-size: 13px; color: #6b7280; }
+    .card-row-value { font-size: 13px; color: #e1e4ea; font-weight: 500; text-align: right; }
+    .card-row-value.gold { color: #fbbf24; }
+
+    .note-box {
+      background: #0a0a0a; border: 1px solid #2a2d3a; border-radius: 8px;
+      padding: 12px 14px; font-size: 13px; color: #9ca3af; min-height: 60px;
+    }
+
+    /* ─── Action Required Alert Banner ─── */
+    .alert-banner {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(239,68,68,0.08); border: 1px solid #ef4444;
+      border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;
+    }
+    .alert-banner-icon { font-size: 18px; }
+    .alert-banner-text { flex: 1; }
+    .alert-banner-title { font-size: 13px; font-weight: 600; color: #f87171; }
+    .alert-banner-sub { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+    .alert-banner-btn {
+      background: #ef4444; color: #fff; border: none; padding: 8px 16px;
+      border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SECTION A — Orders Listing Page (Enhanced)
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="section-wrap">
+    <div class="wireframe-annotation">Screen A — Orders Listing</div>
+    <div class="wireframe-title">Orders Listing — Enhanced Status Column + Bulk Actions</div>
+    <div class="wireframe-desc">Foundation: existing seller BO listing. Enhancements: status filter chips, bulk action bar, sortable columns, relative timestamps.</div>
+
+    <div class="breadcrumb">
+      <a href="#">Home</a> &gt; <span class="current">Orders</span>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <button class="filter-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+        Filter
+      </button>
+      <div class="search-wrap">
+        <input class="search-input" type="text" placeholder="Search order number, Customer, Email ...">
+      </div>
+      <button class="btn-pink">Search</button>
+      <button class="btn-pink-outline">Export</button>
+    </div>
+
+    <!-- NEW: Status filter chips -->
+    <div class="status-chips">
+      <button class="status-chip active">All <span class="chip-count">1275</span></button>
+      <button class="status-chip">Preparing <span class="chip-count">42</span></button>
+      <button class="status-chip">In Transit <span class="chip-count">156</span></button>
+      <button class="status-chip">Out for Delivery <span class="chip-count">23</span></button>
+      <button class="status-chip">Delivered <span class="chip-count">980</span></button>
+      <button class="status-chip chip-action">Action Required <span class="chip-count">8</span></button>
+      <button class="status-chip">Returned <span class="chip-count">12</span></button>
+      <button class="status-chip">Cancelled <span class="chip-count">54</span></button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active">All</div>
+      <div class="tab">Processing</div>
+      <div class="tab">Completed</div>
+    </div>
+
+    <!-- NEW: Bulk action bar (shown when rows selected) -->
+    <div class="bulk-bar show">
+      <div class="bulk-bar-info">3 orders selected</div>
+      <div class="bulk-bar-actions">
+        <button class="bulk-btn">Print Labels</button>
+        <button class="bulk-btn">Export Selected</button>
+        <button class="bulk-btn primary">Mark as Shipped</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="row-check"><input type="checkbox"></th>
+            <th>Order Number</th>
+            <th class="sortable sorted">Date <span class="sort-arrow">▼</span></th>
+            <th>Customer</th>
+            <th class="sortable">Price <span class="sort-arrow">▼</span></th>
+            <th>Items</th>
+            <th style="position:relative" class="highlight-new">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-check"><input type="checkbox" checked></td>
+            <td class="order-num">20260304094755793275...</td>
+            <td class="date-col">2026/03/03</td>
+            <td>
+              <div class="customer-name">yi新加坡 tf地址</div>
+              <div class="customer-sub">98765432 · 2969440493@qq.com</div>
+            </td>
+            <td class="price-col">MYR82.31</td>
+            <td class="items-col">1</td>
+            <td class="status-cell">
+              <span class="badge badge-delivered">Delivered</span>
+              <div class="status-meta">Mar 27, 14:20 · Received by Customer <span class="time-ago">(2h ago)</span></div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <tr>
+            <td class="row-check"><input type="checkbox" checked></td>
+            <td class="order-num">20260304093844527548...</td>
+            <td class="date-col">2026/03/03</td>
+            <td>
+              <div class="customer-name">yi新加坡 tf地址</div>
+              <div class="customer-sub">98765432 · 2969440493@qq.com</div>
+            </td>
+            <td class="price-col">MYR142.31</td>
+            <td class="items-col">1</td>
+            <td class="status-cell">
+              <span class="badge badge-out-for-delivery">Out for Delivery</span>
+              <div class="status-meta">On vehicle — Tangerang Hub <span class="time-ago">(45m ago)</span></div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <tr>
+            <td class="row-check"><input type="checkbox" checked></td>
+            <td class="order-num">20260304092403419920...</td>
+            <td class="date-col">2026/03/03</td>
+            <td>
+              <div class="customer-name">29 69</div>
+              <div class="customer-sub">2969440493@qq.com</div>
+            </td>
+            <td class="price-col">MYR100.00</td>
+            <td class="items-col">1</td>
+            <td class="status-cell">
+              <span class="badge badge-action">⚠ Action Required</span>
+              <div class="status-meta urgent">Failure: Nobody at Location <span class="time-ago">(6h ago)</span></div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <tr>
+            <td class="row-check"><input type="checkbox"></td>
+            <td class="order-num">20260227103844219830...</td>
+            <td class="date-col">2026/02/27</td>
+            <td>
+              <div class="customer-name">Ahmad Razak</div>
+              <div class="customer-sub">+60123456789 · ahmad@mail.com</div>
+            </td>
+            <td class="price-col">MYR88.00</td>
+            <td class="items-col">2</td>
+            <td class="status-cell">
+              <span class="badge badge-in-transit">In Transit</span>
+              <div class="status-meta">Departed Jakarta Sorting Facility <span class="time-ago">(1d ago)</span></div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <tr>
+            <td class="row-check"><input type="checkbox"></td>
+            <td class="order-num">20260130093756663827...</td>
+            <td class="date-col">2026/01/29</td>
+            <td>
+              <div class="customer-name">2744 901308</div>
+              <div class="customer-sub">987654321 · 2744901308@qq.com</div>
+            </td>
+            <td class="price-col">MYR300.00</td>
+            <td class="items-col">5</td>
+            <td class="status-cell">
+              <span class="badge badge-preparing">Preparing</span>
+              <div class="status-meta">Awaiting logistics creation</div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <tr>
+            <td class="row-check"><input type="checkbox"></td>
+            <td class="order-num">20260125081234567890...</td>
+            <td class="date-col">2026/01/25</td>
+            <td>
+              <div class="customer-name">Sarah Chen</div>
+              <div class="customer-sub">+6598761234 · sarah@mail.com</div>
+            </td>
+            <td class="price-col">MYR45.00</td>
+            <td class="items-col">1</td>
+            <td class="status-cell">
+              <span class="badge badge-returned">Returned</span>
+              <div class="status-meta">Returned after 3 failed attempts</div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+          <tr>
+            <td class="row-check"><input type="checkbox"></td>
+            <td class="order-num">20260128134923629551...</td>
+            <td class="date-col">2026/01/28</td>
+            <td>
+              <div class="customer-name">2744 901308</div>
+              <div class="customer-sub">987654321 · 2744901308@qq.com</div>
+            </td>
+            <td class="price-col">MYR100.00</td>
+            <td class="items-col">1</td>
+            <td class="status-cell">
+              <span class="badge badge-cancelled">Cancelled</span>
+              <div class="status-meta">Order cancelled by seller</div>
+            </td>
+            <td class="chevron-col">&rsaquo;</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination-bar">
+        <div>Displaying 1-10 of 1275 orders</div>
+        <div class="page-nums">
+          <span class="page-num active">1</span>
+          <span class="page-num">2</span>
+          <span class="page-num">3</span>
+          <span class="page-num">4</span>
+          <span class="page-num">5</span>
+          <span class="page-num">...</span>
+          <span class="page-num">128</span>
+          <span class="page-num">&rsaquo;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SECTION B — Order Detail Page (Seller Back Office Foundation)
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="section-wrap">
+    <div class="wireframe-annotation">Screen B — Order Detail</div>
+    <div class="wireframe-title">Order Detail — Enhanced Shipping Tracking (Seller BO Foundation)</div>
+    <div class="wireframe-desc">Uses existing seller back office layout. The Shipping Log section is enhanced with Ninja Van webhook-driven tracking.</div>
+
+    <div class="detail-page">
+
+      <!-- Order Header (matching seller BO screenshot) -->
+      <div class="order-header">
+        <span class="order-header-id">20260304094755579327519136</span>
+        <span class="order-header-date">2026/03/03 20:47</span>
+        <div class="order-header-user">
+          <span>User Info</span> &nbsp;
+          User Nickname: <span>yi新加坡 tf地址</span> &nbsp;|&nbsp;
+          Phone Number: <span>98765432</span> &nbsp;|&nbsp;
+          Email: <span>2969440493@qq.com</span>
+        </div>
+      </div>
+
+      <!-- Product Card (matching seller BO) -->
+      <div class="card">
+        <div class="product-card-title">实物</div>
+        <div class="product-line">
+          <div class="product-thumb">📦</div>
+          <div class="product-info">
+            <div class="product-name">实物</div>
+          </div>
+          <div class="product-right">
+            <div class="product-badge">Preparing</div>
+            <div class="product-pricing">
+              <div class="product-pricing-label">Unit Price</div>
+              <div class="product-pricing-value">MYR120.00</div>
+            </div>
+            <div class="product-pricing-qty">x 1</div>
+            <div class="product-pricing">
+              <div class="product-pricing-label">Subtotal</div>
+              <div class="product-pricing-value">MYR120</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Log Toggle (existing element, now expandable) -->
+        <div class="shipping-log-toggle open">
+          <span class="shipping-log-toggle-title">Shipping Log</span>
+          <span class="shipping-log-toggle-arrow">▼</span>
+        </div>
+      </div>
+
+      <!-- ★★★ ENHANCED: Shipping Tracking Card ★★★ -->
+      <div class="card tracking-card">
+        <div class="enhanced-badge">Enhanced</div>
+        <div class="card-title" style="margin-top: 4px;">Shipping Tracking</div>
+
+        <!-- Tracking Header Row: Product pill + Tracking ID + Status + Download -->
+        <div class="tracking-row-1">
+          <div class="product-pill">🧸 实物</div>
+          <div>
+            <div class="tracking-label">Tracking No</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span class="tracking-value">BEAMC148557259845987532</span>
+              <button class="btn-copy">Copy</button>
+            </div>
+          </div>
+          <span class="tracking-status-inline in-transit">● In Transit</span>
+          <button class="btn-waybill">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3" /></svg>
+            Download Label
+          </button>
+        </div>
+
+        <!-- Courier Meta -->
+        <div class="courier-meta">
+          <div class="courier-meta-item">
+            <div class="courier-meta-label">Courier</div>
+            <div class="courier-meta-value">Ninja Van</div>
+          </div>
+          <div class="courier-meta-item">
+            <div class="courier-meta-label">Service</div>
+            <div class="courier-meta-value">Standard</div>
+          </div>
+          <div class="courier-meta-item">
+            <div class="courier-meta-label">Est. Delivery</div>
+            <div class="courier-meta-value on-track">Mar 28, 2026 ✓</div>
+          </div>
+          <div class="courier-meta-item">
+            <div class="courier-meta-label">Weight</div>
+            <div class="courier-meta-value">1.2 kg</div>
+          </div>
+        </div>
+
+        <!-- Progress Stepper (6 steps) -->
+        <div class="stepper-wrap">
+          <div class="stepper">
+            <div class="step">
+              <div class="step-dot done">✓</div>
+              <div class="step-text done">Created</div>
+            </div>
+            <div class="step-line done"></div>
+            <div class="step">
+              <div class="step-dot done">✓</div>
+              <div class="step-text done">Pending Pickup</div>
+            </div>
+            <div class="step-line done"></div>
+            <div class="step">
+              <div class="step-dot done">✓</div>
+              <div class="step-text done">Picked Up</div>
+            </div>
+            <div class="step-line current"></div>
+            <div class="step">
+              <div class="step-dot current">⇢</div>
+              <div class="step-text current">In Transit</div>
+            </div>
+            <div class="step-line pending"></div>
+            <div class="step">
+              <div class="step-dot pending">●</div>
+              <div class="step-text pending">Out for Delivery</div>
+            </div>
+            <div class="step-line pending"></div>
+            <div class="step">
+              <div class="step-dot pending">●</div>
+              <div class="step-text pending">Delivered</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-header">
+          <div class="timeline-label">Tracking History</div>
+          <button class="timeline-expand">Show all 12 events ↓</button>
+        </div>
+        <div class="timeline">
+          <div class="tl-event">
+            <div class="tl-dot">🚚</div>
+            <div class="tl-date">Mar 27, 2026 · 09:15 AM <span class="time-ago">(2h ago)</span></div>
+            <div class="tl-title">On Vehicle for Delivery</div>
+            <div class="tl-sub">Package loaded onto delivery vehicle — Tangerang Hub</div>
+          </div>
+          <div class="tl-event">
+            <div class="tl-dot">📦</div>
+            <div class="tl-date">Mar 26, 2026 · 08:00 PM</div>
+            <div class="tl-title">Arrived at Destination Hub</div>
+            <div class="tl-sub">Tangerang Distribution Center</div>
+          </div>
+          <div class="tl-event">
+            <div class="tl-dot">🚚</div>
+            <div class="tl-date">Mar 26, 2026 · 10:30 AM</div>
+            <div class="tl-title">In Transit to Destination</div>
+            <div class="tl-sub">Departed from Jakarta Sorting Facility</div>
+          </div>
+          <!-- Collapsed events -->
+          <div class="tl-event collapsed">
+            <div class="tl-dot">📦</div>
+            <div class="tl-date">Mar 25, 2026 · 02:00 PM</div>
+            <div class="tl-title">Picked Up, In Transit to Origin Hub</div>
+            <div class="tl-sub">Package collected from seller</div>
+          </div>
+          <div class="tl-event collapsed">
+            <div class="tl-dot">🎫</div>
+            <div class="tl-date">Mar 24, 2026 · 11:30 AM</div>
+            <div class="tl-title">Order Creation Processed</div>
+            <div class="tl-sub">Shipping label generated · Pending Pickup webhook triggered</div>
+          </div>
+        </div>
+      </div>
+      <!-- ★★★ END ENHANCED CARD ★★★ -->
+
+
+      <!-- ═══ VARIANT: Delivery Exception / Action Required ═══ -->
+      <div style="margin-top: 32px; padding-top: 32px; border-top: 2px dashed #2a2d3a;">
+        <div class="wireframe-annotation">Variant — Action Required</div>
+        <div class="wireframe-desc" style="margin-bottom: 12px;">When a delivery exception is received (e.g. nobody at location), this alert banner appears above the tracking card.</div>
+
+        <div class="alert-banner">
+          <div class="alert-banner-icon">⚠️</div>
+          <div class="alert-banner-text">
+            <div class="alert-banner-title">Delivery Failed — Nobody at Location</div>
+            <div class="alert-banner-sub">First attempt failed on Mar 27. Ninja Van will retry automatically. Contact customer to confirm availability.</div>
+          </div>
+          <button class="alert-banner-btn">Contact Customer</button>
+        </div>
+
+        <!-- Stepper variant with error state -->
+        <div class="card" style="border: 1.5px solid #f97316;">
+          <div class="card-title">Shipping Tracking — Exception State</div>
+          <div class="stepper-wrap">
+            <div class="stepper">
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">Created</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">Pending Pickup</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">Picked Up</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">In Transit</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-dot error">!</div><div class="step-text error">Delivery Failed</div></div>
+              <div class="step-line pending"></div>
+              <div class="step"><div class="step-dot pending">●</div><div class="step-text pending">Delivered</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ═══ VARIANT: Delivered (Terminal Success) ═══ -->
+      <div style="margin-top: 32px; padding-top: 32px; border-top: 2px dashed #2a2d3a;">
+        <div class="wireframe-annotation">Variant — Delivered</div>
+        <div class="wireframe-desc" style="margin-bottom: 12px;">Terminal success state. All steps green. Est. Delivery shows "On time" in green.</div>
+
+        <div class="card" style="border: 1.5px solid #16a34a;">
+          <div class="card-title">Shipping Tracking — Delivered</div>
+          <div class="tracking-row-1">
+            <div class="product-pill">🧸 实物</div>
+            <div>
+              <div class="tracking-label">Tracking No</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="tracking-value">BEAMC148557259845987532</span>
+                <button class="btn-copy">Copy</button>
+              </div>
+            </div>
+            <span class="tracking-status-inline delivered">✓ Delivered</span>
+          </div>
+          <div class="courier-meta">
+            <div class="courier-meta-item"><div class="courier-meta-label">Courier</div><div class="courier-meta-value">Ninja Van</div></div>
+            <div class="courier-meta-item"><div class="courier-meta-label">Service</div><div class="courier-meta-value">Standard</div></div>
+            <div class="courier-meta-item"><div class="courier-meta-label">Delivered On</div><div class="courier-meta-value on-track">Mar 28, 2026 — On time ✓</div></div>
+            <div class="courier-meta-item"><div class="courier-meta-label">Weight</div><div class="courier-meta-value">1.2 kg</div></div>
+          </div>
+          <div class="stepper-wrap">
+            <div class="stepper">
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">Created</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">Pending Pickup</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">Picked Up</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">In Transit</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">Out for Delivery</div></div>
+              <div class="step-line done"></div>
+              <div class="step"><div class="step-dot done">✓</div><div class="step-text done">Delivered</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ═══ VARIANT: Returned to Sender ═══ -->
+      <div style="margin-top: 32px; padding-top: 32px; border-top: 2px dashed #2a2d3a;">
+        <div class="wireframe-annotation">Variant — Returned</div>
+        <div class="wireframe-desc" style="margin-bottom: 12px;">Parcel returned after failed delivery attempts.</div>
+
+        <div class="alert-banner" style="border-color: #f97316; background: rgba(249,115,22,0.08);">
+          <div class="alert-banner-icon">↩️</div>
+          <div class="alert-banner-text">
+            <div class="alert-banner-title" style="color: #fb923c;">Parcel Returned to Sender</div>
+            <div class="alert-banner-sub">Returned on Mar 30 after 3 failed delivery attempts. Parcel is back at your warehouse.</div>
+          </div>
+          <button class="alert-banner-btn" style="background: #f97316;">Reship Order</button>
+        </div>
+      </div>
+
+
+      <!-- Remaining existing cards (below tracking) -->
+      <div style="margin-top: 32px; padding-top: 32px; border-top: 2px dashed #2a2d3a;">
+        <div class="wireframe-annotation">Existing Cards (unchanged)</div>
+        <div class="wireframe-desc" style="margin-bottom: 12px;">These existing cards remain below the enhanced Shipping Tracking card.</div>
+
+        <!-- Payment Card -->
+        <div class="card">
+          <div class="card-title">Payment</div>
+          <div class="card-row"><span class="card-row-label">Total items</span><span class="card-row-value">1 items &nbsp; MYR 60.00</span></div>
+          <div class="card-row"><span class="card-row-label">Discount</span><span class="card-row-value">MYR 0</span></div>
+          <div class="card-row"><span class="card-row-label">Promo Code</span><span class="card-row-value">4TF3OOFR2P</span></div>
+          <div class="card-row"><span class="card-row-label">Promo Code Discount</span><span class="card-row-value">50%</span></div>
+          <div class="card-row"><span class="card-row-label">Discount Amount</span><span class="card-row-value">MYR 60.00</span></div>
+          <div class="card-row"><span class="card-row-label">Shipping fee</span><span class="card-row-value">MYR 22.31</span></div>
+          <div class="card-row"><span class="card-row-label">Tax 0%</span><span class="card-row-value">MYR 0</span></div>
+          <div class="card-row" style="padding-top:12px;border-top:1px solid #1f1f26;margin-top:6px;">
+            <span class="card-row-label" style="font-weight:700;color:#fff;font-size:15px;">Total</span>
+            <span class="card-row-value" style="font-weight:700;font-size:15px;">MYR 82.31</span>
+          </div>
+          <div class="card-row" style="padding-top:12px;border-top:1px solid #1f1f26;margin-top:6px;">
+            <span class="card-row-label" style="font-weight:600;">Paid by Customer</span>
+            <span class="card-row-value" style="font-weight:600;">MYR82.31</span>
+          </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="card">
+          <div class="card-title">Shipping</div>
+          <div class="card-row"><span class="card-row-label">Addressee</span><span class="card-row-value gold">yi新加坡 tf地址</span></div>
+          <div class="card-row"><span class="card-row-label">Phone Number</span><span class="card-row-value">+SG-65 98765432</span></div>
+          <div class="card-row"><span class="card-row-label">Email</span><span class="card-row-value">2969440493@qq.com</span></div>
+          <div class="card-row"><span class="card-row-label">Postal Code</span><span class="card-row-value">560000</span></div>
+          <div class="card-row"><span class="card-row-label">Delivery Address</span><span class="card-row-value gold">新加坡详细地址1(-Singapore)</span></div>
+        </div>
+
+        <!-- Order Log -->
+        <div class="card">
+          <div class="card-title">Order Log</div>
+          <div class="card-row"><span class="card-row-label">Order Number</span><span class="card-row-value" style="font-family:monospace;font-size:12px;">Copy &nbsp; 20260304094755793275191136</span></div>
+          <div class="card-row"><span class="card-row-label">Customer Name</span><span class="card-row-value gold">yi新加坡 tf地址</span></div>
+          <div class="card-row"><span class="card-row-label">Payment Method</span><span class="card-row-value">Stripe</span></div>
+          <div class="card-row"><span class="card-row-label">Creation Time</span><span class="card-row-value gold">2026/03/03 20:47</span></div>
+          <div class="card-row"><span class="card-row-label">Payment Time</span><span class="card-row-value gold">2026/03/03 20:48</span></div>
+          <div class="card-row"><span class="card-row-label">Completion Time</span><span class="card-row-value"></span></div>
+        </div>
+
+        <!-- Note -->
+        <div class="card">
+          <div class="card-title">Note</div>
+          <div class="note-box">这是备注信息系</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pickup Scheduling — Fulfillment Flow Options</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    padding: 40px 24px;
+  }
+  .page-title {
+    text-align: center;
+    margin-bottom: 8px;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .page-subtitle {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 15px;
+    color: #6e6e73;
+  }
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .option-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .option-card:hover { border-color: #0071e3; }
+  .option-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .option-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .badge-a { background: #0071e3; }
+  .badge-b { background: #bf4800; }
+  .badge-c { background: #1d7a3e; }
+  .option-title { font-size: 17px; font-weight: 600; }
+  .option-subtitle {
+    font-size: 13px;
+    color: #6e6e73;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .mermaid-container {
+    background: #fafafa;
+    border-radius: 10px;
+    padding: 16px 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .mermaid-container svg { max-width: 100%; height: auto; }
+  .detail-section { margin-bottom: 16px; }
+  .detail-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #86868b;
+    margin-bottom: 6px;
+  }
+  .detail-list {
+    list-style: none;
+    padding: 0;
+  }
+  .detail-list li {
+    font-size: 13px;
+    line-height: 1.6;
+    padding-left: 16px;
+    position: relative;
+    color: #1d1d1f;
+  }
+  .detail-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #86868b;
+  }
+  .role-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .role-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .role-admin { background: #e8f0fe; color: #1a56db; }
+  .role-creator { background: #fef3e2; color: #b45309; }
+  .role-fan { background: #e8f5e9; color: #1b7a3d; }
+  .role-system { background: #f3e8ff; color: #7c3aed; }
+
+  .comparison-section {
+    max-width: 1400px;
+    margin: 48px auto 0;
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .comparison-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background: #f5f5f7;
+    font-weight: 600;
+    border-bottom: 1px solid #e5e5e7;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0f0f2;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tr:last-child td { border-bottom: none; }
+  .highlight { background: #f0fdf4; }
+
+  .shared-flow {
+    max-width: 1400px;
+    margin: 0 auto 32px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .shared-flow-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .shared-flow-sub {
+    font-size: 13px;
+    color: #6e6e73;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 1100px) {
+    .options-grid { grid-template-columns: 1fr; max-width: 560px; }
+  }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Pickup Scheduling — Fulfillment Flow Options</h1>
+<p class="page-subtitle">Beamco PRD Feedback Discussion · March 2026</p>
+
+<!-- Shared start -->
+<div class="shared-flow">
+  <div class="shared-flow-title">Shared Starting Flow (all options)</div>
+  <div class="shared-flow-sub">Every option begins with the same trigger: fan places an order, system notifies both Creator and Admin.</div>
+  <div class="mermaid-container">
+    <pre class="mermaid">
+flowchart LR
+    A["🛒 Fan places order"] --> B["📩 System sends\nNew Order notification"]
+    B --> C["👤 Creator notified"]
+    B --> D["👔 Admin notified"]
+    </pre>
+  </div>
+</div>
+
+<!-- Three option cards -->
+<div class="options-grid">
+
+  <!-- OPTION A -->
+  <div class="option-card">
+    <div class="option-header">
+      <span class="option-badge badge-a">A</span>
+      <span class="option-title">Current Workflow — Admin sends label to Creator</span>
+    </div>
+    <p class="option-subtitle">✅ This is how the system works today. Admin is the full coordinator. Creator receives the label passively via communication channel or email.</p>
+
+    <div class="mermaid-container">
+      <pre class="mermaid">
+flowchart TD
+    A1["👔 Admin creates shipping label\n(via courier system)"] --> A2["Admin sends label\nto Creator\n(comm channel / email)"]
+    A3["👤 Creator prepares order"] --> A4["Creator packages order\n+ attaches label"]
+    A2 --> A4
+    A4 --> A5["👔 Admin schedules pickup\nvia Back Office"]
+    A5 --> A6["📩 Pickup Scheduled\nnotification → Creator"]
+    A5 --> A7["📩 Tracking link\nvisible to Fan"]
+    A7 --> A8["🚚 Courier picks up"]
+    A8 --> A9["Fan receives order ✅"]
+      </pre>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label">Who does what</div>
+      <div class="role-tags">
+        <span class="role-tag role-admin">Admin: label + schedule + send</span>
+        <span class="role-tag role-creator">Creator: prep + package</span>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-label">Pros</div>
+      <ul class="detail-list">
+        <li>Simplest for creators — they just receive and attach</li>
+        <li>Admin has full visibility and control</li>
+        <li>No Artist Portal development needed</li>
+      </ul>
+    </div>
+    <div class="detail-section">
+      <div class="detail-label">Cons</div>
+      <ul class="detail-list">
+        <li>High admin workload — manual send per order</li>
+        <li>Bottleneck as order volume grows</li>
+        <li>Depends on comm channel reliability</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- OPTION B -->
+  <div class="option-card">
+    <div class="option-header">
+      <span class="option-badge badge-b">B</span>
+      <span class="option-title">Admin creates label + Creator downloads from Portal</span>
+    </div>
+    <p class="option-subtitle">Admin still creates the label, but it's uploaded to the Artist Portal. Creator self-serves the download.</p>
+
+    <div class="mermaid-container">
+      <pre class="mermaid">
+flowchart TD
+    B1["👔 Admin creates shipping label\n(via courier system)"] --> B2["Label uploaded to\nArtist Portal"]
+    B3["👤 Creator prepares order"] --> B4["Creator downloads label\nfrom Artist Portal"]
+    B2 --> B4
+    B4 --> B5["Creator packages order\n+ attaches label"]
+    B5 --> B6["👔 Admin schedules pickup\nvia Back Office"]
+    B6 --> B7["📩 Pickup Scheduled\nnotification → Creator"]
+    B6 --> B8["📩 Tracking link\nvisible to Fan"]
+    B8 --> B9["🚚 Courier picks up"]
+    B9 --> B10["Fan receives order ✅"]
+      </pre>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label">Who does what</div>
+      <div class="role-tags">
+        <span class="role-tag role-admin">Admin: label + schedule</span>
+        <span class="role-tag role-creator">Creator: download + prep + package</span>
+        <span class="role-tag role-system">System: hosts label in Portal</span>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-label">Pros</div>
+      <ul class="detail-list">
+        <li>Removes manual send step — less admin friction</li>
+        <li>Creator can download label anytime</li>
+        <li>Audit trail in Portal (who downloaded when)</li>
+      </ul>
+    </div>
+    <div class="detail-section">
+      <div class="detail-label">Cons</div>
+      <ul class="detail-list">
+        <li>Requires Artist Portal dev (label upload + download UI)</li>
+        <li>Admin still creates the label manually</li>
+        <li>Creator needs to know to check Portal</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- OPTION C -->
+  <div class="option-card">
+    <div class="option-header">
+      <span class="option-badge badge-c">C</span>
+      <span class="option-title">Full Automation — Creator self-manages via Portal</span>
+    </div>
+    <p class="option-subtitle">Creator handles label creation, pickup scheduling, and packaging entirely from the Artist Portal. Admin only steps in if something goes wrong.</p>
+
+    <div class="mermaid-container">
+      <pre class="mermaid">
+flowchart TD
+    C1["👤 Creator creates\nshipping label\n(from Artist Portal)"] --> C2["Creator schedules pickup\n(from Artist Portal)"]
+    C2 --> C3["Creator packages order\n+ attaches label"]
+    C3 --> C4["📩 Tracking link\nvisible to Fan"]
+    C4 --> C5["🚚 Courier picks up"]
+    C5 --> C6["Fan receives order ✅"]
+    C7["👔 Admin monitors dashboard"] -.->|"Only if issue"| C8["Admin assists Creator"]
+      </pre>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-label">Who does what</div>
+      <div class="role-tags">
+        <span class="role-tag role-creator">Creator: label + schedule + package</span>
+        <span class="role-tag role-admin">Admin: support only</span>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-label">Pros</div>
+      <ul class="detail-list">
+        <li>Scales best — admin is not a bottleneck</li>
+        <li>Creator has full control and faster turnaround</li>
+        <li>Reduces ops headcount needed</li>
+      </ul>
+    </div>
+    <div class="detail-section">
+      <div class="detail-label">Cons</div>
+      <ul class="detail-list">
+        <li>Largest dev effort (full Portal: labels + scheduling)</li>
+        <li>Risk of missed pickups if creators are disengaged</li>
+        <li>Some creators may struggle with self-service</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- Comparison table -->
+<div class="comparison-section">
+  <div class="comparison-title">Side-by-Side Comparison</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:22%">Dimension</th>
+        <th style="width:26%">Option A — Current Workflow</th>
+        <th style="width:26%">Option B — Portal Download</th>
+        <th style="width:26%">Option C — Full Automation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Label creation</strong></td>
+        <td>Admin</td>
+        <td>Admin</td>
+        <td>Creator</td>
+      </tr>
+      <tr>
+        <td><strong>Label delivery</strong></td>
+        <td>Admin sends via comm channel</td>
+        <td>Creator downloads from Portal</td>
+        <td>Creator generates in Portal</td>
+      </tr>
+      <tr>
+        <td><strong>Pickup scheduling</strong></td>
+        <td>Admin (Back Office)</td>
+        <td>Admin (Back Office)</td>
+        <td>Creator (Artist Portal)</td>
+      </tr>
+      <tr>
+        <td><strong>Admin involvement</strong></td>
+        <td>High — every order</td>
+        <td>Medium — creates label, schedules</td>
+        <td>Low — support only</td>
+      </tr>
+      <tr>
+        <td><strong>Portal dev required</strong></td>
+        <td>None</td>
+        <td>Label download UI</td>
+        <td>Full: labels + scheduling + dashboard</td>
+      </tr>
+      <tr>
+        <td><strong>Scalability</strong></td>
+        <td>Low — admin bottleneck</td>
+        <td>Medium</td>
+        <td class="highlight"><strong>High — creator self-service</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Creator effort</strong></td>
+        <td>Low — just package</td>
+        <td>Low-Medium — download + package</td>
+        <td>High — full ownership</td>
+      </tr>
+      <tr>
+        <td><strong>Risk of missed pickup</strong></td>
+        <td>Low — admin controls</td>
+        <td>Low-Medium</td>
+        <td>Higher — depends on creator</td>
+      </tr>
+      <tr>
+        <td><strong>Best for</strong></td>
+        <td>Closed beta / small volume</td>
+        <td>Growing volume, transition phase</td>
+        <td>Scale / post-beta</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Shared tail -->
+<div class="shared-flow" style="margin-top: 32px;">
+  <div class="shared-flow-title">Shared Ending Flow (all options)</div>
+  <div class="shared-flow-sub">After pickup is scheduled, the remaining steps are the same regardless of option.</div>
+  <div class="mermaid-container">
+    <pre class="mermaid">
+flowchart TD
+    K["📩 Pickup Scheduled\nnotification → Creator"] --> L["📩 Order status updated\n(tracking link → Fan)"]
+    L --> M["🚚 Courier picks up package"]
+    M --> N{"Pickup successful?"}
+    N -->|"Yes"| O["Order → In Transit\nFan tracks via link"]
+    N -->|"No / Missed"| P["⚠️ Late-shipment alert"]
+    O --> Q["Fan receives order ✅"]
+    P --> R["Nudge to Creator + Admin"]
+    </pre>
+  </div>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    flowchart: { curve: 'basis', padding: 16 },
+    themeVariables: {
+      fontSize: '13px',
+      fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+    }
+  });
+</script>
+
+</body>
+</html>

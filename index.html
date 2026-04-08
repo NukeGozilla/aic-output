@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIC Output</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e5e5e5; min-height: 100vh; padding: 3rem 1.5rem; }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.5rem; color: #fff; }
+    .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2.5rem; }
+    .section { margin-bottom: 2rem; }
+    .section-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.75rem; }
+    .file-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    a.file { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1rem; background: #161616; border: 1px solid #262626; border-radius: 8px; text-decoration: none; color: #e5e5e5; transition: all 0.15s ease; }
+    a.file:hover { background: #1a1a1a; border-color: #404040; transform: translateX(2px); }
+    .file-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; flex-shrink: 0; }
+    .beamco .file-icon { background: #1e3a5f; color: #60a5fa; }
+    .ztor .file-icon { background: #3b1f4e; color: #c084fc; }
+    .other .file-icon { background: #1f3d2e; color: #6ee7b7; }
+    .file-name { font-size: 0.95rem; font-weight: 500; }
+    .file-desc { font-size: 0.8rem; color: #666; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AIC Output</h1>
+    <p class="subtitle">Shared output files for team review</p>
+
+    <div class="section">
+      <div class="section-label">Beamco</div>
+      <div class="file-list">
+        <a class="file beamco" href="beamco-antom-payment-flow.html">
+          <div class="file-icon">PAY</div>
+          <div><div class="file-name">Antom Payment Flow</div><div class="file-desc">Payment integration flow documentation</div></div>
+        </a>
+        <a class="file beamco" href="beamco-shipping-wireframe.html">
+          <div class="file-icon">v1</div>
+          <div><div class="file-name">Shipping Wireframe</div><div class="file-desc">Shipping feature wireframe &mdash; version 1</div></div>
+        </a>
+        <a class="file beamco" href="beamco-shipping-wireframe-v2.html">
+          <div class="file-icon">v2</div>
+          <div><div class="file-name">Shipping Wireframe v2</div><div class="file-desc">Shipping feature wireframe &mdash; version 2</div></div>
+        </a>
+        <a class="file beamco" href="pickup-workflow-options.html">
+          <div class="file-icon">PKP</div>
+          <div><div class="file-name">Pickup Workflow Options</div><div class="file-desc">Pickup workflow comparison and options</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Ztor</div>
+      <div class="file-list">
+        <a class="file ztor" href="ztor-2.0-phase1-architecture.html">
+          <div class="file-icon">2.0</div>
+          <div><div class="file-name">Ztor 2.0 Phase 1 Architecture</div><div class="file-desc">Phase 1 architecture documentation</div></div>
+        </a>
+        <a class="file ztor" href="ztor-phase1-deploy.html">
+          <div class="file-icon">DEP</div>
+          <div><div class="file-name">Ztor Phase 1 Deploy</div><div class="file-desc">Phase 1 deployment page</div></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Other</div>
+      <div class="file-list">
+        <a class="file other" href="wireframe-movie-dashboard.html">
+          <div class="file-icon">MOV</div>
+          <div><div class="file-name">Movie Dashboard Wireframe</div><div class="file-desc">Movie dashboard UI wireframe</div></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
