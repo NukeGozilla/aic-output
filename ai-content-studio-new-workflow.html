@@ -93,14 +93,14 @@
 <body>
 
 <h1>AI Content Studio 1.1 — Revised Architecture</h1>
-<p class="subtitle">Post-meetings: Howard (April 7) + L sync (April 8) · BRD v1.3 · Entertainment News</p>
+<p class="subtitle">Post-meetings: Howard (April 7) + L sync (April 8) + Core standup (April 8) · BRD v1.3 · Entertainment News</p>
 
 <!-- Metrics bar -->
 <div class="metrics-bar">
   <div class="metric"><div class="m-value">15–20</div><div class="m-label">Articles / day target</div></div>
   <div class="metric"><div class="m-value">May 1</div><div class="m-label">Target delivery</div></div>
   <div class="metric"><div class="m-value">~20 → ~10</div><div class="m-label">AI discovers → Team curates</div></div>
-  <div class="metric"><div class="m-value">Weekly</div><div class="m-label">Topic cadence (set Sun, run Mon–Sat)</div></div>
+  <div class="metric"><div class="m-value">Per-Topic</div><div class="m-label">Frequency: Daily / Weekly / Custom</div></div>
   <div class="metric highlight"><div class="m-value">Topic-First</div><div class="m-label">Approved approach ✓</div></div>
 </div>
 
@@ -179,6 +179,16 @@
       <div class="cc-old">Split between Howard + Eric's team</div>
       <div class="cc-new">Howard end-to-end (full-stack, DevOps, iOS)</div>
     </div>
+    <div class="change-card">
+      <div class="cc-label">New: Per-Topic Frequency</div>
+      <div class="cc-old">Fixed weekly cadence for all topics</div>
+      <div class="cc-new">Each topic gets its own schedule: daily / weekly / specific dates / one-time. Replaces carry-over logic.</div>
+    </div>
+    <div class="change-card">
+      <div class="cc-label">New: Unified Topic View</div>
+      <div class="cc-old">Telegram ad-hoc topics only visible in chat</div>
+      <div class="cc-new">All topics (scheduled + ad-hoc) visible in Topic Manager dashboard. One place for all content.</div>
+    </div>
   </div>
 </div>
 
@@ -192,7 +202,7 @@
       <div class="lane-header">
         <span class="lane-badge discovery">Flow 0</span>
         <span class="lane-title">Topic Discovery <span class="new-pill">NEW</span></span>
-        <span class="lane-sub">Automated · Weekly cadence (set Sunday) · AI Agent</span>
+        <span class="lane-sub">Automated · Discovery runs weekly (Sunday) · Per-topic frequency on approval</span>
       </div>
       <div class="lane-steps">
         <div class="lane-step system">
@@ -203,13 +213,13 @@
         <div class="step-arrow">→</div>
         <div class="lane-step system">
           <div class="step-label system-label">AI Agent</div>
-          <div class="step-text"><strong>Identify ~20 trending topics</strong> — rank by relevance, recency, and audience interest</div>
+          <div class="step-text"><strong>Identify ~20 trending topics</strong> — rank by relevance, recency, audience interest. <strong>AI suggests frequency</strong> (daily/weekly/one-time)</div>
           <div class="step-brs"><span class="step-br new-br">BR-10</span></div>
         </div>
         <div class="step-arrow">→</div>
         <div class="lane-step human">
           <div class="step-label human-label">Content Team · Dashboard</div>
-          <div class="step-text"><strong>Curate: pick ~10 topics</strong> to write about. Reject the rest.</div>
+          <div class="step-text"><strong>Curate: pick ~10 topics</strong> to write about. <strong>Set frequency</strong> per topic (daily / every 2 days / weekly / specific date / one-time). Reject the rest.</div>
           <div class="step-brs"><span class="step-br new-br">BR-10</span><span class="step-br">BR-03</span></div>
         </div>
       </div>
@@ -255,7 +265,7 @@
       <div class="lane-header">
         <span class="lane-badge generation">Flow 2</span>
         <span class="lane-title">Scheduled Generation</span>
-        <span class="lane-sub">Per approved topic · AI Research Agent</span>
+        <span class="lane-sub">Per approved topic · Runs at topic's set frequency · AI Research Agent</span>
       </div>
       <div class="lane-steps">
         <div class="lane-step decision">
@@ -277,7 +287,7 @@
         </div>
       </div>
       <div style="margin-top:10px;padding:6px 10px;background:#fffbeb;border-radius:6px;font-size:10px;color:#92400e;line-height:1.4;">
-        ✏️ Single reporter persona · "Official Ztor editorial" voice · Unique angle, not paraphrasing · 15–20 articles/day target
+        ✏️ Single reporter persona · "Official Ztor editorial" voice · Unique angle, not paraphrasing · 15–20 articles/day target · Generation triggered by each topic's frequency schedule
       </div>
     </div>
 
@@ -336,7 +346,7 @@
           <div class="step-brs"><span class="step-br">BR-04</span><span class="step-br">BR-03</span></div>
         </div>
       </div>
-      <div style="margin-top:8px;font-size:10px;color:#9ca3af;">Available regardless of auto-gen toggle state. Mirrors existing movie review Telegram bot UI pattern.<br><strong style="color:#c2410c;">Event-driven use case:</strong> Live event coverage (e.g., Golden Horse Awards) — someone watches the event, sends topic/link to bot for immediate article generation and publish.</div>
+      <div style="margin-top:8px;font-size:10px;color:#9ca3af;">Available regardless of auto-gen toggle state. Mirrors existing movie review Telegram bot UI pattern.<br><strong style="color:#c2410c;">Event-driven use case:</strong> Live event coverage (e.g., Golden Horse Awards) — someone watches the event, sends topic/link to bot for immediate article generation and publish.<br><strong style="color:#7c3aed;">↑ Unified view:</strong> Ad-hoc topics also appear in Topic Management dashboard with "Telegram · Ad-Hoc" origin badge — content team sees ALL topics in one place. <span class="new-pill">NEW</span></div>
     </div>
   </div>
 </div>
@@ -365,7 +375,7 @@
 </div>
 
 <div style="font-size:10px;color:#9ca3af;margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;">
-  Source: <a href="https://www.notion.so/33b9ca6e76ac80cc8d6ed7af20d7182a" style="color:#6b7280;">Sync with Howard — April 7</a> · <a href="https://www.notion.so/33c9ca6e76ac809098a1c11a40804e50" style="color:#6b7280;">Sync with L — April 8</a> · <a href="https://www.notion.so/AI-Content-Studio-1-1-BRD-Entertainment-News-3359ca6e76ac818b8811d1163232176e" style="color:#6b7280;">AI Content Studio 1.1 BRD v1.3</a> · Prepared by Jeff (Product)
+  Source: <a href="https://www.notion.so/33b9ca6e76ac80cc8d6ed7af20d7182a" style="color:#6b7280;">Sync with Howard — April 7</a> · <a href="https://www.notion.so/33c9ca6e76ac809098a1c11a40804e50" style="color:#6b7280;">Sync with L — April 8</a> · <a href="https://www.notion.so/33d9ca6e76ac80f9a92ccc27948a1ece" style="color:#6b7280;">Core Standup — April 8</a> · <a href="https://www.notion.so/AI-Content-Studio-1-1-BRD-Entertainment-News-3359ca6e76ac818b8811d1163232176e" style="color:#6b7280;">AI Content Studio 1.1 BRD v1.3</a> · Prepared by Jeff (Product)
 </div>
 
 </body>

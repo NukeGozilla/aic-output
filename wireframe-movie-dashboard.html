@@ -708,6 +708,27 @@
             font-size: 12px;
         }
 
+        /* SYSTEM OWNERSHIP BADGES */
+        .system-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .system-badge-crawler {
+            background: rgba(124, 58, 237, 0.2);
+            color: #d8b4fe;
+            border: 1px solid rgba(124, 58, 237, 0.4);
+        }
+
+        .system-badge-bo {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+
         /* RANKING CARD GRID (mirrors current Ztor system) */
         .ranking-card-grid {
             display: grid;
@@ -952,7 +973,10 @@
         <!-- MAIN CONTENT -->
         <div class="main">
             <div class="header">
-                <div class="header-title" id="page-title">List Source Manager</div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div class="header-title" id="page-title">List Source Manager</div>
+                    <span class="system-badge system-badge-crawler" id="system-badge">Crawler Dashboard · Howard</span>
+                </div>
             </div>
 
             <div class="content">
@@ -1701,6 +1725,20 @@
                 'awards': 'Awards'
             };
             document.getElementById('page-title').textContent = titles[page] || 'Dashboard';
+
+            // Update system ownership badge
+            const badge = document.getElementById('system-badge');
+            const systemMap = {
+                'list-source': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
+                'movies': { label: 'Ztor BO · Eric\'s team', cls: 'system-badge-bo' },
+                'rankings': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
+                'vod': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
+                'boxoffice': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
+                'awards': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' }
+            };
+            const sys = systemMap[page] || { label: '', cls: '' };
+            badge.textContent = sys.label;
+            badge.className = 'system-badge ' + sys.cls;
         }
 
         function switchMovieTab(el, panelId) {

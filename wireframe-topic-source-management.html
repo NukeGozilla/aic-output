@@ -220,6 +220,7 @@
       <div class="tab active" role="tab" aria-selected="true">Pending Review <span class="tab-count">7</span></div>
       <div class="tab" role="tab">Approved <span class="tab-count">9</span></div>
       <div class="tab" role="tab">Active (Generating)</div>
+      <div class="tab" role="tab">Ad-Hoc <span class="tab-count">2</span></div>
       <div class="tab" role="tab">Rejected</div>
     </div>
 
@@ -234,7 +235,7 @@
 
     <!-- Topic cards -->
     <div class="topic-grid">
-      <!-- Card 1: Pending -->
+      <!-- Card 1: Pending — with AI-suggested frequency -->
       <div class="topic-card annotation">
         <div class="tc-header">
           <div class="tc-title">金馬獎 2026 — Best Picture nominees and early predictions</div>
@@ -245,6 +246,17 @@
           <div class="tc-meta-item">📅 Apr 7</div>
           <div class="tc-meta-item">🔥 High trending</div>
         </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:var(--purple-light);border:1px solid var(--purple-border);border-radius:var(--radius-sm);font-size:11px;">
+          <span style="font-weight:700;color:var(--purple);">📅 AI suggests:</span>
+          <select style="padding:3px 8px;border:1px solid var(--purple-border);border-radius:4px;font-size:11px;font-weight:600;color:var(--purple);background:#fff;">
+            <option selected>Daily</option>
+            <option>Every 2 days</option>
+            <option>Weekly</option>
+            <option>Specific dates</option>
+            <option>One-time</option>
+          </select>
+          <span style="color:var(--text-secondary);font-size:10px;">Set when approving · can change later</span>
+        </div>
         <div class="tc-sources">
           <span class="tc-source-tag">Apple Daily</span>
           <span class="tc-source-tag">ETtoday</span>
@@ -252,7 +264,7 @@
           <span class="tc-source-tag">+4 sources</span>
         </div>
         <div class="tc-actions">
-          <button class="tc-btn approve" type="button">✅ Approve</button>
+          <button class="tc-btn approve" type="button">✅ Approve + Schedule</button>
           <button class="tc-btn reject" type="button">❌ Reject</button>
           <button class="tc-btn" type="button">👁️ Preview sources</button>
           <div class="tc-articles">0 articles</div>
@@ -283,7 +295,7 @@
         </div>
       </div>
 
-      <!-- Card 3: Approved + Generating -->
+      <!-- Card 3: Approved + Generating — with frequency badge -->
       <div class="topic-card" style="border-color:var(--green-border);">
         <div class="tc-header">
           <div class="tc-title">Netflix Top 10 Taiwan — Week of April 7</div>
@@ -292,7 +304,7 @@
         <div class="tc-meta">
           <div class="tc-meta-item">🤖 AI Discovered</div>
           <div class="tc-meta-item">📅 Apr 7</div>
-          <div class="tc-meta-item">📊 Recurring weekly</div>
+          <div class="tc-meta-item" style="color:var(--green);font-weight:600;">🔄 Weekly</div>
         </div>
         <div class="tc-sources">
           <span class="tc-source-tag">Netflix TW</span>
@@ -305,16 +317,16 @@
         </div>
       </div>
 
-      <!-- Card 4: Active / Persistent -->
+      <!-- Card 4: Active / Frequency-based persistence -->
       <div class="topic-card" style="border-color:var(--purple-border);">
         <div class="tc-header">
           <div class="tc-title">劉德華 — upcoming film slate and interview roundup</div>
-          <div class="tc-status active">Active · Persistent</div>
+          <div class="tc-status active">Active · Every 2 days</div>
         </div>
         <div class="tc-meta">
           <div class="tc-meta-item">👤 Manual input</div>
           <div class="tc-meta-item">📅 Mar 28 → ongoing</div>
-          <div class="tc-meta-item">🔄 Week 2</div>
+          <div class="tc-meta-item" style="color:var(--purple);font-weight:600;">🔄 Every 2 days · Week 2</div>
         </div>
         <div class="tc-sources">
           <span class="tc-source-tag">IG @andylauofficial</span>
@@ -373,18 +385,79 @@
           <div class="tc-articles" style="color:var(--red);">Rejected by Jeff</div>
         </div>
       </div>
+
+      <!-- Card 7: Telegram Ad-Hoc — NEW -->
+      <div class="topic-card" style="border-color:#6ee7b7;border-width:2px;">
+        <div class="tc-header">
+          <div class="tc-title">金馬獎 Live — Best Director announcement reaction</div>
+          <div class="tc-status" style="background:#ecfdf5;color:#059669;border:1px solid #6ee7b7;">Telegram · Ad-Hoc</div>
+        </div>
+        <div class="tc-meta">
+          <div class="tc-meta-item">💬 via Telegram</div>
+          <div class="tc-meta-item">📅 Apr 8, 9:42 PM</div>
+          <div class="tc-meta-item">👤 Triggered by Jeff</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:#ecfdf5;border:1px solid #6ee7b7;border-radius:var(--radius-sm);font-size:11px;">
+          <span style="font-weight:700;color:#059669;">📅 Frequency:</span>
+          <span style="font-weight:600;color:#059669;">One-time</span>
+          <span style="color:var(--text-secondary);font-size:10px;">· Ad-hoc defaults to one-time</span>
+        </div>
+        <div class="tc-sources">
+          <span class="tc-source-tag" style="background:#ecfdf5;color:#059669;border-color:#6ee7b7;">Telegram /news</span>
+          <span class="tc-source-tag">Apple Daily</span>
+          <span class="tc-source-tag">+2 sources</span>
+        </div>
+        <div class="tc-actions">
+          <button class="tc-btn" style="background:#ecfdf5;color:#059669;border-color:#6ee7b7;" type="button">✅ Approved in Telegram</button>
+          <div class="tc-articles">1 article ✓</div>
+        </div>
+      </div>
+
+      <!-- Card 8: Another Telegram Ad-Hoc -->
+      <div class="topic-card" style="border-color:#6ee7b7;">
+        <div class="tc-header">
+          <div class="tc-title">周杰倫 new album rumor — studio session photos leaked</div>
+          <div class="tc-status" style="background:#ecfdf5;color:#059669;border:1px solid #6ee7b7;">Telegram · Ad-Hoc</div>
+        </div>
+        <div class="tc-meta">
+          <div class="tc-meta-item">💬 via Telegram</div>
+          <div class="tc-meta-item">📅 Apr 8, 2:15 PM</div>
+          <div class="tc-meta-item">👤 Triggered by Angela</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:#ecfdf5;border:1px solid #6ee7b7;border-radius:var(--radius-sm);font-size:11px;">
+          <span style="font-weight:700;color:#059669;">📅 Frequency:</span>
+          <select style="padding:3px 8px;border:1px solid #6ee7b7;border-radius:4px;font-size:11px;font-weight:600;color:#059669;background:#fff;">
+            <option>One-time</option>
+            <option selected>Daily</option>
+            <option>Every 2 days</option>
+            <option>Weekly</option>
+          </select>
+          <span style="color:var(--text-secondary);font-size:10px;">· Promoted from ad-hoc to scheduled</span>
+        </div>
+        <div class="tc-sources">
+          <span class="tc-source-tag" style="background:#ecfdf5;color:#059669;border-color:#6ee7b7;">Telegram /news url</span>
+          <span class="tc-source-tag">IG @jaychou</span>
+        </div>
+        <div class="tc-actions">
+          <button class="tc-btn generate" type="button">⚡ Generate Articles</button>
+          <button class="tc-btn" type="button">✏️ Edit</button>
+          <div class="tc-articles">1 article ✓</div>
+        </div>
+      </div>
     </div>
 
     <!-- Annotation notes -->
     <div class="anno-note" style="margin-top:32px;">
-      <div class="anno-title">📐 Wireframe Notes — Topic Management</div>
+      <div class="anno-title">📐 Wireframe Notes — Topic Management (Updated: Core Standup April 8)</div>
       <div class="anno-list">
-        <div><span class="anno-num">1</span> <strong>Week selector</strong> — topics are set on a weekly cadence (set Sunday, run Mon–Sat). Navigate between weeks to review past/future topics.</div>
-        <div><span class="anno-num">2</span> <strong>AI Discovery → Human Curation</strong> — AI surfaces ~20 trending topics, content team approves ~10. Cards show source (AI vs manual) and trending score.</div>
-        <div><span class="anno-num">3</span> <strong>Persistent topics</strong> — some topics span multiple weeks (e.g., tracking a movie production). Shown with "Active · Persistent" badge and week counter.</div>
-        <div><span class="anno-num">4</span> <strong>Per-topic article generation</strong> — approved topics show "Generate Articles" button. Each topic can produce 1–2 articles. Article count visible on card.</div>
-        <div><span class="anno-num">5</span> <strong>Run Discovery Now</strong> — manual trigger for AI topic scan outside the weekly cycle. Useful for breaking news weeks.</div>
-        <div><span class="anno-num">6</span> <strong>Category filter</strong> — filter by film, music, gaming, anime, celebrity, etc. Matches BR-01 tagging.</div>
+        <div><span class="anno-num">1</span> <strong>Week selector</strong> — discovery runs weekly (set Sunday). Navigate between weeks to review past/future topics.</div>
+        <div><span class="anno-num">2</span> <strong>AI Discovery → Human Curation</strong> — AI surfaces ~20 trending topics with suggested frequency. Content team approves ~10, sets frequency per topic. "Approve + Schedule" is one action.</div>
+        <div><span class="anno-num">3</span> <strong>Per-topic frequency (NEW)</strong> — each approved topic gets its own generation schedule: Daily, Every 2 days, Weekly, Specific dates, or One-time. Replaces the old "persistent topic" concept — frequency IS the persistence model. A topic set to "Weekly" auto-generates each week until paused.</div>
+        <div><span class="anno-num">4</span> <strong>Per-topic article generation</strong> — approved topics show "Generate Articles" button. Each topic can produce 1–2 articles per cycle. Article count visible on card.</div>
+        <div><span class="anno-num">5</span> <strong>Telegram ad-hoc in unified view (NEW)</strong> — topics triggered via Telegram (/news or /news url) also appear here with "Telegram · Ad-Hoc" badge. Shows who triggered it and when. Ad-hoc defaults to "One-time" but can be promoted to a recurring schedule (e.g., daily) if the story has legs.</div>
+        <div><span class="anno-num">6</span> <strong>Ad-Hoc tab</strong> — dedicated tab to filter only Telegram-triggered topics. Content team can see all ad-hoc activity at a glance.</div>
+        <div><span class="anno-num">7</span> <strong>Run Discovery Now</strong> — manual trigger for AI topic scan outside the weekly cycle. Useful for breaking news weeks.</div>
+        <div><span class="anno-num">8</span> <strong>Category filter</strong> — filter by film, music, gaming, anime, celebrity, etc. Matches BR-01 tagging.</div>
       </div>
     </div>
 
