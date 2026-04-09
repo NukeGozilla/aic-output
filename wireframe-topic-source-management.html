@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Content Studio — Topic & Source Management Wireframe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f6f8; --surface: #fff; --border: #e5e7eb; --border-focus: #7c3aed;
+    --text-primary: #1a1a2e; --text-secondary: #6b7280; --text-muted: #9ca3af;
+    --purple: #7c3aed; --purple-light: #f5f3ff; --purple-border: #ddd6fe;
+    --green: #16a34a; --green-light: #f0fdf4; --green-border: #bbf7d0;
+    --red: #dc2626; --red-light: #fef2f2; --red-border: #fecaca;
+    --amber: #d97706; --amber-light: #fffbeb; --amber-border: #fde68a;
+    --blue: #2563eb; --blue-light: #eff6ff; --blue-border: #bfdbfe;
+    --radius: 10px; --radius-sm: 6px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text-primary); }
+
+  /* Shell */
+  .shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+  .sidebar { background: var(--text-primary); color: #fff; padding: 20px 0; display: flex; flex-direction: column; }
+  .sidebar-logo { padding: 0 20px 20px; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 12px; }
+  .sidebar-logo span { color: var(--purple); }
+  .nav-section { padding: 8px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 13px; color: rgba(255,255,255,0.6); cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; }
+  .nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
+  .nav-item.active { color: #fff; background: rgba(124,58,237,0.15); border-left-color: var(--purple); }
+  .nav-icon { width: 18px; text-align: center; font-size: 14px; flex-shrink: 0; }
+  .nav-item .badge { margin-left: auto; font-size: 10px; font-weight: 700; background: var(--purple); color: #fff; padding: 1px 7px; border-radius: 10px; }
+
+  /* Main content */
+  .main { padding: 28px 32px; overflow-y: auto; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .page-title { font-size: 20px; font-weight: 700; }
+  .page-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 24px; }
+  .tab { padding: 10px 20px; font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab:hover { color: var(--text-primary); }
+  .tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+  .tab .tab-count { font-size: 11px; font-weight: 700; background: var(--purple-light); color: var(--purple); padding: 1px 7px; border-radius: 10px; margin-left: 6px; }
+
+  /* Stats bar */
+  .stats-bar { display: flex; gap: 12px; margin-bottom: 24px; }
+  .stat-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .stat-value { font-size: 22px; font-weight: 800; }
+  .stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+  .stat-card.purple .stat-value { color: var(--purple); }
+  .stat-card.green .stat-value { color: var(--green); }
+  .stat-card.amber .stat-value { color: var(--amber); }
+  .stat-card.blue .stat-value { color: var(--blue); }
+
+  /* Action bar */
+  .action-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .search-box { flex: 1; max-width: 320px; padding: 8px 12px 8px 34px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%239ca3af' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") no-repeat 10px center; }
+  .search-box:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+  .filter-btn { padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; background: var(--surface); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 5px; }
+  .filter-btn:hover { border-color: var(--text-secondary); }
+  .primary-btn { padding: 8px 16px; border: none; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; background: var(--purple); color: #fff; cursor: pointer; margin-left: auto; display: flex; align-items: center; gap: 5px; }
+  .primary-btn:hover { background: #6d28d9; }
+  .secondary-btn { padding: 8px 14px; border: 1px solid var(--purple-border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; background: var(--purple-light); color: var(--purple); cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+  /* Topic cards */
+  .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+  .topic-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color 0.15s, box-shadow 0.15s; }
+  .topic-card:hover { border-color: var(--purple-border); box-shadow: 0 2px 8px rgba(124,58,237,0.06); }
+  .tc-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .tc-title { font-size: 14px; font-weight: 700; flex: 1; line-height: 1.3; }
+  .tc-status { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 12px; white-space: nowrap; flex-shrink: 0; }
+  .tc-status.pending { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber-border); }
+  .tc-status.approved { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+  .tc-status.active { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); }
+  .tc-status.rejected { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+  .tc-meta { display: flex; gap: 12px; font-size: 11px; color: var(--text-secondary); margin-bottom: 10px; }
+  .tc-meta-item { display: flex; align-items: center; gap: 4px; }
+  .tc-sources { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tc-source-tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: var(--blue-light); color: var(--blue); font-weight: 600; border: 1px solid var(--blue-border); }
+  .tc-actions { display: flex; gap: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .tc-btn { padding: 5px 12px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; border: 1px solid var(--border); background: var(--surface); cursor: pointer; }
+  .tc-btn.approve { background: var(--green-light); color: var(--green); border-color: var(--green-border); }
+  .tc-btn.reject { background: var(--red-light); color: var(--red); border-color: var(--red-border); }
+  .tc-btn.generate { background: var(--purple); color: #fff; border-color: var(--purple); }
+  .tc-btn:hover { opacity: 0.85; }
+  .tc-articles { font-size: 11px; color: var(--text-secondary); margin-left: auto; display: flex; align-items: center; gap: 4px; }
+
+  /* Source table */
+  .source-table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .source-table th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); background: #f9fafb; border-bottom: 1px solid var(--border); }
+  .source-table td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .source-table tr:last-child td { border-bottom: none; }
+  .source-table tr:hover td { background: #fafafa; }
+  .source-name { font-weight: 600; color: var(--text-primary); }
+  .source-url { font-size: 11px; color: var(--text-secondary); word-break: break-all; }
+  .source-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; }
+  .source-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .source-dot.active { background: var(--green); }
+  .source-dot.paused { background: var(--amber); }
+  .source-dot.error { background: var(--red); }
+  .source-category { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .cat-film { background: #dbeafe; color: #1d4ed8; }
+  .cat-music { background: #fce7f3; color: #be185d; }
+  .cat-gaming { background: #d1fae5; color: #065f46; }
+  .cat-anime { background: #fef3c7; color: #92400e; }
+  .cat-celebrity { background: #ede9fe; color: #5b21b6; }
+  .cat-general { background: #f3f4f6; color: #4b5563; }
+  .source-actions { display: flex; gap: 6px; }
+  .sa-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-secondary); }
+  .sa-btn:hover { border-color: var(--purple-border); color: var(--purple); background: var(--purple-light); }
+  .sa-btn.danger:hover { border-color: var(--red-border); color: var(--red); background: var(--red-light); }
+  .last-crawl { font-size: 11px; color: var(--text-secondary); }
+  .article-count { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+
+  /* Week selector */
+  .week-selector { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 12px; font-weight: 600; }
+  .week-arrow { cursor: pointer; color: var(--text-secondary); padding: 2px 4px; }
+  .week-arrow:hover { color: var(--purple); }
+  .week-current { color: var(--purple); }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--text-secondary); }
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.4; }
+  .empty-state .empty-title { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+  .empty-state .empty-desc { font-size: 12px; max-width: 300px; margin: 0 auto 16px; line-height: 1.5; }
+
+  /* Add source modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+  .modal { background: var(--surface); border-radius: 14px; width: 480px; max-width: 95vw; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+  .modal-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 15px; font-weight: 700; }
+  .modal-close { width: 28px; height: 28px; border-radius: 6px; border: none; background: none; cursor: pointer; font-size: 16px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: var(--bg); }
+  .modal-body { padding: 20px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+  .form-hint { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+  .form-input { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; }
+  .form-input:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+  .form-select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--surface); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+  .btn-cancel { padding: 8px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; background: var(--surface); cursor: pointer; }
+  .btn-save { padding: 8px 20px; border: none; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; background: var(--purple); color: #fff; cursor: pointer; }
+
+  /* Annotations */
+  .annotation { position: relative; }
+  .anno-badge { position: absolute; top: -8px; right: -8px; background: #ef4444; color: #fff; font-size: 9px; font-weight: 800; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; border: 2px solid var(--surface); }
+  .anno-note { margin-top: 32px; padding: 14px 16px; background: #fffbeb; border: 1px solid var(--amber-border); border-radius: var(--radius); }
+  .anno-note .anno-title { font-size: 11px; font-weight: 700; color: var(--amber); margin-bottom: 4px; }
+  .anno-note .anno-list { font-size: 11px; color: #78350f; line-height: 1.7; }
+  .anno-note .anno-num { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: #ef4444; color: #fff; font-size: 9px; font-weight: 800; margin-right: 4px; }
+
+  /* Wireframe label */
+  .wf-label { position: fixed; top: 12px; right: 16px; background: var(--purple); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 6px; z-index: 200; letter-spacing: 0.06em; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .topic-grid { grid-template-columns: 1fr; }
+    .stats-bar { flex-wrap: wrap; }
+    .stat-card { min-width: 120px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wf-label">WIREFRAME — AI Content Studio Dashboard</div>
+
+<div class="shell">
+  <!-- Sidebar -->
+  <nav class="sidebar" aria-label="Main navigation">
+    <div class="sidebar-logo">Ztor <span>Content Studio</span></div>
+    <div class="nav-section">Content</div>
+    <div class="nav-item active"><span class="nav-icon">📌</span> Topics <span class="badge">7</span></div>
+    <div class="nav-item"><span class="nav-icon">📰</span> Articles</div>
+    <div class="nav-item"><span class="nav-icon">📝</span> Blueprint Queue</div>
+    <div class="nav-section">Setup</div>
+    <div class="nav-item"><span class="nav-icon">🔗</span> Sources</div>
+    <div class="nav-item"><span class="nav-icon">📚</span> Context Library</div>
+    <div class="nav-item"><span class="nav-icon">🎭</span> Persona / Skill</div>
+    <div class="nav-section">System</div>
+    <div class="nav-item"><span class="nav-icon">⚙️</span> Settings</div>
+    <div class="nav-item"><span class="nav-icon">🤖</span> Telegram Bot</div>
+    <div class="nav-item"><span class="nav-icon">📊</span> Usage & Tokens</div>
+  </nav>
+
+  <!-- Main: Topic Management -->
+  <main class="main" id="topics-view">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Topic Management</div>
+        <div class="page-subtitle">Manage weekly topics for AI editorial generation</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="week-selector">
+          <span class="week-arrow">‹</span>
+          <span class="week-current">Week of Apr 7 – Apr 13</span>
+          <span class="week-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-card purple"><div class="stat-value">18</div><div class="stat-label">AI Discovered</div></div>
+      <div class="stat-card amber"><div class="stat-value">7</div><div class="stat-label">Pending Review</div></div>
+      <div class="stat-card green"><div class="stat-value">9</div><div class="stat-label">Approved</div></div>
+      <div class="stat-card blue"><div class="stat-value">14</div><div class="stat-label">Articles Generated</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+      <div class="tab" role="tab">All <span class="tab-count">18</span></div>
+      <div class="tab active" role="tab" aria-selected="true">Pending Review <span class="tab-count">7</span></div>
+      <div class="tab" role="tab">Approved <span class="tab-count">9</span></div>
+      <div class="tab" role="tab">Active (Generating)</div>
+      <div class="tab" role="tab">Rejected</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-bar">
+      <input type="text" class="search-box" placeholder="Search topics..." aria-label="Search topics">
+      <button class="filter-btn" type="button">🏷️ Category</button>
+      <button class="filter-btn" type="button">📅 Date range</button>
+      <button class="secondary-btn" type="button">🔄 Run Discovery Now</button>
+      <button class="primary-btn" type="button">+ Add Topic Manually</button>
+    </div>
+
+    <!-- Topic cards -->
+    <div class="topic-grid">
+      <!-- Card 1: Pending -->
+      <div class="topic-card annotation">
+        <div class="tc-header">
+          <div class="tc-title">金馬獎 2026 — Best Picture nominees and early predictions</div>
+          <div class="tc-status pending">Pending Review</div>
+        </div>
+        <div class="tc-meta">
+          <div class="tc-meta-item">🤖 AI Discovered</div>
+          <div class="tc-meta-item">📅 Apr 7</div>
+          <div class="tc-meta-item">🔥 High trending</div>
+        </div>
+        <div class="tc-sources">
+          <span class="tc-source-tag">Apple Daily</span>
+          <span class="tc-source-tag">ETtoday</span>
+          <span class="tc-source-tag">TMDB</span>
+          <span class="tc-source-tag">+4 sources</span>
+        </div>
+        <div class="tc-actions">
+          <button class="tc-btn approve" type="button">✅ Approve</button>
+          <button class="tc-btn reject" type="button">❌ Reject</button>
+          <button class="tc-btn" type="button">👁️ Preview sources</button>
+          <div class="tc-articles">0 articles</div>
+        </div>
+      </div>
+
+      <!-- Card 2: Pending -->
+      <div class="topic-card">
+        <div class="tc-header">
+          <div class="tc-title">Avatar 3 production update — behind the scenes footage leak</div>
+          <div class="tc-status pending">Pending Review</div>
+        </div>
+        <div class="tc-meta">
+          <div class="tc-meta-item">🤖 AI Discovered</div>
+          <div class="tc-meta-item">📅 Apr 7</div>
+          <div class="tc-meta-item">🔥 High trending</div>
+        </div>
+        <div class="tc-sources">
+          <span class="tc-source-tag">Variety</span>
+          <span class="tc-source-tag">IMDB News</span>
+          <span class="tc-source-tag">+2 sources</span>
+        </div>
+        <div class="tc-actions">
+          <button class="tc-btn approve" type="button">✅ Approve</button>
+          <button class="tc-btn reject" type="button">❌ Reject</button>
+          <button class="tc-btn" type="button">👁️ Preview sources</button>
+          <div class="tc-articles">0 articles</div>
+        </div>
+      </div>
+
+      <!-- Card 3: Approved + Generating -->
+      <div class="topic-card" style="border-color:var(--green-border);">
+        <div class="tc-header">
+          <div class="tc-title">Netflix Top 10 Taiwan — Week of April 7</div>
+          <div class="tc-status approved">Approved</div>
+        </div>
+        <div class="tc-meta">
+          <div class="tc-meta-item">🤖 AI Discovered</div>
+          <div class="tc-meta-item">📅 Apr 7</div>
+          <div class="tc-meta-item">📊 Recurring weekly</div>
+        </div>
+        <div class="tc-sources">
+          <span class="tc-source-tag">Netflix TW</span>
+          <span class="tc-source-tag">TMDB</span>
+        </div>
+        <div class="tc-actions">
+          <button class="tc-btn generate" type="button">⚡ Generate Articles</button>
+          <button class="tc-btn" type="button">✏️ Edit</button>
+          <div class="tc-articles">2 articles ✓</div>
+        </div>
+      </div>
+
+      <!-- Card 4: Active / Persistent -->
+      <div class="topic-card" style="border-color:var(--purple-border);">
+        <div class="tc-header">
+          <div class="tc-title">劉德華 — upcoming film slate and interview roundup</div>
+          <div class="tc-status active">Active · Persistent</div>
+        </div>
+        <div class="tc-meta">
+          <div class="tc-meta-item">👤 Manual input</div>
+          <div class="tc-meta-item">📅 Mar 28 → ongoing</div>
+          <div class="tc-meta-item">🔄 Week 2</div>
+        </div>
+        <div class="tc-sources">
+          <span class="tc-source-tag">IG @andylauofficial</span>
+          <span class="tc-source-tag">IMDB</span>
+          <span class="tc-source-tag">Apple Daily</span>
+          <span class="tc-source-tag">+6 sources</span>
+        </div>
+        <div class="tc-actions">
+          <button class="tc-btn generate" type="button">⚡ Generate Articles</button>
+          <button class="tc-btn" type="button">✏️ Edit</button>
+          <button class="tc-btn" type="button">⏸ Pause</button>
+          <div class="tc-articles">5 articles ✓</div>
+        </div>
+      </div>
+
+      <!-- Card 5: Pending -->
+      <div class="topic-card">
+        <div class="tc-header">
+          <div class="tc-title">Disney+ April new releases — Marvel and Star Wars lineup</div>
+          <div class="tc-status pending">Pending Review</div>
+        </div>
+        <div class="tc-meta">
+          <div class="tc-meta-item">🤖 AI Discovered</div>
+          <div class="tc-meta-item">📅 Apr 8</div>
+          <div class="tc-meta-item">📊 Seasonal</div>
+        </div>
+        <div class="tc-sources">
+          <span class="tc-source-tag">Disney+</span>
+          <span class="tc-source-tag">Collider</span>
+          <span class="tc-source-tag">TMDB</span>
+        </div>
+        <div class="tc-actions">
+          <button class="tc-btn approve" type="button">✅ Approve</button>
+          <button class="tc-btn reject" type="button">❌ Reject</button>
+          <button class="tc-btn" type="button">👁️ Preview sources</button>
+          <div class="tc-articles">0 articles</div>
+        </div>
+      </div>
+
+      <!-- Card 6: Rejected -->
+      <div class="topic-card" style="opacity:0.55;">
+        <div class="tc-header">
+          <div class="tc-title">K-pop dating rumors — unverified tabloid reports</div>
+          <div class="tc-status rejected">Rejected</div>
+        </div>
+        <div class="tc-meta">
+          <div class="tc-meta-item">🤖 AI Discovered</div>
+          <div class="tc-meta-item">📅 Apr 7</div>
+          <div class="tc-meta-item">⚠️ Low quality sources</div>
+        </div>
+        <div class="tc-sources">
+          <span class="tc-source-tag">Tabloid</span>
+        </div>
+        <div class="tc-actions">
+          <button class="tc-btn" type="button">🔄 Reconsider</button>
+          <div class="tc-articles" style="color:var(--red);">Rejected by Jeff</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Annotation notes -->
+    <div class="anno-note" style="margin-top:32px;">
+      <div class="anno-title">📐 Wireframe Notes — Topic Management</div>
+      <div class="anno-list">
+        <div><span class="anno-num">1</span> <strong>Week selector</strong> — topics are set on a weekly cadence (set Sunday, run Mon–Sat). Navigate between weeks to review past/future topics.</div>
+        <div><span class="anno-num">2</span> <strong>AI Discovery → Human Curation</strong> — AI surfaces ~20 trending topics, content team approves ~10. Cards show source (AI vs manual) and trending score.</div>
+        <div><span class="anno-num">3</span> <strong>Persistent topics</strong> — some topics span multiple weeks (e.g., tracking a movie production). Shown with "Active · Persistent" badge and week counter.</div>
+        <div><span class="anno-num">4</span> <strong>Per-topic article generation</strong> — approved topics show "Generate Articles" button. Each topic can produce 1–2 articles. Article count visible on card.</div>
+        <div><span class="anno-num">5</span> <strong>Run Discovery Now</strong> — manual trigger for AI topic scan outside the weekly cycle. Useful for breaking news weeks.</div>
+        <div><span class="anno-num">6</span> <strong>Category filter</strong> — filter by film, music, gaming, anime, celebrity, etc. Matches BR-01 tagging.</div>
+      </div>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- DIVIDER: Source Management section -->
+    <!-- ====================================== -->
+    <div style="margin-top:64px;padding-top:48px;border-top:3px solid var(--purple);">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Source Management</div>
+          <div class="page-subtitle">Manage news sources for crawling — replaces Google Sheet (Howard's Dashboard)</div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat-card green"><div class="stat-value">14</div><div class="stat-label">Active Sources</div></div>
+        <div class="stat-card amber"><div class="stat-value">2</div><div class="stat-label">Paused</div></div>
+        <div class="stat-card"><div class="stat-value">1</div><div class="stat-label">Error</div></div>
+        <div class="stat-card blue"><div class="stat-value">342</div><div class="stat-label">Articles Crawled (7d)</div></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-bar">
+        <input type="text" class="search-box" placeholder="Search sources..." aria-label="Search sources">
+        <button class="filter-btn" type="button">🏷️ Category</button>
+        <button class="filter-btn" type="button">📊 Status</button>
+        <button class="primary-btn" type="button">+ Add Source</button>
+      </div>
+
+      <!-- Source table -->
+      <table class="source-table" role="table">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Last Crawl</th>
+            <th>Articles (7d)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="source-name">ETtoday Star</div>
+              <div class="source-url">ettoday.net/news/star</div>
+            </td>
+            <td><span class="source-category cat-celebrity">Celebrity</span></td>
+            <td><span class="source-status"><span class="source-dot active"></span> Active</span></td>
+            <td><span class="last-crawl">12 min ago</span></td>
+            <td><span class="article-count">48</span></td>
+            <td>
+              <div class="source-actions">
+                <button class="sa-btn" type="button" title="Edit" aria-label="Edit source">✏️</button>
+                <button class="sa-btn" type="button" title="Pause" aria-label="Pause source">⏸</button>
+                <button class="sa-btn danger" type="button" title="Remove" aria-label="Remove source">🗑</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="source-name">Variety Film</div>
+              <div class="source-url">variety.com/v/film</div>
+            </td>
+            <td><span class="source-category cat-film">Film</span></td>
+            <td><span class="source-status"><span class="source-dot active"></span> Active</span></td>
+            <td><span class="last-crawl">34 min ago</span></td>
+            <td><span class="article-count">31</span></td>
+            <td>
+              <div class="source-actions">
+                <button class="sa-btn" type="button" title="Edit" aria-label="Edit source">✏️</button>
+                <button class="sa-btn" type="button" title="Pause" aria-label="Pause source">⏸</button>
+                <button class="sa-btn danger" type="button" title="Remove" aria-label="Remove source">🗑</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="source-name">Apple Daily Entertainment</div>
+              <div class="source-url">appledaily.com/entertainment</div>
+            </td>
+            <td><span class="source-category cat-general">General</span></td>
+            <td><span class="source-status"><span class="source-dot active"></span> Active</span></td>
+            <td><span class="last-crawl">18 min ago</span></td>
+            <td><span class="article-count">52</span></td>
+            <td>
+              <div class="source-actions">
+                <button class="sa-btn" type="button" title="Edit" aria-label="Edit source">✏️</button>
+                <button class="sa-btn" type="button" title="Pause" aria-label="Pause source">⏸</button>
+                <button class="sa-btn danger" type="button" title="Remove" aria-label="Remove source">🗑</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="source-name">Collider</div>
+              <div class="source-url">collider.com/news</div>
+            </td>
+            <td><span class="source-category cat-film">Film</span></td>
+            <td><span class="source-status"><span class="source-dot active"></span> Active</span></td>
+            <td><span class="last-crawl">1 hr ago</span></td>
+            <td><span class="article-count">27</span></td>
+            <td>
+              <div class="source-actions">
+                <button class="sa-btn" type="button" title="Edit" aria-label="Edit source">✏️</button>
+                <button class="sa-btn" type="button" title="Pause" aria-label="Pause source">⏸</button>
+                <button class="sa-btn danger" type="button" title="Remove" aria-label="Remove source">🗑</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="source-name">Netflix TW Top 10 API</div>
+              <div class="source-url">api.netflix.com/tw/top10</div>
+            </td>
+            <td><span class="source-category cat-film">Film</span></td>
+            <td><span class="source-status"><span class="source-dot paused"></span> Paused</span></td>
+            <td><span class="last-crawl">3 days ago</span></td>
+            <td><span class="article-count">0</span></td>
+            <td>
+              <div class="source-actions">
+                <button class="sa-btn" type="button" title="Edit" aria-label="Edit source">✏️</button>
+                <button class="sa-btn" type="button" title="Resume" aria-label="Resume source">▶️</button>
+                <button class="sa-btn danger" type="button" title="Remove" aria-label="Remove source">🗑</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="source-name">HKEJ Entertainment</div>
+              <div class="source-url">hkej.com/entertainment</div>
+            </td>
+            <td><span class="source-category cat-general">General</span></td>
+            <td><span class="source-status"><span class="source-dot error"></span> Error (3 failures)</span></td>
+            <td><span class="last-crawl" style="color:var(--red);">Failed 6 hrs ago</span></td>
+            <td><span class="article-count">12</span></td>
+            <td>
+              <div class="source-actions">
+                <button class="sa-btn" type="button" title="Edit" aria-label="Edit source">✏️</button>
+                <button class="sa-btn" type="button" title="Retry" aria-label="Retry source">🔄</button>
+                <button class="sa-btn danger" type="button" title="Remove" aria-label="Remove source">🗑</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="source-name">IGN Gaming Asia</div>
+              <div class="source-url">ign.com/asia/gaming</div>
+            </td>
+            <td><span class="source-category cat-gaming">Gaming</span></td>
+            <td><span class="source-status"><span class="source-dot active"></span> Active</span></td>
+            <td><span class="last-crawl">45 min ago</span></td>
+            <td><span class="article-count">19</span></td>
+            <td>
+              <div class="source-actions">
+                <button class="sa-btn" type="button" title="Edit" aria-label="Edit source">✏️</button>
+                <button class="sa-btn" type="button" title="Pause" aria-label="Pause source">⏸</button>
+                <button class="sa-btn danger" type="button" title="Remove" aria-label="Remove source">🗑</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="source-name">Anime News Network</div>
+              <div class="source-url">animenewsnetwork.com</div>
+            </td>
+            <td><span class="source-category cat-anime">Anime</span></td>
+            <td><span class="source-status"><span class="source-dot active"></span> Active</span></td>
+            <td><span class="last-crawl">22 min ago</span></td>
+            <td><span class="article-count">15</span></td>
+            <td>
+              <div class="source-actions">
+                <button class="sa-btn" type="button" title="Edit" aria-label="Edit source">✏️</button>
+                <button class="sa-btn" type="button" title="Pause" aria-label="Pause source">⏸</button>
+                <button class="sa-btn danger" type="button" title="Remove" aria-label="Remove source">🗑</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Add Source Modal (shown as inline for wireframe) -->
+      <div style="margin-top:32px;">
+        <h2 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-secondary);margin-bottom:14px;">Add Source Modal (Preview)</h2>
+        <div class="modal" style="position:relative;margin:0;">
+          <div class="modal-header">
+            <div class="modal-title">Add New Source</div>
+            <button class="modal-close" type="button" aria-label="Close">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label" for="source-name">Source Name</label>
+              <input type="text" id="source-name" class="form-input" placeholder="e.g., Variety Film News">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="source-url">Source URL</label>
+              <input type="url" id="source-url" class="form-input" placeholder="https://variety.com/v/film">
+              <div class="form-hint">System will validate the URL is reachable before adding.</div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="source-cat">Category</label>
+                <select id="source-cat" class="form-select">
+                  <option>Film</option>
+                  <option>Music</option>
+                  <option>Gaming</option>
+                  <option>Anime</option>
+                  <option>Celebrity</option>
+                  <option>General Entertainment</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="source-freq">Crawl Frequency</label>
+                <select id="source-freq" class="form-select">
+                  <option>Every hour</option>
+                  <option>Every 3 hours</option>
+                  <option>Every 6 hours</option>
+                  <option>Daily</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="source-lang">Language</label>
+              <select id="source-lang" class="form-select">
+                <option>Traditional Chinese (繁體中文)</option>
+                <option>Simplified Chinese (简体中文)</option>
+                <option>English</option>
+                <option>Japanese</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="source-notes">Notes (optional)</label>
+              <input type="text" id="source-notes" class="form-input" placeholder="e.g., Focus on awards coverage only">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" type="button">Cancel</button>
+            <button class="btn-save" type="button">Validate & Add Source</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Annotation notes -->
+      <div class="anno-note" style="margin-top:32px;">
+        <div class="anno-title">📐 Wireframe Notes — Source Management</div>
+        <div class="anno-list">
+          <div><span class="anno-num">1</span> <strong>Dashboard replaces Google Sheet</strong> — all source CRUD happens here. No more spreadsheet as source of truth (confirmed with Howard, April 7).</div>
+          <div><span class="anno-num">2</span> <strong>Status indicators</strong> — Active (green), Paused (amber), Error (red). Error state shows failure count, aligns with BR-01 AC-01d (3+ consecutive failures → alert).</div>
+          <div><span class="anno-num">3</span> <strong>Crawl frequency per source</strong> — not all sources need hourly crawl. Let operators set cadence per source to manage load.</div>
+          <div><span class="anno-num">4</span> <strong>Category tagging</strong> — maps to BR-01 content categories (film, music, gaming, anime, celebrity, brand). Used for topic discovery and article generation.</div>
+          <div><span class="anno-num">5</span> <strong>URL validation on add</strong> — system validates URL is reachable before saving (BR-06 Step 2–3). "Validate & Add" button reflects this.</div>
+          <div><span class="anno-num">6</span> <strong>Inbox for new source requests</strong> — from Howard meeting: content team requests new sources, Howard reviews and sets up crawlers. "Add Source" is the inbox entry point.</div>
+          <div><span class="anno-num">7</span> <strong>Language field</strong> — critical for Ztor's TW market. Avoids simplified Chinese content on traditional Chinese site (poster issue from meeting).</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Content Studio 1.1 — Revised Architecture (April 8, 2026)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6f8; color: #1a1a2e; padding: 32px 24px; max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 32px; }
+  h2 { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; margin-bottom: 14px; }
+  .section { margin-bottom: 48px; }
+
+  /* Before/After comparison */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 48px; }
+  .compare-col { border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; }
+  .compare-header { padding: 12px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  .old .compare-header { background: #fef2f2; color: #dc2626; border-bottom: 2px solid #fecaca; }
+  .new .compare-header { background: #f0fdf4; color: #16a34a; border-bottom: 2px solid #bbf7d0; }
+  .compare-body { padding: 16px; background: #fff; }
+  .compare-flow { display: flex; flex-direction: column; gap: 6px; }
+  .cf-step { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 12px; color: #374151; line-height: 1.4; }
+  .old .cf-step { background: #fef2f2; border: 1px solid #fecaca; }
+  .new .cf-step { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .cf-step.highlight { border-width: 2px; font-weight: 600; }
+  .new .cf-step.highlight { background: #dcfce7; border-color: #16a34a; }
+  .cf-arrow { text-align: center; color: #9ca3af; font-size: 16px; padding: 0; line-height: 1; }
+  .cf-label { font-size: 10px; font-weight: 700; color: #fff; padding: 2px 8px; border-radius: 10px; margin-right: 6px; flex-shrink: 0; }
+  .old .cf-label { background: #dc2626; }
+  .new .cf-label { background: #16a34a; }
+  .cf-label.new-tag { background: #7c3aed; }
+  .strike { text-decoration: line-through; opacity: 0.5; }
+
+  /* Main flow diagram */
+  .flow-container { display: flex; flex-direction: column; gap: 0; }
+  .flow-lane { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 12px; position: relative; }
+  .flow-lane::after { content: '↓'; position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 18px; color: #9ca3af; z-index: 1; }
+  .flow-lane:last-child::after { display: none; }
+  .lane-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .lane-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+  .lane-badge.discovery { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+  .lane-badge.source { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .lane-badge.generation { background: #fefce8; color: #a16207; border: 1px solid #fde68a; }
+  .lane-badge.review { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+  .lane-badge.adhoc { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .lane-title { font-size: 14px; font-weight: 700; color: #1a1a2e; }
+  .lane-sub { font-size: 11px; color: #6b7280; margin-left: auto; }
+  .new-pill { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 8px; background: #7c3aed; color: #fff; margin-left: 6px; vertical-align: middle; }
+
+  /* Steps inside lanes */
+  .lane-steps { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; }
+  .lane-step { flex: 1; min-width: 140px; padding: 10px 12px; border-radius: 8px; border: 1px solid #e5e7eb; background: #f9fafb; font-size: 12px; color: #374151; line-height: 1.4; display: flex; flex-direction: column; gap: 4px; }
+  .lane-step.decision { border-color: #fbbf24; background: #fffbeb; }
+  .lane-step.human { border-color: #a78bfa; background: #f5f3ff; }
+  .lane-step.system { border-color: #93c5fd; background: #eff6ff; }
+  .lane-step.telegram { border-color: #6ee7b7; background: #ecfdf5; }
+  .step-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; }
+  .step-label.human-label { color: #7c3aed; }
+  .step-label.system-label { color: #2563eb; }
+  .step-label.decision-label { color: #d97706; }
+  .step-label.telegram-label { color: #059669; }
+  .step-text { font-size: 12px; color: #374151; }
+  .step-text strong { color: #1a1a2e; }
+  .step-arrow { display: flex; align-items: center; justify-content: center; font-size: 18px; color: #d1d5db; flex-shrink: 0; min-width: 20px; }
+  .step-brs { display: flex; gap: 3px; flex-wrap: wrap; margin-top: auto; }
+  .step-br { font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: 8px; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  .step-br.new-br { background: #f5f3ff; color: #7c3aed; border-color: #ddd6fe; }
+
+  /* Context library callout */
+  .context-callout { background: #f5f3ff; border: 2px solid #ddd6fe; border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
+  .context-callout .cc-title { font-size: 12px; font-weight: 700; color: #7c3aed; margin-bottom: 6px; }
+  .context-callout .cc-body { font-size: 11px; color: #6b7280; line-height: 1.5; }
+  .context-sources { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .ctx-tag { font-size: 10px; padding: 3px 8px; border-radius: 12px; background: #ede9fe; color: #6d28d9; font-weight: 600; }
+
+  /* Key changes callout */
+  .changes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+  .change-card { background: #fff; border-radius: 10px; border: 1px solid #e5e7eb; padding: 12px 14px; }
+  .change-card .cc-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #6b7280; margin-bottom: 4px; }
+  .change-card .cc-old { font-size: 11px; color: #dc2626; text-decoration: line-through; margin-bottom: 2px; }
+  .change-card .cc-new { font-size: 12px; color: #16a34a; font-weight: 600; }
+
+  /* Volume + timeline bar */
+  .metrics-bar { display: flex; gap: 12px; margin-bottom: 32px; }
+  .metric { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 16px; flex: 1; text-align: center; }
+  .metric .m-value { font-size: 20px; font-weight: 800; color: #1a1a2e; }
+  .metric .m-label { font-size: 11px; color: #6b7280; margin-top: 2px; }
+  .metric.highlight { border-color: #7c3aed; background: #f5f3ff; }
+  .metric.highlight .m-value { color: #7c3aed; }
+</style>
+</head>
+<body>
+
+<h1>AI Content Studio 1.1 — Revised Architecture</h1>
+<p class="subtitle">Post-meetings: Howard (April 7) + L sync (April 8) · BRD v1.3 · Entertainment News</p>
+
+<!-- Metrics bar -->
+<div class="metrics-bar">
+  <div class="metric"><div class="m-value">15–20</div><div class="m-label">Articles / day target</div></div>
+  <div class="metric"><div class="m-value">May 1</div><div class="m-label">Target delivery</div></div>
+  <div class="metric"><div class="m-value">~20 → ~10</div><div class="m-label">AI discovers → Team curates</div></div>
+  <div class="metric"><div class="m-value">Weekly</div><div class="m-label">Topic cadence (set Sun, run Mon–Sat)</div></div>
+  <div class="metric highlight"><div class="m-value">Topic-First</div><div class="m-label">Approved approach ✓</div></div>
+</div>
+
+<!-- Before / After -->
+<div class="section">
+  <h2>What Changed — Before vs After</h2>
+  <div class="compare">
+    <div class="compare-col old">
+      <div class="compare-header">❌ Before — Source-First (BRD v1.2)</div>
+      <div class="compare-body">
+        <div class="compare-flow">
+          <div class="cf-step"><span class="cf-label">1</span> Crawl news sources → store articles in KB</div>
+          <div class="cf-arrow">↓</div>
+          <div class="cf-step"><span class="cf-label">2</span> AI rewrites each article individually</div>
+          <div class="cf-arrow">↓</div>
+          <div class="cf-step"><span class="cf-label">3</span> Draft → Blueprint Queue → Human review</div>
+          <div class="cf-arrow">↓</div>
+          <div class="cf-step"><span class="cf-label">4</span> Publish to Ztor</div>
+        </div>
+        <div style="margin-top:12px;padding:8px 10px;background:#fef2f2;border-radius:6px;font-size:11px;color:#991b1b;line-height:1.4;">
+          <strong>Problem:</strong> Produces commodity rewrites of other outlets' articles. Limited editorial value. Content feels like paraphrased copies, not original Ztor content.
+        </div>
+      </div>
+    </div>
+    <div class="compare-col new">
+      <div class="compare-header">✅ After — Topic-First (Revised v1.3)</div>
+      <div class="compare-body">
+        <div class="compare-flow">
+          <div class="cf-step highlight"><span class="cf-label new-tag">NEW</span> AI agent scans landscape → identifies ~20 trending topics</div>
+          <div class="cf-arrow">↓</div>
+          <div class="cf-step highlight"><span class="cf-label new-tag">NEW</span> Content team curates → picks ~10 topics to write about</div>
+          <div class="cf-arrow">↓</div>
+          <div class="cf-step"><span class="cf-label">3</span> AI researches across multiple sources → writes editorial piece</div>
+          <div class="cf-arrow">↓</div>
+          <div class="cf-step"><span class="cf-label">4</span> Blueprint Queue → Human review → Publish</div>
+        </div>
+        <div style="margin-top:12px;padding:8px 10px;background:#f0fdf4;border-radius:6px;font-size:11px;color:#166534;line-height:1.4;">
+          <strong>Value:</strong> Produces original editorial content with Ztor's perspective. Multi-source research creates unique angles. Positions Ztor as a content destination, not an aggregator.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Key changes cards -->
+<div class="section">
+  <h2>Key Decisions from Meeting</h2>
+  <div class="changes-grid">
+    <div class="change-card">
+      <div class="cc-label">Generation Trigger</div>
+      <div class="cc-old">Every new crawled article auto-generates a draft</div>
+      <div class="cc-new">AI identifies trending topics → human picks which to write</div>
+    </div>
+    <div class="change-card">
+      <div class="cc-label">AI Role</div>
+      <div class="cc-old">Single-source rewrite engine</div>
+      <div class="cc-new">Research agent + editorial writer (multi-source synthesis)</div>
+    </div>
+    <div class="change-card">
+      <div class="cc-label">Source Management</div>
+      <div class="cc-old">Google Sheet as source of truth</div>
+      <div class="cc-new">Howard's dashboard (already built, extending)</div>
+    </div>
+    <div class="change-card">
+      <div class="cc-label">Content Angle</div>
+      <div class="cc-old">Paraphrased news articles</div>
+      <div class="cc-new">Original editorial with Ztor perspective</div>
+    </div>
+    <div class="change-card">
+      <div class="cc-label">New: Context Library</div>
+      <div class="cc-old">Not in original BRD</div>
+      <div class="cc-new">Curated reference data (TMDB, IMDB, social) refreshed weekly</div>
+    </div>
+    <div class="change-card">
+      <div class="cc-label">Ownership</div>
+      <div class="cc-old">Split between Howard + Eric's team</div>
+      <div class="cc-new">Howard end-to-end (full-stack, DevOps, iOS)</div>
+    </div>
+  </div>
+</div>
+
+<!-- Main flow diagram -->
+<div class="section">
+  <h2>Revised Pipeline — End to End</h2>
+
+  <div class="flow-container">
+    <!-- Flow 0: Topic Discovery -->
+    <div class="flow-lane">
+      <div class="lane-header">
+        <span class="lane-badge discovery">Flow 0</span>
+        <span class="lane-title">Topic Discovery <span class="new-pill">NEW</span></span>
+        <span class="lane-sub">Automated · Weekly cadence (set Sunday) · AI Agent</span>
+      </div>
+      <div class="lane-steps">
+        <div class="lane-step system">
+          <div class="step-label system-label">AI Agent</div>
+          <div class="step-text"><strong>Scan entertainment landscape</strong> — news outlets, social media, trending topics across film, music, gaming, anime</div>
+          <div class="step-brs"><span class="step-br new-br">BR-10</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step system">
+          <div class="step-label system-label">AI Agent</div>
+          <div class="step-text"><strong>Identify ~20 trending topics</strong> — rank by relevance, recency, and audience interest</div>
+          <div class="step-brs"><span class="step-br new-br">BR-10</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step human">
+          <div class="step-label human-label">Content Team · Dashboard</div>
+          <div class="step-text"><strong>Curate: pick ~10 topics</strong> to write about. Reject the rest.</div>
+          <div class="step-brs"><span class="step-br new-br">BR-10</span><span class="step-br">BR-03</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow 1: Source & Context -->
+    <div class="flow-lane">
+      <div class="lane-header">
+        <span class="lane-badge source">Flow 1</span>
+        <span class="lane-title">Source Ingestion & Context Library</span>
+        <span class="lane-sub">Automated · Hourly crawl + Weekly context refresh</span>
+      </div>
+      <div class="lane-steps">
+        <div class="lane-step system">
+          <div class="step-label system-label">Crawler · Hourly</div>
+          <div class="step-text"><strong>Crawl configured sources</strong> → extract clean text → deduplicate → tag → Knowledge Base</div>
+          <div class="step-brs"><span class="step-br">BR-01</span><span class="step-br">BR-09</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step system" style="border-color:#a78bfa;background:#f5f3ff;">
+          <div class="step-label" style="color:#7c3aed;">Context Library · Weekly <span class="new-pill">NEW</span></div>
+          <div class="step-text"><strong>Enrich Knowledge Base</strong> with multi-source context for AI research</div>
+          <div class="context-sources">
+            <span class="ctx-tag">TMDB</span>
+            <span class="ctx-tag">IMDB</span>
+            <span class="ctx-tag">Actor Social</span>
+            <span class="ctx-tag">Box Office</span>
+            <span class="ctx-tag">Awards</span>
+          </div>
+          <div class="step-brs"><span class="step-br new-br">DEP-10</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step">
+          <div class="step-label">Dashboard · Operator</div>
+          <div class="step-text"><strong>Manage sources</strong> via Howard's dashboard (replaces Google Sheet)</div>
+          <div class="step-brs"><span class="step-br">BR-06</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow 2: Generation -->
+    <div class="flow-lane">
+      <div class="lane-header">
+        <span class="lane-badge generation">Flow 2</span>
+        <span class="lane-title">Scheduled Generation</span>
+        <span class="lane-sub">Per approved topic · AI Research Agent</span>
+      </div>
+      <div class="lane-steps">
+        <div class="lane-step decision">
+          <div class="step-label decision-label">Config Gate</div>
+          <div class="step-text"><strong>Auto-gen toggle ON?</strong><br>OFF → topics stored, no drafts<br>ON → continue to generation</div>
+          <div class="step-brs"><span class="step-br">BR-02</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step system">
+          <div class="step-label system-label">AI Research Agent</div>
+          <div class="step-text"><strong>For each approved topic:</strong> research across KB + Context Library → synthesize multi-source editorial piece with Ztor angle</div>
+          <div class="step-brs"><span class="step-br">BR-02</span><span class="step-br">BR-05</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step">
+          <div class="step-label">Output</div>
+          <div class="step-text"><strong>Draft article:</strong> headline, body, tags, source references → Blueprint Queue as "Pending Review"</div>
+          <div class="step-brs"><span class="step-br">BR-02</span><span class="step-br">BR-03</span></div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding:6px 10px;background:#fffbeb;border-radius:6px;font-size:10px;color:#92400e;line-height:1.4;">
+        ✏️ Single reporter persona · "Official Ztor editorial" voice · Unique angle, not paraphrasing · 15–20 articles/day target
+      </div>
+    </div>
+
+    <!-- Flow 3: Review & Publish -->
+    <div class="flow-lane">
+      <div class="lane-header">
+        <span class="lane-badge review">Flow 3</span>
+        <span class="lane-title">Review & Publish</span>
+        <span class="lane-sub">Dashboard · Human review required</span>
+      </div>
+      <div class="lane-steps">
+        <div class="lane-step human">
+          <div class="step-label human-label">Dashboard · Content Team</div>
+          <div class="step-text"><strong>Review draft</strong> — source articles shown side-by-side. Inline editing. Diff on revision.</div>
+          <div class="step-brs"><span class="step-br">BR-03</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step decision">
+          <div class="step-label decision-label">Decision</div>
+          <div class="step-text"><strong>Approve</strong> → publish<br><strong>Revise</strong> → edit inline<br><strong>Reject</strong> → archive</div>
+          <div class="step-brs"><span class="step-br">BR-03</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step system">
+          <div class="step-label system-label">System</div>
+          <div class="step-text"><strong>Publish to Ztor</strong> via existing pipeline. Confirmation sent.</div>
+          <div class="step-brs"><span class="step-br">BR-07</span></div>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:#9ca3af;">1.1: Human review required for all content. <strong style="color:#6b7280;">Future (1.2):</strong> Auto-publish toggle can be enabled once flow is proven stable — confirmed April 8.</div>
+    </div>
+
+    <!-- Flow 4: Ad-hoc -->
+    <div class="flow-lane" style="border-style:dashed;">
+      <div class="lane-header">
+        <span class="lane-badge adhoc">Ad-Hoc</span>
+        <span class="lane-title">On-Demand Generation via Telegram</span>
+        <span class="lane-sub">Operator-triggered · Single use · Event-driven breaking news</span>
+      </div>
+      <div class="lane-steps">
+        <div class="lane-step telegram">
+          <div class="step-label telegram-label">Telegram</div>
+          <div class="step-text"><strong>/news [topic]</strong> or <strong>/news url [url]</strong><br>Operator triggers single article generation</div>
+          <div class="step-brs"><span class="step-br">BR-04</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step system">
+          <div class="step-label system-label">AI Agent</div>
+          <div class="step-text">Researches topic → generates draft → sends preview with inline UI buttons</div>
+          <div class="step-brs"><span class="step-br">BR-02</span><span class="step-br">BR-04</span></div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="lane-step telegram">
+          <div class="step-label telegram-label">Telegram UI Buttons</div>
+          <div class="step-text">✅ <strong>Approve</strong> → Queue<br>✏️ <strong>Revise</strong> → regenerate<br>❌ <strong>Reject</strong> → archive</div>
+          <div class="step-brs"><span class="step-br">BR-04</span><span class="step-br">BR-03</span></div>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:#9ca3af;">Available regardless of auto-gen toggle state. Mirrors existing movie review Telegram bot UI pattern.<br><strong style="color:#c2410c;">Event-driven use case:</strong> Live event coverage (e.g., Golden Horse Awards) — someone watches the event, sends topic/link to bot for immediate article generation and publish.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <h2>Timeline & Next Steps</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:200px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">April 9</div>
+      <div style="font-size:12px;color:#374151;line-height:1.4;">Jeff: BRD v1.3 updated<br>Howard: Requirements doc finalized</div>
+    </div>
+    <div style="flex:1;min-width:200px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">April 11</div>
+      <div style="font-size:12px;color:#374151;line-height:1.4;">Howard: Feasibility confirmation<br>Jeff: Sync with Eric on ownership transfer</div>
+    </div>
+    <div style="flex:1;min-width:200px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:10px;font-weight:700;color:#d97706;text-transform:uppercase;margin-bottom:6px;">April 21 — Milestone</div>
+      <div style="font-size:12px;color:#374151;line-height:1.4;">Halfway check-in<br>Assess May 1 delivery status</div>
+    </div>
+    <div style="flex:1;min-width:200px;background:#f0fdf4;border:2px solid #16a34a;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:10px;font-weight:700;color:#16a34a;text-transform:uppercase;margin-bottom:6px;">May 1 — Target Delivery</div>
+      <div style="font-size:12px;color:#374151;line-height:1.4;">AI Content Studio 1.1 live<br>Howard: end-to-end owner</div>
+    </div>
+  </div>
+</div>
+
+<div style="font-size:10px;color:#9ca3af;margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;">
+  Source: <a href="https://www.notion.so/33b9ca6e76ac80cc8d6ed7af20d7182a" style="color:#6b7280;">Sync with Howard — April 7</a> · <a href="https://www.notion.so/33c9ca6e76ac809098a1c11a40804e50" style="color:#6b7280;">Sync with L — April 8</a> · <a href="https://www.notion.so/AI-Content-Studio-1-1-BRD-Entertainment-News-3359ca6e76ac818b8811d1163232176e" style="color:#6b7280;">AI Content Studio 1.1 BRD v1.3</a> · Prepared by Jeff (Product)
+</div>
+
+</body>
+</html>
