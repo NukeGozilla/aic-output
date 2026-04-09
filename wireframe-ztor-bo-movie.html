@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ztor Admin Dashboard</title>
+    <title>Ztor BO — Movie Management</title>
     <style>
         * {
             margin: 0;
@@ -196,6 +196,19 @@
             font-size: 24px;
             font-weight: 600;
             color: #e4e4e7;
+        }
+
+        .system-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .system-badge-bo {
+            background: #3b82f6;
+            color: white;
         }
 
         .content {
@@ -399,66 +412,117 @@
             font-size: 14px;
         }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover {
-            background: rgba(124, 58, 237, 0.05);
-        }
-
         /* BADGES */
         .badge {
             display: inline-block;
-            padding: 2px 8px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 600;
         }
 
-        .badge-green {
-            background: rgba(22, 163, 74, 0.2);
-            color: #86efac;
-        }
-
-        .badge-red {
-            background: rgba(220, 38, 38, 0.2);
-            color: #fca5a5;
-        }
-
-        .badge-yellow {
-            background: rgba(202, 138, 4, 0.2);
-            color: #fde047;
-        }
-
         .badge-blue {
             background: rgba(59, 130, 246, 0.2);
-            color: #93c5fd;
+            color: #60a5fa;
         }
 
         .badge-gray {
-            background: rgba(113, 113, 122, 0.2);
+            background: rgba(161, 161, 166, 0.2);
             color: #a1a1a6;
         }
 
-        .badge-purple {
-            background: rgba(124, 58, 237, 0.2);
-            color: #d8b4fe;
+        .badge-green {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .badge-yellow {
+            background: rgba(253, 224, 71, 0.2);
+            color: #fde047;
+        }
+
+        .badge-red {
+            background: rgba(252, 165, 165, 0.2);
+            color: #fca5a5;
         }
 
         .badge-sm {
-            padding: 1px 6px;
+            padding: 2px 6px;
             font-size: 10px;
+            margin-left: 8px;
         }
 
-        /* CHECKBOX */
-        input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
+        /* TOGGLE SWITCH */
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            width: 40px;
+            height: 24px;
+            background: #27272a;
+            border-radius: 12px;
+            padding: 2px;
             cursor: pointer;
+            transition: background 0.2s;
         }
 
-        /* MODAL */
+        .toggle-switch.on {
+            background: #16a34a;
+        }
+
+        .toggle-knob {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch.on .toggle-knob {
+            transform: translateX(16px);
+        }
+
+        /* DROPDOWN */
+        .dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #27272a;
+            border: 1px solid #3f3f46;
+            border-radius: 6px;
+            min-width: 180px;
+            z-index: 1000;
+            margin-top: 4px;
+        }
+
+        .dropdown-menu.open {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: #a1a1a6;
+            font-size: 13px;
+            transition: all 0.2s;
+            border-bottom: 1px solid #3f3f46;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(124, 58, 237, 0.1);
+            color: #e4e4e7;
+        }
+
+        /* MODALS */
         .modal {
             display: none;
             position: fixed;
@@ -466,8 +530,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
             align-items: center;
             justify-content: center;
         }
@@ -480,25 +544,22 @@
             background: #18181b;
             border: 1px solid #27272a;
             border-radius: 8px;
-            max-width: 600px;
+            max-width: 480px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 90vh;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
         }
 
         .modal-header {
-            padding: 20px;
+            padding: 20px 24px;
             border-bottom: 1px solid #27272a;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0;
         }
 
         .modal-header-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #e4e4e7;
         }
@@ -506,15 +567,20 @@
         .modal-header-actions {
             display: flex;
             gap: 8px;
-            align-items: center;
         }
 
         .modal-close {
-            background: none;
+            background: transparent;
             border: none;
             color: #a1a1a6;
+            font-size: 24px;
             cursor: pointer;
-            font-size: 20px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-close:hover {
@@ -522,289 +588,67 @@
         }
 
         .modal-body {
-            padding: 20px;
-            flex: 1;
-            overflow-y: auto;
+            padding: 24px;
         }
 
         .modal-footer {
-            padding: 16px 20px;
+            padding: 16px 24px;
             border-top: 1px solid #27272a;
             display: flex;
-            gap: 12px;
+            gap: 8px;
             justify-content: flex-end;
-            flex-shrink: 0;
         }
 
+        /* FORMS */
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: #e4e4e7;
+            margin-bottom: 8px;
         }
 
-        .form-label .required {
-            color: #dc2626;
+        .required {
+            color: #fca5a5;
         }
 
-        .form-input,
-        .form-textarea,
-        .form-select {
+        .form-input, .form-select {
             width: 100%;
             background: #27272a;
             border: 1px solid #3f3f46;
             border-radius: 6px;
             padding: 8px 12px;
             color: #e4e4e7;
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        .form-input::placeholder,
-        .form-textarea::placeholder {
-            color: #71717a;
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-            font-family: inherit;
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
         }
 
         .form-helper {
-            font-size: 12px;
+            font-size: 11px;
             color: #71717a;
             margin-top: 4px;
         }
 
-        .file-upload-area {
-            border: 2px dashed #27272a;
-            border-radius: 6px;
-            padding: 24px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: rgba(124, 58, 237, 0.05);
-        }
-
-        .file-upload-area:hover {
-            border-color: #7c3aed;
-            background: rgba(124, 58, 237, 0.1);
-        }
-
-        .file-upload-text {
-            color: #a1a1a6;
-            font-size: 14px;
-        }
-
-        /* COMING SOON */
-        .coming-soon-page {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-            background: #18181b;
-            border: 1px solid #27272a;
-            border-radius: 8px;
-            flex-direction: column;
-            gap: 16px;
-            color: #a1a1a6;
-        }
-
-        .coming-soon-page-text {
-            font-size: 18px;
-        }
-
-        /* TOGGLE SWITCH */
-        .toggle-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .toggle-btn {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #3f3f46;
-            background: transparent;
-            color: #a1a1a6;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .toggle-btn.active {
-            background: #7c3aed;
-            border-color: #7c3aed;
-            color: white;
-        }
-
-        /* IMAGE GRID */
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 16px 0;
-        }
-
-        .image-item {
-            aspect-ratio: 2/3;
-            border: 2px solid #27272a;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-
-        .image-item:hover {
-            border-color: #7c3aed;
-        }
-
-        .image-item.selected {
-            border-color: #7c3aed;
-            background: rgba(124, 58, 237, 0.1);
-        }
-
-        /* COMPARISON PANEL */
-        .comparison-panel {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .comparison-item {
-            flex: 1;
-        }
-
-        .comparison-label {
-            font-size: 12px;
-            color: #71717a;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .comparison-box {
-            background: #27272a;
-            border: 1px solid #3f3f46;
-            border-radius: 6px;
-            padding: 16px;
-        }
-
-        .comparison-value {
-            font-size: 32px;
-            font-weight: 600;
-            color: #7c3aed;
-            margin-bottom: 8px;
-        }
-
-        .comparison-subtitle {
-            color: #a1a1a6;
-            font-size: 12px;
-        }
-
-        /* SYSTEM OWNERSHIP BADGES */
-        .system-badge {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 4px;
-            white-space: nowrap;
-        }
-
-        .system-badge-crawler {
-            background: rgba(124, 58, 237, 0.2);
-            color: #d8b4fe;
-            border: 1px solid rgba(124, 58, 237, 0.4);
-        }
-
-        .system-badge-bo {
-            background: rgba(59, 130, 246, 0.2);
-            color: #93c5fd;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-        }
-
-        /* RANKING CARD GRID (mirrors current Ztor system) */
-        .ranking-card-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-
-        .ranking-card {
-            background: #18181b;
-            border: 1px solid #27272a;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .ranking-card-header {
-            padding: 12px 16px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #e4e4e7;
-        }
-
-        .ranking-card-images {
-            display: flex;
-            gap: 0;
-            padding: 0 12px;
-        }
-
-        .ranking-card-img-col {
-            flex: 1;
-            padding: 0 4px;
-        }
-
-        .ranking-card-img-label {
-            font-size: 11px;
-            color: #71717a;
-            margin-bottom: 6px;
-        }
-
-        .ranking-card-img {
-            width: 100%;
-            aspect-ratio: 2/3;
-            border-radius: 4px;
-        }
-
-        .ranking-card-meta {
-            padding: 12px 16px;
-        }
-
-        .ranking-card-actions {
-            padding: 0 12px 12px;
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .ranking-card-actions .btn {
-            font-size: 11px;
-            padding: 4px 6px;
-            text-align: center;
-            justify-content: center;
-        }
-
         /* COVER SOURCE TABS */
         .cover-source-tab {
-            padding: 10px 20px;
+            padding: 12px 16px;
             background: transparent;
             border: none;
             border-bottom: 2px solid transparent;
             color: #a1a1a6;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 500;
             transition: all 0.2s;
-        }
-
-        .cover-source-tab:hover {
-            color: #e4e4e7;
         }
 
         .cover-source-tab.active {
@@ -820,103 +664,105 @@
             display: block;
         }
 
+        /* IMAGE GRID */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .image-item {
+            aspect-ratio: 2/3;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .image-item:hover {
+            border-color: #7c3aed;
+        }
+
+        .image-item.selected {
+            border-color: #7c3aed;
+        }
+
         .image-item-check {
             position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 22px;
-            height: 22px;
+            top: 8px;
+            right: 8px;
             background: #7c3aed;
-            border-radius: 50%;
             color: white;
-            font-size: 12px;
-            display: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
         }
 
-        .image-item.selected .image-item-check {
+        .file-upload-area {
+            border: 2px dashed #3f3f46;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-upload-area:hover {
+            border-color: #7c3aed;
+            background: rgba(124, 58, 237, 0.05);
+        }
+
+        .file-upload-text {
+            color: #a1a1a6;
+            font-size: 13px;
+        }
+
+        /* TOGGLE GROUP */
+        .toggle-group {
             display: flex;
+            gap: 8px;
         }
 
-        /* DROPDOWN MENU */
-        .dropdown-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 100%;
-            background: #27272a;
+        .toggle-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: transparent;
             border: 1px solid #3f3f46;
             border-radius: 6px;
-            min-width: 160px;
-            z-index: 100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            overflow: hidden;
-        }
-
-        .dropdown-menu.open {
-            display: block;
-        }
-
-        .dropdown-item {
-            padding: 8px 14px;
+            color: #a1a1a6;
             cursor: pointer;
             font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            border-color: #7c3aed;
             color: #e4e4e7;
-            transition: background 0.15s;
         }
 
-        .dropdown-item:hover {
-            background: rgba(124, 58, 237, 0.2);
+        .toggle-btn.active {
+            background: #7c3aed;
+            border-color: #7c3aed;
+            color: white;
         }
 
-        /* TOGGLE SWITCH (for source manager) */
-        .toggle-switch {
-            width: 40px;
-            height: 22px;
-            background: #3f3f46;
-            border-radius: 11px;
-            cursor: pointer;
-            position: relative;
-            transition: background 0.2s;
-        }
-
-        .toggle-switch.on {
-            background: #16a34a;
-        }
-
-        .toggle-knob {
-            width: 18px;
-            height: 18px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.2s;
-        }
-
-        .toggle-switch.on .toggle-knob {
-            transform: translateX(18px);
-        }
-
-        /* WIREFRAME NOTICE */
         .wireframe-notice {
             position: fixed;
             bottom: 16px;
             right: 16px;
             background: #27272a;
-            border: 1px solid #3f3f46;
-            border-radius: 4px;
+            color: #a1a1a6;
             padding: 8px 12px;
+            border-radius: 4px;
             font-size: 11px;
-            color: #71717a;
-            z-index: 999;
+            border: 1px solid #3f3f46;
         }
     </style>
 </head>
@@ -926,7 +772,7 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-header-icon">Z</div>
-                <span>Ztor Dashboard</span>
+                <span>Ztor BO</span>
             </div>
 
             <div class="sidebar-nav">
@@ -938,26 +784,12 @@
                     </span>
                 </div>
 
-                <div class="sidebar-section-title">List Manager</div>
-                <div class="sidebar-item" onclick="toggleListManager()">
-                    <span class="sidebar-collapsible-label">
-                        <span>List Manager</span>
-                        <span class="sidebar-toggle-icon" id="list-manager-toggle">›</span>
-                    </span>
-                </div>
-                <div class="sidebar-submenu" id="list-manager-submenu">
-                    <div class="sidebar-subitem" onclick="showPage('rankings')">Rankings</div>
-                    <div class="sidebar-subitem" onclick="showPage('vod')">VOD Availability</div>
-                    <div class="sidebar-subitem" onclick="showPage('boxoffice')">Box Office</div>
-                    <div class="sidebar-subitem" onclick="showPage('awards')">Awards</div>
-                </div>
-
                 <div class="sidebar-section-title">Content Management</div>
-                <div class="sidebar-item active" onclick="showPage('list-source')">
-                    <span>List Source Manager</span>
-                    <span class="badge badge-gray badge-sm">2</span>
+                <div class="sidebar-item" onclick="showPage('list-source')">
+                    <span>API Source Manager</span>
+                    <span class="badge badge-gray badge-sm">4</span>
                 </div>
-                <div class="sidebar-item" onclick="showPage('movies')">
+                <div class="sidebar-item active" onclick="showPage('movies')">
                     <span>Movie Database</span>
                     <span class="badge badge-yellow badge-sm">24</span>
                 </div>
@@ -974,43 +806,37 @@
         <div class="main">
             <div class="header">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <div class="header-title" id="page-title">List Source Manager</div>
-                    <span class="system-badge system-badge-crawler" id="system-badge">Crawler Dashboard · Howard</span>
+                    <div class="header-title" id="page-title">Movie Database</div>
+                    <span class="system-badge system-badge-bo" id="system-badge">Ztor BO · Eric's team</span>
                 </div>
             </div>
 
             <div class="content">
-                <!-- PAGE: LIST SOURCE MANAGER -->
-                <div class="page active" id="page-list-source">
+                <!-- PAGE: API SOURCE MANAGER -->
+                <div class="page" id="page-list-source">
                     <div class="stats-row">
                         <div class="stat-card">
-                            <div class="stat-label">Active Sources</div>
-                            <div class="stat-value">12</div>
+                            <div class="stat-label">Active API Sources</div>
+                            <div class="stat-value">4</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-label">Pending Requests</div>
-                            <div class="stat-value">2</div>
+                            <div class="stat-label">Inactive Sources</div>
+                            <div class="stat-value">0</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-label">Last Updated</div>
-                            <div class="stat-value">2h ago</div>
+                            <div class="stat-value">1h ago</div>
                         </div>
                     </div>
 
                     <div class="filter-bar">
                         <input type="text" class="search-input" placeholder="Search sources...">
-                        <select class="select-input">
-                            <option>All Source Types</option>
-                            <option>Crawled</option>
-                            <option>API</option>
-                        </select>
                         <button class="btn btn-outline">Filter</button>
                     </div>
 
                     <div class="tabs-container">
-                        <button class="tab active" onclick="switchCrawlerTab(this, 'crawler-all')">All Sources</button>
-                        <button class="tab" onclick="switchCrawlerTab(this, 'crawler-pending')">Pending Requests</button>
-                        <button class="tab" onclick="switchCrawlerTab(this, 'crawler-archived')">Archived</button>
+                        <button class="tab active" onclick="switchSourceTab(this, 'source-all')">All Sources</button>
+                        <button class="tab" onclick="switchSourceTab(this, 'source-archived')">Archived</button>
                     </div>
 
                     <div class="table-container">
@@ -1028,12 +854,12 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Netflix Top 10 Global</td>
-                                    <td><span class="badge badge-purple">Crawled</span></td>
+                                    <td>Netflix Top 10 API</td>
+                                    <td><span class="badge badge-blue">API</span></td>
                                     <td>Netflix</td>
                                     <td>Global</td>
                                     <td><span class="badge badge-green">Active</span></td>
-                                    <td>2 hours ago</td>
+                                    <td>1 hour ago</td>
                                     <td><div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></td>
                                 </tr>
                                 <tr>
@@ -1046,43 +872,30 @@
                                     <td><div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></td>
                                 </tr>
                                 <tr>
-                                    <td>FlixPatrol Trending</td>
-                                    <td><span class="badge badge-purple">Crawled</span></td>
-                                    <td>FlixPatrol</td>
+                                    <td>Apple TV+ Rankings API</td>
+                                    <td><span class="badge badge-blue">API</span></td>
+                                    <td>Apple TV+</td>
                                     <td>Taiwan</td>
-                                    <td><span class="badge badge-yellow">Processing</span></td>
-                                    <td>30 minutes ago</td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                    <td>3 hours ago</td>
                                     <td><div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></td>
                                 </tr>
                                 <tr>
-                                    <td>HBO Max 電影排行榜</td>
-                                    <td><span class="badge badge-purple">Crawled</span></td>
-                                    <td>HBO Max</td>
-                                    <td>Taiwan</td>
-                                    <td><span class="badge badge-red">Error</span></td>
-                                    <td>3 days ago</td>
-                                    <td><div class="toggle-switch" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></td>
-                                </tr>
-                                <tr>
-                                    <td>LiTV 電視劇排行榜</td>
-                                    <td><span class="badge badge-purple">Crawled</span></td>
-                                    <td>LiTV</td>
-                                    <td>Taiwan</td>
-                                    <td><span class="badge badge-green">Active</span></td>
-                                    <td>5 hours ago</td>
+                                    <td>Viu API Feed</td>
+                                    <td><span class="badge badge-blue">API</span></td>
+                                    <td>Viu</td>
+                                    <td>Hong Kong</td>
+                                    <td><span class="badge badge-yellow">Processing</span></td>
+                                    <td>30 min ago</td>
                                     <td><div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-
-                    <div style="margin-top: 24px;">
-                        <button class="btn btn-primary" onclick="toggleModal('modal-request-new-list')">Request New List</button>
-                    </div>
                 </div>
 
                 <!-- PAGE: MOVIE DATABASE -->
-                <div class="page" id="page-movies">
+                <div class="page active" id="page-movies">
                     <div class="stats-row">
                         <div class="stat-card">
                             <div class="stat-label">Total Movies</div>
@@ -1105,7 +918,7 @@
                             <option>Netflix Top 10</option>
                             <option>Disney+ Featured</option>
                             <option>Viu Rankings</option>
-                            <option>LiTV Rankings</option>
+                            <option>Apple TV+ Trending</option>
                         </select>
                         <select class="select-input">
                             <option>Movies & TV</option>
@@ -1240,278 +1053,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- PAGE: RANKINGS (mirrors current system card-grid layout) -->
-                <div class="page" id="page-rankings">
-                    <!-- Breadcrumb -->
-                    <div style="font-size:13px; color:#71717a; margin-bottom:8px;">
-                        Rankings <span style="color:#3f3f46; margin:0 6px;">›</span> <span style="color:#e4e4e7;">Viu 電影 日排行榜</span>
-                    </div>
-
-                    <!-- Page title + Back button -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                        <h2 style="font-size:22px; font-weight:600; color:#e4e4e7;">Viu 電影 日排行榜</h2>
-                        <button class="btn btn-outline btn-sm">Back to list</button>
-                    </div>
-
-                    <!-- Metadata bar (Platform, Country, Cycle, Date Range, Status, Created At) -->
-                    <div style="background:#18181b; border:1px solid #27272a; border-radius:8px; padding:16px 24px; display:flex; gap:40px; margin-bottom:24px; flex-wrap:wrap;">
-                        <div>
-                            <div style="font-size:11px; color:#71717a; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Platform</div>
-                            <div style="font-size:14px; color:#e4e4e7;">viu</div>
-                        </div>
-                        <div>
-                            <div style="font-size:11px; color:#71717a; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Country</div>
-                            <div style="font-size:14px; color:#e4e4e7;">HK</div>
-                        </div>
-                        <div>
-                            <div style="font-size:11px; color:#71717a; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Cycle</div>
-                            <div style="font-size:14px; color:#e4e4e7;">day</div>
-                        </div>
-                        <div>
-                            <div style="font-size:11px; color:#71717a; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Date Range</div>
-                            <div style="font-size:14px; color:#e4e4e7;">2026-04-08 ~ 2026-04-08</div>
-                        </div>
-                        <div>
-                            <div style="font-size:11px; color:#71717a; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Status</div>
-                            <div><span style="font-size:13px; padding:3px 10px; border:1px solid #3f3f46; border-radius:4px; color:#e4e4e7;">Approved</span></div>
-                        </div>
-                        <div>
-                            <div style="font-size:11px; color:#71717a; text-transform:uppercase; font-weight:600; margin-bottom:4px;">Created At</div>
-                            <div style="font-size:14px; color:#e4e4e7;">2026-04-08 20:35</div>
-                        </div>
-                    </div>
-
-                    <!-- Card grid (4 columns, matching current system) -->
-                    <div class="ranking-card-grid">
-                        <!-- Card 1 -->
-                        <div class="ranking-card">
-                            <div class="ranking-card-header">Rank #1</div>
-                            <div class="ranking-card-images">
-                                <div class="ranking-card-img-col">
-                                    <div class="ranking-card-img-label">🔍 Crawled Image</div>
-                                    <div class="ranking-card-img" style="background:linear-gradient(135deg,#2a3a5a,#4a5a8a);"></div>
-                                </div>
-                                <div class="ranking-card-img-col">
-                                    <div class="ranking-card-img-label">TMDB Poster</div>
-                                    <div class="ranking-card-img" style="background:linear-gradient(135deg,#3a4a6a,#5a6a9a);"></div>
-                                </div>
-                            </div>
-                            <div class="ranking-card-meta">
-                                <div style="font-weight:500; color:#e4e4e7; font-size:14px;">超異能特攻</div>
-                                <div style="font-size:12px; color:#71717a;">TMDB Title: 異能5：死了一個超人以後</div>
-                                <div style="display:flex; gap:6px; align-items:center; margin-top:4px;">
-                                    <span class="badge badge-blue">Movie</span>
-                                    <span style="font-size:12px; color:#71717a;">TMDB ID: <span style="color:#a78bfa;">793058</span></span>
-                                </div>
-                            </div>
-                            <div class="ranking-card-actions">
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</button>
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
-                            </div>
-                        </div>
-
-                        <!-- Card 2 -->
-                        <div class="ranking-card">
-                            <div class="ranking-card-header">Rank #2</div>
-                            <div class="ranking-card-images">
-                                <div class="ranking-card-img-col">
-                                    <div class="ranking-card-img-label">🔍 Crawled Image</div>
-                                    <div class="ranking-card-img" style="background:linear-gradient(135deg,#4a3520,#6b4c30);"></div>
-                                </div>
-                                <div class="ranking-card-img-col">
-                                    <div class="ranking-card-img-label">TMDB Poster</div>
-                                    <div class="ranking-card-img" style="background:linear-gradient(135deg,#5a4530,#7b5c40);"></div>
-                                </div>
-                            </div>
-                            <div class="ranking-card-meta">
-                                <div style="font-weight:500; color:#e4e4e7; font-size:14px;">摘星廚神·巴黎夢</div>
-                                <div style="font-size:12px; color:#71717a;">TMDB Title: 型男主廚三星夢：巴黎篇</div>
-                                <div style="display:flex; gap:6px; align-items:center; margin-top:4px;">
-                                    <span class="badge badge-blue">Movie</span>
-                                    <span style="font-size:12px; color:#71717a;">TMDB ID: <span style="color:#a78bfa;">1306061</span></span>
-                                </div>
-                            </div>
-                            <div class="ranking-card-actions">
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</button>
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
-                            </div>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="ranking-card">
-                            <div class="ranking-card-header">Rank #3</div>
-                            <div class="ranking-card-images">
-                                <div class="ranking-card-img-col">
-                                    <div class="ranking-card-img-label">🔍 Crawled Image</div>
-                                    <div class="ranking-card-img" style="background:linear-gradient(135deg,#1a3a5a,#2a5a8a);"></div>
-                                </div>
-                                <div class="ranking-card-img-col">
-                                    <div class="ranking-card-img-label">TMDB Poster</div>
-                                    <div class="ranking-card-img" style="background:linear-gradient(135deg,#2a4a6a,#3a6a9a);"></div>
-                                </div>
-                            </div>
-                            <div class="ranking-card-meta">
-                                <div style="font-weight:500; color:#e4e4e7; font-size:14px;">調教我的殭屍女兒</div>
-                                <div style="font-size:12px; color:#71717a;">TMDB Title: 我和我的殭屍女兒</div>
-                                <div style="display:flex; gap:6px; align-items:center; margin-top:4px;">
-                                    <span class="badge badge-blue">Movie</span>
-                                    <span style="font-size:12px; color:#71717a;">TMDB ID: <span style="color:#a78bfa;">1306816</span></span>
-                                </div>
-                            </div>
-                            <div class="ranking-card-actions">
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</button>
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
-                            </div>
-                        </div>
-
-                        <!-- Card 4 -->
-                        <div class="ranking-card">
-                            <div class="ranking-card-header">Rank #4</div>
-                            <div class="ranking-card-images">
-                                <div class="ranking-card-img-col">
-                                    <div class="ranking-card-img-label">🔍 Crawled Image</div>
-                                    <div class="ranking-card-img" style="background:linear-gradient(135deg,#2a1a4a,#4a2a7a);"></div>
-                                </div>
-                                <div class="ranking-card-img-col">
-                                    <div class="ranking-card-img-label">TMDB Poster</div>
-                                    <div class="ranking-card-img" style="background:linear-gradient(135deg,#3a2a5a,#5a3a8a);"></div>
-                                </div>
-                            </div>
-                            <div class="ranking-card-meta">
-                                <div style="font-weight:500; color:#e4e4e7; font-size:14px;">捕風捉影</div>
-                                <div style="font-size:12px; color:#71717a;">TMDB Title: 捕風捉影</div>
-                                <div style="display:flex; gap:6px; align-items:center; margin-top:4px;">
-                                    <span class="badge badge-blue">Movie</span>
-                                    <span style="font-size:12px; color:#71717a;">TMDB ID: <span style="color:#a78bfa;">1419406</span></span>
-                                </div>
-                            </div>
-                            <div class="ranking-card-actions">
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</button>
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PAGE: VOD Availability (Coming Soon) -->
-                <div class="page" id="page-vod">
-                    <div class="coming-soon-page">
-                        <div class="coming-soon-page-text">VOD Availability</div>
-                        <div style="font-size: 12px; color: #71717a;">Page managed externally</div>
-                    </div>
-                </div>
-
-                <!-- PAGE: Box Office (Coming Soon) -->
-                <div class="page" id="page-boxoffice">
-                    <div class="coming-soon-page">
-                        <div class="coming-soon-page-text">Box Office</div>
-                        <div style="font-size: 12px; color: #71717a;">Page managed externally</div>
-                    </div>
-                </div>
-
-                <!-- PAGE: Awards (Coming Soon) -->
-                <div class="page" id="page-awards">
-                    <div class="coming-soon-page">
-                        <div class="coming-soon-page-text">Awards</div>
-                        <div style="font-size: 12px; color: #71717a;">Page managed externally</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: Request New List -->
-    <div class="modal" id="modal-request-new-list">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-header-title">Request New List</div>
-                <button class="modal-close" onclick="toggleModal('modal-request-new-list')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Requestor Name <span class="required">*</span></label>
-                    <input type="text" class="form-input" placeholder="Your name">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Requestor Email <span class="required">*</span></label>
-                    <input type="email" class="form-input" placeholder="your@email.com">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">List Name <span class="required">*</span></label>
-                    <input type="text" class="form-input" placeholder="Must be the exact movie list label as shown on the source platform">
-                    <div class="form-helper">Must be the exact movie list label as shown on the source platform</div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Platform <span class="required">*</span></label>
-                    <select class="form-select">
-                        <option>-- Select Platform --</option>
-                        <option>Netflix</option>
-                        <option>Disney+</option>
-                        <option>HBO Max</option>
-                        <option>Viu</option>
-                        <option>LiTV</option>
-                        <option>friDay Video</option>
-                        <option>CATCHPLAY+</option>
-                        <option>Apple TV+</option>
-                        <option>KKTV</option>
-                        <option>Other</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Known Source</label>
-                    <select class="form-select">
-                        <option>-- Select Source --</option>
-                        <option>flixpatrol.com</option>
-                        <option>Netflix</option>
-                        <option>Disney+</option>
-                        <option>HBO Max</option>
-                        <option>Viu</option>
-                        <option>LiTV</option>
-                        <option>friDay Video</option>
-                        <option>CATCHPLAY+</option>
-                        <option>Apple TV+</option>
-                        <option>KKTV</option>
-                        <option>Custom</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Custom Source URL (optional)</label>
-                    <input type="url" class="form-input" placeholder="https://...">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Region <span class="required">*</span></label>
-                    <select class="form-select">
-                        <option>-- Select Region --</option>
-                        <option>Taiwan</option>
-                        <option>Hong Kong</option>
-                        <option>Global</option>
-                        <option>Other</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Screenshot (optional)</label>
-                    <div class="file-upload-area" onclick="alert('File upload would be handled here')">
-                        <div style="font-size: 24px; margin-bottom: 8px;">📎</div>
-                        <div class="file-upload-text">Drag & drop or click to upload</div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Notes (optional)</label>
-                    <textarea class="form-textarea" placeholder="Additional information..."></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="toggleModal('modal-request-new-list')">Cancel</button>
-                <button class="btn btn-primary" onclick="alert('Request submitted'); toggleModal('modal-request-new-list')">Submit Request</button>
             </div>
         </div>
     </div>
@@ -1558,7 +1099,6 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="toggleModal('modal-edit-tmdb')">Cancel</button>
-                <button class="btn btn-primary" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
                 <button class="btn btn-primary" onclick="alert('TMDB ID updated'); toggleModal('modal-edit-tmdb')">Save</button>
             </div>
         </div>
@@ -1655,8 +1195,7 @@
         </div>
     </div>
 
-    <!-- WIREFRAME NOTICE -->
-    <div class="wireframe-notice">Wireframe — Interactive Prototype</div>
+    <div class="wireframe-notice">Wireframe — Ztor BO Movie Management</div>
 
     <script>
         function showPage(page) {
@@ -1680,24 +1219,16 @@
             });
 
             const titles = {
-                'list-source': 'List Source Manager',
-                'movies': 'Movie Database',
-                'rankings': 'Rankings',
-                'vod': 'VOD Availability',
-                'boxoffice': 'Box Office',
-                'awards': 'Awards'
+                'list-source': 'API Source Manager',
+                'movies': 'Movie Database'
             };
             document.getElementById('page-title').textContent = titles[page] || 'Dashboard';
 
             // Update system ownership badge
             const badge = document.getElementById('system-badge');
             const systemMap = {
-                'list-source': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
-                'movies': { label: 'Ztor BO · Eric\'s team', cls: 'system-badge-bo' },
-                'rankings': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
-                'vod': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
-                'boxoffice': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
-                'awards': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' }
+                'list-source': { label: 'Ztor BO · Eric\'s team', cls: 'system-badge-bo' },
+                'movies': { label: 'Ztor BO · Eric\'s team', cls: 'system-badge-bo' }
             };
             const sys = systemMap[page] || { label: '', cls: '' };
             badge.textContent = sys.label;
@@ -1709,7 +1240,7 @@
             el.classList.add('active');
         }
 
-        function switchCrawlerTab(el, panelId) {
+        function switchSourceTab(el, panelId) {
             document.querySelectorAll('#page-list-source .tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
         }
@@ -1719,14 +1250,6 @@
             if (modal) {
                 modal.classList.toggle('active');
             }
-        }
-
-        function toggleListManager() {
-            const submenu = document.getElementById('list-manager-submenu');
-            const toggle = document.getElementById('list-manager-toggle');
-
-            submenu.classList.toggle('expanded');
-            toggle.classList.toggle('expanded');
         }
 
         function switchCoverSource(tab, panelId) {
@@ -1757,6 +1280,7 @@
             }
         });
 
+        // Close modals on click outside
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -1765,6 +1289,7 @@
             });
         });
 
+        // Image item selection + toggle button handling
         document.addEventListener('click', function(e) {
             if (e.target.closest('.image-item')) {
                 document.querySelectorAll('.image-item').forEach(item => {

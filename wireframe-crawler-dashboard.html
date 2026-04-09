@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ztor Admin Dashboard</title>
+    <title>Crawler Movie List Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -925,8 +925,8 @@
         <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-header-icon">Z</div>
-                <span>Ztor Dashboard</span>
+                <div class="sidebar-header-icon">C</div>
+                <span>Crawler Dashboard</span>
             </div>
 
             <div class="sidebar-nav">
@@ -956,10 +956,6 @@
                 <div class="sidebar-item active" onclick="showPage('list-source')">
                     <span>List Source Manager</span>
                     <span class="badge badge-gray badge-sm">2</span>
-                </div>
-                <div class="sidebar-item" onclick="showPage('movies')">
-                    <span>Movie Database</span>
-                    <span class="badge badge-yellow badge-sm">24</span>
                 </div>
             </div>
 
@@ -999,11 +995,6 @@
 
                     <div class="filter-bar">
                         <input type="text" class="search-input" placeholder="Search sources...">
-                        <select class="select-input">
-                            <option>All Source Types</option>
-                            <option>Crawled</option>
-                            <option>API</option>
-                        </select>
                         <button class="btn btn-outline">Filter</button>
                     </div>
 
@@ -1082,166 +1073,6 @@
                 </div>
 
                 <!-- PAGE: MOVIE DATABASE -->
-                <div class="page" id="page-movies">
-                    <div class="stats-row">
-                        <div class="stat-card">
-                            <div class="stat-label">Total Movies</div>
-                            <div class="stat-value">4,267</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Missing TMDB ID</div>
-                            <div class="stat-value" style="color:#fca5a5;">24</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Missing Cover Photo</div>
-                            <div class="stat-value" style="color:#fde047;">89</div>
-                        </div>
-                    </div>
-
-                    <div class="filter-bar">
-                        <input type="text" class="search-input" placeholder="Search movies...">
-                        <select class="select-input">
-                            <option>All Source Lists</option>
-                            <option>Netflix Top 10</option>
-                            <option>Disney+ Featured</option>
-                            <option>Viu Rankings</option>
-                            <option>LiTV Rankings</option>
-                        </select>
-                        <select class="select-input">
-                            <option>Movies & TV</option>
-                            <option>Movies Only</option>
-                            <option>TV Only</option>
-                        </select>
-                        <button class="btn btn-outline">Filter</button>
-                    </div>
-
-                    <div class="tabs-container">
-                        <button class="tab active" onclick="switchMovieTab(this, 'movie-all')">All Movies (4,267)</button>
-                        <button class="tab" onclick="switchMovieTab(this, 'movie-missing-tmdb')">Missing TMDB ID (24)</button>
-                        <button class="tab" onclick="switchMovieTab(this, 'movie-missing-cover')">Missing Cover Photo (89)</button>
-                        <button class="tab" onclick="switchMovieTab(this, 'movie-recent')">Recently Updated</button>
-                    </div>
-
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Poster</th>
-                                    <th>Title</th>
-                                    <th>TMDB ID</th>
-                                    <th>Type</th>
-                                    <th>Source List</th>
-                                    <th>Last Updated</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><div style="width: 40px; height: 60px; background:linear-gradient(135deg,#2a3a5a,#4a5a8a); border-radius: 4px;"></div></td>
-                                    <td>
-                                        <div style="font-weight:500; color:#e4e4e7;">Dune: Part Two</div>
-                                        <div style="font-size:12px; color:#71717a;">TMDB: Dune: Part Two</div>
-                                    </td>
-                                    <td><span style="color:#a78bfa;">693134</span></td>
-                                    <td><span class="badge badge-blue">Movie</span></td>
-                                    <td><span class="badge badge-gray">Netflix Top 10</span> <span class="badge badge-gray">HBO Max</span></td>
-                                    <td>2 days ago</td>
-                                    <td>
-                                        <div class="dropdown-wrapper">
-                                            <button class="btn btn-ghost btn-sm dropdown-trigger" onclick="toggleDropdown(event, this)">Edit ▾</button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</div>
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><div style="width: 40px; height: 60px; background:linear-gradient(135deg,#3a2a1a,#5a4a2a); border-radius: 4px;"></div></td>
-                                    <td>
-                                        <div style="font-weight:500; color:#e4e4e7;">Oppenheimer</div>
-                                        <div style="font-size:12px; color:#71717a;">TMDB: Oppenheimer</div>
-                                    </td>
-                                    <td><span style="color:#a78bfa;">940721</span></td>
-                                    <td><span class="badge badge-blue">Movie</span></td>
-                                    <td><span class="badge badge-gray">Netflix</span></td>
-                                    <td>3 days ago</td>
-                                    <td>
-                                        <div class="dropdown-wrapper">
-                                            <button class="btn btn-ghost btn-sm dropdown-trigger" onclick="toggleDropdown(event, this)">Edit ▾</button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</div>
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><div style="width: 40px; height: 60px; background:#27272a; border-radius: 4px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#71717a;">N/A</div></td>
-                                    <td>
-                                        <div style="font-weight:500; color:#e4e4e7;">超異能特攻</div>
-                                        <div style="font-size:12px; color:#fca5a5;">Missing TMDB ID</div>
-                                    </td>
-                                    <td><span style="color:#fca5a5;">—</span></td>
-                                    <td><span class="badge badge-gray">Unknown</span></td>
-                                    <td><span class="badge badge-gray">Disney+</span></td>
-                                    <td>1 hour ago</td>
-                                    <td>
-                                        <div class="dropdown-wrapper">
-                                            <button class="btn btn-ghost btn-sm dropdown-trigger" onclick="toggleDropdown(event, this)">Edit ▾</button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</div>
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><div style="width: 40px; height: 60px; background:linear-gradient(135deg,#1a4a2a,#2a6a3a); border-radius: 4px;"></div></td>
-                                    <td>
-                                        <div style="font-weight:500; color:#e4e4e7;">Barbie</div>
-                                        <div style="font-size:12px; color:#71717a;">TMDB: Barbie</div>
-                                    </td>
-                                    <td><span style="color:#a78bfa;">436969</span></td>
-                                    <td><span class="badge badge-blue">Movie</span></td>
-                                    <td><span class="badge badge-gray">Netflix</span> <span class="badge badge-gray">Viu</span></td>
-                                    <td>1 day ago</td>
-                                    <td>
-                                        <div class="dropdown-wrapper">
-                                            <button class="btn btn-ghost btn-sm dropdown-trigger" onclick="toggleDropdown(event, this)">Edit ▾</button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</div>
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><div style="width: 40px; height: 60px; background:linear-gradient(135deg,#2a1a4a,#4a2a7a); border-radius: 4px;"></div></td>
-                                    <td>
-                                        <div style="font-weight:500; color:#e4e4e7;">捕風捉影</div>
-                                        <div style="font-size:12px; color:#71717a;">TMDB: 捕風捉影</div>
-                                    </td>
-                                    <td><span style="color:#a78bfa;">1419406</span></td>
-                                    <td><span class="badge badge-blue">Movie</span></td>
-                                    <td><span class="badge badge-gray">Viu</span></td>
-                                    <td>2 days ago</td>
-                                    <td>
-                                        <div class="dropdown-wrapper">
-                                            <button class="btn btn-ghost btn-sm dropdown-trigger" onclick="toggleDropdown(event, this)">Edit ▾</button>
-                                            <div class="dropdown-menu">
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</div>
-                                                <div class="dropdown-item" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- PAGE: RANKINGS (mirrors current system card-grid layout) -->
                 <div class="page" id="page-rankings">
                     <!-- Breadcrumb -->
                     <div style="font-size:13px; color:#71717a; margin-bottom:8px;">
@@ -1307,7 +1138,6 @@
                             </div>
                             <div class="ranking-card-actions">
                                 <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</button>
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
                             </div>
                         </div>
 
@@ -1334,7 +1164,6 @@
                             </div>
                             <div class="ranking-card-actions">
                                 <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</button>
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
                             </div>
                         </div>
 
@@ -1361,7 +1190,6 @@
                             </div>
                             <div class="ranking-card-actions">
                                 <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</button>
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
                             </div>
                         </div>
 
@@ -1388,7 +1216,6 @@
                             </div>
                             <div class="ranking-card-actions">
                                 <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-tmdb')">Edit TMDB ID</button>
-                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
                             </div>
                         </div>
                     </div>
@@ -1558,105 +1385,15 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="toggleModal('modal-edit-tmdb')">Cancel</button>
-                <button class="btn btn-primary" onclick="toggleModal('modal-edit-cover')">Edit Cover Photo</button>
                 <button class="btn btn-primary" onclick="alert('TMDB ID updated'); toggleModal('modal-edit-tmdb')">Save</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: Edit Cover Photo -->
-    <div class="modal" id="modal-edit-cover">
-        <div class="modal-content" style="max-width:720px;">
-            <div class="modal-header">
-                <div class="modal-header-title">Edit Cover Photo — Dune: Part Two</div>
-                <button class="modal-close" onclick="toggleModal('modal-edit-cover')">×</button>
-            </div>
-            <div class="modal-body">
-
-                <!-- Source tabs: Search TMDB vs Upload -->
-                <div style="display:flex; gap:0; border-bottom:1px solid #27272a; margin-bottom:20px;">
-                    <button class="cover-source-tab active" onclick="switchCoverSource(this, 'cover-tmdb-search')">Search TMDB</button>
-                    <button class="cover-source-tab" onclick="switchCoverSource(this, 'cover-upload')">Upload Photo</button>
-                </div>
-
-                <!-- TAB: Search TMDB -->
-                <div class="cover-source-panel active" id="cover-tmdb-search">
-                    <!-- TMDB search bar -->
-                    <div style="margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px; color:#e4e4e7; font-size:14px;">Search TMDB</h3>
-                        <div style="display:flex; gap:8px;">
-                            <input type="text" class="form-input" placeholder="Search by movie name or TMDB ID..." value="Dune: Part Two" style="flex:1;">
-                            <button class="btn btn-primary">Search</button>
-                        </div>
-                        <div class="form-helper">Enter a movie title or TMDB ID (e.g. 693134) to find cover photos</div>
-                    </div>
-
-                    <!-- Filter toggles -->
-                    <div style="display:flex; gap:24px; margin-bottom:20px;">
-                        <div style="flex:1;">
-                            <h3 style="margin-bottom:8px; color:#e4e4e7; font-size:14px;">Language</h3>
-                            <div class="toggle-group">
-                                <button class="toggle-btn active">English</button>
-                                <button class="toggle-btn">Chinese</button>
-                            </div>
-                        </div>
-                        <div style="flex:1;">
-                            <h3 style="margin-bottom:8px; color:#e4e4e7; font-size:14px;">Orientation</h3>
-                            <div class="toggle-group">
-                                <button class="toggle-btn active">Horizontal</button>
-                                <button class="toggle-btn">Vertical</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Results grid -->
-                    <div>
-                        <h3 style="margin-bottom:8px; color:#e4e4e7; font-size:14px;">Results <span style="color:#71717a; font-weight:400;">(6 covers found)</span></h3>
-                        <div class="image-grid">
-                            <div class="image-item selected" style="background: linear-gradient(135deg, #7c3aed, #5b21b6);"><div class="image-item-check">✓</div></div>
-                            <div class="image-item" style="background: linear-gradient(135deg, #3b82f6, #1e40af);"></div>
-                            <div class="image-item" style="background: linear-gradient(135deg, #10b981, #047857);"></div>
-                            <div class="image-item" style="background: linear-gradient(135deg, #f59e0b, #d97706);"></div>
-                            <div class="image-item" style="background: linear-gradient(135deg, #ef4444, #991b1b);"></div>
-                            <div class="image-item" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: Upload Photo -->
-                <div class="cover-source-panel" id="cover-upload">
-                    <div style="margin-bottom:20px;">
-                        <h3 style="margin-bottom:8px; color:#e4e4e7; font-size:14px;">Upload Cover Photo</h3>
-                        <p style="font-size:13px; color:#71717a; margin-bottom:16px;">Upload a custom cover photo if the right one isn't available on TMDB.</p>
-                    </div>
-
-                    <div class="file-upload-area" style="padding:40px 24px;" onclick="alert('File upload would be handled here')">
-                        <div style="font-size:32px; margin-bottom:12px;">🖼️</div>
-                        <div style="font-size:14px; color:#e4e4e7; margin-bottom:4px;">Drag & drop an image here, or click to browse</div>
-                        <div style="font-size:12px; color:#71717a;">Supports JPG, PNG, WebP — max 5MB</div>
-                    </div>
-
-                    <!-- Upload preview (shown after upload) -->
-                    <div style="margin-top:16px; padding:12px; background:#27272a; border-radius:6px; display:flex; align-items:center; gap:12px;">
-                        <div style="width:60px; height:40px; background:linear-gradient(135deg,#7c3aed,#5b21b6); border-radius:4px; flex-shrink:0;"></div>
-                        <div style="flex:1;">
-                            <div style="font-size:13px; color:#e4e4e7;">dune-cover-tw.jpg</div>
-                            <div style="font-size:11px; color:#71717a;">1920 × 1080 · 342 KB</div>
-                        </div>
-                        <button class="btn btn-outline btn-sm" style="color:#fca5a5; border-color:#fca5a5;">Remove</button>
-                    </div>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="toggleModal('modal-edit-cover')">Cancel</button>
-                <button class="btn btn-primary" onclick="alert('Cover photo updated'); toggleModal('modal-edit-cover')">Save</button>
-            </div>
-        </div>
+</div>
     </div>
 
-    <!-- WIREFRAME NOTICE -->
-    <div class="wireframe-notice">Wireframe — Interactive Prototype</div>
+    <div class="wireframe-notice">Wireframe — Crawler Movie List Dashboard</div>
 
     <script>
         function showPage(page) {
@@ -1681,32 +1418,12 @@
 
             const titles = {
                 'list-source': 'List Source Manager',
-                'movies': 'Movie Database',
                 'rankings': 'Rankings',
                 'vod': 'VOD Availability',
                 'boxoffice': 'Box Office',
                 'awards': 'Awards'
             };
             document.getElementById('page-title').textContent = titles[page] || 'Dashboard';
-
-            // Update system ownership badge
-            const badge = document.getElementById('system-badge');
-            const systemMap = {
-                'list-source': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
-                'movies': { label: 'Ztor BO · Eric\'s team', cls: 'system-badge-bo' },
-                'rankings': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
-                'vod': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
-                'boxoffice': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' },
-                'awards': { label: 'Crawler Dashboard · Howard', cls: 'system-badge-crawler' }
-            };
-            const sys = systemMap[page] || { label: '', cls: '' };
-            badge.textContent = sys.label;
-            badge.className = 'system-badge ' + sys.cls;
-        }
-
-        function switchMovieTab(el, panelId) {
-            document.querySelectorAll('#page-movies .tab').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
         }
 
         function switchCrawlerTab(el, panelId) {
@@ -1729,16 +1446,8 @@
             toggle.classList.toggle('expanded');
         }
 
-        function switchCoverSource(tab, panelId) {
-            document.querySelectorAll('.cover-source-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.cover-source-panel').forEach(p => p.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById(panelId).classList.add('active');
-        }
-
         function toggleDropdown(event, btn) {
             event.stopPropagation();
-            // Close all other dropdowns
             document.querySelectorAll('.dropdown-menu.open').forEach(menu => {
                 if (menu !== btn.nextElementSibling) menu.classList.remove('open');
             });
@@ -1750,7 +1459,6 @@
             document.querySelectorAll('.dropdown-menu.open').forEach(menu => menu.classList.remove('open'));
         });
 
-        // Dropdown items should close the menu then execute
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('dropdown-item')) {
                 document.querySelectorAll('.dropdown-menu.open').forEach(menu => menu.classList.remove('open'));
@@ -1766,13 +1474,6 @@
         });
 
         document.addEventListener('click', function(e) {
-            if (e.target.closest('.image-item')) {
-                document.querySelectorAll('.image-item').forEach(item => {
-                    item.classList.remove('selected');
-                });
-                e.target.closest('.image-item').classList.add('selected');
-            }
-
             if (e.target.closest('.toggle-btn')) {
                 const btn = e.target.closest('.toggle-btn');
                 const group = btn.parentElement;
