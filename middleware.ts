@@ -1,5 +1,5 @@
 export const config = {
-  matcher: '/((?!_vercel|favicon.ico).*)',
+  matcher: ['/', '/index.html'],
 };
 
 export default function middleware(request: Request) {
