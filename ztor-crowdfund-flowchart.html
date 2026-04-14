@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor Simple Crowdfund — Flowchart</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    overflow-x: auto;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 32px 48px;
+    border-bottom: 2px solid #2a2a4a;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 14px;
+    color: #8888aa;
+  }
+  .header .badge {
+    display: inline-block;
+    background: #e67e22;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-left: 12px;
+    vertical-align: middle;
+  }
+
+  .legend {
+    display: flex;
+    gap: 24px;
+    padding: 16px 48px;
+    background: #111;
+    border-bottom: 1px solid #222;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #999;
+  }
+  .legend-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .canvas {
+    padding: 48px;
+    overflow-x: auto;
+  }
+
+  /* Phase sections */
+  .phase {
+    margin-bottom: 56px;
+  }
+  .phase-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #666;
+    margin-bottom: 20px;
+    padding-left: 4px;
+  }
+  .phase-label span {
+    color: #888;
+    font-weight: 400;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    flex-wrap: nowrap;
+  }
+
+  /* Nodes */
+  .node {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 500;
+    min-width: 160px;
+    max-width: 200px;
+  }
+
+  .node-process {
+    background: #1e3a5f;
+    border: 1.5px solid #2a5a8f;
+    border-radius: 8px;
+    color: #c8ddf0;
+  }
+  .node-process.manual {
+    background: #2d1f4e;
+    border-color: #5a3d8a;
+    color: #d4c4f0;
+  }
+  .node-process.manual::after {
+    content: "MANUAL";
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    background: #7c3aed;
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .node-start {
+    background: #1a4a3a;
+    border: 1.5px solid #2a7a5a;
+    border-radius: 24px;
+    color: #a0e0c0;
+    min-width: 140px;
+  }
+  .node-decision {
+    background: #5a3e10;
+    border: 1.5px solid #8a6a20;
+    color: #f0d080;
+    min-width: 150px;
+    max-width: 170px;
+    padding: 20px 14px;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .node-end-success {
+    background: #1a5a2a;
+    border: 1.5px solid #2a8a3a;
+    border-radius: 8px;
+    color: #a0f0a0;
+  }
+  .node-end-fail {
+    background: #5a1a1a;
+    border: 1.5px solid #8a2a2a;
+    border-radius: 8px;
+    color: #f0a0a0;
+  }
+  .node-output {
+    background: #0d4a4a;
+    border: 1.5px solid #1a7a7a;
+    border-radius: 8px;
+    color: #a0e8e8;
+  }
+
+  .node-detail {
+    font-size: 10px;
+    font-weight: 400;
+    margin-top: 6px;
+    opacity: 0.75;
+    line-height: 1.3;
+  }
+
+  /* Arrows */
+  .arrow {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    position: relative;
+    align-self: center;
+  }
+  .arrow::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 2px;
+    background: #4a4a6a;
+  }
+  .arrow::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid #4a4a6a;
+  }
+  .arrow-label {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 600;
+    color: #8a8aaa;
+    white-space: nowrap;
+  }
+  .arrow-label.yes { color: #4ade80; }
+  .arrow-label.no { color: #f87171; }
+
+  /* Branch layout */
+  .branch-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .branch-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* Vertical connector */
+  .v-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+  }
+  .v-connector .v-line {
+    width: 2px;
+    height: 24px;
+    background: #4a4a6a;
+  }
+  .v-connector .v-arrow {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #4a4a6a;
+  }
+  .v-connector .v-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #8a8aaa;
+    margin: 2px 0;
+  }
+
+  /* Annotation callout */
+  .callout {
+    background: #1a1a2e;
+    border: 1px dashed #3a3a5a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 11px;
+    color: #8888cc;
+    line-height: 1.5;
+    max-width: 260px;
+    margin-top: 8px;
+    align-self: center;
+  }
+  .callout strong {
+    color: #aaaaee;
+  }
+
+  /* Comparison table */
+  .comparison {
+    margin-top: 56px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .comparison h3 {
+    padding: 16px 24px;
+    font-size: 14px;
+    background: #1a1a2e;
+    border-bottom: 1px solid #222;
+    color: #aaa;
+  }
+  .comparison table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .comparison th, .comparison td {
+    padding: 10px 24px;
+    text-align: left;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .comparison th {
+    color: #888;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: #0f0f1a;
+  }
+  .comparison td:first-child { color: #aaa; }
+  .comparison .beamco { color: #f0a060; }
+  .comparison .ztor { color: #60c0f0; }
+  .comparison .tag-auto {
+    display: inline-block;
+    background: #1a3a1a;
+    color: #6fcf6f;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .comparison .tag-manual {
+    display: inline-block;
+    background: #2d1f4e;
+    color: #b090e0;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* Notes section */
+  .notes-section {
+    margin-top: 48px;
+    padding: 24px;
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+  }
+  .notes-section h3 {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+  .notes-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  .notes-section li {
+    font-size: 13px;
+    color: #888;
+    padding: 6px 0;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .notes-section li::before {
+    content: "\2022";
+    position: absolute;
+    left: 4px;
+    color: #555;
+  }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .flow-row { overflow-x: auto; }
+    .canvas { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Ztor Simple Crowdfund <span class="badge">Lightweight / MVP</span></h1>
+  <p>End-to-end flowchart for the simplified crowdfunding feature on Ztor Store &mdash; April 2026</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#1a4a3a;border:1px solid #2a7a5a"></div> Start / Trigger</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#1e3a5f;border:1px solid #2a5a8f"></div> Automated Process</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#2d1f4e;border:1px solid #5a3d8a"></div> Manual Process</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#5a3e10;border:1px solid #8a6a20;clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);width:18px;height:18px"></div> Decision</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#1a5a2a;border:1px solid #2a8a3a"></div> Success End</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#5a1a1a;border:1px solid #8a2a2a"></div> Fail / Refund</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#0d4a4a;border:1px solid #1a7a7a"></div> Output / Deliverable</div>
+</div>
+
+<div class="canvas">
+
+  <!-- ═══════ PHASE 1: SETUP ═══════ -->
+  <div class="phase">
+    <div class="phase-label">Phase 1 &mdash; Project Setup <span>(Offline / Manual)</span></div>
+    <div class="flow-row">
+
+      <div class="node node-start">
+        Identify Promising<br>AI Creator
+        <div class="node-detail">From AI contest winners or talented creators on Ztor</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process manual">
+        Negotiate Terms<br>with Creator
+        <div class="node-detail">Revenue split %, timeline, content scope, deliverables</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process manual">
+        Set Up Crowdfund<br>Standalone Page
+        <div class="node-detail">
+          Project story, budget breakdown, timeline, hardcoded funding tiers
+        </div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process manual">
+        Connect Film Owner<br>to Creator Account
+        <div class="node-detail">Backend: link Film Owner record to a Ztor user account</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        Crowdfund Page<br>Goes Live
+        <div class="node-detail">Standalone page on Store &mdash; does not alter main site architecture</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════ PHASE 2: CAMPAIGN ═══════ -->
+  <div class="phase">
+    <div class="phase-label">Phase 2 &mdash; Crowdfunding Campaign <span>(Fan-Facing)</span></div>
+    <div class="flow-row">
+
+      <div class="node node-start">
+        Fan Discovers<br>Project
+        <div class="node-detail">Via Store homepage, social media share, AI contest page, or creator profile</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        View Crowdfund<br>Page
+        <div class="node-detail">Story, budget, timeline, progress bar, funding tiers, creator info</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        Select Funding<br>Tier
+        <div class="node-detail">Hardcoded fixed amounts<br>(e.g. $100, $500, $5,000)</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        Pay Immediately
+        <div class="node-detail">Charge on purchase.<br>Record: backer, amount, ownership %</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-output">
+        Backer Confirmed
+        <div class="node-detail">Update progress bar &amp; backer count. Fan sees receipt &amp; ownership %</div>
+      </div>
+
+    </div>
+
+    <!-- Campaign monitoring sub-row -->
+    <div class="v-connector" style="margin-left: 700px; margin-top: -1px;">
+      <div class="v-line"></div>
+      <div class="v-arrow"></div>
+    </div>
+    <div class="flow-row" style="margin-left: 540px;">
+
+      <div class="node node-process">
+        Campaign<br>In Progress
+        <div class="node-detail">Track raised amount vs target. Creator posts updates / announcements</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-decision">
+        Met Target<br>by Deadline?
+      </div>
+
+      <div class="branch-container" style="margin-left: 0;">
+        <div class="branch-row">
+          <div class="arrow"><span class="arrow-label yes">YES</span></div>
+          <div class="node node-end-success">
+            Campaign<br>Successful
+            <div class="node-detail">Proceed to production phase</div>
+          </div>
+        </div>
+        <div class="branch-row">
+          <div class="arrow"><span class="arrow-label no">NO</span></div>
+          <div class="node node-end-fail">
+            Refund All<br>Backers
+            <div class="node-detail">Manual refund process. Campaign ends.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════ PHASE 3: PRODUCTION ═══════ -->
+  <div class="phase">
+    <div class="phase-label">Phase 3 &mdash; Content Production <span>(Post-Funding)</span></div>
+    <div class="flow-row">
+
+      <div class="node node-start" style="background:#1a5a2a;border-color:#2a8a3a;color:#a0f0a0;">
+        Campaign<br>Successful
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process manual">
+        Release Funds<br>to Creator
+        <div class="node-detail">Transfer collected funds<br>(minus platform fee) to creator</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        Creator Produces<br>Content
+        <div class="node-detail">Short series / long-form AI content per agreed timeline</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-decision">
+        Completed<br>On Time?
+      </div>
+
+      <div class="branch-container" style="margin-left: 0;">
+        <div class="branch-row">
+          <div class="arrow"><span class="arrow-label yes">YES</span></div>
+          <div class="node node-end-success">
+            Content<br>Ready
+            <div class="node-detail">Proceed to Store listing</div>
+          </div>
+        </div>
+        <div class="branch-row">
+          <div class="arrow"><span class="arrow-label no">OVERDUE</span></div>
+          <div class="node node-process manual">
+            Follow Up<br>with Creator
+            <div class="node-detail">Negotiate new timeline. Post delay update to backers.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════ PHASE 4: MONETIZATION ═══════ -->
+  <div class="phase">
+    <div class="phase-label">Phase 4 &mdash; Monetization &amp; Revenue Share <span>(Ongoing)</span></div>
+    <div class="flow-row">
+
+      <div class="node node-start" style="background:#1a5a2a;border-color:#2a8a3a;color:#a0f0a0;">
+        Content<br>Ready
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process manual">
+        Add Content to<br>Store Inventory
+        <div class="node-detail">Upload via Film Owner portal or manually by Ztor team</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        Content Listed as<br>Pay-Per-View
+        <div class="node-detail">Crowdfund page converts to regular video page on Store</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-output">
+        Content<br>Earns Revenue
+        <div class="node-detail">Popcoin / direct purchases on Store</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process manual">
+        Calculate Backer<br>Revenue Share
+        <div class="node-detail">Based on each backer's ownership %. Manual calculation from Store earnings data.</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process manual">
+        Distribute<br>Payouts
+        <div class="node-detail">Manual transfer to backers based on % split</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-output">
+        Reporting
+        <div class="node-detail">Revenue reports for both creator &amp; backers</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════ COMPARISON TABLE ═══════ -->
+  <div class="comparison">
+    <h3>Beamco Full vs. Ztor Simple &mdash; Key Differences</h3>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:22%">Aspect</th>
+          <th style="width:39%">Beamco (Full System)</th>
+          <th style="width:39%">Ztor (Simple / MVP)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Funding tiers</td>
+          <td class="beamco">Dynamic plans with items, price, share count <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">Hardcoded fixed amounts (e.g. $100, $500, $5K) <span class="tag-manual">HARDCODE</span></td>
+        </tr>
+        <tr>
+          <td>Payment model</td>
+          <td class="beamco">Reserve now, charge on success (Stripe Future Payment) <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">Immediate charge at time of backing <span class="tag-auto">SYSTEM</span></td>
+        </tr>
+        <tr>
+          <td>Artist Portal</td>
+          <td class="beamco">Full self-serve portal for artists to create &amp; manage projects <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">No portal &mdash; all setup handled offline by Ztor team <span class="tag-manual">MANUAL</span></td>
+        </tr>
+        <tr>
+          <td>Creator negotiation</td>
+          <td class="beamco">Artist contract with dynamic terms, in-platform agreement <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">Offline negotiation, terms set manually <span class="tag-manual">MANUAL</span></td>
+        </tr>
+        <tr>
+          <td>Loyalty / Eligibility</td>
+          <td class="beamco">Follow X days &rarr; earn Y points &rarr; unlock eligibility <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">None &mdash; anyone can back a project</td>
+        </tr>
+        <tr>
+          <td>Plan upgrades</td>
+          <td class="beamco">Upward-only upgrade with spot availability checks <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">Not supported in MVP</td>
+        </tr>
+        <tr>
+          <td>Revenue distribution</td>
+          <td class="beamco">Automated share assignment &amp; tracking (Phase 2) <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">Manual calculation &amp; payout <span class="tag-manual">MANUAL</span></td>
+        </tr>
+        <tr>
+          <td>Page architecture</td>
+          <td class="beamco">Integrated into main platform with full CMS <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">Standalone page, independent from main Store site <span class="tag-manual">HARDCODE</span></td>
+        </tr>
+        <tr>
+          <td>Updates / Comments</td>
+          <td class="beamco">Full update system with 3 types, attachments, visibility controls <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">Basic announcements &mdash; tech evaluation needed for comments</td>
+        </tr>
+        <tr>
+          <td>Refund on failure</td>
+          <td class="beamco">No charges collected (reserve model) <span class="tag-auto">SYSTEM</span></td>
+          <td class="ztor">Manual refund of collected payments <span class="tag-manual">MANUAL</span></td>
+        </tr>
+        <tr>
+          <td>Team ownership</td>
+          <td class="beamco">Kerry &amp; Eric main team (Bingo system migration)</td>
+          <td class="ztor">Indonesia AI team (lightweight build), can run in parallel</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════ KEY NOTES ═══════ -->
+  <div class="notes-section">
+    <h3>Key Decisions &amp; Notes from Meeting (Apr 13, 2026)</h3>
+    <ul>
+      <li><strong>Validate first, build later</strong> &mdash; the entire approach is "ship a manual MVP to test if the crowdfund business model works on Ztor before investing in a full system."</li>
+      <li><strong>Don't port Bingo (Beamco) system</strong> &mdash; the most complex part is Artist Portal, which isn't needed. Front-end is relatively simple.</li>
+      <li><strong>Parallel workstreams</strong> &mdash; Bingo system migration (Kerry &amp; Eric) runs alongside this lightweight Store crowdfund (Indonesia AI team, onboarded as of Apr 13).</li>
+      <li><strong>Standalone page</strong> &mdash; crowdfund project lives on its own page, doesn't change main Store site architecture. After funding completes, page converts to a regular video page.</li>
+      <li><strong>First crowdfund project could happen by end of May 2026</strong> &mdash; likely an AI contest creator wanting to produce a longer series or pay-per-view short series.</li>
+      <li><strong>Revenue share is simple math</strong> &mdash; Store already tracks earnings per film. Backer % is known from the funding. Manual calculation &amp; payout.</li>
+      <li><strong>Comments / activity announcements</strong> need tech evaluation &mdash; may be separate from main site comment system. Deferred if complex.</li>
+      <li><strong>Creator onboarding</strong> is fully offline &mdash; Ztor team contacts creator, negotiates terms, sets everything up. No self-service.</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
