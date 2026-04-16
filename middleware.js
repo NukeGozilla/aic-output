@@ -2,7 +2,7 @@ export const config = {
   matcher: ['/', '/index.html'],
 };
 
-export default function middleware(request: Request) {
+export default function middleware(request) {
   const auth = request.headers.get('authorization');
   const expected = 'Basic ' + btoa('viewer:' + (process.env.SITE_PASSWORD ?? ''));
 
