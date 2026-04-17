@@ -4,7 +4,7 @@ export const config = {
 
 export default function middleware(request) {
   const auth = request.headers.get('authorization');
-  const expected = 'Basic ' + btoa('viewer:' + (process.env.SITE_PASSWORD ?? ''));
+  const expected = 'Basic ' + btoa('viewer:' + (process.env.SITE_PASSWORD || ''));
 
   if (auth === expected) return;
 

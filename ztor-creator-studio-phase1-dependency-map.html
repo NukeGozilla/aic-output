@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor 2.0 — Creator Studio Phase 1 Dependency Map</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f7f8fa;
+    color: #1a1a1a;
+    padding: 32px 24px;
+    min-width: 1400px;
+  }
+  header {
+    max-width: 1600px;
+    margin: 0 auto 24px;
+  }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 18px; }
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+    font-size: 12px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-swatch {
+    width: 14px; height: 14px; border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.15);
+  }
+  .map-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  /* Sprint header row */
+  .sprint-header {
+    display: grid;
+    grid-template-columns: 160px repeat(4, 1fr);
+    background: #0f172a;
+    color: #fff;
+  }
+  .sprint-header > div {
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    border-right: 1px solid #1e293b;
+  }
+  .sprint-header > div:last-child { border-right: none; }
+  .sprint-header .sprint-label { font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px; }
+  .sprint-header .sprint-dates { font-size: 11px; opacity: 0.6; margin-top: 2px; }
+  /* Swim lanes */
+  .lanes-grid {
+    position: relative;
+  }
+  .lane {
+    display: grid;
+    grid-template-columns: 160px repeat(4, 1fr);
+    border-top: 1px solid #e5e7eb;
+    min-height: 140px;
+  }
+  .lane-label {
+    padding: 16px 14px;
+    background: #f9fafb;
+    font-size: 12px;
+    font-weight: 600;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+  .lane-label-team { font-size: 14px; }
+  .lane-label-role { font-size: 11px; color: #666; font-weight: 500; }
+  .sprint-cell {
+    padding: 10px 8px;
+    border-right: 1px dashed #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+  }
+  .sprint-cell:last-child { border-right: none; }
+  /* Task node */
+  .task {
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    line-height: 1.35;
+    border: 1px solid;
+    cursor: default;
+    transition: transform 0.12s, box-shadow 0.12s;
+    position: relative;
+    z-index: 2;
+  }
+  .task:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    z-index: 5;
+  }
+  .task .task-id {
+    font-weight: 700;
+    font-size: 10px;
+    opacity: 0.7;
+    margin-right: 4px;
+  }
+  .task .task-meta {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 4px;
+    display: flex;
+    gap: 8px;
+  }
+  /* Team colors */
+  .team-jeff { background: #fff3e0; border-color: #ff9800; color: #6d3900; }
+  .team-eric { background: #ffebee; border-color: #e53935; color: #7a1619; }
+  .team-troy { background: #e3f2fd; border-color: #1976d2; color: #0d3a6c; }
+  .team-kerry { background: #e8f5e9; border-color: #43a047; color: #1a4d1e; }
+  .team-cross { background: #f3e5f5; border-color: #8e24aa; color: #3e1247; }
+  .team-milestone { background: #263238; border-color: #263238; color: #fff; font-weight: 600; }
+  /* Critical path indicator */
+  .critical {
+    box-shadow: 0 0 0 2px #ffc107, 0 2px 6px rgba(255,193,7,0.35);
+  }
+  .critical-badge {
+    display: inline-block;
+    font-size: 9px;
+    padding: 1px 5px;
+    background: #ffc107;
+    color: #4a3500;
+    border-radius: 3px;
+    font-weight: 700;
+    margin-left: 4px;
+    letter-spacing: 0.3px;
+  }
+  /* Blocker badge */
+  .blocker-badge {
+    display: inline-block;
+    font-size: 9px;
+    padding: 1px 5px;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 3px;
+    font-weight: 700;
+    margin-left: 4px;
+    letter-spacing: 0.3px;
+  }
+  /* SVG arrow overlay */
+  .arrow-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  /* Footer notes */
+  .notes {
+    max-width: 1600px;
+    margin: 24px auto 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .note-box {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .note-box h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+    color: #1a1a1a;
+  }
+  .note-box ul {
+    margin-left: 16px;
+    font-size: 12px;
+    color: #444;
+    line-height: 1.6;
+  }
+  .note-box li { margin-bottom: 4px; }
+  /* Critical-path callout */
+  .critical-path-callout {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: #78350f;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .critical-path-callout strong { color: #451a03; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ztor 2.0 — Creator Studio Phase 1 Dependency Map</h1>
+  <div class="subtitle">🎯 Primary objective: <strong>Crowdfunding</strong> (per 4/16 CORE standup) · Target: Jun 11, 2026 · Premise: 5-service architecture — Loyalty deferred to AI Creator track · Source: BRD + 4/15 Dev Sync + 4/16 CORE standup + solution architect review</div>
+
+  <div class="legend">
+    <div class="legend-item"><span class="legend-swatch" style="background:#fff3e0;border-color:#ff9800"></span>Jeff (Product)</div>
+    <div class="legend-item"><span class="legend-swatch" style="background:#ffebee;border-color:#e53935"></span>Eric's team</div>
+    <div class="legend-item"><span class="legend-swatch" style="background:#e3f2fd;border-color:#1976d2"></span>Troy's team</div>
+    <div class="legend-item"><span class="legend-swatch" style="background:#e8f5e9;border-color:#43a047"></span>Kerry's team</div>
+    <div class="legend-item"><span class="legend-swatch" style="background:#f3e5f5;border-color:#8e24aa"></span>Cross-team</div>
+    <div class="legend-item"><span class="legend-swatch" style="background:#263238;border-color:#263238"></span>Milestone / Launch</div>
+    <div class="legend-item"><span class="critical-badge">CRIT</span>On critical path</div>
+    <div class="legend-item"><span class="blocker-badge">BLOCKS</span>Phase 1 blocker</div>
+  </div>
+</header>
+
+<div class="critical-path-callout">
+  <strong>🎯 Phase 1 primary objective — Crowdfunding on Store 2.0 architecture.</strong> Per 4/16 CORE standup: Binco has the foundation, IPO-important, needs 1–2 real campaign cycles for feedback. Loyalty microservice <strong>deferred</strong> (focus shifts to AI Creator). Upload uses <strong>manual BO approval</strong> (automation deferred).
+  <br><br>
+  <strong>Critical path (one line):</strong> BRD finalize → User DB migration plan (Troy) → User Service API → Auth scaffold (Eric) → Login E2E against unified User DB → Crowdfunding extraction + new Studio UI → Crowdfunding live on Store 2.0. If any of these slip, everything downstream slips.
+</div>
+
+<div class="map-container">
+  <!-- Sprint header row -->
+  <div class="sprint-header">
+    <div><div class="sprint-label">Team / Lane</div></div>
+    <div>
+      <div>Sprint 1 — Foundation</div>
+      <div class="sprint-dates">Apr 16 → Apr 30</div>
+    </div>
+    <div>
+      <div>Sprint 2 — Prototype + Extraction</div>
+      <div class="sprint-dates">May 1 → May 14</div>
+    </div>
+    <div>
+      <div>Sprint 3 — Phase 1 Features</div>
+      <div class="sprint-dates">May 15 → May 28</div>
+    </div>
+    <div>
+      <div>Sprint 4 — Hardening + Launch</div>
+      <div class="sprint-dates">May 29 → Jun 11</div>
+    </div>
+  </div>
+
+  <div class="lanes-grid">
+
+    <!-- JEFF LANE -->
+    <div class="lane">
+      <div class="lane-label">
+        <div class="lane-label-team">Jeff</div>
+        <div class="lane-label-role">Product · Scope</div>
+      </div>
+      <!-- Sprint 1 -->
+      <div class="sprint-cell">
+        <div class="task team-jeff critical" id="n-brd">
+          <span class="task-id">#1</span>BRD finalize<span class="critical-badge">CRIT</span>
+          <div class="task-meta">Size M · by Apr 22</div>
+        </div>
+        <div class="task team-jeff">
+          <span class="task-id">#7</span>Service naming locked (w/ Eric)
+          <div class="task-meta">Size S</div>
+        </div>
+      </div>
+      <!-- Sprint 2 -->
+      <div class="sprint-cell"></div>
+      <!-- Sprint 3 -->
+      <div class="sprint-cell">
+        <div class="task team-jeff">
+          🎯 Own Crowdfunding P2 May 27 sign-off (w/ Kerry)
+          <div class="task-meta">Primary objective milestone</div>
+        </div>
+      </div>
+      <!-- Sprint 4 -->
+      <div class="sprint-cell">
+        <div class="task team-jeff">
+          <span class="task-id">#30</span>UAT with pilot creators (w/ Kerry)
+          <div class="task-meta">Size L</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERIC LANE -->
+    <div class="lane">
+      <div class="lane-label">
+        <div class="lane-label-team">Eric</div>
+        <div class="lane-label-role">Fans + Infra + Auth</div>
+      </div>
+      <!-- Sprint 1 -->
+      <div class="sprint-cell">
+        <div class="task team-eric" id="n-17qs">
+          <span class="task-id">#2</span>Answer 17 arch Qs<span class="blocker-badge">BLOCKS</span>
+          <div class="task-meta">Size L · by Apr 22</div>
+        </div>
+        <div class="task team-eric critical" id="n-auth">
+          <span class="task-id">#5</span>Auth service scaffold (JWT + Redis)<span class="critical-badge">CRIT</span>
+          <div class="task-meta">Size M</div>
+        </div>
+        <div class="task team-eric" id="n-gw">
+          <span class="task-id">#6</span>Studio Gateway + BFF scaffold
+          <div class="task-meta">Size M</div>
+        </div>
+        <div class="task team-eric" id="n-obs1">
+          <span class="task-id">#8</span>Observability baseline (ES, OTel plan)
+          <div class="task-meta">Size M</div>
+        </div>
+      </div>
+      <!-- Sprint 2 -->
+      <div class="sprint-cell">
+        <div class="task team-cross critical" id="n-login">
+          <span class="task-id">#13</span>Login E2E vs unified User DB (w/ Troy)<span class="critical-badge">CRIT</span>
+          <div class="task-meta">Size M</div>
+        </div>
+        <div class="task team-eric" id="n-kafka">
+          <span class="task-id">#19</span>Kafka topic schemas
+          <div class="task-meta">Size M</div>
+        </div>
+        <div class="task team-eric" id="n-obs2">
+          <span class="task-id">#20</span>Observability deployed (Prom+Graf)<span class="blocker-badge">BLOCKS</span>
+          <div class="task-meta">Size M · hard gate</div>
+        </div>
+      </div>
+      <!-- Sprint 3 -->
+      <div class="sprint-cell">
+        <div class="task team-cross" id="n-upload">
+          <span class="task-id">#22</span>Upload flow (manual, w/ Kerry)
+          <div class="task-meta">Size M · downsized</div>
+        </div>
+        <div class="task team-cross">
+          <span class="task-id">#28</span>Revenue Dashboard (w/ Kerry)
+          <div class="task-meta">Size M · P1</div>
+        </div>
+      </div>
+      <!-- Sprint 4 -->
+      <div class="sprint-cell">
+        <div class="task team-eric">
+          <span class="task-id">#31</span>Load test
+          <div class="task-meta">Size M</div>
+        </div>
+        <div class="task team-cross">
+          <span class="task-id">#32</span>Cutover runbook (w/ Troy)
+          <div class="task-meta">Size M</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TROY LANE -->
+    <div class="lane">
+      <div class="lane-label">
+        <div class="lane-label-team">Troy</div>
+        <div class="lane-label-role">Unified User DB</div>
+      </div>
+      <!-- Sprint 1 -->
+      <div class="sprint-cell">
+        <div class="task team-troy critical" id="n-userdbplan">
+          <span class="task-id">#3</span>User DB migration plan<span class="critical-badge">CRIT</span><span class="blocker-badge">BLOCKS</span>
+          <div class="task-meta">Size L · by Apr 22</div>
+        </div>
+        <div class="task team-troy critical" id="n-userapi">
+          <span class="task-id">#4</span>User Service API contract v1<span class="critical-badge">CRIT</span>
+          <div class="task-meta">Size M</div>
+        </div>
+      </div>
+      <!-- Sprint 2 -->
+      <div class="sprint-cell">
+        <div class="task team-troy critical" id="n-dryrun">
+          <span class="task-id">#21</span>User DB migration dry run<span class="critical-badge">CRIT</span>
+          <div class="task-meta">Size L · staging</div>
+        </div>
+      </div>
+      <!-- Sprint 3 -->
+      <div class="sprint-cell">
+        <div class="task team-troy critical" id="n-prodmig">
+          <span class="task-id">#27</span>User DB production migration<span class="critical-badge">CRIT</span>
+          <div class="task-meta">Size XL · rollback ready</div>
+        </div>
+      </div>
+      <!-- Sprint 4 -->
+      <div class="sprint-cell"></div>
+    </div>
+
+    <!-- KERRY LANE -->
+    <div class="lane">
+      <div class="lane-label">
+        <div class="lane-label-team">Kerry</div>
+        <div class="lane-label-role">Creator Studio + Backend</div>
+      </div>
+      <!-- Sprint 1 -->
+      <div class="sprint-cell">
+        <div class="task team-kerry" id="n-beamco">
+          <span class="task-id">#9</span>Beamco codebase audit (Option B map)
+          <div class="task-meta">Size M</div>
+        </div>
+        <div class="task team-kerry" id="n-frontend-repo">
+          <span class="task-id">#10</span>Creator Studio frontend repo spun up
+          <div class="task-meta">Size S</div>
+        </div>
+        <div class="task team-cross" id="n-upload-contract">
+          <span class="task-id">#11</span>Upload API contract (w/ Eric)
+          <div class="task-meta">Size M</div>
+        </div>
+      </div>
+      <!-- Sprint 2 -->
+      <div class="sprint-cell">
+        <div class="task team-kerry" id="n-project">
+          <span class="task-id">#14</span>Project Service v1 + IP records sub-table<span class="blocker-badge">BLOCKS</span>
+          <div class="task-meta">Size L</div>
+        </div>
+        <div class="task team-kerry critical" id="n-cf-extract">
+          <span class="task-id">#15</span>🎯 Crowdfunding extracted from Beamco<span class="critical-badge">CRIT</span>
+          <div class="task-meta">Size L · primary objective</div>
+        </div>
+        <div class="task team-kerry" id="n-shell">
+          <span class="task-id">#17</span>Studio frontend shell (+ Crowdfunding entry)
+          <div class="task-meta">Size M</div>
+        </div>
+      </div>
+      <!-- Sprint 3 -->
+      <div class="sprint-cell">
+        <div class="task team-kerry critical" id="n-cf-ui">
+          <span class="task-id">#24</span>🎯 Crowdfunding in new Studio UI<span class="critical-badge">CRIT</span>
+          <div class="task-meta">Size L · primary deliverable</div>
+        </div>
+        <div class="task team-kerry">
+          <span class="task-id">#22</span>Upload flow (manual approval)
+          <div class="task-meta">Size M · downsized</div>
+        </div>
+        <div class="task team-kerry">
+          <span class="task-id">#26</span>IP records written on upload
+          <div class="task-meta">Size S</div>
+        </div>
+        <div class="task team-milestone" id="n-cf-p2">
+          <span class="task-id">#29</span>Crowdfunding P2 live May 27
+          <div class="task-meta">On new arch</div>
+        </div>
+      </div>
+      <!-- Sprint 4 -->
+      <div class="sprint-cell">
+        <div class="task team-milestone">
+          <span class="task-id">#33</span>🚀 Production deploy
+          <div class="task-meta">studio.ztor.com live</div>
+        </div>
+        <div class="task team-cross">
+          <span class="task-id">#34</span>Post-launch triage (all teams)
+          <div class="task-meta">Size M · 7-day window</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEDGER LANE (cross-team, TBD owner) -->
+    <div class="lane">
+      <div class="lane-label">
+        <div class="lane-label-team">Ledger</div>
+        <div class="lane-label-role">Owner TBD (Eric or new)</div>
+      </div>
+      <div class="sprint-cell"></div>
+      <div class="sprint-cell">
+        <div class="task team-cross" id="n-ledger">
+          <span class="task-id">#18</span>Ledger Service skeleton (append-only, Kafka consumer)
+          <div class="task-meta">Size L · combines Waterfall + Compliance + Audit + Config</div>
+        </div>
+      </div>
+      <div class="sprint-cell"></div>
+      <div class="sprint-cell"></div>
+    </div>
+
+  </div>
+
+  <!-- SVG arrow overlay — drawn after layout -->
+  <svg class="arrow-layer" id="arrowLayer" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+<div class="notes">
+  <div class="note-box">
+    <h3>🔗 Key cross-lane dependencies</h3>
+    <ul>
+      <li><strong>#3 User DB plan</strong> blocks <strong>#4 User API</strong>, which blocks <strong>#5 Auth scaffold</strong> → blocks <strong>#13 Login E2E</strong></li>
+      <li><strong>🎯 Crowdfunding critical path:</strong> #9 Beamco audit → #15 Extraction → #24 Studio UI → #29 P2 live on new arch (May 27)</li>
+      <li><strong>#11 Upload API contract</strong> blocks <strong>#22 Upload flow integration</strong> (cross-team; manual approval scope only)</li>
+      <li><strong>#13 Login E2E</strong> is the architecture-proof milestone — everything Sprint 3 assumes it works</li>
+      <li><strong>#20 Observability deployed</strong> is a hard gate before Phase 1 features ship in Sprint 3</li>
+      <li><strong>#21 Dry run</strong> is the early-warning signal for <strong>#27 Production migration</strong></li>
+    </ul>
+  </div>
+  <div class="note-box">
+    <h3>⚠️ Risk concentrations</h3>
+    <ul>
+      <li><strong>Beamco Crowdfunding extraction (#15)</strong> is now the primary delivery risk — it is both the most valuable feature AND of unknown extraction complexity. Fallback: run Phase 1 Crowdfunding on existing Beamco stack, move extraction to Phase 2. Surface to Jeff early if #15 stalls.</li>
+      <li><strong>Troy's User DB critical path</strong> — Sprint 1, 2, 3 all have Troy blocking items. If Troy's team is under-resourced, the whole plan slides.</li>
+      <li><strong>Ledger Service owner undefined</strong> — Vercel doc says "New Team," no team stood up. If Eric absorbs, his Sprint 2 load doubles.</li>
+      <li><strong>Crowdfunding P2 (May 27)</strong> is now a Phase 1 feature milestone, not a side coordination. Any slip moves Phase 1 delivery with it.</li>
+      <li><strong>17 arch Qs unanswered</strong> — blocks BRD sign-off, which blocks everything else. Must clear by Apr 22.</li>
+      <li><strong>Loyalty de-scope risk</strong> — if AI Creator team decides they don't need Loyalty in their phase either, the service might sit unbuilt for too long. Not a Phase 1 risk but worth flagging.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// SVG arrow generator — runs after DOM loaded
+// Draws dependency arrows between task nodes
+window.addEventListener('load', () => {
+  const svg = document.getElementById('arrowLayer');
+  const container = document.querySelector('.map-container');
+  const containerRect = container.getBoundingClientRect();
+
+  // Set SVG size to match container
+  svg.setAttribute('width', containerRect.width);
+  svg.setAttribute('height', containerRect.height);
+  svg.setAttribute('viewBox', `0 0 ${containerRect.width} ${containerRect.height}`);
+
+  // Define arrowhead marker
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  defs.innerHTML = `
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+    </marker>
+    <marker id="arrow-crit" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#d97706" />
+    </marker>
+  `;
+  svg.appendChild(defs);
+
+  // Dependencies: [fromId, toId, isCritical]
+  const deps = [
+    ['n-brd', 'n-17qs', false],
+    ['n-brd', 'n-userdbplan', true],
+    ['n-userdbplan', 'n-userapi', true],
+    ['n-userapi', 'n-auth', true],
+    ['n-auth', 'n-gw', false],
+    ['n-auth', 'n-login', true],
+    ['n-userapi', 'n-login', true],
+    ['n-gw', 'n-login', false],
+    ['n-userdbplan', 'n-dryrun', true],
+    ['n-dryrun', 'n-prodmig', true],
+    ['n-beamco', 'n-project', false],
+    ['n-beamco', 'n-cf-extract', false],
+    ['n-frontend-repo', 'n-shell', false],
+    ['n-shell', 'n-login', false],
+    ['n-upload-contract', 'n-upload', false],
+    ['n-project', 'n-upload', false],
+    ['n-cf-extract', 'n-upload', false],
+    ['n-kafka', 'n-ledger', false],
+    ['n-obs1', 'n-obs2', false],
+    ['n-login', 'n-prodmig', false],
+    ['n-cf-extract', 'n-cf-ui', true],
+    ['n-cf-ui', 'n-cf-p2', true],
+  ];
+
+  function center(el, edge = 'right') {
+    const r = el.getBoundingClientRect();
+    const x = edge === 'right' ? r.right : edge === 'left' ? r.left : r.left + r.width / 2;
+    const y = r.top + r.height / 2;
+    return { x: x - containerRect.left, y: y - containerRect.top };
+  }
+
+  deps.forEach(([fromId, toId, critical]) => {
+    const from = document.getElementById(fromId);
+    const to = document.getElementById(toId);
+    if (!from || !to) return;
+
+    const p1 = center(from, 'right');
+    const p2 = center(to, 'left');
+
+    // Curved path
+    const dx = p2.x - p1.x;
+    const midX = p1.x + dx * 0.5;
+    const d = `M ${p1.x} ${p1.y} C ${midX} ${p1.y}, ${midX} ${p2.y}, ${p2.x - 4} ${p2.y}`;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', critical ? '#d97706' : '#94a3b8');
+    path.setAttribute('stroke-width', critical ? '2.2' : '1.4');
+    path.setAttribute('stroke-dasharray', critical ? '' : '4 3');
+    path.setAttribute('marker-end', critical ? 'url(#arrow-crit)' : 'url(#arrow)');
+    path.setAttribute('opacity', critical ? '0.85' : '0.55');
+    svg.appendChild(path);
+  });
+});
+
+// Redraw arrows on window resize
+window.addEventListener('resize', () => {
+  const svg = document.getElementById('arrowLayer');
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  window.dispatchEvent(new Event('load'));
+});
+</script>
+
+</body>
+</html>
