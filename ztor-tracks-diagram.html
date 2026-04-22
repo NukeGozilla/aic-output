@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ztor 1.0/2.0 — Project Stream Planning Overview</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f4f5f7;
+      color: #1a1a2e;
+      padding: 40px 24px;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .page-header h1 {
+      font-size: 34px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 10px;
+    }
+
+    .page-header p {
+      font-size: 15px;
+      color: #6b7280;
+    }
+
+    /* Tab navigation */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 12px 28px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      background: white;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.t1 {
+      color: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .tab-btn.t1.active {
+      background: #2563eb;
+      color: white;
+    }
+
+    .tab-btn.t2 {
+      color: #7c3aed;
+      border-color: #7c3aed;
+    }
+
+    .tab-btn.t2.active {
+      background: #7c3aed;
+      color: white;
+    }
+
+    .tab-btn.t3 {
+      color: #059669;
+      border-color: #059669;
+    }
+
+    .tab-btn.t3.active {
+      background: #059669;
+      color: white;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    }
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card-sub {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 36px;
+    }
+
+    /* ─── TRACK 1: TIMELINE ─── */
+    .timeline-wrap {
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .timeline {
+      min-width: 900px;
+      position: relative;
+    }
+
+    .tl-months {
+      display: grid;
+      grid-template-columns: 110px 1fr 1fr 1fr;
+      gap: 0;
+      margin-bottom: 10px;
+    }
+
+    .tl-month-label {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 6px 0;
+      border-left: 1px dashed #e5e7eb;
+    }
+
+    .tl-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 0;
+    }
+
+    .tl-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      padding-right: 16px;
+      text-align: right;
+    }
+
+    .tl-bar-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      position: relative;
+      height: 46px;
+      border-left: 1px dashed #e5e7eb;
+    }
+
+    .tl-col {
+      border-right: 1px dashed #e5e7eb;
+    }
+
+    .tl-bar {
+      position: absolute;
+      height: 36px;
+      top: 5px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tl-milestone {
+      position: absolute;
+      top: 2px;
+      width: 2px;
+      height: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tl-milestone-line {
+      width: 2px;
+      flex: 1;
+    }
+
+    .tl-milestone-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 2px;
+    }
+
+    .tl-milestone-tag {
+      position: absolute;
+      top: -22px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+
+    .milestones-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      margin-top: 16px;
+    }
+
+    .milestone-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 4px;
+    }
+
+    .milestone-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .milestone-chip .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ─── TRACK 2: ARCH FLOW ─── */
+    .arch-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .arch-node {
+      border-radius: 12px;
+      padding: 14px 24px;
+      width: 320px;
+      text-align: center;
+      position: relative;
+    }
+
+    .arch-node .node-port {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+      opacity: 0.7;
+    }
+
+    .arch-node .node-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .arch-node .node-desc {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .arch-node .node-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-top: 5px;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .arch-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin: 4px 0;
+    }
+
+    .arch-arrow .arrow-line {
+      width: 2px;
+      height: 24px;
+    }
+
+    .arch-arrow .arrow-head {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+    }
+
+    .arch-arrow .arrow-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #9ca3af;
+      margin-top: -16px;
+      margin-left: 14px;
+    }
+
+    /* side note */
+    .future-note {
+      margin-top: 28px;
+      border: 2px dashed #e5e7eb;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      background: #fafafa;
+    }
+
+    .future-note .fn-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .future-note .fn-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+
+    .future-note .fn-body {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    /* ─── TRACK 3: SPLIT ARCH ─── */
+    .t3-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .t3-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .t3-node {
+      border-radius: 12px;
+      padding: 14px 18px;
+      text-align: center;
+      flex: 1;
+      max-width: 200px;
+    }
+
+    .t3-node .node-port {
+      font-size: 10px;
+      font-weight: 700;
+      opacity: 0.7;
+      letter-spacing: 0.06em;
+      margin-bottom: 2px;
+    }
+
+    .t3-node .node-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .t3-node .node-desc {
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    .t3-node .node-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-top: 5px;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .t3-arrow-down {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 4px 0;
+    }
+
+    .t3-arrow-down .al {
+      width: 2px;
+      height: 20px;
+    }
+
+    .t3-arrow-down .ah {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+    }
+
+    .t3-split-arrows {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      width: 300px;
+      position: relative;
+      height: 40px;
+      margin: 0 auto;
+    }
+
+    .split-line {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 40px;
+    }
+
+    .split-branch {
+      position: absolute;
+      top: 20px;
+      width: 50%;
+      height: 2px;
+    }
+
+    .split-branch.left {
+      right: 50%;
+    }
+
+    .split-branch.right {
+      left: 50%;
+    }
+
+    .split-down {
+      position: absolute;
+      top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .split-down.left {
+      left: 0;
+    }
+
+    .split-down.right {
+      right: 0;
+    }
+
+    .split-down .al {
+      width: 2px;
+      height: 20px;
+    }
+
+    .split-down .ah {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    /* colors */
+    .c-eric {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 2px solid #93c5fd;
+    }
+
+    .c-kerry {
+      background: #d1fae5;
+      color: #065f46;
+      border: 2px solid #6ee7b7;
+    }
+
+    .c-new {
+      background: #fff7ed;
+      color: #9a3412;
+      border: 2px solid #fdba74;
+    }
+
+    .c-infra {
+      background: #f3f4f6;
+      color: #374151;
+      border: 2px solid #d1d5db;
+    }
+
+    .c-frontend {
+      background: #ede9fe;
+      color: #5b21b6;
+      border: 2px solid #c4b5fd;
+    }
+
+    .c-old-1 {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 2px solid #bfdbfe;
+    }
+
+    .c-freeze {
+      background: #fef3c7;
+      color: #92400e;
+      border: 2px solid #fde68a;
+    }
+
+    .arrow-blue {
+      background: #3b82f6;
+    }
+
+    .arrow-purple {
+      background: #8b5cf6;
+    }
+
+    .arrow-green {
+      background: #10b981;
+    }
+
+    .arrow-gray {
+      background: #d1d5db;
+    }
+
+    .ah-blue {
+      border-top: 7px solid #3b82f6;
+    }
+
+    .ah-purple {
+      border-top: 7px solid #8b5cf6;
+    }
+
+    .ah-green {
+      border-top: 7px solid #10b981;
+    }
+
+    .ah-gray {
+      border-top: 7px solid #d1d5db;
+    }
+
+    .ld-eric {
+      background: #3b82f6;
+    }
+
+    .ld-kerry {
+      background: #10b981;
+    }
+
+    .ld-new {
+      background: #f97316;
+    }
+
+    .ld-infra {
+      background: #9ca3af;
+    }
+
+    .ld-1x {
+      background: #6366f1;
+    }
+
+    /* Milestone markers on swimlanes */
+    .ms {
+      position: absolute;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+      transform: translateX(-50%);
+    }
+
+    .ms-label {
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+      padding: 2px 6px;
+      border-radius: 4px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .ms-diamond {
+      width: 9px;
+      height: 9px;
+      transform: rotate(45deg);
+      margin: 2px 0;
+      flex-shrink: 0;
+    }
+
+    .ms-line {
+      width: 2px;
+      flex: 1;
+    }
+
+    .tl-bar-wrap.has-ms {
+      overflow: visible;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-header">
+    <h1>Ztor 1.0/2.0 — Project Stream Planning Overview</h1>
+    <p>Resource & project planning · April 2026</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn t1 active" onclick="switchTab('t1')">Stream 1 — 1.0 Maintenance &amp; Handoff</button>
+    <button class="tab-btn t2" onclick="switchTab('t2')">Stream 2 — 2.0 Frontend Redesign</button>
+    <button class="tab-btn t3" onclick="switchTab('t3')">Stream 3 — Creator Studio Phase 1</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TRACK 1 -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="t1" class="panel active">
+    <div class="card">
+      <div class="card-title" style="color:#2563eb">Track 1 — Ztor 1.0 Maintenance &amp; Deliverables by Stage</div>
+      <div class="card-sub">May → July · What needs to be built at each stage · team assignment TBD by Eric</div>
+
+      <div class="timeline-wrap">
+        <div class="timeline">
+
+          <!-- Month labels -->
+          <div class="tl-months">
+            <div></div>
+            <div class="tl-month-label">May</div>
+            <div class="tl-month-label">June</div>
+            <div class="tl-month-label">July</div>
+          </div>
+
+          <!-- 1.0 Maintenance row -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:11px">1.0 Maint</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:66%;background:#3b82f6;">1.0 Maintenance + AIC + Crowdfund Simple
+              </div>
+              <!-- May 1: AIC Phase 2 -->
+              <div class="ms" style="left:1%">
+                <div class="ms-label" style="background:#1d4ed8;color:white;">May 1<br>AIC P2</div>
+                <div class="ms-diamond" style="background:#1d4ed8;"></div>
+                <div class="ms-line" style="background:#1d4ed8;opacity:0.5;height:14px;"></div>
+              </div>
+              <!-- May 31: Crowdfund simple -->
+              <div class="ms" style="left:32%">
+                <div class="ms-label" style="background:#d97706;color:white;">May 31<br>CF Simple</div>
+                <div class="ms-diamond" style="background:#d97706;"></div>
+                <div class="ms-line" style="background:#d97706;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2.0 Frontend row -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:11px">2.0 Frontend</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:33%;background:#8b5cf6;">UI build</div>
+              <div class="tl-bar" style="left:33%;width:34%;background:#c4b5fd;color:#3b0764;">BFF + Gateway scoping</div>
+              <div class="tl-bar" style="left:67%;width:10%;background:#7c3aed;font-size:10px;">QA</div>
+              <!-- ~June 1: Static demo for Alex -->
+              <div class="ms" style="left:34%">
+                <div class="ms-label" style="background:#7c3aed;color:white;">~Jun 1<br>Static Demo</div>
+                <div class="ms-diamond" style="background:#7c3aed;"></div>
+                <div class="ms-line" style="background:#7c3aed;opacity:0.5;height:14px;"></div>
+              </div>
+              <!-- July 1: 2.0 Beta -->
+              <div class="ms" style="left:67%">
+                <div class="ms-label" style="background:#6d28d9;color:white;">Jul 1<br>2.0 Beta</div>
+                <div class="ms-diamond" style="background:#6d28d9;"></div>
+                <div class="ms-line" style="background:#6d28d9;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CS Foundation row — starts May 1 -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:11px">2.0 Foundation</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:90%;background:#059669;">CS foundation — starts May 1</div>
+              <!-- May 1: Foundation kicks off -->
+              <div class="ms" style="left:1%">
+                <div class="ms-label" style="background:#047857;color:white;">May 1<br>Start</div>
+                <div class="ms-diamond" style="background:#047857;"></div>
+                <div class="ms-line" style="background:#047857;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Creator Studio App row -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:11px">2.0 CS App</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-bar" style="left:33%;width:57%;background:#10b981;">Creator Studio + eShop service (Kerry's team)</div>
+              <!-- June 1: CS App build begins -->
+              <div class="ms" style="left:33%">
+                <div class="ms-label" style="background:#065f46;color:white;">Jun 1<br>Build</div>
+                <div class="ms-diamond" style="background:#065f46;"></div>
+                <div class="ms-line" style="background:#065f46;opacity:0.5;height:14px;"></div>
+              </div>
+              <!-- July 15: Creator Studio launch -->
+              <div class="ms" style="left:83%">
+                <div class="ms-label" style="background:#065f46;color:white;">Jul 15<br>Launch</div>
+                <div class="ms-diamond" style="background:#065f46;"></div>
+                <div class="ms-line" style="background:#065f46;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Crowdfund milestones row -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:10px;color:#9ca3af">Crowdfund</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="ms" style="left:1%">
+                <div class="ms-label" style="background:#d97706;color:white;">Apr 30<br>Dummy</div>
+                <div class="ms-diamond" style="background:#d97706;"></div>
+                <div class="ms-line" style="background:#d97706;opacity:0.5;height:14px;"></div>
+              </div>
+              <div class="ms" style="left:32%">
+                <div class="ms-label" style="background:#b45309;color:white;">May 31<br>Simple</div>
+                <div class="ms-diamond" style="background:#b45309;"></div>
+                <div class="ms-line" style="background:#b45309;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature freeze -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:10px;color:#9ca3af">1.0 freeze</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-col"></div>
+              <div class="tl-bar"
+                style="left:56%;width:12%;background:#f59e0b;opacity:0.9;border:2px dashed #d97706;color:#1a1a2e;font-size:10px">
+                Feature freeze</div>
+              <div class="ms" style="left:56%">
+                <div class="ms-label" style="background:#b45309;color:white;">~Jun 16<br>Freeze</div>
+                <div class="ms-diamond" style="background:#b45309;"></div>
+                <div class="ms-line" style="background:#b45309;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /timeline -->
+      </div><!-- /wrap -->
+
+      <!-- Milestone chips -->
+      <div style="margin-top:20px">
+        <div
+          style="font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">
+          Key milestones</div>
+        <div class="milestone-list">
+          <div class="milestone-chip" style="background:#eff6ff;color:#1e40af">
+            <div class="dot" style="background:#3b82f6"></div>May 1 — AIC Phase 2 ships
+          </div>
+          <div class="milestone-chip" style="background:#d1fae5;color:#065f46">
+            <div class="dot" style="background:#059669"></div>May 1 — CS foundation kicks off
+          </div>
+          <div class="milestone-chip" style="background:#fffbeb;color:#92400e">
+            <div class="dot" style="background:#f59e0b"></div>May 31 — Crowdfund simple (1.0)
+          </div>
+          <div class="milestone-chip" style="background:#ede9fe;color:#5b21b6">
+            <div class="dot" style="background:#7c3aed"></div>~June 1 — Static demo ready for Alex (3 flows: crowdfund, content, AIC)
+          </div>
+          <div class="milestone-chip" style="background:#fffbeb;color:#92400e">
+            <div class="dot" style="background:#f59e0b"></div>~June 16 — Feature freeze on 1.0
+          </div>
+          <div class="milestone-chip" style="background:#ede9fe;color:#5b21b6">
+            <div class="dot" style="background:#8b5cf6"></div>July 1 — 2.0 beta
+          </div>
+          <div class="milestone-chip" style="background:#d1fae5;color:#065f46">
+            <div class="dot" style="background:#10b981"></div>July 15 — Creator Studio Phase 1
+          </div>
+        </div>
+      </div>
+
+      <div class="future-note" style="margin-top:24px">
+        <div class="fn-icon">📌</div>
+        <div>
+          <div class="fn-title">Team assignment TBD by Eric</div>
+          <div class="fn-body">The rows above show what needs to be built at each stage — not who builds it. Eric
+            decides how to allocate his old team and new team across 1.0 maintenance, 2.0 frontend, and CS foundation.
+            CS foundation must begin May 1 regardless of assignment to hit the July 15 target.</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot ld-eric"></div>1.0 / 2.0 work
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#8b5cf6"></div>2.0 frontend
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot ld-kerry"></div>CS App (Kerry)
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#059669"></div>CS Foundation
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#f59e0b"></div>Feature freeze
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TRACK 2 -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="t2" class="panel">
+    <div class="card">
+      <div class="card-title" style="color:#7c3aed">Stream 2 — Frontend Redesign · Beta July 1</div>
+      <div class="card-sub">New UI on a BFF proxy layer · 1.0 backend stays untouched · 2.0-compatible contracts from
+        day one</div>
+
+      <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
+
+        <!-- Architecture flow -->
+        <div style="flex:1;min-width:280px">
+          <div
+            style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px">
+            Architecture</div>
+
+          <div class="arch-flow">
+
+            <div class="arch-node c-frontend">
+              <div class="node-title">Ztor Fans App</div>
+              <div class="node-desc">New 2.0 UI design · same frontend stack</div>
+              <div class="node-badge">LEAD: ERIC</div>
+            </div>
+
+            <div class="arch-arrow">
+              <div class="arrow-line arrow-purple"></div>
+              <div class="arrow-head ah-purple"></div>
+            </div>
+
+            <div class="arch-node c-infra">
+              <div class="node-port">PORT 8001</div>
+              <div class="node-title">Fans Gateway</div>
+              <div class="node-desc">JWT validation · user/guest routing · rate limiting</div>
+              <div class="node-badge" style="background:rgba(107,114,128,0.15);color:#374151">INFRA — NEW TEAM</div>
+            </div>
+
+            <div class="arch-arrow">
+              <div class="arrow-line arrow-gray"></div>
+              <div class="arrow-head ah-gray"></div>
+            </div>
+
+            <div class="arch-node c-infra">
+              <div class="node-port">PORT 8500</div>
+              <div class="node-title">Consul Cluster</div>
+              <div class="node-desc">Service discovery · 3 nodes · enables future microservice routing</div>
+              <div class="node-badge" style="background:rgba(107,114,128,0.15);color:#374151">INFRA — NEW TEAM</div>
+            </div>
+
+            <div class="arch-arrow">
+              <div class="arrow-line arrow-gray"></div>
+              <div class="arrow-head ah-gray"></div>
+            </div>
+
+            <div class="arch-node c-frontend" style="border-color:#a78bfa;background:#f5f3ff">
+              <div class="node-port">PORT 8096</div>
+              <div class="node-title">Fans BFF</div>
+              <div class="node-desc">Proxies to 1.0 backend · API contracts designed 2.0-compatible</div>
+              <div class="node-badge">KEY PIECE — ERIC</div>
+            </div>
+
+            <div class="arch-arrow">
+              <div class="arrow-line arrow-gray"></div>
+              <div class="arrow-head ah-gray"></div>
+              <div class="arrow-label"
+                style="font-size:10px;font-weight:600;color:#9ca3af;margin-left:12px;margin-top:-14px">proxy →</div>
+            </div>
+
+            <div class="arch-node c-old-1">
+              <div class="node-title">1.0 Backend</div>
+              <div class="node-desc">VOD · live · feed · PPV · unchanged</div>
+              <div class="node-badge" style="background:rgba(37,99,235,0.1);color:#1e40af">UNCHANGED</div>
+            </div>
+
+            <div class="arch-arrow">
+              <div class="arrow-line arrow-gray"></div>
+              <div class="arrow-head ah-gray"></div>
+            </div>
+
+            <div class="arch-node c-infra">
+              <div class="node-title">Existing Databases</div>
+              <div class="node-desc">Content DB · User DB · Revenue Ledger</div>
+              <div class="node-badge" style="background:rgba(107,114,128,0.15);color:#374151">UNCHANGED</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right side: scope + notes -->
+        <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:16px">
+
+          <div>
+            <div
+              style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px">
+              Beta scope (July 1)</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div
+                style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#f5f3ff;border:1px solid #ddd6fe">
+                <div style="color:#7c3aed;font-size:16px">✓</div>
+                <div style="font-size:12px;font-weight:600;color:#374151">VOD, live, feed, PPV</div>
+              </div>
+              <div
+                style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#f5f3ff;border:1px solid #ddd6fe">
+                <div style="color:#7c3aed;font-size:16px">✓</div>
+                <div style="font-size:12px;font-weight:600;color:#374151">Full 2.0 UI redesign</div>
+              </div>
+              <div
+                style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#f5f3ff;border:1px solid #ddd6fe">
+                <div style="color:#7c3aed;font-size:16px">✓</div>
+                <div style="font-size:12px;font-weight:600;color:#374151">Crowdfunding simple version</div>
+              </div>
+              <div
+                style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#f9fafb;border:1px dashed #e5e7eb">
+                <div style="color:#9ca3af;font-size:16px">✗</div>
+                <div style="font-size:12px;font-weight:600;color:#9ca3af">Loyalty → out of scope for Phase 1</div>
+              </div>
+              <div
+                style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#f9fafb;border:1px dashed #e5e7eb">
+                <div style="color:#9ca3af;font-size:16px">✗</div>
+                <div style="font-size:12px;font-weight:600;color:#9ca3af">TV App, eShop → post-beta</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div
+              style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px">
+              Infra to build</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="padding:8px 12px;border-radius:8px;background:#f3f4f6;font-size:12px">
+                <span style="font-weight:700;color:#374151">8001 Fans Gateway</span><br>
+                <span style="color:#6b7280">~1 week · new service</span>
+              </div>
+              <div style="padding:8px 12px;border-radius:8px;background:#f3f4f6;font-size:12px">
+                <span style="font-weight:700;color:#374151">8500 Consul</span><br>
+                <span style="color:#6b7280">~3 days · standard setup · include now</span>
+              </div>
+              <div
+                style="padding:8px 12px;border-radius:8px;background:#ede9fe;border:1px solid #c4b5fd;font-size:12px">
+                <span style="font-weight:700;color:#5b21b6">8096 Fans BFF ← critical</span><br>
+                <span style="color:#7c3aed">~2 weeks · API contract design is key</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="future-note">
+            <div class="fn-icon">🔀</div>
+            <div>
+              <div class="fn-title">Migration path built in</div>
+              <div class="fn-body">BFF contracts must be designed for 2.0 — not shaped around 1.0 endpoints. When
+                microservices land, BFF reroutes silently. Frontend code never changes.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#8b5cf6"></div>Frontend (Eric)
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot ld-infra"></div>Infrastructure (new team)
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#3b82f6"></div>1.0 backend (unchanged)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- TRACK 3 -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="t3" class="panel">
+    <div class="card">
+      <div class="card-title" style="color:#059669">Stream 3 — Creator Studio Phase 1 · July 15</div>
+      <div class="card-sub">New system foundation · minimum viable microservices · Eric's team (foundation) + Kerry's team (application + eShop)</div>
+
+      <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+
+        <!-- Architecture -->
+        <div style="flex:1;min-width:280px">
+          <div
+            style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px">
+            Architecture</div>
+
+          <div class="t3-layout">
+
+            <div class="arch-node c-kerry" style="width:320px">
+              <div class="node-title">Ztor Creator Studio</div>
+              <div class="node-desc">studio.ztor.com · Upload · Merch · eShop · Revenue</div>
+              <div class="node-badge">LEAD: KERRY</div>
+            </div>
+
+            <div class="arch-arrow">
+              <div class="arrow-line arrow-green"></div>
+              <div class="arrow-head ah-green"></div>
+            </div>
+
+            <div class="arch-node c-infra" style="width:320px">
+              <div class="node-port">PORT 8002</div>
+              <div class="node-title">Studio Gateway</div>
+              <div class="node-desc">JWT + creator/admin roles · mTLS to services</div>
+              <div class="node-badge" style="background:rgba(107,114,128,0.15);color:#374151">INFRA</div>
+            </div>
+
+            <div class="arch-arrow">
+              <div class="arrow-line arrow-gray"></div>
+              <div class="arrow-head ah-gray"></div>
+            </div>
+
+            <div class="arch-node c-kerry" style="width:320px;background:#ecfdf5;border-color:#6ee7b7">
+              <div class="node-port">PORT 8097</div>
+              <div class="node-title">Studio BFF</div>
+              <div class="node-desc">Aggregates creator data · routes to microservices</div>
+              <div class="node-badge">KERRY</div>
+            </div>
+
+            <div class="arch-arrow">
+              <div class="arrow-line arrow-green"></div>
+              <div class="arrow-head ah-green"></div>
+            </div>
+
+            <!-- Split row -->
+            <div style="display:flex;gap:16px;justify-content:center;width:100%;margin-top:4px">
+
+              <!-- Left branch: Auth -->
+              <div style="display:flex;flex-direction:column;align-items:center;flex:1;max-width:180px">
+                <div style="width:2px;height:20px;background:#10b981"></div>
+                <div
+                  style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #10b981">
+                </div>
+                <div class="arch-node c-kerry" style="width:100%;margin-top:4px">
+                  <div class="node-port">PORT 8092</div>
+                  <div class="node-title">Auth / Identity</div>
+                  <div class="node-desc">Beamco auth unified login · KYC · roles</div>
+                  <div class="node-badge">KERRY → NEW TEAM AT M2</div>
+                </div>
+              </div>
+
+              <!-- Right branch: eShop -->
+              <div style="display:flex;flex-direction:column;align-items:center;flex:1;max-width:180px">
+                <div style="width:2px;height:20px;background:#10b981"></div>
+                <div
+                  style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #10b981">
+                </div>
+                <div class="arch-node c-kerry" style="width:100%;margin-top:4px">
+                  <div class="node-port">PORT 8088</div>
+                  <div class="node-title">eShop / Commerce</div>
+                  <div class="node-desc">Products · inventory · purchase events · delivery integration</div>
+                  <div class="node-badge">KERRY</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Shared infra below -->
+            <div style="margin-top:24px;width:100%">
+              <div
+                style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;text-align:center">
+                Creator Studio Foundation (Eric's team · start May 1)</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+                <div class="arch-node c-eric"
+                  style="width:auto;padding:10px 14px;flex:1;min-width:120px;max-width:160px">
+                  <div class="node-port">8082</div>
+                  <div class="node-title" style="font-size:12px">Content &amp; IP Binding</div>
+                  <div class="node-badge">ERIC</div>
+                </div>
+                <div class="arch-node c-eric"
+                  style="width:auto;padding:10px 14px;flex:1;min-width:120px;max-width:160px">
+                  <div class="node-port">8083</div>
+                  <div class="node-title" style="font-size:12px">Revenue Event</div>
+                  <div class="node-badge">ERIC</div>
+                </div>
+                <div class="arch-node c-eric"
+                  style="width:auto;padding:10px 14px;flex:1;min-width:120px;max-width:160px">
+                  <div class="node-port">8085</div>
+                  <div class="node-title" style="font-size:12px">Entitlement &amp; Access</div>
+                  <div class="node-badge">ERIC</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Kafka + DB -->
+            <div style="margin-top:16px;width:100%;text-align:center">
+              <div style="width:2px;height:20px;background:#d1d5db;margin:0 auto"></div>
+              <div
+                style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #d1d5db;margin:0 auto">
+              </div>
+              <div class="arch-node c-infra" style="width:320px;margin:4px auto 0">
+                <div class="node-port">PORT 9092</div>
+                <div class="node-title">Kafka Event Bus</div>
+                <div class="node-desc">Async events between all services</div>
+                <div class="node-badge" style="background:rgba(107,114,128,0.15);color:#374151">NEW TEAM GOVERNS</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: scope + timeline -->
+        <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:16px">
+
+          <div>
+            <div
+              style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px">
+              Phase 1 scope</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div
+                style="padding:8px 12px;border-radius:8px;background:#d1fae5;border:1px solid #6ee7b7;font-size:12px">
+                <span style="font-weight:700;color:#065f46">✓ eShop service</span><br>
+                <span style="color:#047857">Products · inventory · purchase events · delivery + payment integration</span>
+              </div>
+              <div
+                style="padding:8px 12px;border-radius:8px;background:#fefce8;border:1px dashed #fde047;font-size:12px">
+                <span style="font-weight:700;color:#854d0e">? Creator upload flow — TBD</span><br>
+                <span style="color:#a16207">Most likely Phase 2 · confirm with Eric</span>
+              </div>
+              <div
+                style="padding:8px 12px;border-radius:8px;background:#fefce8;border:1px dashed #fde047;font-size:12px">
+                <span style="font-weight:700;color:#854d0e">? Loyalty Points service — TBD</span><br>
+                <span style="color:#a16207">Most likely Phase 2 · out of scope for now</span>
+              </div>
+              <div
+                style="padding:8px 12px;border-radius:8px;background:#f9fafb;border:1px dashed #e5e7eb;font-size:12px">
+                <span style="font-weight:700;color:#9ca3af">✗ IP Bank UI & Marketplace → Phase 2</span>
+              </div>
+              <div
+                style="padding:8px 12px;border-radius:8px;background:#f9fafb;border:1px dashed #e5e7eb;font-size:12px">
+                <span style="font-weight:700;color:#9ca3af">✗ Events / Ticketing → Phase 2</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div
+              style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px">
+              Critical path</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;gap:10px;align-items:center">
+                <div style="width:80px;font-size:11px;font-weight:700;color:#059669;flex-shrink:0">May 1</div>
+                <div style="font-size:12px;color:#374151">Eric's team starts CS foundation work</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <div style="width:80px;font-size:11px;font-weight:700;color:#059669;flex-shrink:0">June 1</div>
+                <div style="font-size:12px;color:#374151">Kerry's team: Auth + Crowdfund service build</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <div style="width:80px;font-size:11px;font-weight:700;color:#6b7280;flex-shrink:0">~June 30</div>
+                <div style="font-size:12px;color:#374151">Integration + QA window</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center">
+                <div style="width:80px;font-size:11px;font-weight:700;color:#059669;flex-shrink:0">July 15</div>
+                <div style="font-size:12px;font-weight:700;color:#065f46">Creator Studio Phase 1 launch</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="future-note">
+            <div class="fn-icon">⚠️</div>
+            <div>
+              <div class="fn-title">Foundation must start June 1 — not July 2</div>
+              <div class="fn-body">Eric's team can't context-switch from 2.0 beta directly into Creator Studio
+                foundation without a gap. CS foundation work begins June 1 in parallel with 2.0 final QA — otherwise
+                July 15 has zero buffer.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-dot ld-eric"></div>Eric's team
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot ld-kerry"></div>Kerry's team
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot ld-infra"></div>Infrastructure / new team
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(id) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelector(`.tab-btn.${id}`).classList.add('active');
+    }
+  </script>
+</body>
+
+</html>
