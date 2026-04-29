@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ztor.com — Site Map</title>
+<style>
+  :root {
+    --paper:    #efece2;
+    --paper-2:  #e7e4d8;
+    --ink:      #1f1f1f;
+    --ink-2:    #4a4a4a;
+    --muted:    #5a5a5a;
+    --line:     #2a2a2a;
+    --yellow:   #ffd966;
+    --yellow-2: #f7c83f;
+    --orange:   #ff9a3d;
+    --pink:     #ffb1c1;
+    --blue:     #b9d8ff;
+    --purple:   #d6c2ff;
+    --green:    #c4ecb6;
+    --black:    #1d1d1d;
+    --shadow:   0 1px 0 rgba(0,0,0,0.08), 0 8px 16px -8px rgba(0,0,0,0.18);
+    --shadow-lg:0 1px 0 rgba(0,0,0,0.08), 0 14px 26px -10px rgba(0,0,0,0.25);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(circle at 25% 15%, rgba(0,0,0,0.018) 0 1px, transparent 1.5px) 0 0/22px 22px,
+      var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+      'PingFang HK', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+    line-height: 1.35;
+    overflow-x: auto;
+  }
+
+  header.canvas-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(247, 245, 238, 0.95);
+    backdrop-filter: saturate(140%) blur(8px);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 22px;
+    min-width: max-content;
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .brand {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    font-size: 22px;
+    color: var(--ink);
+  }
+  .brand small { color: var(--muted); font-weight: 600; font-size: 11px; margin-left: 4px; vertical-align: super; }
+  .title {
+    font-size: 14px;
+    color: var(--ink-2);
+    border-left: 1px solid rgba(0,0,0,0.15);
+    padding-left: 14px;
+  }
+  .meta {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 12px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .legend {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .legend .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #fff; border: 1px solid rgba(0,0,0,0.1);
+    padding: 4px 10px; border-radius: 12px;
+    font-size: 11px; color: var(--ink-2);
+  }
+  .swatch {
+    width: 12px; height: 12px; border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.12);
+  }
+
+  .canvas {
+    position: relative;
+    padding: 60px 40px 80px;
+    min-width: 2000px;
+  }
+
+  .root {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 56px;
+    position: relative;
+  }
+  .root::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 2px;
+    height: 56px;
+    background: var(--line);
+    transform: translateX(-1px);
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 18px;
+    position: relative;
+    padding-top: 30px;
+  }
+  .columns::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 5%;
+    right: 5%;
+    height: 2px;
+    background: var(--line);
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    position: relative;
+    padding-top: 30px;
+  }
+  .col::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 30px;
+    background: var(--line);
+    transform: translateX(-1px);
+  }
+  .col > .sticky + .sticky::before,
+  .col > .group + .sticky::before,
+  .col > .sticky + .group::before,
+  .col > .group + .group::before {
+    content: "";
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    width: 2px;
+    height: 18px;
+    background: var(--line);
+    transform: translateX(-1px);
+  }
+  .col > .sticky, .col > .group { position: relative; }
+
+  .sticky {
+    width: 168px;
+    min-height: 72px;
+    background: var(--yellow);
+    color: var(--ink);
+    border-radius: 4px;
+    padding: 10px 12px 12px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .sticky:hover { transform: translateY(-1px) rotate(-0.3deg); box-shadow: var(--shadow-lg); }
+  .sticky .zh { font-weight: 700; font-size: 14px; line-height: 1.2; }
+  .sticky .en { font-size: 11px; color: var(--ink-2); line-height: 1.2; }
+  .sticky .path {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 10px;
+    color: #1a1a1a;
+    background: #e8b832;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-top: 2px;
+    word-break: break-all;
+  }
+  .sticky--root .path { background: #d9a51d; color: #1a1a1a; }
+  .sticky--note .path { background: rgba(255,255,255,0.18); color: #f5f5f5; }
+
+  .sticky--root {
+    width: 200px;
+    min-height: 84px;
+    background: var(--yellow-2);
+    transform: rotate(-0.5deg);
+  }
+  .sticky--root:hover { transform: translateY(-1px) rotate(-0.5deg); }
+  .sticky--root .zh { font-size: 18px; }
+
+  .sticky--primary {
+    width: 178px;
+    min-height: 84px;
+    background: var(--yellow);
+    border: 2px solid var(--ink);
+    transform: rotate(0deg);
+  }
+  .sticky--primary .zh { font-size: 15px; }
+
+  .sticky--note {
+    width: 140px;
+    min-height: 56px;
+    background: var(--black);
+    color: #f5f5f5;
+  }
+  .sticky--note .zh { font-size: 12px; font-weight: 600; }
+  .sticky--note .en { font-size: 10px; color: rgba(255,255,255,0.7); }
+  .sticky--note .path { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); }
+
+  .sticky--tab {
+    width: 150px;
+    min-height: 50px;
+    background: var(--orange);
+  }
+  .sticky--tab .zh { font-size: 12px; font-weight: 600; }
+  .sticky--tab .en { font-size: 10px; color: rgba(31,31,31,0.7); }
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+  .group .group-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .group > .sticky + .sticky { position: relative; }
+  .group > .sticky + .sticky::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 2px;
+    height: 10px;
+    background: var(--line);
+    transform: translateX(-1px);
+  }
+
+  .badges {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    display: flex;
+    gap: 4px;
+  }
+  .badge {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.18);
+    border-radius: 999px;
+    padding: 2px 7px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--ink-2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  }
+  .badge--auth   { background: #e8f0ff; color: #1f4caa; border-color: #c5d8ff; }
+  .badge--public { background: #e8f7ea; color: #1f7a35; border-color: #c2e6c8; }
+  .badge--dyn    { background: #fff3d6; color: #8a5b00; border-color: #ffd97f; }
+
+  footer.canvas-footer {
+    margin-top: 60px;
+    padding: 18px 40px 40px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    border-top: 1px dashed rgba(0,0,0,0.15);
+    min-width: max-content;
+  }
+  footer.canvas-footer code {
+    background: rgba(0,0,0,0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticky:hover { transform: none; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @media (max-width: 900px) {
+    body { overflow-x: hidden; }
+    header.canvas-header,
+    footer.canvas-footer { min-width: 0; }
+    .meta { display: none; }              /* legend chips wrap awkwardly on narrow screens */
+    .canvas { min-width: 0; padding: 24px 16px 60px; }
+    .columns {
+      grid-template-columns: 1fr;
+      gap: 28px;
+      padding-top: 0;
+    }
+    .columns::before { display: none; }
+    .col::before { display: none; }
+    .col {
+      padding-top: 18px;
+      gap: 12px;
+      border-top: 1px solid rgba(0,0,0,0.12);
+    }
+    .root::after { display: none; }
+    .root { margin-bottom: 24px; }
+    .sticky, .sticky--primary, .sticky--root { width: 90%; max-width: 320px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="canvas-header">
+  <div class="brand">ztor.<small>BETA</small></div>
+  <div class="title">Site Map · v1.15</div>
+  <div class="meta">
+    <div class="legend">
+      <span class="chip"><span class="swatch" style="background:var(--yellow-2)"></span>Page</span>
+      <span class="chip"><span class="swatch" style="background:var(--orange)"></span>Tab</span>
+      <span class="chip"><span class="swatch" style="background:var(--black)"></span>Drawer / Note</span>
+    </div>
+  </div>
+</header>
+
+<main class="canvas" tabindex="0" aria-label="Ztor.com site map — scroll horizontally on small screens">
+  <h1 class="visually-hidden">Ztor.com Site Map</h1>
+
+  <section class="root" aria-labelledby="root-label">
+    <span id="root-label" class="visually-hidden">Site root</span>
+    <div class="sticky sticky--root">
+      <div class="zh">Home</div>
+      <div class="en">Locale splash · zh-hk · zh-tw · en-us</div>
+      <div class="path">/</div>
+    </div>
+  </section>
+
+  <section class="columns" aria-label="Top-level site sections">
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">登入 / 註冊</div>
+        <div class="en">Login / Sign up</div>
+        <div class="path">/login</div>
+        <div class="badges"><span class="badge badge--public">Public</span></div>
+      </div>
+      <div class="sticky"><div class="zh">電子郵件登入</div><div class="en">Email + password</div></div>
+      <div class="sticky"><div class="zh">手機號碼登入</div><div class="en">Phone + OTP</div></div>
+      <div class="sticky"><div class="zh">SSO providers</div><div class="en">~4 social options</div></div>
+      <div class="sticky">
+        <div class="zh">立即註冊</div>
+        <div class="en">Sign up · nickname, email, password, referral code</div>
+        <div class="path">/register</div>
+        <div class="badges"><span class="badge badge--public">Public</span></div>
+      </div>
+      <div class="sticky"><div class="zh">語言</div><div class="en">Language picker</div><div class="path">/language</div></div>
+      <div class="sticky">
+        <div class="zh">搜尋</div>
+        <div class="en">Search results</div>
+        <div class="path">/search?q=…</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">焦點</div>
+        <div class="en">Spotlight</div>
+        <div class="path">/home</div>
+        <div class="badges"><span class="badge badge--public">Public</span></div>
+      </div>
+      <div class="sticky">
+        <div class="zh">Spotlight Event</div>
+        <div class="path">/spotlight/event/:id</div>
+        <div class="badges"><span class="badge badge--dyn">Dynamic</span></div>
+      </div>
+      <div class="sticky">
+        <div class="zh">Ranking List</div>
+        <div class="en">Top 10 by OTT</div>
+        <div class="path">/spotlight/ranking-list</div>
+        <div class="badges"><span class="badge badge--dyn">Dynamic</span></div>
+      </div>
+      <div class="sticky">
+        <div class="zh">Review</div>
+        <div class="en">Tastemaker article</div>
+        <div class="path">/review/:id</div>
+        <div class="badges"><span class="badge badge--dyn">Dynamic</span></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">找片</div>
+        <div class="en">Explore</div>
+        <div class="path">/explore</div>
+        <div class="badges"><span class="badge badge--public">Public</span></div>
+      </div>
+      <div class="group">
+        <div class="group-label">Tabs</div>
+        <div class="sticky sticky--tab"><div class="zh">放映廳</div><div class="en">Screening Room</div></div>
+        <div class="sticky sticky--tab"><div class="zh">資料庫</div><div class="en">Database</div></div>
+      </div>
+      <div class="sticky">
+        <div class="zh">Latest Collection</div>
+        <div class="en">Top 10 etc.</div>
+        <div class="path">/explore/latest/:id</div>
+      </div>
+      <div class="sticky">
+        <div class="zh">Title / Player</div>
+        <div class="en">Movie or series detail</div>
+        <div class="path">/play/:slug/:id</div>
+        <div class="badges"><span class="badge badge--dyn">Dynamic</span></div>
+      </div>
+      <div class="sticky sticky--note">
+        <div class="zh">OTT filter</div>
+        <div class="en">Netflix · Disney+ · Apple TV · HBO Max · Prime</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">社群</div>
+        <div class="en">Community / Posts</div>
+        <div class="path">/posts</div>
+        <div class="badges"><span class="badge badge--auth">Auth</span></div>
+      </div>
+      <div class="group">
+        <div class="group-label">Tabs</div>
+        <div class="sticky sticky--tab"><div class="zh">全部</div><div class="en">All</div></div>
+        <div class="sticky sticky--tab"><div class="zh">貼文</div><div class="en">Posts</div></div>
+        <div class="sticky sticky--tab"><div class="zh">推薦片單</div><div class="en">Recommended Lists</div></div>
+        <div class="sticky sticky--tab"><div class="zh">活動</div><div class="en">Events</div></div>
+      </div>
+      <div class="sticky sticky--note">
+        <div class="zh">發表</div>
+        <div class="en">Create-post drawer · no own URL</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">AI 原力創作計畫</div>
+        <div class="en">Z·Origin · AI Creative</div>
+        <div class="path">/zorigin</div>
+        <div class="badges"><span class="badge badge--auth">Auth</span></div>
+      </div>
+      <div class="sticky sticky--note">
+        <div class="zh">Beta program</div>
+        <div class="en">AI-assisted content creation</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">我的片庫</div>
+        <div class="en">My Library</div>
+        <div class="path">/library/my-rent</div>
+        <div class="badges"><span class="badge badge--auth">Auth</span></div>
+      </div>
+      <div class="group">
+        <div class="group-label">Tabs</div>
+        <div class="sticky sticky--tab"><div class="zh">我的租借</div><div class="en">Rentals</div></div>
+        <div class="sticky sticky--tab"><div class="zh">收到的禮物</div><div class="en">Gifts received</div></div>
+        <div class="sticky sticky--tab"><div class="zh">收藏影片</div><div class="en">Saved</div></div>
+        <div class="sticky sticky--tab"><div class="zh">喜愛的影片</div><div class="en">Liked</div></div>
+      </div>
+      <div class="sticky sticky--note">
+        <div class="zh">觀看歷史</div>
+        <div class="en">Watch history drawer · no URL</div>
+      </div>
+      <div class="sticky sticky--note">
+        <div class="zh">通知</div>
+        <div class="en">Notifications drawer · no URL</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">爆米花</div>
+        <div class="en">Popcorn wallet</div>
+        <div class="path">/popcorn</div>
+        <div class="badges"><span class="badge badge--auth">Auth</span></div>
+      </div>
+      <div class="sticky">
+        <div class="zh">計劃與價格</div>
+        <div class="en">Plans &amp; Pricing</div>
+        <div class="path">/popcorn/pricing</div>
+        <div class="badges"><span class="badge badge--public">Public</span></div>
+      </div>
+      <div class="sticky">
+        <div class="zh">兌換爆米花</div>
+        <div class="en">Redeem popcorn code</div>
+        <div class="path">/popcorn/redeem</div>
+      </div>
+      <div class="sticky sticky--note">
+        <div class="zh">In-app currency</div>
+        <div class="en">HKD 8 / 38 / 98 tiers</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">帳號設定</div>
+        <div class="en">Account hub</div>
+        <div class="path">/account</div>
+        <div class="badges"><span class="badge badge--auth">Auth</span></div>
+      </div>
+      <div class="sticky">
+        <div class="zh">個人資料</div>
+        <div class="en">Profile &amp; account mgmt</div>
+        <div class="path">/account/profile/accounts</div>
+      </div>
+      <div class="group">
+        <div class="group-label">偏好設定 · Preferences</div>
+        <div class="sticky"><div class="zh">語言</div><div class="path">…/preferences/language</div></div>
+        <div class="sticky"><div class="zh">影片品質</div><div class="path">…/preferences/video-quality</div></div>
+      </div>
+      <div class="group">
+        <div class="group-label">隱私 · Privacy</div>
+        <div class="sticky"><div class="zh">管理設備</div><div class="path">…/privacy/devices</div></div>
+        <div class="sticky"><div class="zh">安全設定</div><div class="path">…/privacy/security-settings</div></div>
+        <div class="sticky"><div class="zh">追隨者和公開內容</div><div class="path">…/privacy/followers-and-public-content</div></div>
+      </div>
+      <div class="group">
+        <div class="group-label">幫助 · Help</div>
+        <div class="sticky"><div class="zh">禮物中心</div><div class="path">/account/gift-center</div></div>
+        <div class="sticky"><div class="zh">問題回報</div><div class="path">…/support/feedback/report</div></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">Social Profile</div>
+        <div class="en">Member profiles</div>
+        <div class="path">/social/me/u-:id</div>
+        <div class="badges"><span class="badge badge--dyn">Dynamic</span></div>
+      </div>
+      <div class="group">
+        <div class="group-label">My profile tabs</div>
+        <div class="sticky sticky--tab"><div class="zh">貼文</div><div class="en">Posts</div></div>
+        <div class="sticky sticky--tab"><div class="zh">喜歡</div><div class="en">Likes</div></div>
+        <div class="sticky sticky--tab"><div class="zh">收藏</div><div class="en">Saved</div></div>
+        <div class="sticky sticky--tab"><div class="zh">草稿夾</div><div class="en">Drafts</div></div>
+      </div>
+      <div class="sticky">
+        <div class="zh">Public Member</div>
+        <div class="en">Other users' profile</div>
+        <div class="path">/social/member/u-:id</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="sticky sticky--primary">
+        <div class="zh">Footer / Support</div>
+        <div class="en">Persistent footer</div>
+        <div class="badges"><span class="badge badge--public">Public</span></div>
+      </div>
+      <div class="sticky"><div class="zh">常見問題</div><div class="en">FAQ</div><div class="path">/faq</div></div>
+      <div class="sticky"><div class="zh">侵權投訴</div><div class="en">Infringement</div><div class="path">/infringement-complaint</div></div>
+      <div class="sticky"><div class="zh">隱私政策</div><div class="en">Privacy Policy</div><div class="path">/privacy-policy</div></div>
+      <div class="sticky"><div class="zh">條款與細則</div><div class="en">Terms &amp; Conditions</div><div class="path">/terms-and-conditions</div></div>
+      <div class="sticky"><div class="zh">Tastemaker 條款</div><div class="path">/tastemaker-terms-and-conditions</div></div>
+      <div class="sticky"><div class="zh">帳號刪除政策</div><div class="en">Account Deletion</div><div class="path">/account-deletion-policy</div></div>
+      <div class="sticky sticky--note">
+        <div class="zh">enquiry@ztor.com</div>
+        <div class="en">IG · Threads · @ztor.hk</div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="canvas-footer">
+  Mapped 2026-04-28 from <code>https://www.ztor.com/zh-hk</code> · authenticated crawl ·
+  every route is locale-prefixed (<code>/zh-hk</code> · <code>/zh-tw</code> · <code>/en-us</code>).
+  Yellow = page · Orange = tab · Black = drawer / annotation. Drawers don't have their own URLs.
+</footer>
+
+</body>
+</html>
