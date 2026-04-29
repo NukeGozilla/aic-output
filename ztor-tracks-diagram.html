@@ -86,6 +86,34 @@
       color: white;
     }
 
+    .tab-btn.t4 {
+      color: #0891b2;
+      border-color: #0891b2;
+    }
+
+    .tab-btn.t4.active {
+      background: #0891b2;
+      color: white;
+    }
+
+    .tab-btn.t5 {
+      color: #d97706;
+      border-color: #d97706;
+    }
+
+    .tab-btn.t5.active {
+      background: #d97706;
+      color: white;
+    }
+
+    .tl-months-4 {
+      grid-template-columns: 110px 1fr 1fr 1fr 1fr !important;
+    }
+
+    .tl-bar-wrap-4 {
+      grid-template-columns: 1fr 1fr 1fr 1fr !important;
+    }
+
     .panel {
       display: none;
     }
@@ -655,9 +683,11 @@
 
   <!-- TABS -->
   <div class="tabs">
-    <button class="tab-btn t1 active" onclick="switchTab('t1')">Stream 1 — 1.0 Maintenance &amp; Handoff</button>
-    <button class="tab-btn t2" onclick="switchTab('t2')">Stream 2 — 2.0 Frontend Redesign</button>
-    <button class="tab-btn t3" onclick="switchTab('t3')">Stream 3 — Creator Studio Phase 1</button>
+    <button class="tab-btn t1 active" onclick="switchTab('t1')">Timeline</button>
+    <button class="tab-btn t2" onclick="switchTab('t2')">2.0 Frontend</button>
+    <button class="tab-btn t3" onclick="switchTab('t3')">Creator Studio</button>
+    <button class="tab-btn t4" onclick="switchTab('t4')">Ownership</button>
+    <button class="tab-btn t5" onclick="switchTab('t5')">Adjustment</button>
   </div>
 
   <!-- ══════════════════════════════════════════════ -->
@@ -665,8 +695,8 @@
   <!-- ══════════════════════════════════════════════ -->
   <div id="t1" class="panel active">
     <div class="card">
-      <div class="card-title" style="color:#2563eb">Track 1 — Ztor 1.0 Maintenance &amp; Deliverables by Stage</div>
-      <div class="card-sub">May → July · What needs to be built at each stage · team assignment TBD by Eric</div>
+      <div class="card-title" style="color:#2563eb">Project Roadmap — May → July 2026</div>
+      <div class="card-sub">Cross-stream timeline · what gets built at each stage · team assignment TBD by Eric</div>
 
       <div class="timeline-wrap">
         <div class="timeline">
@@ -735,7 +765,7 @@
               <div class="tl-col"></div>
               <div class="tl-col"></div>
               <div class="tl-col"></div>
-              <div class="tl-bar" style="left:0%;width:90%;background:#059669;">CS foundation — starts May 1</div>
+              <div class="tl-bar" style="left:0%;width:90%;background:#059669;">2.0 Foundation — starts May 1</div>
               <!-- May 1: Foundation kicks off -->
               <div class="ms" style="left:1%">
                 <div class="ms-label" style="background:#047857;color:white;">May 1<br>Start</div>
@@ -796,8 +826,8 @@
               <div class="tl-col"></div>
               <div class="tl-col"></div>
               <div class="tl-bar"
-                style="left:56%;width:12%;background:#f59e0b;opacity:0.9;border:2px dashed #d97706;color:#1a1a2e;font-size:10px">
-                Feature freeze</div>
+                style="left:56%;width:12%;background:#f59e0b;opacity:0.9;border:2px dashed #d97706;">
+              </div>
               <div class="ms" style="left:56%">
                 <div class="ms-label" style="background:#b45309;color:white;">~Jun 16<br>Freeze</div>
                 <div class="ms-diamond" style="background:#b45309;"></div>
@@ -825,7 +855,7 @@
             <div class="dot" style="background:#f59e0b"></div>May 31 — Crowdfund simple (1.0)
           </div>
           <div class="milestone-chip" style="background:#ede9fe;color:#5b21b6">
-            <div class="dot" style="background:#7c3aed"></div>~June 1 — Static demo ready for Alex (3 flows: crowdfund, content, AIC)
+            <div class="dot" style="background:#7c3aed"></div>~June 1 — Static demo ready for Alex (3 flows: eShop, content, AIC)
           </div>
           <div class="milestone-chip" style="background:#fffbeb;color:#92400e">
             <div class="dot" style="background:#f59e0b"></div>~June 16 — Feature freeze on 1.0
@@ -874,7 +904,7 @@
   <!-- ══════════════════════════════════════════════ -->
   <div id="t2" class="panel">
     <div class="card">
-      <div class="card-title" style="color:#7c3aed">Stream 2 — Frontend Redesign · Beta July 1</div>
+      <div class="card-title" style="color:#7c3aed">2.0 Frontend Redesign — Beta July 1</div>
       <div class="card-sub">New UI on a BFF proxy layer · 1.0 backend stays untouched · 2.0-compatible contracts from
         day one</div>
 
@@ -988,7 +1018,7 @@
               <div
                 style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:#f9fafb;border:1px dashed #e5e7eb">
                 <div style="color:#9ca3af;font-size:16px">✗</div>
-                <div style="font-size:12px;font-weight:600;color:#9ca3af">TV App, eShop → post-beta</div>
+                <div style="font-size:12px;font-weight:600;color:#9ca3af">TV App → post-beta</div>
               </div>
             </div>
           </div>
@@ -1045,7 +1075,7 @@
   <!-- ══════════════════════════════════════════════ -->
   <div id="t3" class="panel">
     <div class="card">
-      <div class="card-title" style="color:#059669">Stream 3 — Creator Studio Phase 1 · July 15</div>
+      <div class="card-title" style="color:#059669">Creator Studio Phase 1 — July 15</div>
       <div class="card-sub">New system foundation · minimum viable microservices · Eric's team (foundation) + Kerry's team (application + eShop)</div>
 
       <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
@@ -1215,7 +1245,7 @@
               </div>
               <div style="display:flex;gap:10px;align-items:center">
                 <div style="width:80px;font-size:11px;font-weight:700;color:#059669;flex-shrink:0">June 1</div>
-                <div style="font-size:12px;color:#374151">Kerry's team: Auth + Crowdfund service build</div>
+                <div style="font-size:12px;color:#374151">Kerry's team: Auth + eShop service build</div>
               </div>
               <div style="display:flex;gap:10px;align-items:center">
                 <div style="width:80px;font-size:11px;font-weight:700;color:#6b7280;flex-shrink:0">~June 30</div>
@@ -1231,10 +1261,10 @@
           <div class="future-note">
             <div class="fn-icon">⚠️</div>
             <div>
-              <div class="fn-title">Foundation must start June 1 — not July 2</div>
-              <div class="fn-body">Eric's team can't context-switch from 2.0 beta directly into Creator Studio
-                foundation without a gap. CS foundation work begins June 1 in parallel with 2.0 final QA — otherwise
-                July 15 has zero buffer.</div>
+              <div class="fn-title">2.0 Foundation must start May 1 — not June 1</div>
+              <div class="fn-body">Eric's team needs the full May–June window to build the foundation layer. Starting
+                June 1 leaves zero buffer before the July 15 target. Foundation runs in parallel with 2.0 frontend
+                — it does not wait for the beta to ship.</div>
             </div>
           </div>
 
@@ -1251,6 +1281,428 @@
         <div class="legend-item">
           <div class="legend-dot ld-infra"></div>Infrastructure / new team
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- OWNERSHIP -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="t4" class="panel">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap">
+        <div class="card-title" style="color:#0891b2;margin-bottom:0">Recommended Ownership Model</div>
+        <div style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1;flex-shrink:0">RECOMMENDATION FOR ERIC</div>
+      </div>
+      <div class="card-sub">Team assignment across all three streams · May → July 2026 · pending Eric's confirmation</div>
+
+      <div class="timeline-wrap">
+        <div class="timeline">
+
+          <div class="tl-months">
+            <div></div>
+            <div class="tl-month-label">May</div>
+            <div class="tl-month-label">June</div>
+            <div class="tl-month-label">July</div>
+          </div>
+
+          <!-- ── ERIC'S OLD TEAM ── -->
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#1e40af;margin:8px 0 6px 116px">Eric's Old Team</div>
+
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:10px;color:#374151">1.0 Maint</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:33%;background:#3b82f6;">Active maintenance</div>
+              <div class="tl-bar" style="left:33%;width:67%;background:#bfdbfe;color:#1e40af;font-size:10px;border:1.5px dashed #93c5fd;">Consult only — new team owns</div>
+              <div class="ms" style="left:33%">
+                <div class="ms-label" style="background:#0891b2;color:white;">Jun 1<br>Handoff</div>
+                <div class="ms-diamond" style="background:#0891b2;"></div>
+                <div class="ms-line" style="background:#0891b2;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:10px;color:#374151">2.0 Frontend</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:67%;background:#8b5cf6;">UI build → BFF + Gateway → QA</div>
+              <div class="ms" style="left:67%">
+                <div class="ms-label" style="background:#6d28d9;color:white;">Jul 1<br>Beta</div>
+                <div class="ms-diamond" style="background:#6d28d9;"></div>
+                <div class="ms-line" style="background:#6d28d9;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:10px;color:#374151">CS Foundation</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:83%;background:#059669;">2.0 Foundation (parallel with 2.0 Frontend)</div>
+              <div class="ms" style="left:1%">
+                <div class="ms-label" style="background:#047857;color:white;">May 1<br>Start</div>
+                <div class="ms-diamond" style="background:#047857;"></div>
+                <div class="ms-line" style="background:#047857;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── NEW TEAM ── -->
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#9a3412;margin:16px 0 6px 116px">New Team</div>
+
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:10px;color:#374151">1.0 Ownership</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:33%;background:#fdba74;color:#7c2d12;font-size:10px;border:1.5px dashed #f97316;">Shadow mode (paired)</div>
+              <div class="tl-bar" style="left:33%;width:67%;background:#f97316;">Primary on-call · incidents · deployments</div>
+              <div class="ms" style="left:1%">
+                <div class="ms-label" style="background:#c2410c;color:white;">May 1<br>Shadow</div>
+                <div class="ms-diamond" style="background:#c2410c;"></div>
+                <div class="ms-line" style="background:#c2410c;opacity:0.5;height:14px;"></div>
+              </div>
+              <div class="ms" style="left:33%">
+                <div class="ms-label" style="background:#0891b2;color:white;">Jun 1<br>Take over</div>
+                <div class="ms-diamond" style="background:#0891b2;"></div>
+                <div class="ms-line" style="background:#0891b2;opacity:0.5;height:14px;"></div>
+              </div>
+              <div class="ms" style="left:52%">
+                <div class="ms-label" style="background:#b45309;color:white;">Jun 16<br>Freeze</div>
+                <div class="ms-diamond" style="background:#b45309;"></div>
+                <div class="ms-line" style="background:#b45309;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:10px;color:#9ca3af">Crowdfund</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="ms" style="left:32%">
+                <div class="ms-label" style="background:#d97706;color:white;">May 31<br>CF Simple</div>
+                <div class="ms-diamond" style="background:#d97706;"></div>
+                <div class="ms-line" style="background:#d97706;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── KERRY'S TEAM ── -->
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#065f46;margin:16px 0 6px 116px">Kerry's Team</div>
+
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:10px;color:#374151">eShop + Auth</div>
+            <div class="tl-bar-wrap has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="tl-bar" style="left:33%;width:50%;background:#10b981;">eShop + Auth service build</div>
+              <div class="ms" style="left:33%">
+                <div class="ms-label" style="background:#065f46;color:white;">Jun 1<br>Build</div>
+                <div class="ms-diamond" style="background:#065f46;"></div>
+                <div class="ms-line" style="background:#065f46;opacity:0.5;height:14px;"></div>
+              </div>
+              <div class="ms" style="left:83%">
+                <div class="ms-label" style="background:#065f46;color:white;">Jul 15<br>Launch</div>
+                <div class="ms-diamond" style="background:#065f46;"></div>
+                <div class="ms-line" style="background:#065f46;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Three decisions -->
+      <div style="margin-top:32px">
+        <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px">Three decisions for Eric to confirm</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+
+          <div style="flex:1;min-width:200px;padding:16px;border-radius:12px;background:#e0f2fe;border:1.5px solid #7dd3fc">
+            <div style="font-size:12px;font-weight:800;color:#0369a1;margin-bottom:6px">① Crowdfund Simple (May 31)</div>
+            <div style="font-size:13px;font-weight:700;color:#0c4a6e;margin-bottom:4px">→ New team ships it</div>
+            <div style="font-size:11px;color:#0369a1;line-height:1.5">Old team reviews. Best onboarding exercise available — real delivery, supervised, low blast radius.</div>
+          </div>
+
+          <div style="flex:1;min-width:200px;padding:16px;border-radius:12px;background:#e0f2fe;border:1.5px solid #7dd3fc">
+            <div style="font-size:12px;font-weight:800;color:#0369a1;margin-bottom:6px">② 1.0 Hard Handoff Date</div>
+            <div style="font-size:13px;font-weight:700;color:#0c4a6e;margin-bottom:4px">→ June 1</div>
+            <div style="font-size:11px;color:#0369a1;line-height:1.5">After June 1, old team is available for consults only — not primary on-call. Set this date in writing now, not in May.</div>
+          </div>
+
+          <div style="flex:1;min-width:200px;padding:16px;border-radius:12px;background:#dcfce7;border:1.5px solid #86efac">
+            <div style="font-size:12px;font-weight:800;color:#166534;margin-bottom:6px">③ CS Foundation Start</div>
+            <div style="font-size:13px;font-weight:700;color:#14532d;margin-bottom:4px">→ May 1, old team</div>
+            <div style="font-size:11px;color:#166534;line-height:1.5">Non-negotiable for July 15. Runs in parallel with 2.0 frontend — does not wait for beta to ship.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="future-note" style="margin-top:24px;border-color:#fde68a;background:#fffbeb">
+        <div class="fn-icon">⚠️</div>
+        <div>
+          <div class="fn-title" style="color:#92400e">Condition: weekly new team readiness check from May 1</div>
+          <div class="fn-body">If the new team is behind on 1.0 ramp by May 15, escalate immediately — the June 1 handoff date depends on it. Don't discover this problem in June when it's too late to course-correct.</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Old team / 1.0</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>Old team / 2.0 Frontend</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#059669"></div>Old team / CS Foundation</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>New team</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>Kerry's team</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#0891b2"></div>Handoff gate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ADJUSTMENT (post 4/23 dev sync) -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div id="t5" class="panel">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap">
+        <div class="card-title" style="color:#d97706;margin-bottom:0">Proposed Timeline Adjustment</div>
+        <div style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:#fef3c7;color:#92400e;flex-shrink:0">AFTER 4/23 DEV SYNC W/ ERIC</div>
+      </div>
+      <div class="card-sub">All major milestones slip ~3 weeks · driven by new team ramp time + design delivery dependencies</div>
+
+      <!-- Date comparison cards -->
+      <div style="margin-bottom:32px">
+        <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px">Date changes</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+
+          <div style="padding:16px;border-radius:12px;background:#fef3c7;border:1.5px solid #fcd34d">
+            <div style="font-size:12px;font-weight:800;color:#92400e;margin-bottom:8px">2.0 Demo (Investor)</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#78350f">
+              <span style="text-decoration:line-through;color:#a16207;font-weight:500">Jun 1</span>
+              <span style="color:#d97706">→</span>
+              <span>Jun 1st week</span>
+            </div>
+            <div style="font-size:11px;color:#92400e;margin-top:6px;line-height:1.5"><strong>Demonstrates specific user flows only</strong> — HTML demo, no API/DB · UAT or independent URL</div>
+          </div>
+
+          <div style="padding:16px;border-radius:12px;background:#fef3c7;border:1.5px solid #fcd34d">
+            <div style="font-size:12px;font-weight:800;color:#92400e;margin-bottom:8px">1.0 → 2.0 Handoff</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#78350f">
+              <span style="text-decoration:line-through;color:#a16207;font-weight:500">Jun 1</span>
+              <span style="color:#d97706">→</span>
+              <span>Jun 1st week</span>
+            </div>
+            <div style="font-size:11px;color:#92400e;margin-top:6px;line-height:1.5">Indonesia team takes over 1.0 maintenance from China team</div>
+          </div>
+
+          <div style="padding:16px;border-radius:12px;background:#fee2e2;border:1.5px solid #fca5a5">
+            <div style="font-size:12px;font-weight:800;color:#991b1b;margin-bottom:8px">2.0 Beta</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#7f1d1d">
+              <span style="text-decoration:line-through;color:#b91c1c;font-weight:500">Jul 1</span>
+              <span style="color:#dc2626">→</span>
+              <span>~Jul 21 (3rd wk)</span>
+            </div>
+            <div style="font-size:11px;color:#991b1b;margin-top:6px;line-height:1.5;font-weight:600">3-week slip · biggest move on the chart</div>
+          </div>
+
+          <div style="padding:16px;border-radius:12px;background:#fee2e2;border:1.5px solid #fca5a5">
+            <div style="font-size:12px;font-weight:800;color:#991b1b;margin-bottom:8px">eShop (Creator Studio)</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#7f1d1d">
+              <span style="text-decoration:line-through;color:#b91c1c;font-weight:500">Jul 15</span>
+              <span style="color:#dc2626">→</span>
+              <span>~Aug 5–12</span>
+            </div>
+            <div style="font-size:11px;color:#991b1b;margin-top:6px;line-height:1.5">eShop is now the priority for Creator Studio Phase 1</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Adjusted Timeline -->
+      <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px">Adjusted timeline (May → August)</div>
+      <div class="timeline-wrap">
+        <div class="timeline">
+
+          <div class="tl-months tl-months-4">
+            <div></div>
+            <div class="tl-month-label">May</div>
+            <div class="tl-month-label">June</div>
+            <div class="tl-month-label">July</div>
+            <div class="tl-month-label">August</div>
+          </div>
+
+          <!-- 1.0 Maintenance -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:11px">1.0 Maint</div>
+            <div class="tl-bar-wrap tl-bar-wrap-4 has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:28%;background:#3b82f6;">1.0 Maintenance + AIC + Crowdfund Simple</div>
+              <div class="tl-bar" style="left:28%;width:72%;background:#bfdbfe;color:#1e40af;font-size:10px;border:1.5px dashed #93c5fd;">Old team continues maintenance · 1.0 wraps as microservice in 2.0</div>
+              <div class="ms" style="left:1%">
+                <div class="ms-label" style="background:#1d4ed8;color:white;">May 1<br>AIC P2</div>
+                <div class="ms-diamond" style="background:#1d4ed8;"></div>
+                <div class="ms-line" style="background:#1d4ed8;opacity:0.5;height:14px;"></div>
+              </div>
+              <div class="ms" style="left:24%">
+                <div class="ms-label" style="background:#d97706;color:white;">May 31<br>CF Simple</div>
+                <div class="ms-diamond" style="background:#d97706;"></div>
+                <div class="ms-line" style="background:#d97706;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2.0 Frontend -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:11px">2.0 Frontend</div>
+            <div class="tl-bar-wrap tl-bar-wrap-4 has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:28%;background:#8b5cf6;">UI build (China team)</div>
+              <div class="tl-bar" style="left:28%;width:30%;background:#a78bfa;color:#3b0764;font-size:10px;">BFF + Gateway scoping</div>
+              <div class="tl-bar" style="left:58%;width:9%;background:#7c3aed;font-size:10px;">QA</div>
+              <div class="ms" style="left:28%">
+                <div class="ms-label" style="background:#7c3aed;color:white;">Jun 1st wk<br>Demo</div>
+                <div class="ms-diamond" style="background:#7c3aed;"></div>
+                <div class="ms-line" style="background:#7c3aed;opacity:0.5;height:14px;"></div>
+              </div>
+              <div class="ms" style="left:67%">
+                <div class="ms-label" style="background:#6d28d9;color:white;">~Jul 21<br>2.0 Beta</div>
+                <div class="ms-diamond" style="background:#6d28d9;"></div>
+                <div class="ms-line" style="background:#6d28d9;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2.0 Foundation -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:11px">2.0 Foundation</div>
+            <div class="tl-bar-wrap tl-bar-wrap-4 has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="tl-bar" style="left:0%;width:78%;background:#059669;">2.0 Foundation — starts May 1 · Gateway + BFF + 1.0 microservice wrap</div>
+              <div class="ms" style="left:1%">
+                <div class="ms-label" style="background:#047857;color:white;">May 1<br>Start</div>
+                <div class="ms-diamond" style="background:#047857;"></div>
+                <div class="ms-line" style="background:#047857;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Creator Studio App / eShop -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:11px">2.0 CS / eShop</div>
+            <div class="tl-bar-wrap tl-bar-wrap-4 has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <div class="tl-bar" style="left:28%;width:56%;background:#10b981;">eShop + Auth · Kerry handles integration</div>
+              <div class="ms" style="left:28%">
+                <div class="ms-label" style="background:#065f46;color:white;">Jun 1st wk<br>Build</div>
+                <div class="ms-diamond" style="background:#065f46;"></div>
+                <div class="ms-line" style="background:#065f46;opacity:0.5;height:14px;"></div>
+              </div>
+              <div class="ms" style="left:84%">
+                <div class="ms-label" style="background:#065f46;color:white;">~Aug 5–12<br>eShop Launch</div>
+                <div class="ms-diamond" style="background:#065f46;"></div>
+                <div class="ms-line" style="background:#065f46;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Design delivery (Dolly) — 2 stages May 1 → Jun 18 -->
+          <div class="tl-row">
+            <div class="tl-label" style="font-size:10px;color:#9ca3af">Design (Dolly)</div>
+            <div class="tl-bar-wrap tl-bar-wrap-4 has-ms">
+              <div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div><div class="tl-col"></div>
+              <!-- Stage 1: May 1 → Jun 1st wk · for demo -->
+              <div class="tl-bar" style="left:0%;width:28%;background:#fdba74;color:#7c2d12;font-size:10px;border:1.5px dashed #f97316;">Stage 1 — Layouts for demo</div>
+              <!-- Stage 2: Jun 1st wk → Jun 18 · for real build -->
+              <div class="tl-bar" style="left:28%;width:12%;background:#f97316;color:white;font-size:10px;">Stage 2 — for real build</div>
+              <div class="ms" style="left:1%">
+                <div class="ms-label" style="background:#c2410c;color:white;">May 1<br>Start</div>
+                <div class="ms-diamond" style="background:#c2410c;"></div>
+                <div class="ms-line" style="background:#c2410c;opacity:0.5;height:14px;"></div>
+              </div>
+              <div class="ms" style="left:28%">
+                <div class="ms-label" style="background:#c2410c;color:white;">Jun 1st wk<br>Demo set</div>
+                <div class="ms-diamond" style="background:#c2410c;"></div>
+                <div class="ms-line" style="background:#c2410c;opacity:0.5;height:14px;"></div>
+              </div>
+              <div class="ms" style="left:40%">
+                <div class="ms-label" style="background:#9a3412;color:white;">~Jun 18<br>All done</div>
+                <div class="ms-diamond" style="background:#9a3412;"></div>
+                <div class="ms-line" style="background:#9a3412;opacity:0.5;height:14px;"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Reasoning -->
+      <div style="margin-top:32px">
+        <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px">Why the slip</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+
+          <div style="padding:16px;border-radius:12px;background:#fef3c7;border:1.5px solid #fcd34d">
+            <div style="font-size:12px;font-weight:800;color:#92400e;margin-bottom:6px">① New team ramp time</div>
+            <div style="font-size:11px;color:#78350f;line-height:1.5">2–3 weeks needed before the new team can deliver formally. Pushing through too fast risks burnout and staff turnover.</div>
+          </div>
+
+          <div style="padding:16px;border-radius:12px;background:#fef3c7;border:1.5px solid #fcd34d">
+            <div style="font-size:12px;font-weight:800;color:#92400e;margin-bottom:6px">② Design deliverable lead time</div>
+            <div style="font-size:11px;color:#78350f;line-height:1.5">Dolly's layouts need 3 weeks of dev runway after handoff. Weekly batched delivery, all complete by Jun 18.</div>
+          </div>
+
+          <div style="padding:16px;border-radius:12px;background:#fef3c7;border:1.5px solid #fcd34d">
+            <div style="font-size:12px;font-weight:800;color:#92400e;margin-bottom:6px">③ Avoid pressure backfire</div>
+            <div style="font-size:11px;color:#78350f;line-height:1.5">Compressing timelines was deemed counterproductive — risk of staff loss outweighs the value of holding original dates.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Team allocation changes -->
+      <div style="margin-top:32px">
+        <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px">Team allocation (confirmed in meeting)</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+
+          <div style="display:flex;gap:14px;padding:12px 16px;border-radius:10px;background:#eff6ff;border:1px solid #bfdbfe;align-items:flex-start">
+            <div style="font-size:11px;font-weight:800;color:#1e40af;flex-shrink:0;min-width:130px">Old team</div>
+            <div style="font-size:12px;color:#1e3a8a;line-height:1.5">Keeps 1.0 maintenance · continues AIC + Crowdfund work · 1.0 eventually wraps as a microservice inside 2.0</div>
+          </div>
+
+          <div style="display:flex;gap:14px;padding:12px 16px;border-radius:10px;background:#f5f3ff;border:1px solid #c4b5fd;align-items:flex-start">
+            <div style="font-size:11px;font-weight:800;color:#5b21b6;flex-shrink:0;min-width:130px">Mainland China team</div>
+            <div style="font-size:12px;color:#4c1d95;line-height:1.5">Owns 2.0 UI build first · then transitions onto 2.0 demo + foundation work</div>
+          </div>
+
+          <div style="display:flex;gap:14px;padding:12px 16px;border-radius:10px;background:#fff7ed;border:1px solid #fdba74;align-items:flex-start">
+            <div style="font-size:11px;font-weight:800;color:#9a3412;flex-shrink:0;min-width:130px">Indonesia team<br><span style="font-size:9px;font-weight:600;color:#c2410c">(new team)</span></div>
+            <div style="font-size:12px;color:#7c2d12;line-height:1.5">Owns 2.0 demo delivery (Jun 1st week) · organizes tech docs using AI-generated documentation · language barrier (no Mandarin) → extra comms cost</div>
+          </div>
+
+          <div style="display:flex;gap:14px;padding:12px 16px;border-radius:10px;background:#ecfdf5;border:1px solid #6ee7b7;align-items:flex-start">
+            <div style="font-size:11px;font-weight:800;color:#065f46;flex-shrink:0;min-width:130px">Kerry</div>
+            <div style="font-size:12px;color:#064e3b;line-height:1.5">Architecture team builds; Kerry handles downstream integration</div>
+          </div>
+
+          <div style="display:flex;gap:14px;padding:12px 16px;border-radius:10px;background:#f3f4f6;border:1px solid #d1d5db;align-items:flex-start">
+            <div style="font-size:11px;font-weight:800;color:#374151;flex-shrink:0;min-width:130px">Agnes</div>
+            <div style="font-size:12px;color:#1f2937;line-height:1.5">Single point for collecting all requirements before allocation — prevents scope drift across teams</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="future-note" style="margin-top:24px;border-color:#fcd34d;background:#fffbeb">
+        <div class="fn-icon">🎯</div>
+        <div>
+          <div class="fn-title" style="color:#92400e">Demo is HTML-only — investor-facing, not production</div>
+          <div class="fn-body">Jun 1st week 2.0 demo: 3 core user flows, no API or DB integration, on UAT or independent URL — kept fully separate from 1.0. Purpose is to show progress to investors, not to ship a working release.</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>1.0 work</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>2.0 Frontend</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#059669"></div>2.0 Foundation</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>Creator Studio / eShop</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>Design delivery</div>
       </div>
     </div>
   </div>
