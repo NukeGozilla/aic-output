@@ -43,32 +43,45 @@
     background: #111118;
     border: 1px solid #2a2a3a;
     border-radius: 12px;
-    padding: 48px;
+    padding: 32px;
     margin-bottom: 32px;
     overflow-x: auto;
   }
 
-  /* Layout: 3-row state graph */
-  .row {
-    display: flex;
-    justify-content: center;
-    gap: 48px;
-    margin-bottom: 64px;
-    align-items: center;
+  /* Positioned canvas: states placed absolutely; SVG overlay draws arrows */
+  .canvas-positioned {
     position: relative;
+    width: 820px;
+    height: 600px;
+    margin: 0 auto;
   }
-  .row:last-child { margin-bottom: 0; }
+
+  .state-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
 
   .state {
     background: #1a1a2e;
     border: 2px solid;
     border-radius: 16px;
-    padding: 18px 24px;
-    min-width: 180px;
+    padding: 14px 20px;
+    width: 200px;
     text-align: center;
-    position: relative;
+    position: absolute;
     z-index: 2;
+    box-sizing: border-box;
   }
+  .state.s-live      { left: 310px; top: 30px;  }
+  .state.s-uns       { left: 50px;  top: 230px; }
+  .state.s-funded    { left: 310px; top: 230px; }
+  .state.s-cancel    { left: 570px; top: 230px; }
+  .state.s-inprod    { left: 310px; top: 430px; }
+  .state.s-released  { left: 570px; top: 430px; }
   .state .zh { font-size: 18px; font-weight: 700; color: #fff; }
   .state .en { font-size: 11px; color: #8888aa; margin-top: 2px; letter-spacing: 0.5px; }
   .state .meta { font-size: 11px; color: #999; margin-top: 8px; line-height: 1.4; }
@@ -147,8 +160,7 @@
 
   @media (max-width: 900px) {
     .canvas { padding: 24px; }
-    .diagram { padding: 24px; }
-    .row { flex-wrap: wrap; gap: 16px; }
+    .diagram { padding: 24px 16px; }
   }
 </style>
 </head>
@@ -177,50 +189,94 @@
   </div>
 
   <div class="diagram">
-    <!-- Row 1: Live -->
-    <div class="row">
-      <div class="state live">
+    <div class="canvas-positioned">
+
+      <!-- SVG overlay with all transition arrows + labels -->
+      <svg class="state-svg" viewBox="0 0 820 600" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#888aaa"/>
+          </marker>
+          <marker id="arr-success" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#37b87a"/>
+          </marker>
+          <marker id="arr-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#e25555"/>
+          </marker>
+        </defs>
+
+        <!-- 1. Live → Funded (success path) -->
+        <path d="M 410 120 L 410 230" stroke="#37b87a" stroke-width="2" fill="none" marker-end="url(#arr-success)"/>
+        <text x="420" y="180" fill="#6ee0a0" font-size="11" font-weight="500">goal met</text>
+
+        <!-- 2. Live → Unsuccessful (fail path) -->
+        <path d="M 340 120 L 175 230" stroke="#e25555" stroke-width="2" fill="none" marker-end="url(#arr-fail)"/>
+        <text x="195" y="170" fill="#f0a0a0" font-size="11" font-weight="500" transform="rotate(-30 215 175)">goal missed</text>
+
+        <!-- 3. Live → Canceled (manual fail) -->
+        <path d="M 480 120 L 645 230" stroke="#e25555" stroke-width="2" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
+        <text x="540" y="170" fill="#f0a0a0" font-size="11" font-weight="500" transform="rotate(30 575 175)">ops pulls</text>
+
+        <!-- 4. Funded → In Production -->
+        <path d="M 410 320 L 410 430" stroke="#888aaa" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+        <text x="420" y="380" fill="#aaaadd" font-size="11" font-weight="500">funds disbursed</text>
+
+        <!-- 5. Funded → Canceled (edge) -->
+        <path d="M 510 268 L 570 268" stroke="#e25555" stroke-width="1.5" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
+        <text x="513" y="260" fill="#f0a0a0" font-size="10">creator default</text>
+
+        <!-- 6. In Production → Released (success) -->
+        <path d="M 510 460 L 570 460" stroke="#37b87a" stroke-width="2" fill="none" marker-end="url(#arr-success)"/>
+        <text x="515" y="452" fill="#6ee0a0" font-size="10" font-weight="500">live on Ztor</text>
+
+        <!-- 7. In Production → Canceled (edge — bent path right then up) -->
+        <path d="M 510 480 L 540 480 L 540 290 L 570 290" stroke="#e25555" stroke-width="1.5" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
+        <text x="546" y="385" fill="#f0a0a0" font-size="10">delivery fail</text>
+      </svg>
+
+      <!-- State boxes (positioned absolutely) -->
+      <div class="state live s-live">
         <div class="zh">募資中</div>
         <div class="en">LIVE</div>
         <div class="meta">Funding period open<br>Pledges accepted</div>
       </div>
-    </div>
 
-    <!-- Row 2: outcome -->
-    <div class="row">
-      <div class="state unsuccessful terminal">
+      <div class="state unsuccessful terminal s-uns">
         <div class="zh">募資失敗</div>
         <div class="en">UNSUCCESSFUL</div>
         <div class="meta">Goal not met<br>No charge made</div>
       </div>
-      <div class="state funded">
+
+      <div class="state funded s-funded">
         <div class="zh">目標達成</div>
         <div class="en">FUNDED</div>
         <div class="meta">Stripe batch capture<br>Disbursement queued</div>
       </div>
-      <div class="state canceled terminal">
+
+      <div class="state canceled terminal s-cancel">
         <div class="zh">已取消</div>
         <div class="en">CANCELED</div>
         <div class="meta">Pulled by ops<br>Manual refunds if needed</div>
       </div>
-    </div>
 
-    <!-- Row 3: production + release -->
-    <div class="row">
-      <div class="state in-prod">
+      <div class="state in-prod s-inprod">
         <div class="zh">製作中</div>
         <div class="en">IN PRODUCTION</div>
         <div class="meta">Funds disbursed<br>Creator building</div>
       </div>
-      <div class="state released terminal">
+
+      <div class="state released terminal s-released">
         <div class="zh">已上架</div>
         <div class="en">RELEASED</div>
         <div class="meta">Content lives on Ztor<br>N11 sent to backers</div>
       </div>
+
     </div>
 
-    <p style="text-align:center; color:#666; font-size:12px; margin-top:24px; font-style:italic;">
-      Top → bottom = forward path. Canceled is reachable from Live, Funded, In Production. Unsuccessful is only reachable from Live.
+    <p style="text-align:center; color:#888; font-size:12px; margin-top:24px;">
+      <span style="color:#6ee0a0">━ solid green</span> = success path &nbsp;·&nbsp;
+      <span style="color:#f0a0a0">┄ dashed red</span> = fail / edge case &nbsp;·&nbsp;
+      <span style="color:#aaaadd">━ solid grey</span> = neutral progression
     </p>
   </div>
 
