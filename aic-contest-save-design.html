@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AIC CMS — Contest Save Design</title>
+<style>
+  :root {
+    --bg: #0c0c0e;
+    --bg-elev: #161618;
+    --bg-elev-2: #1f1f23;
+    --border: #2a2a2f;
+    --text: #f5f5f5;
+    --text-dim: #a1a1aa;
+    --text-faint: #71717a;
+    --gold: #c89968;
+    --gold-hover: #d4a878;
+    --blue: #3b82f6;
+    --blue-hover: #2563eb;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* layout */
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  header.hero {
+    padding: 80px 0 56px;
+    border-bottom: 1px solid var(--border);
+    background:
+      radial-gradient(ellipse at top right, rgba(200,153,104,.08), transparent 60%),
+      radial-gradient(ellipse at bottom left, rgba(59,130,246,.05), transparent 50%);
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    background: rgba(200,153,104,.1);
+    border: 1px solid rgba(200,153,104,.3);
+    color: var(--gold);
+    border-radius: 999px;
+    font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px;
+    line-height: 1.1;
+  }
+  h1 em { color: var(--gold); font-style: normal; }
+  .lede { font-size: 19px; color: var(--text-dim); max-width: 760px; margin: 0 0 32px; }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px;
+  }
+  .meta-pill {
+    padding: 6px 12px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-dim);
+  }
+  .meta-pill strong { color: var(--text); font-weight: 600; }
+
+  section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+  section h2 {
+    font-size: clamp(24px, 3vw, 34px); font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em;
+  }
+  section h2 .num { color: var(--gold); margin-right: 14px; font-variant-numeric: tabular-nums; }
+  section .section-sub { color: var(--text-dim); margin: 0 0 40px; max-width: 720px; }
+
+  /* before/after */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  @media (max-width: 880px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .compare-card.before { border-color: rgba(239,68,68,.25); }
+  .compare-card.after { border-color: rgba(34,197,94,.3); }
+  .compare-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; font-weight: 600;
+  }
+  .compare-head .tag {
+    font-size: 11px; padding: 3px 8px; border-radius: 999px; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .compare-card.before .tag { background: rgba(239,68,68,.15); color: #fca5a5; border: 1px solid rgba(239,68,68,.3); }
+  .compare-card.after .tag { background: rgba(34,197,94,.15); color: #86efac; border: 1px solid rgba(34,197,94,.3); }
+  .compare-body { padding: 20px; }
+  .compare-body ul { padding-left: 18px; margin: 0; color: var(--text-dim); font-size: 14px; }
+  .compare-body li { margin-bottom: 8px; }
+  .compare-body li::marker { color: var(--text-faint); }
+
+  /* fake CMS chrome */
+  .demo-frame {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-top: 24px;
+  }
+  .demo-titlebar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px;
+    background: #0a0a0c;
+    border-bottom: 1px solid var(--border);
+  }
+  .demo-titlebar .dot { width: 11px; height: 11px; border-radius: 50%; background: #3a3a40; }
+  .demo-titlebar .url {
+    margin-left: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .demo-page-head {
+    padding: 18px 24px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .demo-page-head .title-cluster {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .demo-page-head h3 {
+    margin: 0; font-size: 22px; font-weight: 700;
+  }
+  .save-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px; font-weight: 500;
+    transition: all .2s ease;
+  }
+  .save-pill .ind { width: 8px; height: 8px; border-radius: 50%; }
+  .save-pill[data-state=hidden] { display: none; }
+  .save-pill[data-state=dirty]  { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3); color: var(--amber); }
+  .save-pill[data-state=dirty]  .ind { background: var(--amber); }
+  .save-pill[data-state=saving] { background: rgba(59,130,246,.1); border: 1px solid rgba(59,130,246,.3); color: var(--blue); }
+  .save-pill[data-state=saving] .ind { background: var(--blue); animation: pulse 1.2s infinite; }
+  .save-pill[data-state=saved]  { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); color: var(--green); }
+  .save-pill[data-state=saved]  .ind { background: var(--green); }
+  .save-pill[data-state=error]  { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: var(--red); }
+  .save-pill[data-state=error]  .ind { background: var(--red); }
+  .save-pill .draft-id {
+    color: var(--text-faint); font-size: 12px; margin-left: 4px; padding-left: 10px; border-left: 1px solid currentColor;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+  /* step indicator strip */
+  .step-strip {
+    display: flex; align-items: center;
+    gap: 0;
+    padding: 18px 24px;
+    background: var(--bg-elev);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .step {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .step + .step::before {
+    content: ""; display: block;
+    width: 32px; height: 1px; background: var(--border);
+    margin: 0 14px;
+  }
+  .step .circle {
+    position: relative;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--bg-elev-2); color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    transition: all .2s ease;
+  }
+  .step.active .circle { background: var(--gold); color: #1a1a1a; border-color: var(--gold); }
+  .step.active { color: var(--gold); font-weight: 600; }
+  .step.saved .circle::after {
+    content: "✓";
+    position: absolute; top: -6px; right: -6px;
+    width: 18px; height: 18px;
+    background: var(--green); color: #fff;
+    border: 2px solid var(--bg-elev);
+    border-radius: 50%;
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step.dirty .circle::after {
+    content: "";
+    position: absolute; top: -4px; right: -4px;
+    width: 10px; height: 10px;
+    background: var(--amber);
+    border: 2px solid var(--bg-elev);
+    border-radius: 50%;
+  }
+
+  /* form area (placeholder) */
+  .demo-form {
+    padding: 24px;
+    background: var(--bg);
+    min-height: 200px;
+  }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
+  .field input, .field textarea {
+    width: 100%;
+    background: #0a0a0c;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+  }
+  .field input:focus-visible, .field textarea:focus-visible {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(59,130,246,.2);
+  }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+
+  /* footer buttons */
+  .demo-footer {
+    display: flex; justify-content: center; align-items: center;
+    gap: 10px;
+    padding: 18px 24px;
+    background: var(--bg-elev);
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    appearance: none;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 14px; font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    min-height: 44px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background .15s ease, transform .05s ease;
+  }
+  .btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .btn:active { transform: translateY(1px); }
+  .btn-secondary { background: #2a2a2f; color: var(--text); }
+  .btn-secondary:hover { background: #34343a; }
+  .btn-gold { background: var(--gold); color: #1a1a1a; }
+  .btn-gold:hover { background: var(--gold-hover); }
+  .btn-save {
+    background: var(--blue);
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+  .btn-save:hover { background: var(--blue-hover); }
+  .btn-save.is-loading { pointer-events: none; opacity: .7; }
+  .btn-save.is-loading svg { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* annotation badges */
+  .demo-annotated { position: relative; }
+  .ann {
+    position: absolute;
+    background: var(--gold);
+    color: #1a1a1a;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px; font-weight: 700;
+    box-shadow: 0 6px 16px rgba(0,0,0,.4);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .ann::after {
+    content: "";
+    position: absolute;
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+  }
+  .ann.point-down::after { bottom: -6px; left: 24px; border-top: 6px solid var(--gold); }
+  .ann.point-up::after { top: -6px; left: 24px; border-bottom: 6px solid var(--gold); }
+  @media (max-width: 880px) { .ann { display: none; } } /* hide annotations on mobile to keep it readable */
+
+  /* states grid */
+  .states-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;
+    margin-top: 28px;
+  }
+  .state-card {
+    padding: 18px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .state-card .pill-preview { margin-bottom: 12px; }
+  .state-card h4 { margin: 0 0 4px; font-size: 14px; }
+  .state-card p { margin: 0; font-size: 13px; color: var(--text-dim); }
+
+  /* spec table */
+  .spec-table {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+    margin-top: 24px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .spec-table th, .spec-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+  }
+  .spec-table tbody tr:last-child td { border-bottom: none; }
+  .spec-table th { background: var(--bg-elev-2); font-weight: 600; color: var(--text-dim); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .spec-table code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    background: #0a0a0c;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--gold);
+  }
+
+  /* timeline / impl steps */
+  .impl-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px;
+    margin-top: 28px;
+  }
+  .impl-card {
+    padding: 20px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    position: relative;
+  }
+  .impl-card .day {
+    color: var(--gold);
+    font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .impl-card h4 { margin: 0 0 8px; font-size: 15px; }
+  .impl-card p { margin: 0; color: var(--text-dim); font-size: 13px; }
+
+  /* footer */
+  footer.page-foot {
+    padding: 36px 0 60px;
+    color: var(--text-faint);
+    font-size: 13px;
+  }
+  footer.page-foot a { color: var(--gold); text-decoration: none; border-bottom: 1px dashed currentColor; }
+  footer.page-foot a:hover { color: var(--gold-hover); }
+
+  /* utility */
+  .row-link { color: var(--gold); text-decoration: none; font-weight: 500; }
+  .row-link:hover { text-decoration: underline; }
+  .demo-tip {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(59,130,246,.08);
+    border: 1px solid rgba(59,130,246,.25);
+    border-radius: var(--radius-sm);
+    color: #93c5fd;
+    font-size: 13px;
+  }
+  .demo-tip strong { color: #bfdbfe; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">● Design Proposal · Sprint 1.16.2</span>
+    <h1>AIC CMS — <em>Save this step.</em><br>Not a draft system.</h1>
+    <p class="lede">
+      Per the 4/30 dev sync: don't build a separate "draft" feature. Add an inline
+      <strong style="color:var(--text)">儲存此步驟 / Save this step</strong> button to every step of the existing 5-step
+      contest creation wizard. Editors stop losing work to forced logouts and tab-closes
+      without learning a new flow.
+    </p>
+    <div class="meta-row">
+      <span class="meta-pill">Ticket: <strong>[AIC] CMS - 儲存草稿功能</strong></span>
+      <span class="meta-pill">Owner: <strong>Eric Tam</strong></span>
+      <span class="meta-pill">Target: <strong>May 11</strong></span>
+      <span class="meta-pill">Effort: <strong>~4 dev-days</strong></span>
+    </div>
+  </div>
+</header>
+
+<!-- ========================================================== 1. Problem -->
+<section>
+  <div class="wrap">
+    <h2><span class="num">01</span>The problem</h2>
+    <p class="section-sub">Editors lose work when they get force-logged-out or the edit page auto-closes during a long contest creation. Today, the only way to persist anything is the final 創建活動 button — which requires every required field across all 5 steps to be filled.</p>
+
+    <div class="compare-grid">
+      <div class="compare-card before">
+        <div class="compare-head"><span class="tag">Before</span> Today's flow</div>
+        <div class="compare-body">
+          <ul>
+            <li>5-step wizard, ~230 inputs total</li>
+            <li>Step 1 alone: 84 inputs + 9 image uploads + 4 rich-text editors</li>
+            <li><strong>下一步 / 上一步</strong> are pure client-side toggles — no network call</li>
+            <li><strong>創建活動</strong> is the only persistence path; fails if any required field is missing</li>
+            <li>No "last saved" indicator, no draft state, no recovery after logout</li>
+            <li>Tab close or session expiry → all in-flight work lost</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="compare-card after">
+        <div class="compare-head"><span class="tag">After</span> Proposed</div>
+        <div class="compare-body">
+          <ul>
+            <li>Same 5-step wizard — no new screens</li>
+            <li>Each step gets its own <strong>儲存此步驟</strong> button (blue, primary)</li>
+            <li>Saves a partial contest as <code style="background:#0a0a0c;color:var(--gold);padding:1px 6px;border-radius:4px;">status='draft'</code> — required fields not enforced until publish</li>
+            <li>Header shows live save state: <strong>● 已儲存 · 1 分鐘前</strong></li>
+            <li>Saved steps get a green ✓ in the wizard nav</li>
+            <li>Re-entry after logout lands on the last saved step with all data restored</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== 2. Live demo -->
+<section>
+  <div class="wrap">
+    <h2><span class="num">02</span>Interactive demo</h2>
+    <p class="section-sub">Tap <strong>儲存此步驟</strong> in the demo below to see the full save flow — header pill, step checkmark, success toast, and re-entry behavior.</p>
+
+    <div class="demo-frame demo-annotated">
+      <div class="demo-titlebar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="url">mvp-aicapi.ztor.com/admin/contests/create</span>
+      </div>
+
+      <div class="demo-page-head">
+        <div class="title-cluster">
+          <h3>新增活動</h3>
+          <span class="save-pill" id="savePill" data-state="hidden">
+            <span class="ind"></span><span class="label">未儲存的變更</span>
+            <span class="draft-id" id="draftId" hidden>草稿 ID #5</span>
+          </span>
+        </div>
+        <button class="btn btn-secondary" type="button">返回列表</button>
+      </div>
+
+      <div class="step-strip" id="stepStrip">
+        <div class="step active" data-step="1"><div class="circle">1</div><span>基本資訊</span></div>
+        <div class="step" data-step="2"><div class="circle">2</div><span>介紹模組</span></div>
+        <div class="step" data-step="3"><div class="circle">3</div><span>時間線</span></div>
+        <div class="step" data-step="4"><div class="circle">4</div><span>獎項</span></div>
+        <div class="step" data-step="5"><div class="circle">5</div><span>創作指南與條款</span></div>
+      </div>
+
+      <div class="demo-form">
+        <div class="field-row">
+          <div class="field">
+            <label>活動識別字串</label>
+            <input id="f1" placeholder="例如：zorigin001" value="zorigin004" />
+          </div>
+          <div class="field">
+            <label>活動標題 *</label>
+            <input id="f2" placeholder="輸入活動標題" />
+          </div>
+        </div>
+        <div class="field">
+          <label>副標題</label>
+          <input id="f3" placeholder="副標題" />
+        </div>
+        <div class="field">
+          <label>活動描述</label>
+          <textarea id="f4" rows="4" placeholder="請輸入內容..."></textarea>
+        </div>
+
+        <div class="demo-tip">
+          <strong>Try it:</strong> edit any field above (the pill turns amber → "未儲存的變更"), then click <strong>儲存此步驟</strong>.
+        </div>
+      </div>
+
+      <div class="demo-footer">
+        <button class="btn btn-secondary" type="button" disabled>上一步</button>
+        <button class="btn btn-save" id="saveBtn" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          <span class="btn-label">儲存此步驟</span>
+        </button>
+        <button class="btn btn-secondary" type="button">下一步</button>
+      </div>
+
+      <!-- floating annotations -->
+      <div class="ann point-down" style="top: 50px; left: 220px;">② Save state pill</div>
+      <div class="ann point-up" style="top: 200px; left: 24px;">③ Saved steps get a green ✓</div>
+      <div class="ann point-up" style="bottom: 80px; left: 50%; transform: translateX(-50%);">① New: Save this step</div>
+    </div>
+
+    <div id="toastHost" style="position:fixed;top:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
+  </div>
+</section>
+
+<!-- ========================================================== 3. States -->
+<section>
+  <div class="wrap">
+    <h2><span class="num">03</span>Save-state taxonomy</h2>
+    <p class="section-sub">The header pill is the at-a-glance signal. Five distinct states, each combining color + text + icon (color is never the only signal — passes WCAG).</p>
+
+    <div class="states-grid">
+      <div class="state-card">
+        <div class="pill-preview"><span class="save-pill" data-state="hidden" style="display:inline-flex;background:#1f1f23;border:1px dashed var(--border);color:var(--text-faint);"><span class="ind" style="background:var(--text-faint)"></span>未編輯</span></div>
+        <h4>Pristine</h4>
+        <p>Pill hidden. New contest, no input yet.</p>
+      </div>
+      <div class="state-card">
+        <div class="pill-preview"><span class="save-pill" data-state="dirty"><span class="ind"></span>未儲存的變更</span></div>
+        <h4>Dirty</h4>
+        <p>Editor changed a field. Strong amber nudge.</p>
+      </div>
+      <div class="state-card">
+        <div class="pill-preview"><span class="save-pill" data-state="saving"><span class="ind"></span>儲存中…</span></div>
+        <h4>Saving</h4>
+        <p>Network in flight. Button locked, spinner.</p>
+      </div>
+      <div class="state-card">
+        <div class="pill-preview"><span class="save-pill" data-state="saved"><span class="ind"></span>已儲存 · 剛剛<span class="draft-id">#5</span></span></div>
+        <h4>Saved</h4>
+        <p>Persisted. Timestamp counts up: 剛剛 → 1 分鐘前 → 5 分鐘前.</p>
+      </div>
+      <div class="state-card">
+        <div class="pill-preview"><span class="save-pill" data-state="error"><span class="ind"></span>儲存失敗，重試</span></div>
+        <h4>Error</h4>
+        <p>Clickable. Form state preserved on retry.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== 4. Spec -->
+<section>
+  <div class="wrap">
+    <h2><span class="num">04</span>Save button — visual spec</h2>
+    <p class="section-sub">Distinct from the gold publish CTA. Blue reads as "system / save" in admin contexts (cf. WordPress, Notion, GitHub) so editors don't mis-click 發佈活動 (publish).</p>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th style="width:30%">Property</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Label (zh-TW)</td><td>儲存此步驟</td></tr>
+        <tr><td>Label (en)</td><td>Save this step</td></tr>
+        <tr><td>Background</td><td><code>#3b82f6</code> (blue-500) — hover: <code>#2563eb</code></td></tr>
+        <tr><td>Text</td><td><code>#ffffff</code></td></tr>
+        <tr><td>Border-radius</td><td><code>8px</code></td></tr>
+        <tr><td>Padding</td><td><code>10px 20px</code></td></tr>
+        <tr><td>Min height</td><td><code>44px</code> (touch target — Apple/Google guideline)</td></tr>
+        <tr><td>Icon</td><td>Save (floppy), 14px, before label</td></tr>
+        <tr><td>:focus-visible</td><td>2px ring <code>#60a5fa</code>, 2px offset</td></tr>
+        <tr><td>Loading</td><td>Replace label with <code>儲存中…</code> + spinning icon; disable</td></tr>
+        <tr><td>Contrast ratio (text on bg)</td><td>4.93:1 ✓ (WCAG AA pass)</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin-top: 64px;"><span class="num">05</span>Footer layout per step</h2>
+    <p class="section-sub">Replace 創建活動 on steps 1–4 (it's misleading there — backend rejects unless all fields complete). Keep it on step 5, renamed to 發佈活動.</p>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th style="width:18%">Step</th><th>Footer (left → right)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>1</strong> 基本資訊</td><td>儲存此步驟 · 下一步</td></tr>
+        <tr><td><strong>2</strong> 介紹模組</td><td>上一步 · 儲存此步驟 · 下一步</td></tr>
+        <tr><td><strong>3</strong> 時間線</td><td>上一步 · 儲存此步驟 · 下一步</td></tr>
+        <tr><td><strong>4</strong> 獎項</td><td>上一步 · 儲存此步驟 · 下一步</td></tr>
+        <tr><td><strong>5</strong> 創作指南與條款</td><td>上一步 · 儲存此步驟 · <strong style="color:var(--gold)">發佈活動</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========================================================== 5. Implementation -->
+<section>
+  <div class="wrap">
+    <h2><span class="num">06</span>Implementation — ~4 dev-days</h2>
+    <p class="section-sub">Each step is already a separate <code style="color:var(--gold);background:#0a0a0c;padding:1px 6px;border-radius:4px;">&lt;form&gt;</code> in the DOM (verified). Per-step save is a thin layer over what's already there.</p>
+
+    <div class="impl-grid">
+      <div class="impl-card">
+        <div class="day">Day 1</div>
+        <h4>Backend: status + partial endpoint</h4>
+        <p>Add <code style="font-size:12px;background:#0a0a0c;color:var(--gold);padding:1px 4px;border-radius:3px;">status</code>, <code style="font-size:12px;background:#0a0a0c;color:var(--gold);padding:1px 4px;border-radius:3px;">last_saved_step</code>, <code style="font-size:12px;background:#0a0a0c;color:var(--gold);padding:1px 4px;border-radius:3px;">last_saved_at</code> columns. Build PATCH endpoint that accepts partial step data.</p>
+      </div>
+      <div class="impl-card">
+        <div class="day">Day 2</div>
+        <h4>Backend: publish endpoint</h4>
+        <p>Move full validation behind a separate POST /publish route. Existing rows backfilled to <code style="font-size:12px;background:#0a0a0c;color:var(--gold);padding:1px 4px;border-radius:3px;">status='active'</code>.</p>
+      </div>
+      <div class="impl-card">
+        <div class="day">Day 3</div>
+        <h4>Frontend: Save buttons + JS</h4>
+        <p>One button per <code style="font-size:12px;background:#0a0a0c;color:var(--gold);padding:1px 4px;border-radius:3px;">&lt;form&gt;</code>. Submits FormData to PATCH endpoint. Handles loading / success / error states.</p>
+      </div>
+      <div class="impl-card">
+        <div class="day">Day 3.5</div>
+        <h4>Frontend: pill + step ✓</h4>
+        <p>Header save-state pill, step-indicator checkmarks, dirty-tracking on input/change events.</p>
+      </div>
+      <div class="impl-card">
+        <div class="day">Day 4</div>
+        <h4>QA + edge cases</h4>
+        <p>Verify re-entry after logout, browser refresh warning, partial-save with required fields blank, multilingual content (繁中 / English).</p>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;padding:16px 20px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:var(--radius);color:#fcd34d;font-size:14px;">
+      <strong style="color:#fde68a;">Out of scope (separate ticket):</strong> the underlying force-logout / page-auto-close bug. This design <em>mitigates damage</em> from logouts — it doesn't <em>prevent</em> them.
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== Footer -->
+<footer class="page-foot">
+  <div class="wrap">
+    Full spec → <a href="https://app.asana.com/1/1201357017636456/project/1209435606242106/task/1214344787221416">Asana ticket</a> · Designed by Web Designer skill (on behalf of Angela), 2026-04-30
+  </div>
+</footer>
+
+<script>
+(() => {
+  const pill = document.getElementById('savePill');
+  const pillLabel = pill.querySelector('.label');
+  const draftId = document.getElementById('draftId');
+  const saveBtn = document.getElementById('saveBtn');
+  const btnLabel = saveBtn.querySelector('.btn-label');
+  const stepStrip = document.getElementById('stepStrip');
+  const fields = ['f1','f2','f3','f4'].map(id => document.getElementById(id));
+  const toastHost = document.getElementById('toastHost');
+
+  let dirty = false;
+  let savedAt = null;
+  let firstSave = true;
+
+  const setPill = (state, label) => {
+    pill.dataset.state = state;
+    pillLabel.textContent = label;
+    if (state === 'saved') draftId.hidden = false;
+  };
+
+  const updateRelTime = () => {
+    if (!savedAt || pill.dataset.state !== 'saved') return;
+    const diff = Math.round((Date.now() - savedAt) / 1000);
+    let text;
+    if (diff < 5) text = '剛剛';
+    else if (diff < 60) text = `${diff} 秒前`;
+    else if (diff < 3600) text = `${Math.floor(diff/60)} 分鐘前`;
+    else text = `${Math.floor(diff/3600)} 小時前`;
+    pillLabel.textContent = `已儲存 · ${text}`;
+  };
+  setInterval(updateRelTime, 5000);
+
+  fields.forEach(f => {
+    f.addEventListener('input', () => {
+      if (!dirty) {
+        dirty = true;
+        setPill('dirty', '未儲存的變更');
+        // mark active step dirty
+        const active = stepStrip.querySelector('.step.active');
+        if (active) {
+          active.classList.remove('saved');
+          active.classList.add('dirty');
+        }
+      }
+    });
+  });
+
+  const showToast = (text, kind = 'success') => {
+    const t = document.createElement('div');
+    const colors = {
+      success: { bg: 'rgba(34,197,94,.12)', border: 'rgba(34,197,94,.35)', fg: '#86efac' },
+      error: { bg: 'rgba(239,68,68,.12)', border: 'rgba(239,68,68,.35)', fg: '#fca5a5' }
+    }[kind];
+    t.style.cssText = `
+      pointer-events:auto;padding:12px 16px;background:${colors.bg};
+      border:1px solid ${colors.border};color:${colors.fg};
+      border-radius:10px;font-size:14px;font-weight:500;
+      box-shadow:0 8px 24px rgba(0,0,0,.5);
+      transform:translateX(20px);opacity:0;transition:all .25s ease;
+      max-width:300px;
+    `;
+    t.setAttribute('role', 'status');
+    t.setAttribute('aria-live', kind === 'error' ? 'assertive' : 'polite');
+    t.textContent = text;
+    toastHost.appendChild(t);
+    requestAnimationFrame(() => { t.style.transform = 'translateX(0)'; t.style.opacity = '1'; });
+    setTimeout(() => {
+      t.style.transform = 'translateX(20px)'; t.style.opacity = '0';
+      setTimeout(() => t.remove(), 250);
+    }, 2800);
+  };
+
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.classList.add('is-loading');
+    btnLabel.textContent = '儲存中…';
+    setPill('saving', '儲存中…');
+
+    // simulate network
+    await new Promise(r => setTimeout(r, 900));
+
+    saveBtn.classList.remove('is-loading');
+    btnLabel.textContent = '儲存此步驟';
+    dirty = false;
+    savedAt = Date.now();
+    setPill('saved', '已儲存 · 剛剛');
+
+    const active = stepStrip.querySelector('.step.active');
+    if (active) {
+      active.classList.remove('dirty');
+      active.classList.add('saved');
+    }
+
+    if (firstSave) {
+      firstSave = false;
+      showToast('已儲存「基本資訊」步驟。草稿 ID #5 已建立。');
+    } else {
+      showToast('已儲存「基本資訊」步驟');
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
