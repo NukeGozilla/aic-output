@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Beamco QA Workflow — Status Flow</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --ink: #0f172a;
+    --ink-soft: #475569;
+    --muted: #94a3b8;
+    --line: #e2e8f0;
+    --plan: #8b5cf6;
+    --design: #0ea5e9;
+    --build: #f97316;
+    --qa: #f59e0b;
+    --pass: #10b981;
+    --fail: #ef4444;
+    --ship: #64748b;
+    --new: #b45309;
+    --new-bg: #fef3c7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Noto Sans TC", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 36px 48px 20px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--new);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 800px;
+    line-height: 1.5;
+  }
+  .meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .meta strong { color: var(--ink-soft); font-weight: 600; }
+
+  main {
+    padding: 32px 48px 64px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .diagram-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 32px 24px 16px;
+    overflow-x: auto;
+  }
+  .diagram-wrap svg { display: block; min-width: 1300px; }
+
+  .section-title {
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 700;
+    margin: 32px 0 12px;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .card h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card h3 .badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--new-bg);
+    color: var(--new);
+  }
+  .card h3 .badge.warn { background: #fee2e2; color: #b91c1c; }
+  .card h3 .badge.ok { background: #d1fae5; color: #047857; }
+  .card ul { margin: 0; padding-left: 18px; }
+  .card li {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 6px;
+  }
+  .card li code {
+    background: #f1f5f9;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .card li .strike {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .kpi .num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .kpi .label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    line-height: 1.35;
+  }
+  .kpi.warn .num { color: var(--fail); }
+  .kpi.ok .num { color: var(--pass); }
+  .kpi.new .num { color: var(--new); }
+
+  /* SVG-specific */
+  .node-box { rx: 10; ry: 10; stroke-width: 1.5; }
+  .node-text {
+    fill: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .node-sub {
+    fill: rgba(255,255,255,0.85);
+    font-size: 10px;
+    font-weight: 500;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .lane-label {
+    fill: var(--ink-soft);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .lane-bg { fill: #f8fafc; stroke: var(--line); stroke-dasharray: 4 4; rx: 8; ry: 8; }
+  .arrow { stroke: #94a3b8; stroke-width: 1.8; fill: none; }
+  .arrow-fail { stroke: var(--fail); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+  .arrow-pass { stroke: var(--pass); stroke-width: 2; fill: none; }
+  .arrow-merge { stroke: var(--qa); stroke-width: 2; fill: none; }
+  .new-glow {
+    filter: drop-shadow(0 0 8px rgba(180, 83, 9, 0.4));
+  }
+  .annotation {
+    fill: var(--ink-soft);
+    font-size: 11px;
+    font-style: italic;
+  }
+  .arrow-label {
+    fill: var(--ink-soft);
+    font-size: 11px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+
+  footer {
+    margin-top: 32px;
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Beamco · QA Workflow Design · 2026-04-29</div>
+  <h1>Status flow for Feature &amp; Bug tickets</h1>
+  <p class="subtitle">
+    Proposed end-to-end workflow using existing Asana statuses, with one addition
+    (<strong>Testing</strong>) to surface the active QA pickup state. Designed around bringing
+    Ming into a dedicated UAT role at Beamco.
+  </p>
+  <div class="meta">
+    <div><strong>Workspace:</strong> Beamco (pilot)</div>
+    <div><strong>Status field:</strong> shared single-select (~7 Beamco projects)</div>
+    <div><strong>Review checkpoint:</strong> 2026-05-27 (4-week trial)</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- KPI strip from data -->
+  <div class="kpis">
+    <div class="kpi warn"><div class="num">61.5%</div><div class="label">Beamco tickets currently sitting in <code>UAT</code> — the bottleneck the new status helps measure</div></div>
+    <div class="kpi"><div class="num">56</div><div class="label">tickets in the UAT queue today (last 21d window)</div></div>
+    <div class="kpi new"><div class="num">2</div><div class="label">tickets already in <code>Testing</code> on Ztor — the status isn't actually new</div></div>
+    <div class="kpi warn"><div class="num">5</div><div class="label">dead statuses ripe for cleanup at the same time</div></div>
+  </div>
+
+  <div class="section-title">End-to-end status flow</div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 1500 720" width="100%" height="720" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#94a3b8" />
+        </marker>
+        <marker id="arrowhead-fail" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#ef4444" />
+        </marker>
+        <marker id="arrowhead-pass" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#10b981" />
+        </marker>
+        <marker id="arrowhead-merge" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#f59e0b" />
+        </marker>
+      </defs>
+
+      <!-- Lane backgrounds -->
+      <rect class="lane-bg" x="20" y="40" width="1460" height="180" />
+      <rect class="lane-bg" x="20" y="240" width="1460" height="220" />
+      <rect class="lane-bg" x="20" y="480" width="1460" height="220" />
+
+      <!-- Lane labels -->
+      <text class="lane-label" x="36" y="62">FEATURE TICKET</text>
+      <text class="lane-label" x="36" y="262">BUG TICKET</text>
+      <text class="lane-label" x="36" y="502">SHARED · QA + SHIP</text>
+
+      <!-- =================== FEATURE FLOW =================== -->
+      <!-- Requirement -->
+      <g>
+        <rect class="node-box" x="170" y="120" width="130" height="50" fill="#8b5cf6" stroke="#7c3aed" />
+        <text class="node-text" x="235" y="145">Requirement</text>
+      </g>
+      <!-- Design -->
+      <g>
+        <rect class="node-box" x="340" y="120" width="120" height="50" fill="#0ea5e9" stroke="#0284c7" />
+        <text class="node-text" x="400" y="145">Design</text>
+      </g>
+      <!-- Design Review -->
+      <g>
+        <rect class="node-box" x="500" y="120" width="140" height="50" fill="#0ea5e9" stroke="#0284c7" />
+        <text class="node-text" x="570" y="145">Design Review</text>
+      </g>
+      <!-- Copywriting (parallel above) -->
+      <g>
+        <rect class="node-box" x="500" y="60" width="140" height="40" fill="#0ea5e9" stroke="#0284c7" opacity="0.85" />
+        <text class="node-text" x="570" y="80">Copywriting</text>
+        <text class="annotation" x="650" y="84">parallel</text>
+      </g>
+      <!-- Development (feature) -->
+      <g>
+        <rect class="node-box" x="680" y="120" width="130" height="50" fill="#f97316" stroke="#ea580c" />
+        <text class="node-text" x="745" y="138">Development</text>
+        <text class="node-sub" x="745" y="156">(feature build)</text>
+      </g>
+
+      <!-- Feature arrows -->
+      <line class="arrow" x1="300" y1="145" x2="338" y2="145" marker-end="url(#arrowhead)" />
+      <line class="arrow" x1="460" y1="145" x2="498" y2="145" marker-end="url(#arrowhead)" />
+      <line class="arrow" x1="640" y1="145" x2="678" y2="145" marker-end="url(#arrowhead)" />
+      <!-- Copywriting parallel arrows -->
+      <path class="arrow" d="M 460 138 Q 480 80 498 80" marker-end="url(#arrowhead)" />
+      <path class="arrow" d="M 640 80 Q 660 100 680 130" marker-end="url(#arrowhead)" />
+
+      <!-- Feature → UAT merge arrow -->
+      <path class="arrow-merge" d="M 745 170 Q 745 380 825 540" marker-end="url(#arrowhead-merge)" />
+      <text class="arrow-label" x="785" y="350">feature → QA</text>
+
+      <!-- =================== BUG FLOW =================== -->
+      <!-- Bug Found -->
+      <g>
+        <rect class="node-box" x="170" y="320" width="130" height="50" fill="#8b5cf6" stroke="#7c3aed" />
+        <text class="node-text" x="235" y="345">Bug Found</text>
+      </g>
+      <!-- Discussion -->
+      <g>
+        <rect class="node-box" x="340" y="320" width="120" height="50" fill="#8b5cf6" stroke="#7c3aed" />
+        <text class="node-text" x="400" y="338">Discussion</text>
+        <text class="node-sub" x="400" y="356">(triage)</text>
+      </g>
+
+      <!-- Branches from Discussion -->
+      <!-- Not a bug (terminal) -->
+      <g>
+        <rect class="node-box" x="500" y="260" width="120" height="40" fill="#94a3b8" stroke="#64748b" />
+        <text class="node-text" x="560" y="280">Not a bug</text>
+        <text class="annotation" x="630" y="285">closed · invalid</text>
+      </g>
+      <!-- Pending (parked) -->
+      <g>
+        <rect class="node-box" x="500" y="320" width="120" height="40" fill="#94a3b8" stroke="#64748b" />
+        <text class="node-text" x="560" y="340">Pending</text>
+        <text class="annotation" x="630" y="345">deferred</text>
+      </g>
+      <!-- Development (bug fix) -->
+      <g>
+        <rect class="node-box" x="500" y="380" width="130" height="50" fill="#f97316" stroke="#ea580c" />
+        <text class="node-text" x="565" y="398">Development</text>
+        <text class="node-sub" x="565" y="416">(bug fix)</text>
+      </g>
+      <!-- Fixed (bug-flow only intermediate) -->
+      <g>
+        <rect class="node-box" x="680" y="380" width="120" height="50" fill="#f97316" stroke="#ea580c" opacity="0.85" />
+        <text class="node-text" x="740" y="398">Fixed</text>
+        <text class="node-sub" x="740" y="416">(awaiting QA)</text>
+      </g>
+
+      <!-- Bug arrows -->
+      <line class="arrow" x1="300" y1="345" x2="338" y2="345" marker-end="url(#arrowhead)" />
+      <!-- Discussion → branches -->
+      <path class="arrow" d="M 460 335 Q 480 290 498 280" marker-end="url(#arrowhead)" />
+      <line class="arrow" x1="460" y1="345" x2="498" y2="340" marker-end="url(#arrowhead)" />
+      <path class="arrow" d="M 460 360 Q 480 400 498 405" marker-end="url(#arrowhead)" />
+      <!-- Development → Fixed -->
+      <line class="arrow" x1="630" y1="405" x2="678" y2="405" marker-end="url(#arrowhead)" />
+
+      <!-- Bug → UAT merge arrow -->
+      <path class="arrow-merge" d="M 740 430 Q 740 490 825 555" marker-end="url(#arrowhead-merge)" />
+      <text class="arrow-label" x="780" y="495">fix → QA</text>
+
+      <!-- =================== SHARED QA + SHIP =================== -->
+      <!-- UAT (queue) -->
+      <g>
+        <rect class="node-box" x="830" y="540" width="130" height="60" fill="#f59e0b" stroke="#d97706" />
+        <text class="node-text" x="895" y="563">UAT</text>
+        <text class="node-sub" x="895" y="582">queue · unassigned</text>
+      </g>
+      <!-- Testing (NEW) -->
+      <g class="new-glow">
+        <rect class="node-box" x="990" y="540" width="140" height="60" fill="#fef3c7" stroke="#b45309" stroke-width="2.5" />
+        <text x="1060" y="560" fill="#b45309" font-size="13" font-weight="700" text-anchor="middle">Testing</text>
+        <text x="1060" y="578" fill="#92400e" font-size="10" font-weight="600" text-anchor="middle">tester actively verifying</text>
+        <text x="1060" y="528" fill="#b45309" font-size="10" font-weight="700" text-anchor="middle">★ NEW (exists on Ztor)</text>
+      </g>
+      <!-- Launch Ready -->
+      <g>
+        <rect class="node-box" x="1180" y="500" width="130" height="50" fill="#10b981" stroke="#059669" />
+        <text class="node-text" x="1245" y="525">Launch Ready</text>
+      </g>
+      <!-- Test Failed -->
+      <g>
+        <rect class="node-box" x="1180" y="600" width="130" height="50" fill="#ef4444" stroke="#dc2626" />
+        <text class="node-text" x="1245" y="625">Test Failed</text>
+      </g>
+      <!-- Launched -->
+      <g>
+        <rect class="node-box" x="1340" y="500" width="120" height="50" fill="#64748b" stroke="#475569" />
+        <text class="node-text" x="1400" y="525">Launched</text>
+      </g>
+      <!-- Done -->
+      <g>
+        <rect class="node-box" x="1340" y="610" width="120" height="50" fill="#64748b" stroke="#475569" opacity="0.9" />
+        <text class="node-text" x="1400" y="635">Done</text>
+      </g>
+
+      <!-- QA arrows -->
+      <line class="arrow-merge" x1="960" y1="570" x2="988" y2="570" marker-end="url(#arrowhead-merge)" />
+      <!-- Testing → Launch Ready (pass) -->
+      <path class="arrow-pass" d="M 1130 555 Q 1155 530 1180 525" marker-end="url(#arrowhead-pass)" />
+      <text class="arrow-label" x="1155" y="510" fill="#059669">PASS</text>
+      <!-- Testing → Test Failed (fail) -->
+      <path class="arrow-fail" d="M 1130 585 Q 1155 605 1180 620" marker-end="url(#arrowhead-fail)" />
+      <text class="arrow-label" x="1155" y="650" fill="#dc2626">FAIL</text>
+
+      <!-- Launch Ready → Launched -->
+      <line class="arrow" x1="1310" y1="525" x2="1338" y2="525" marker-end="url(#arrowhead)" />
+      <!-- Launched → Done (verify in prod) -->
+      <path class="arrow" d="M 1400 550 Q 1400 580 1400 608" marker-end="url(#arrowhead)" />
+      <text class="annotation" x="1410" y="585">verified</text>
+
+      <!-- Test Failed loop back to Development (bug) -->
+      <path class="arrow-fail" d="M 1180 625 Q 900 700 565 430" marker-end="url(#arrowhead-fail)" />
+      <text class="arrow-label" x="900" y="695" fill="#dc2626">re-open · back to Development</text>
+
+    </svg>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#8b5cf6"></div>Plan / Triage</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#0ea5e9"></div>Design</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#f97316"></div>Build</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#f59e0b"></div>QA queue / active</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#fef3c7;border:1.5px solid #b45309"></div>NEW status</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#10b981"></div>Pass</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#ef4444"></div>Fail</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#64748b"></div>Ship / Closed</div>
+  </div>
+
+  <!-- Notes -->
+  <div class="grid-2">
+    <div class="card">
+      <h3>What changes <span class="badge ok">Adopt</span></h3>
+      <ul>
+        <li>Add (or formalize) <code>Testing</code> as the active-pickup state between <code>UAT</code> and outcomes.</li>
+        <li>Pilot on Beamco only first — Ztor already has 2 tickets in <code>Testing</code> organically; let it stay until Beamco proves the pattern.</li>
+        <li>Daily QA discipline: dev sets <code>UAT</code> unassigned · tester self-assigns + moves to <code>Testing</code> · resolves to <code>Launch Ready</code> or <code>Test Failed</code>.</li>
+        <li>Re-test loop standard: <code>Test Failed</code> → <code>Development</code> → <code>Fixed</code> → <code>UAT</code> → <code>Testing</code>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>What to clean up <span class="badge warn">Retire</span></h3>
+      <ul>
+        <li><span class="strike">Copywriting</span> as a status — captured by section/parallel work, near-zero usage.</li>
+        <li><span class="strike">Discussion</span> as a status — overlaps with Asana comments + triage.</li>
+        <li>Reconcile <code>Development</code> ↔ <code>Ready For Development</code> — Beamco uses the latter; the former sits unused.</li>
+        <li>Retire Beamco section <em>"Testing (QA/UAT in test env)"</em> — duplicates the new status.</li>
+        <li>Confirm <code>Launched</code> = deployed, <code>Done</code> = verified-in-prod (or merge them).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>What to watch <span class="badge">Risk</span></h3>
+      <ul>
+        <li><strong>Status field discipline</strong> — Ztor has 33% null on the primary status field. New status won't help if field isn't filled.</li>
+        <li><strong>Multiple Status fields exist</strong> — Beamco has 3 GIDs, Ztor has 4 (Pawkit's is separate). The "shared across 11 projects" model is partial.</li>
+        <li><strong>Section-vs-status confusion</strong> — Beamco encodes UAT cycles in section names (e.g. "UAT April 27 - 28"). Pick which layer carries which signal.</li>
+        <li><strong>Capacity, not workflow</strong> — 56 in <code>UAT</code> is a queue depth issue. The status helps measure it but doesn't shrink it; that's Ming's job.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Three open questions for the team</h3>
+      <ul>
+        <li><strong>Re-test path:</strong> after <code>Test Failed</code> → does it route through <code>Fixed</code> or skip it?</li>
+        <li><strong><code>Launched</code> vs <code>Done</code>:</strong> two states or one? Recommend deployed vs verified-in-prod split.</li>
+        <li><strong><code>Pending</code> meaning:</strong> blocked, deferred, or waiting on input? Pick one — currently overloaded.</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div>Beamco · QA workflow design · 4-week trial review 2026-05-27</div>
+    <div>Pilot scope: Beamco workspace (~7 projects on primary Status field)</div>
+  </footer>
+
+</main>
+
+</body>
+</html>
