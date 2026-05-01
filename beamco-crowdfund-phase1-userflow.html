@@ -1374,13 +1374,10 @@
     <div class="lane">
       <div class="step artist">
         <div class="head"><span class="num">A1 · Setup</span><span class="pill">Foundational</span></div>
-        <h3>Verified artist + agree to artist contract</h3>
-        <div class="screen">/login → /home</div>
+        <h3>Agree to artist contract</h3>
+        <div class="screen">/crowdfunding (verified artist required) <span class="fr-tag">FR-01</span></div>
         <ul>
-          <li>Verification flow: "All features have been activated for you" <span class="fr-tag">FR-01</span></li>
-          <li>Side nav: Home · Sales · QR Scanner · <b>Crowdfunding</b> · Events · My Wallet</li>
-          <li>Settlement currency picked once (TWD / SGD)</li>
-          <li><b>Artist contract</b> shown before first publish; revenue share %, platform fee, settlement currency, key obligations <span class="fr-tag">FR-52..54</span></li>
+          <li><b>Artist contract</b> shown before first publish: revenue share %, platform fee, settlement currency, key obligations <span class="fr-tag">FR-52..54</span></li>
           <li>Agreement recorded; contract accessible from portal afterwards</li>
         </ul>
       </div>
@@ -1394,21 +1391,19 @@
     <div class="lane">
       <div class="step fan">
         <div class="head"><span class="num">F1 · Setup</span><span class="pill">Foundational</span></div>
-        <h3>Sign up · follow · earn first loyalty point</h3>
-        <div class="screen">/login · /store/{artist}</div>
+        <h3>Earn first loyalty point on the artist</h3>
+        <div class="screen">/store/{artist}</div>
         <ul>
-          <li>Email + password · or Phone · Facebook · Google</li>
-          <li>Visit artist store, tap follow → "You are fan of Artist" badge appears <span class="fr-tag">FR-21</span></li>
-          <li><b style="color: var(--upcoming);">BR-236 · supersedes FR-22 / FR-45:</b> eligibility unlocked once fan earns ≥1 loyalty point on this artist, via either:
+          <li>Eligibility unlocked once fan earns <b>≥1 loyalty point</b> on this artist, via either:
             <ul style="margin-left: 12px; margin-top: 2px;">
               <li><b>Path A — Join community:</b> tap "Join {Artist}'s community" → instant 1 point</li>
-              <li><b>Path B — Any purchase:</b> includes $0 / free items, which now award 28 points (1:28 ratio)</li>
+              <li><b>Path B — Any purchase:</b> includes $0 / free items (28 pts at 1:28 ratio)</li>
             </ul>
           </li>
-          <li>No more <b>7-day wait</b>, no <b>200-point threshold</b> — both removed by BR-236</li>
-          <li>Eligibility flag is <b>permanent per-artist</b> once earned</li>
+          <li>Eligibility flag is <b>permanent per-artist</b> once earned <span class="fr-tag">FR-23 · FR-24</span></li>
+          <li>Supersedes the original 7-day / 200-point model from FR-22 / FR-45 — see Tab 2 §7 (BR-236)</li>
         </ul>
-        <div class="note warn"><b>BR-236 known bug (deferred to P2):</b> user can join community → earn 1 point → leave community, but eligibility flag is retained. Resolution path: confirm with Al.</div>
+        <div class="note warn"><b>Known bug deferred to P2:</b> user can join community → earn 1 point → leave community, but eligibility flag is retained. Owner: Al.</div>
       </div>
     </div>
 
@@ -1436,11 +1431,10 @@
     <div class="lane">
       <div class="step fan" style="opacity: 0.55;">
         <div class="head"><span class="num">F2 · Browse</span><span class="pill">Passive</span></div>
-        <h3>Existing artist store</h3>
+        <h3>Pre-publish store view</h3>
         <div class="screen">/store/{artist}</div>
         <ul>
-          <li>Tabs: All · Shop · Events · Top Fans</li>
-          <li>"{Artist}'s Fanvestor" section is empty until artist publishes</li>
+          <li>"{Artist}'s Fanvestor" section is empty until artist publishes a project</li>
         </ul>
       </div>
     </div>
@@ -1453,8 +1447,7 @@
         <div class="screen">/crowdfunding (list view)</div>
         <ul>
           <li>Validation: portrait + landscape images, name, ≥1 plan, ≥1 milestone, story content, dates ordered, min ≤ total <span class="fr-tag">AC-02..09</span></li>
-          <li>Status auto-flips by date <span class="fr-tag">FR-07 · FR-08</span></li>
-          <li>List columns: Project Name · Remaining/Total · % Sold · Status · Preview Date · Sales Date</li>
+          <li>Status auto-flips by date — no manual review/approval <span class="fr-tag">FR-07 · FR-08</span></li>
           <li>Once first investment lands, plan structure is <b>locked</b> <span class="fr-tag">FR-12</span> (subject to OQ-11)</li>
         </ul>
       </div>
@@ -1471,8 +1464,7 @@
         <h3>See "{Artist}'s Fanvestor"</h3>
         <div class="screen">/store/{artist}</div>
         <ul>
-          <li>Hero card with cover, title, tagline (e.g. "100W · 65% Smaller than Apple's charger")</li>
-          <li>Progress bar (% raised) + "X Days Left" countdown</li>
+          <li>Hero card with progress bar (% raised) and "X Days Left" countdown</li>
           <li>If status = Upcoming: visible but no Invest CTA <span class="fr-tag">FR-09 · AC-11</span></li>
         </ul>
       </div>
@@ -1483,7 +1475,7 @@
       <div class="step artist" style="opacity: 0.55;">
         <div class="head"><span class="num">A·passive</span><span class="pill">No-op</span></div>
         <h3>(no artist-side step)</h3>
-        <ul><li>Eligibility enforced automatically against fan's per-artist follow streak.</li></ul>
+        <ul><li>Eligibility enforced automatically against fan's per-artist eligibility flag.</li></ul>
       </div>
     </div>
     <div class="lane">
@@ -1497,13 +1489,7 @@
           <li><b>Not eligible:</b> CTA = "View Requirement" <span class="fr-tag">FR-25 · AC-28</span></li>
           <li><b>Eligible:</b> CTA = "Join the Journey" on In Progress projects only <span class="fr-tag">FR-27 · AC-30</span></li>
           <li>Eligibility is permanent once earned <span class="fr-tag">FR-23 · FR-24 · AC-31</span></li>
-          <li><b style="color: var(--upcoming);">BR-236 copy update</b> — "View Requirement" screen text:
-            <div style="font-size: 11px; color: var(--text-2); padding: 4px 0 0 8px; border-left: 2px solid var(--upcoming); margin-top: 4px;">
-              <b style="color: var(--text);">"Exclusive Access: Top Fans Only.</b> This is reserved for {Creator}'s top fans. To qualify, either: (1) Grab something from {Creator}'s shop; or (2) Join {Creator}'s community."
-            </div>
-          </li>
         </ul>
-        <div class="note warn"><b>BR-236 superseded OQ-2:</b> X-day-with-unfollow ambiguity is moot — no day-counter exists anymore. <b>New known bug</b> (P2): leaving community after earning eligibility doesn't revoke the flag.</div>
       </div>
     </div>
 
@@ -1533,7 +1519,7 @@
         <div class="screen">Project detail → invest wizard</div>
         <ul>
           <li>1. Tap "Join the Journey" → Plan picker <span class="fr-tag">FR-27 · FR-28</span></li>
-          <li>2. <b>Royalty Shares availability check</b> on selected plan — error if 0 left <span class="fr-tag">FR-29 · AC-33 · BR-267</span></li>
+          <li>2. <b>Royalty Shares availability check</b> on selected plan — error if 0 left <span class="fr-tag">FR-29 · AC-33</span></li>
           <li>3. Enter shipping address <span class="fr-tag">FR-31</span></li>
           <li>4. Add payment method via <b>Stripe Future Payment Setup</b> · no charge <span class="fr-tag">FR-32</span></li>
           <li>5. <b>Fan contract</b> with dynamic values; tick "I agree" <span class="fr-tag">FR-33 · FR-49 · FR-50 · AC-34/35</span></li>
@@ -1690,18 +1676,18 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td class="actor">Configure X / Y values <span style="color: var(--upcoming);">(BR-236)</span></td><td class="actor"><span class="ad">Admin</span> → <span class="s">System</span></td><td class="action">After BR-236, X (days) is no longer used. Y is now effectively the per-purchase point ratio (1:28 for $0 items, otherwise dollar-pegged). Sets eligibility threshold; new values apply only to fans not yet eligible.</td><td class="refs">FR-55 · AC-43 · BR-236</td></tr>
+        <tr><td class="actor">Configure loyalty / eligibility</td><td class="actor"><span class="ad">Admin</span> → <span class="s">System</span></td><td class="action">Sets the loyalty point ratio (1:28 for $0 purchases, dollar-pegged otherwise) and the 1-point eligibility threshold. New values only apply to fans not yet eligible.</td><td class="refs">FR-55 · AC-43</td></tr>
         <tr><td class="actor">Manage contract templates</td><td class="actor"><span class="ad">Admin</span> → <span class="s">System</span></td><td class="action">Creates / edits / versions fan + artist contracts in EN and zh-TW.</td><td class="refs">FR-56 · AC-44</td></tr>
         <tr><td class="actor">Agree to artist contract</td><td class="actor"><span class="a">Artist</span> → <span class="s">System</span></td><td class="action">Required before publish; agreement recorded; contract accessible in portal.</td><td class="refs">FR-52..54</td></tr>
         <tr><td class="actor">Publish project</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Project becomes visible at preview date in fan store under "{Artist}'s Fanvestor". Status auto-flips by date.</td><td class="refs">FR-07 · FR-08</td></tr>
-        <tr><td class="actor">Earn first loyalty point <span style="color: var(--upcoming);">(BR-236)</span></td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span></td><td class="action">Two paths, instant: <b>(A)</b> Join artist's community → 1 point · <b>(B)</b> Any purchase incl. $0 → ≥28 points (1:28 ratio). On any of these, fan is permanently eligible to invest in that artist. <b>Supersedes</b> the FR-22 / FR-45 X-day follow streak.</td><td class="refs">BR-236 · supersedes FR-22 · FR-45</td></tr>
-        <tr><td class="actor">Tap "Join the Journey"</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Plan picker → Royalty Shares availability check → shipping → Stripe (no charge) → fan contract → Confirm. <span style="color: var(--upcoming);">(BR-267)</span></td><td class="refs">FR-27..37 · AC-32..36</td></tr>
+        <tr><td class="actor">Earn first loyalty point</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span></td><td class="action">Two paths, instant: <b>(A)</b> Join artist's community → 1 point · <b>(B)</b> Any purchase incl. $0 → ≥28 points. On either, fan is permanently eligible to invest in that artist.</td><td class="refs">FR-22 · FR-45 (per BR-236)</td></tr>
+        <tr><td class="actor">Tap "Join the Journey"</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Plan picker → Royalty Shares availability check → shipping → Stripe (no charge) → fan contract → Confirm.</td><td class="refs">FR-27..37 · AC-32..36</td></tr>
         <tr><td class="actor">Upgrade pledge</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Higher tier only. Old Royalty Shares returned, new ones taken.</td><td class="refs">FR-38..41 · AC-39..42</td></tr>
         <tr><td class="actor">Post General update</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Visibility-aware. Email scope is open question.</td><td class="refs">FR-14..18 · AC-20</td></tr>
         <tr><td class="actor">Post Milestone Completed</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Investors emailed. Blocked if milestone is overdue.</td><td class="refs">FR-14 · FR-20 · AC-21/26</td></tr>
         <tr><td class="actor">Post Milestone Delayed</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">New target date required. Investors emailed. Clears overdue gate.</td><td class="refs">FR-14 · FR-20 · AC-22/27</td></tr>
         <tr><td class="actor">Edit roadmap date post-publish</td><td class="actor"><span class="a">Artist</span> → <span class="s">System</span></td><td class="action">System forces "Notify Users" update before save.</td><td class="refs">FR-13 · AC-19</td></tr>
-        <tr><td class="actor">End date reached</td><td class="actor"><span class="s">System</span> → <span class="a">Artist</span> + <span class="f">Fan</span></td><td class="action">Status → Completed (reserved ≥ min) or Unsuccessful <span style="color: var(--upcoming);">(BR-203)</span>.</td><td class="refs">FR-07 · FR-47 · AC-13/14 · BR-203</td></tr>
+        <tr><td class="actor">End date reached</td><td class="actor"><span class="s">System</span> → <span class="a">Artist</span> + <span class="f">Fan</span></td><td class="action">Status → Completed (reserved ≥ min) or Unsuccessful.</td><td class="refs">FR-07 · FR-47 · AC-13/14</td></tr>
         <tr><td class="actor">Phase 2 charge fails</td><td class="actor"><span class="s">System</span> → <span class="f">Fan</span></td><td class="action">No shares assigned for that fan; that investment's loyalty revoked.</td><td class="refs">FR-44 · FR-48</td></tr>
       </tbody>
     </table>
