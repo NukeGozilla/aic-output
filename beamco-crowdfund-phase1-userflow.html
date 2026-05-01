@@ -176,8 +176,10 @@
 
   /* Big simple status pills */
   .simple-states {
-    display: flex; gap: 0; align-items: center; flex-wrap: wrap;
+    display: flex; align-items: center; flex-wrap: nowrap;
     padding: 8px 0;
+    overflow-x: auto;
+    gap: 0;
   }
   .simple-state {
     flex-shrink: 0;
@@ -186,7 +188,8 @@
     background: var(--surface);
     border: 1px solid var(--border-strong);
     text-align: left;
-    min-width: 160px;
+    min-width: 170px;
+    position: relative;
   }
   .simple-state .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
   .simple-state .name { font-size: 16px; font-weight: 700; color: #fff; margin: 4px 0 4px; }
@@ -194,13 +197,36 @@
   .simple-state.draft .name     { color: var(--draft); }
   .simple-state.upcoming .name  { color: var(--upcoming); }
   .simple-state.live .name      { color: var(--live); }
+  .simple-state.completed       { border-color: var(--completed); }
   .simple-state.completed .name { color: var(--completed); }
+  .simple-state.failed          { border-color: var(--failed); }
   .simple-state.failed .name    { color: var(--failed); }
+  /* Terminal-state visual cue */
+  .simple-state.completed::after,
+  .simple-state.failed::after {
+    content: "Final"; position: absolute; top: 8px; right: 10px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.04); color: var(--muted);
+    border: 1px solid var(--border-strong);
+  }
   .simple-arrow {
     flex-shrink: 0;
     color: var(--muted);
     font-size: 22px;
-    padding: 0 6px;
+    padding: 0 8px;
+  }
+  /* Y-fork connector: vertical timeline → branches into two terminals */
+  .state-fork-wrap {
+    display: flex; align-items: stretch; gap: 0;
+  }
+  .state-fork-svg {
+    width: 70px; flex-shrink: 0; align-self: stretch;
+  }
+  .state-fork-svg svg { width: 100%; height: 100%; display: block; }
+  .terminal-stack {
+    display: flex; flex-direction: column; gap: 14px;
+    flex-shrink: 0;
   }
 
   /* Simple side-by-side journey */
@@ -800,8 +826,7 @@
   <div class="meta">
     <span>Source · Crowdfund Project BRD (Notion · 2025-12-04, reviewed 2026-03-22)</span>
     <span>·</span>
-    <span>UAT · artists.beamco.co + fans.beamco.co</span>
-    <span>·</span>
+    <span>UAT · artists.beamco.co + fans.beamco.co (UAT is canonical)</span>
   </div>
 </header>
 
@@ -857,17 +882,36 @@
       <div class="name">In Progress</div>
       <div class="when">Live · fans can invest &amp; upgrade</div>
     </div>
-    <div class="simple-arrow">→</div>
-    <div class="simple-state completed">
-      <div class="lbl">Stage 5a</div>
-      <div class="name">Completed</div>
-      <div class="when">Hit the share target by end date</div>
+
+    <!-- Y-fork: end date arrives → either Completed (target hit) or Unsuccessful (target missed) -->
+    <div class="state-fork-svg" aria-label="forks to two terminal states">
+      <svg viewBox="0 0 70 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs>
+          <marker id="state-arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#7a7a90"/>
+          </marker>
+        </defs>
+        <!-- top fork: → Completed -->
+        <path d="M 0,100 Q 35,100 35,40 Q 35,40 60,40" fill="none" stroke="#00d4aa" stroke-width="2" marker-end="url(#state-arrow)"/>
+        <!-- bottom fork: → Unsuccessful -->
+        <path d="M 0,100 Q 35,100 35,160 Q 35,160 60,160" fill="none" stroke="#ff6b6b" stroke-width="2" marker-end="url(#state-arrow)"/>
+        <!-- decision dot at branching point -->
+        <circle cx="0" cy="100" r="3" fill="#7a7a90"/>
+        <text x="35" y="108" text-anchor="middle" fill="#7a7a90" font-size="9" font-family="monospace">end&#10;date</text>
+      </svg>
     </div>
-    <div class="simple-arrow">or</div>
-    <div class="simple-state failed">
-      <div class="lbl">Stage 5b</div>
-      <div class="name">Unsuccessful</div>
-      <div class="when">Missed the target by end date</div>
+
+    <div class="terminal-stack">
+      <div class="simple-state completed">
+        <div class="lbl">Stage 5a · success path</div>
+        <div class="name">Completed</div>
+        <div class="when">Hit the share target by end date · → Phase 2 charge &amp; assignment</div>
+      </div>
+      <div class="simple-state failed">
+        <div class="lbl">Stage 5b · failure path</div>
+        <div class="name">Unsuccessful</div>
+        <div class="when">Missed the share target by end date · reservations released, no charge</div>
+      </div>
     </div>
   </div>
 </section>
@@ -1128,12 +1172,13 @@
 
         <!-- 11. ACTION: Complete invest flow -->
         <g>
-          <rect x="160" y="1544" width="380" height="120" rx="6" fill="rgba(108,184,255,0.12)" stroke="#6cb8ff" stroke-width="2"/>
+          <rect x="140" y="1544" width="420" height="140" rx="6" fill="rgba(108,184,255,0.12)" stroke="#6cb8ff" stroke-width="2"/>
           <text x="350" y="1572" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Complete invest flow</text>
-          <text x="350" y="1596" text-anchor="middle" fill="#b8b8c8" font-size="11">1. Enter shipping address</text>
-          <text x="350" y="1614" text-anchor="middle" fill="#b8b8c8" font-size="11">2. Add payment via Stripe (no charge)</text>
-          <text x="350" y="1632" text-anchor="middle" fill="#b8b8c8" font-size="11">3. Review fan contract · tick "I agree"</text>
-          <text x="350" y="1650" text-anchor="middle" fill="#b8b8c8" font-size="11">4. Confirm → reservation written</text>
+          <text x="350" y="1592" text-anchor="middle" fill="#b8b8c8" font-size="11">1. Enter shipping address</text>
+          <text x="350" y="1610" text-anchor="middle" fill="#b8b8c8" font-size="11">2. Sign "Fan Royalty Participation Agreement"</text>
+          <text x="350" y="1628" text-anchor="middle" fill="#b8b8c8" font-size="11">3. Checkout screen → tap "Place Order"</text>
+          <text x="350" y="1646" text-anchor="middle" fill="#b8b8c8" font-size="11">4. Stripe modal → "Confirm Payment" (no charge)</text>
+          <text x="350" y="1664" text-anchor="middle" fill="#b8b8c8" font-size="11">5. "Thank you for your purchase!" → reservation</text>
         </g>
         <line x1="350" y1="1664" x2="350" y2="1708" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
 
@@ -1260,7 +1305,7 @@
         <li><b>Project creation</b> — the full 4-step wizard</li>
         <li><b>Status machine</b> — Draft → Not Started → Upcoming → In Progress → Completed/Unsuccessful</li>
         <li><b>Eligibility system</b> — instant unlock via community-join OR any purchase (incl. free), 1-point threshold, permanent flag</li>
-        <li><b>Invest flow</b> — pick plan, Royalty Shares availability check, shipping, Stripe Future Payment Setup, fan contract</li>
+        <li><b>Invest flow</b> — pick plan, Royalty Shares availability check, shipping, Fan Royalty Participation Agreement, Checkout (Place Order), Stripe Future Payment Setup, "Thank you" screen</li>
         <li><b>Plan upgrade</b> — upward-only</li>
         <li><b>Reserved shares</b> — committed but not yet assigned</li>
         <li><b>Updates</b> — General + Milestone Completed + Milestone Delayed, with overdue branching</li>
@@ -1519,9 +1564,10 @@
           <li>3. <b>Royalty Shares availability check</b> on selected plan — error if 0 left <span class="fr-tag">FR-29 · AC-33</span></li>
           <li>4. Bottom CTA: <b>"Fanvest for $X"</b> (price computed from plan)</li>
           <li>5. Enter shipping address <span class="fr-tag">FR-31</span></li>
-          <li>6. Add payment method via <b>Stripe Future Payment Setup</b> · no charge <span class="fr-tag">FR-32</span></li>
-          <li>7. <b>Fan contract</b> with dynamic values; tick "I agree" <span class="fr-tag">FR-33 · FR-49 · FR-50 · AC-34/35</span></li>
-          <li>8. Confirm → reservation written · loyalty credited · status pending <span class="fr-tag">FR-34 · AC-32</span></li>
+          <li>6. Sign <b>"Fan Royalty Participation Agreement"</b> (production name; BRD calls this "fan contract") with dynamic values · tick "I agree" <span class="fr-tag">FR-33 · FR-49 · FR-50 · AC-34/35</span></li>
+          <li>7. Checkout screen → tap <b>"Place Order"</b></li>
+          <li>8. Stripe modal — tap <b>"Confirm Payment"</b> (Future Payment Setup, no charge captured today) <span class="fr-tag">FR-32</span></li>
+          <li>9. Success: <b>"Thank you for your purchase!"</b> → reservation written, loyalty credited, status pending <span class="fr-tag">FR-34 · AC-32</span></li>
           <li>One active plan per project <span class="fr-tag">FR-36 · AC-38</span></li>
         </ul>
         <div class="note warn"><b>OQ-12:</b> "Royalty Shares remaining" — derived (total_shares / plan.share_count) or artist-set per plan? UAT shows "1000 slots" minimum threshold which suggests artist-set.</div>
@@ -1679,7 +1725,7 @@
         <tr><td class="actor">Agree to artist contract</td><td class="actor"><span class="a">Artist</span> → <span class="s">System</span></td><td class="action">Required before publish; agreement recorded; contract accessible in portal.</td><td class="refs">FR-52..54</td></tr>
         <tr><td class="actor">Publish project</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Project becomes visible at preview date in fan store under "{Artist}'s Fanvestor". Status auto-flips by date.</td><td class="refs">FR-07 · FR-08</td></tr>
         <tr><td class="actor">Earn first loyalty point</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span></td><td class="action">Two paths, instant: <b>(A)</b> Join artist's community → 1 point · <b>(B)</b> Any purchase incl. $0 → ≥28 points. On either, fan is permanently eligible to invest in that artist.</td><td class="refs">FR-22 · FR-45 (per BR-236)</td></tr>
-        <tr><td class="actor">Tap "Fanvest Now"</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Plan picker → Royalty Shares availability check → shipping → Stripe (no charge) → fan contract → Confirm.</td><td class="refs">FR-27..37 · AC-32..36</td></tr>
+        <tr><td class="actor">Tap "Fanvest Now"</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Plan picker → Royalty Shares availability check → shipping → Fan Royalty Participation Agreement → Checkout → Stripe modal → Place Order (no charge captured).</td><td class="refs">FR-27..37 · AC-32..36</td></tr>
         <tr><td class="actor">Upgrade pledge</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Higher tier only. Old Royalty Shares returned, new ones taken.</td><td class="refs">FR-38..41 · AC-39..42</td></tr>
         <tr><td class="actor">Post General update</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Visibility-aware. Email scope is open question.</td><td class="refs">FR-14..18 · AC-20</td></tr>
         <tr><td class="actor">Post Milestone Completed</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Investors emailed. Blocked if milestone is overdue.</td><td class="refs">FR-14 · FR-20 · AC-21/26</td></tr>
