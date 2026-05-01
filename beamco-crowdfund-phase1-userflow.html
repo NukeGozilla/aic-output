@@ -1085,10 +1085,10 @@
         <line x1="350" y1="978" x2="350" y2="1022" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
         <text x="360" y="1004" fill="#2ecc71" font-size="10" font-weight="700">Yes</text>
 
-        <!-- 8. ACTION: Tap Join the Journey -->
+        <!-- 8. ACTION: Tap Fanvest Now -->
         <g>
           <rect x="200" y="1026" width="300" height="60" rx="6" fill="rgba(108,184,255,0.12)" stroke="#6cb8ff" stroke-width="2"/>
-          <text x="350" y="1051" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Tap "Join the Journey"</text>
+          <text x="350" y="1051" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Tap "Fanvest Now"</text>
           <text x="350" y="1070" text-anchor="middle" fill="#b8b8c8" font-size="11">eligible-only CTA on In Progress projects</text>
         </g>
         <line x1="350" y1="1086" x2="350" y2="1124" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
@@ -1193,8 +1193,8 @@
       <p>What a fan sees if they're <b>not yet eligible</b>. Replaces the invest button. The screen reads:<br><i style="color: var(--text-2);">"Exclusive Access: Top Fans Only. This is reserved for {Creator}'s top fans. To qualify, either: (1) Grab something from {Creator}'s shop; or (2) Join {Creator}'s community."</i></p>
     </div>
     <div class="cta-card go">
-      <span class="label">Join the Journey</span>
-      <p>What an <b>eligible</b> fan sees on a project that's <b>In Progress</b>. Starts the invest flow. Doesn't appear on Upcoming projects.</p>
+      <span class="label">Fanvest Now</span>
+      <p>What an <b>eligible</b> fan sees on a project that's <b>In Progress</b>. Starts the invest flow (opens a "Choose your plan" bottom sheet). Doesn't appear on Upcoming projects. <i>Note: BRD names this CTA "Join the Journey"; production ships as "Fanvest Now" — see Tab 2.</i></p>
     </div>
   </div>
 </section>
@@ -1225,7 +1225,7 @@
           <td>Fan earns ≥1 loyalty point and is <b>permanently unlocked</b> to invest in that artist. Instant — no waiting period. A $0 purchase awards 28 points (1:28 ratio).</td>
         </tr>
         <tr>
-          <td><span class="f">Fan</span> taps "Join the Journey" and confirms</td>
+          <td><span class="f">Fan</span> taps "Fanvest Now" and confirms</td>
           <td><span class="a">Artist</span> dashboard</td>
           <td>Remaining shares drop. % Sold goes up. Fan appears in Top Fans list. <b>No card charged.</b></td>
         </tr>
@@ -1363,7 +1363,7 @@
 <!-- 2. FLOW -->
 <section>
   <h2><span class="num">2</span>End-to-end flow · two lanes, one timeline</h2>
-  <p class="lede">CTA labels (<b>Join the Journey</b>, <b>View Requirement</b>) and update visibility (<b>Everyone</b> / <b>Fanvestors only</b>) are taken verbatim from the BRD.</p>
+  <p class="lede">CTA labels and update visibility (<b>Everyone</b> / <b>Fanvestors only</b>) are taken from the BRD. <b>Production note:</b> BRD says "Join the Journey" but production ships as <b>"Fanvest Now"</b> — confirmed via UAT capture.</p>
 
   <div class="flow">
     <div class="lane-header artist">Artist · Beamco Artist Portal</div>
@@ -1484,27 +1484,30 @@
     <div class="lane">
       <div class="step fan">
         <div class="head"><span class="num">F4 · Eligibility</span><span class="pill system">Per-artist gate</span></div>
-        <h3>"View Requirement" vs "Join the Journey"</h3>
+        <h3>"View Requirement" vs "Fanvest Now"</h3>
         <ul>
           <li><b>Not eligible:</b> CTA = "View Requirement" <span class="fr-tag">FR-25 · AC-28</span></li>
-          <li><b>Eligible:</b> CTA = "Join the Journey" on In Progress projects only <span class="fr-tag">FR-27 · AC-30</span></li>
+          <li><b>Eligible:</b> CTA = <b>"Fanvest Now"</b> on In Progress projects only <span class="fr-tag">FR-27 · AC-30</span></li>
           <li>Eligibility is permanent once earned <span class="fr-tag">FR-23 · FR-24 · AC-31</span></li>
         </ul>
+        <div class="note warn"><b>Production discrepancy:</b> BRD specifies the CTA label as <b>"Join the Journey"</b> but UAT capture shows production renders <b>"Fanvest Now"</b>. Resolve which name is canonical and align doc / UI.</div>
       </div>
     </div>
 
     <!-- Invest -->
     <div class="lane">
       <div class="step artist">
-        <div class="head"><span class="num">A4 · Live data</span><span class="pill live">In Progress</span></div>
-        <h3>Pledge lands in dashboard</h3>
-        <div class="screen">/crowdfunding/{id}</div>
+        <div class="head"><span class="num">A4 · Manage</span><span class="pill live">In Progress</span></div>
+        <h3>Project management — 4 tabs</h3>
+        <div class="screen">/project/detail?id={id}</div>
         <ul>
-          <li>Reserved Shares incremented by plan.share_count <span class="fr-tag">FR-34 · FR-37</span></li>
-          <li>Remaining/Total decrements · % Sold updates · raised amount recalculates <span class="fr-tag">AC-36</span></li>
-          <li>Fan added to investor list + Top Fans rollup</li>
-          <li>Investment status = pending (not paid)</li>
-          <li>Loyalty points credited immediately <span class="fr-tag">FR-35</span></li>
+          <li><b>Project Detail</b> — Basic Information, Selling Price &amp; Amount, Sale Method, Featured Product. Shows progress (Already cast / Target). Status pill (Draft / In Progress / etc.)</li>
+          <li><b>Project Blueprint</b> — content builder: "Add Block Type +" for Story / Roadmap / Fund Allocation / FAQ / Team blocks (post-publish edit surface)</li>
+          <li><b>Data Center</b> — Total Crowdfunded Amount, Total number of Backers, Views, Viewers Conversion Rate. Date filter (e.g. Last 30 days). Download button. <i>"Data will only be displayed after the crowdfunding/sales of the project."</i></li>
+          <li><b>Sales Record</b> — pledge / investor list (empty state: "No Data")</li>
+          <li>Top right: <b>"Share the Campaign"</b> link</li>
+          <li>Reserved Shares + % Sold update atomically as fans pledge <span class="fr-tag">FR-34 · FR-37 · AC-36</span></li>
+          <li>Fan added to investor list (Sales Record) + Top Fans rollup. Loyalty points credited immediately <span class="fr-tag">FR-35</span></li>
         </ul>
         <div class="note warn"><b>OQ-3:</b> "raised amount" formula for mixed-price multi-plan projects.</div>
       </div>
@@ -1515,18 +1518,20 @@
     <div class="lane">
       <div class="step fan">
         <div class="head"><span class="num">F5 · Invest</span><span class="pill live">In Progress</span></div>
-        <h3>Join the Journey · invest flow</h3>
-        <div class="screen">Project detail → invest wizard</div>
+        <h3>Fanvest Now · invest flow</h3>
+        <div class="screen">/product/fundraising?id={id}</div>
         <ul>
-          <li>1. Tap "Join the Journey" → Plan picker <span class="fr-tag">FR-27 · FR-28</span></li>
-          <li>2. <b>Royalty Shares availability check</b> on selected plan — error if 0 left <span class="fr-tag">FR-29 · AC-33</span></li>
-          <li>3. Enter shipping address <span class="fr-tag">FR-31</span></li>
-          <li>4. Add payment method via <b>Stripe Future Payment Setup</b> · no charge <span class="fr-tag">FR-32</span></li>
-          <li>5. <b>Fan contract</b> with dynamic values; tick "I agree" <span class="fr-tag">FR-33 · FR-49 · FR-50 · AC-34/35</span></li>
-          <li>6. Confirm → reservation written · loyalty credited · status pending <span class="fr-tag">FR-34 · AC-32</span></li>
+          <li>1. Tap "Fanvest Now" → opens <b>"Choose your plan"</b> bottom sheet (Vant UI popup) <span class="fr-tag">FR-27 · FR-28</span></li>
+          <li>2. Tabs across plan tiers (e.g. <b>Basic / Plus</b>); each shows Loyalty Points, Song Backer Contract count + description, Plan details. Header subtitle reads e.g. "The project will move forward only if we reach a minimum of 1000 slots"</li>
+          <li>3. <b>Royalty Shares availability check</b> on selected plan — error if 0 left <span class="fr-tag">FR-29 · AC-33</span></li>
+          <li>4. Bottom CTA: <b>"Fanvest for $X"</b> (price computed from plan)</li>
+          <li>5. Enter shipping address <span class="fr-tag">FR-31</span></li>
+          <li>6. Add payment method via <b>Stripe Future Payment Setup</b> · no charge <span class="fr-tag">FR-32</span></li>
+          <li>7. <b>Fan contract</b> with dynamic values; tick "I agree" <span class="fr-tag">FR-33 · FR-49 · FR-50 · AC-34/35</span></li>
+          <li>8. Confirm → reservation written · loyalty credited · status pending <span class="fr-tag">FR-34 · AC-32</span></li>
           <li>One active plan per project <span class="fr-tag">FR-36 · AC-38</span></li>
         </ul>
-        <div class="note warn"><b>OQ-12:</b> "Royalty Shares remaining" — derived (total_shares / plan.share_count) or artist-set per plan?</div>
+        <div class="note warn"><b>OQ-12:</b> "Royalty Shares remaining" — derived (total_shares / plan.share_count) or artist-set per plan? UAT shows "1000 slots" minimum threshold which suggests artist-set.</div>
       </div>
     </div>
 
@@ -1681,7 +1686,7 @@
         <tr><td class="actor">Agree to artist contract</td><td class="actor"><span class="a">Artist</span> → <span class="s">System</span></td><td class="action">Required before publish; agreement recorded; contract accessible in portal.</td><td class="refs">FR-52..54</td></tr>
         <tr><td class="actor">Publish project</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Project becomes visible at preview date in fan store under "{Artist}'s Fanvestor". Status auto-flips by date.</td><td class="refs">FR-07 · FR-08</td></tr>
         <tr><td class="actor">Earn first loyalty point</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span></td><td class="action">Two paths, instant: <b>(A)</b> Join artist's community → 1 point · <b>(B)</b> Any purchase incl. $0 → ≥28 points. On either, fan is permanently eligible to invest in that artist.</td><td class="refs">FR-22 · FR-45 (per BR-236)</td></tr>
-        <tr><td class="actor">Tap "Join the Journey"</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Plan picker → Royalty Shares availability check → shipping → Stripe (no charge) → fan contract → Confirm.</td><td class="refs">FR-27..37 · AC-32..36</td></tr>
+        <tr><td class="actor">Tap "Fanvest Now"</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Plan picker → Royalty Shares availability check → shipping → Stripe (no charge) → fan contract → Confirm.</td><td class="refs">FR-27..37 · AC-32..36</td></tr>
         <tr><td class="actor">Upgrade pledge</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Higher tier only. Old Royalty Shares returned, new ones taken.</td><td class="refs">FR-38..41 · AC-39..42</td></tr>
         <tr><td class="actor">Post General update</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Visibility-aware. Email scope is open question.</td><td class="refs">FR-14..18 · AC-20</td></tr>
         <tr><td class="actor">Post Milestone Completed</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Investors emailed. Blocked if milestone is overdue.</td><td class="refs">FR-14 · FR-20 · AC-21/26</td></tr>
