@@ -31,15 +31,23 @@
   }
   .header .badge {
     display: inline-block;
-    background: #e67e22;
-    color: #fff;
+    background: #b58850;
+    color: #1a1a1a;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     padding: 3px 10px;
     border-radius: 12px;
     margin-left: 12px;
     vertical-align: middle;
   }
+  .header .nav { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .header .nav a {
+    font-size: 11px; color: #aaaadd;
+    background: rgba(255,255,255,0.04); border: 1px solid #2a2a4a;
+    padding: 5px 10px; border-radius: 6px; text-decoration: none; transition: all 0.15s;
+  }
+  .header .nav a:hover { background: rgba(181,136,80,0.12); border-color: #b58850; color: #d2a36f; }
+  .header .nav a.current { background: rgba(181,136,80,0.2); border-color: #b58850; color: #fff; }
 
   .legend {
     display: flex;
@@ -373,8 +381,15 @@
 <body>
 
 <div class="header">
-  <h1>Ztor Simple Crowdfund <span class="badge">Lightweight / MVP</span></h1>
-  <p>End-to-end flowchart for the simplified crowdfunding feature on Ztor Store &mdash; April 2026</p>
+  <h1>Ztor Crowdfund Lifecycle <span class="badge">Simple v · 2025-10-27</span></h1>
+  <p>End-to-end project lifecycle from Ops setup through backer rewards. Updated 2026-05-04 with 2025-10-27 meeting decisions.</p>
+  <div class="nav">
+    <a href="ztor-crowdfund-flowchart.html" class="current">Lifecycle</a>
+    <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
+    <a href="ztor-crowdfund-state-machine.html">State machine</a>
+    <a href="ztor-crowdfund-architecture.html">System architecture</a>
+    <a href="https://ztor-crowdfund-proto.vercel.app" target="_blank">Live prototype ↗</a>
+  </div>
 </div>
 
 <div class="legend">
@@ -391,118 +406,147 @@
 
   <!-- ═══════ PHASE 1: SETUP ═══════ -->
   <div class="phase">
-    <div class="phase-label">Phase 1 &mdash; Project Setup <span>(Offline / Manual)</span></div>
+    <div class="phase-label">Phase 1 &mdash; Project Setup <span>(Ops via /admin · No Creator Studio in Simple v)</span></div>
     <div class="flow-row">
 
       <div class="node node-start">
-        Identify Promising<br>AI Creator
-        <div class="node-detail">From AI contest winners or talented creators on Ztor</div>
+        Identify<br>Creator
+        <div class="node-detail">AI contest winners, Tastemakers, Filmmakers — any Ztor user</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process manual">
-        Negotiate Terms<br>with Creator
-        <div class="node-detail">Revenue split %, timeline, content scope, deliverables</div>
+        Offline Negotiation<br>(creator + ops)
+        <div class="node-detail">Goal, deadline, fee split, deliverables, T&amp;C, physical perks, currency (HKD/TWD)</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process manual">
-        Set Up Crowdfund<br>Standalone Page
-        <div class="node-detail">
-          Project story, budget breakdown, timeline, hardcoded funding tiers
-        </div>
-      </div>
-
-      <div class="arrow"></div>
-
-      <div class="node node-process manual">
-        Connect Film Owner<br>to Creator Account
-        <div class="node-detail">Backend: link Film Owner record to a Ztor user account</div>
+        Configure in /admin
+        <div class="node-detail">Tiers + qty caps + story + currency + collectsAddress flag + creator picker</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process">
-        Crowdfund Page<br>Goes Live
-        <div class="node-detail">Standalone page on Store &mdash; does not alter main site architecture</div>
+        Link Creator User
+        <div class="node-detail">Set <code style="background:#0e0e1a;padding:1px 4px;border-radius:3px">isCreator</code> on backing user account &mdash; not a separate identity class</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        State = Live
+        <div class="node-detail">Project surfaces on /crowdfund and (optionally) home feed via post-mention</div>
       </div>
 
     </div>
   </div>
 
-  <!-- ═══════ PHASE 2: CAMPAIGN ═══════ -->
+  <!-- ═══════ PHASE 2: CAMPAIGN LIVE ═══════ -->
   <div class="phase">
-    <div class="phase-label">Phase 2 &mdash; Crowdfunding Campaign <span>(Fan-Facing)</span></div>
+    <div class="phase-label">Phase 2 &mdash; Campaign Live <span>(Backer-Facing · Stripe Future Payment, no charge yet)</span></div>
     <div class="flow-row">
 
       <div class="node node-start">
-        Fan Discovers<br>Project
-        <div class="node-detail">Via Store homepage, social media share, AI contest page, or creator profile</div>
+        Backer<br>Discovers Project
+        <div class="node-detail">/crowdfund listing, home feed via post-mention, creator profile</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process">
-        View Crowdfund<br>Page
-        <div class="node-detail">Story, budget, timeline, progress bar, funding tiers, creator info</div>
+        View Project<br>Detail
+        <div class="node-detail">Story, tiers (in creator currency + FX preview), creator chip, comments</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-decision">
+        Following<br>Creator/Project?
+      </div>
+
+      <div class="branch-container">
+        <div class="branch-row">
+          <div class="arrow"><span class="arrow-label yes">YES</span></div>
+          <div class="node node-process">
+            Click 贊助 &rarr;<br>Tier
+            <div class="node-detail">Tier-fill bar shows progress; per-tier qty cap enforced</div>
+          </div>
+        </div>
+        <div class="branch-row">
+          <div class="arrow"><span class="arrow-label no">NO</span></div>
+          <div class="node node-process manual">
+            Inline CTA:<br>追蹤即可贊助
+            <div class="node-detail">User follows creator (or joins project — Q1 level TBD), then returns to pledge</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pledge flow row -->
+    <div class="v-connector" style="margin-left: 240px; margin-top: -1px;">
+      <div class="v-line"></div>
+      <div class="v-arrow"></div>
+    </div>
+    <div class="flow-row" style="margin-left: 80px;">
+
+      <div class="node node-process">
+        T&amp;C<br>Acceptance
+        <div class="node-detail">Mandatory checkbox (5-clause summary)</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process">
-        Select Funding<br>Tier
-        <div class="node-detail">Hardcoded fixed amounts<br>(e.g. $100, $500, $5,000)</div>
-      </div>
-
-      <div class="arrow"></div>
-
-      <div class="node node-process">
-        Pay Immediately
-        <div class="node-detail">Charge on purchase.<br>Record: backer, amount, ownership %</div>
+        Stripe Future<br>Payment
+        <div class="node-detail"><strong style="color:#7eb8ff">No charge.</strong> Card vaulted via Stripe-hosted page; PM ID stored on pledge</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-output">
-        Backer Confirmed
-        <div class="node-detail">Update progress bar &amp; backer count. Fan sees receipt &amp; ownership %</div>
+        Pledge<br>Confirmed
+        <div class="node-detail">State = pending · N1 sent · profile pledges tab updated · pledge private (only self-visible)</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        Campaign<br>Continues
+        <div class="node-detail">Backer can pledge multiple tiers · cancel during funding NOT allowed in Simple v</div>
       </div>
 
     </div>
 
-    <!-- Campaign monitoring sub-row -->
+    <!-- Funding period end -->
     <div class="v-connector" style="margin-left: 700px; margin-top: -1px;">
       <div class="v-line"></div>
       <div class="v-arrow"></div>
     </div>
     <div class="flow-row" style="margin-left: 540px;">
 
-      <div class="node node-process">
-        Campaign<br>In Progress
-        <div class="node-detail">Track raised amount vs target. Creator posts updates / announcements</div>
-      </div>
-
-      <div class="arrow"></div>
-
       <div class="node node-decision">
-        Met Target<br>by Deadline?
+        Goal Met<br>by Deadline?
+        <div style="font-size:9px;font-weight:400;margin-top:4px;color:#d2a36f">Q2: amount or shares TBD</div>
       </div>
 
-      <div class="branch-container" style="margin-left: 0;">
+      <div class="branch-container">
         <div class="branch-row">
           <div class="arrow"><span class="arrow-label yes">YES</span></div>
           <div class="node node-end-success">
-            Campaign<br>Successful
-            <div class="node-detail">Proceed to production phase</div>
+            State = Funded<br>Batch Capture
+            <div class="node-detail">Stripe FX rate at capture · creator currency · decimals OK</div>
           </div>
         </div>
         <div class="branch-row">
           <div class="arrow"><span class="arrow-label no">NO</span></div>
           <div class="node node-end-fail">
-            Refund All<br>Backers
-            <div class="node-detail">Manual refund process. Campaign ends.</div>
+            State = Unsuccessful
+            <div class="node-detail">Zero charges (all-or-nothing) · N7 fired · terminal state</div>
           </div>
         </div>
       </div>
@@ -512,46 +556,51 @@
 
   <!-- ═══════ PHASE 3: PRODUCTION ═══════ -->
   <div class="phase">
-    <div class="phase-label">Phase 3 &mdash; Content Production <span>(Post-Funding)</span></div>
+    <div class="phase-label">Phase 3 &mdash; Content Production <span>(Post-Funding · State = In Production)</span></div>
     <div class="flow-row">
 
       <div class="node node-start" style="background:#1a5a2a;border-color:#2a8a3a;color:#a0f0a0;">
-        Campaign<br>Successful
+        State = Funded
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process manual">
-        Release Funds<br>to Creator
-        <div class="node-detail">Transfer collected funds<br>(minus platform fee) to creator</div>
+        Finance Disburses<br>(Stripe → creator)
+        <div class="node-detail">Transfer raised amount minus platform fee &amp; absorbed shipping (HK$75K flat funding-plan fee + case-by-case distribution)</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process">
-        Creator Produces<br>Content
-        <div class="node-detail">Short series / long-form AI content per agreed timeline</div>
+        State = In Production
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        Creator Builds<br>(via AIC editor)
+        <div class="node-detail">Plan: port AIC CMS Timeline editor for creators. Production status visibility = Q3 TBD</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-decision">
-        Completed<br>On Time?
+        Delivered?
       </div>
 
-      <div class="branch-container" style="margin-left: 0;">
+      <div class="branch-container">
         <div class="branch-row">
           <div class="arrow"><span class="arrow-label yes">YES</span></div>
           <div class="node node-end-success">
-            Content<br>Ready
-            <div class="node-detail">Proceed to Store listing</div>
+            Proceed to<br>Phase 4
           </div>
         </div>
         <div class="branch-row">
-          <div class="arrow"><span class="arrow-label no">OVERDUE</span></div>
-          <div class="node node-process manual">
-            Follow Up<br>with Creator
-            <div class="node-detail">Negotiate new timeline. Post delay update to backers.</div>
+          <div class="arrow"><span class="arrow-label no">EDGE</span></div>
+          <div class="node node-end-fail">
+            Ops decides:<br>Extend / Refund / Cancel
+            <div class="node-detail">Finance manual refund via Stripe back-office; state → Canceled if non-recoverable</div>
           </div>
         </div>
       </div>
@@ -559,55 +608,41 @@
     </div>
   </div>
 
-  <!-- ═══════ PHASE 4: MONETIZATION ═══════ -->
+  <!-- ═══════ PHASE 4: RELEASE & REWARDS ═══════ -->
   <div class="phase">
-    <div class="phase-label">Phase 4 &mdash; Monetization &amp; Revenue Share <span>(Ongoing)</span></div>
+    <div class="phase-label">Phase 4 &mdash; Release &amp; Backer Rewards <span>(State = Released · terminal)</span></div>
     <div class="flow-row">
 
       <div class="node node-start" style="background:#1a5a2a;border-color:#2a8a3a;color:#a0f0a0;">
-        Content<br>Ready
-      </div>
-
-      <div class="arrow"></div>
-
-      <div class="node node-process manual">
-        Add Content to<br>Store Inventory
-        <div class="node-detail">Upload via Film Owner portal or manually by Ztor team</div>
+        Content Ready
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process">
-        Content Listed as<br>Pay-Per-View
-        <div class="node-detail">Crowdfund page converts to regular video page on Store</div>
+        State = Released<br>(content on Ztor)
+        <div class="node-detail">Project page → integrated movie page with 簡介 / 募資 tabs · N11 fires</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-output">
-        Content<br>Earns Revenue
-        <div class="node-detail">Popcoin / direct purchases on Store</div>
+        Issue Redeem<br>Codes to Backers
+        <div class="node-detail">Unique one-time code per pledge · 30 days to activate · 48 hours to finish · free viewing (no POPCORN)</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process manual">
-        Calculate Backer<br>Revenue Share
-        <div class="node-detail">Based on each backer's ownership %. Manual calculation from Store earnings data.</div>
-      </div>
-
-      <div class="arrow"></div>
-
-      <div class="node node-process manual">
-        Distribute<br>Payouts
-        <div class="node-detail">Manual transfer to backers based on % split</div>
+        Ship Physical Perks<br>(if applicable)
+        <div class="node-detail">Ops collects addresses → manual fulfillment via 順豐 / similar → bulk-import tracking numbers</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-output">
-        Reporting
-        <div class="node-detail">Revenue reports for both creator &amp; backers</div>
+        Backer Receives<br>Reward
+        <div class="node-detail">Activates code · watches free · receives perks (if any) · pledge marked 已完成</div>
       </div>
 
     </div>
@@ -615,70 +650,75 @@
 
   <!-- ═══════ COMPARISON TABLE ═══════ -->
   <div class="comparison">
-    <h3>Beamco Full vs. Ztor Simple &mdash; Key Differences</h3>
+    <h3>What changed in 2025-10-27 meeting (vs prior Stage 2 BRD)</h3>
     <table>
       <thead>
         <tr>
-          <th style="width:22%">Aspect</th>
-          <th style="width:39%">Beamco (Full System)</th>
-          <th style="width:39%">Ztor (Simple / MVP)</th>
+          <th style="width:20%">Topic</th>
+          <th style="width:38%">Before (Stage 2 BRD)</th>
+          <th style="width:42%">Simple v (post 2025-10-27)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Funding tiers</td>
-          <td class="beamco">Dynamic plans with items, price, share count <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">Hardcoded fixed amounts (e.g. $100, $500, $5K) <span class="tag-manual">HARDCODE</span></td>
+          <td>Eligibility</td>
+          <td class="beamco">Prior POPCORN purchase qualifies</td>
+          <td class="ztor">Follow creator OR join project · Q1 level pending Sam legal</td>
         </tr>
         <tr>
-          <td>Payment model</td>
-          <td class="beamco">Reserve now, charge on success (Stripe Future Payment) <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">Immediate charge at time of backing <span class="tag-auto">SYSTEM</span></td>
+          <td>Currency</td>
+          <td class="beamco">Single canonical fiat (HK$/NT$), no FX</td>
+          <td class="ztor">Creator-selected (HKD/TWD) · live FX preview elsewhere · Stripe daily rate at capture · decimals OK</td>
         </tr>
         <tr>
-          <td>Artist Portal</td>
-          <td class="beamco">Full self-serve portal for artists to create &amp; manage projects <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">No portal &mdash; all setup handled offline by Ztor team <span class="tag-manual">MANUAL</span></td>
+          <td>Backer reward</td>
+          <td class="beamco">Tier perks; viewing model unspecified</td>
+          <td class="ztor">Free viewing via redeem code (30d/48h, unique one-time, no POPCORN charge)</td>
         </tr>
         <tr>
-          <td>Creator negotiation</td>
-          <td class="beamco">Artist contract with dynamic terms, in-platform agreement <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">Offline negotiation, terms set manually <span class="tag-manual">MANUAL</span></td>
+          <td>Physical fulfillment</td>
+          <td class="beamco">Out of scope</td>
+          <td class="ztor">In scope · address collection toggle · ops manual shipping · bulk tracking import · creator absorbs cost</td>
         </tr>
         <tr>
-          <td>Loyalty / Eligibility</td>
-          <td class="beamco">Follow X days &rarr; earn Y points &rarr; unlock eligibility <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">None &mdash; anyone can back a project</td>
+          <td>Comments</td>
+          <td class="beamco">O5 unresolved</td>
+          <td class="ztor">Required + admin moderation tool</td>
         </tr>
         <tr>
-          <td>Plan upgrades</td>
-          <td class="beamco">Upward-only upgrade with spot availability checks <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">Not supported in MVP</td>
+          <td>Cancel during funding</td>
+          <td class="beamco">O14 unresolved</td>
+          <td class="ztor">NOT allowed in Simple v</td>
         </tr>
         <tr>
-          <td>Revenue distribution</td>
-          <td class="beamco">Automated share assignment &amp; tracking (Phase 2) <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">Manual calculation &amp; payout <span class="tag-manual">MANUAL</span></td>
+          <td>Pledge visibility</td>
+          <td class="beamco">O16 unresolved</td>
+          <td class="ztor">Private &mdash; only self-visible</td>
         </tr>
         <tr>
-          <td>Page architecture</td>
-          <td class="beamco">Integrated into main platform with full CMS <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">Standalone page, independent from main Store site <span class="tag-manual">HARDCODE</span></td>
+          <td>Multiple pledges</td>
+          <td class="beamco">Allowed (edge case)</td>
+          <td class="ztor">Explicitly allowed · per-tier qty cap</td>
         </tr>
         <tr>
-          <td>Updates / Comments</td>
-          <td class="beamco">Full update system with 3 types, attachments, visibility controls <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">Basic announcements &mdash; tech evaluation needed for comments</td>
+          <td>Funding model</td>
+          <td class="beamco">Implicitly all-or-nothing; O2 stretch goal open</td>
+          <td class="ztor">All-or-nothing only · no stretch · Q2 amount-vs-share TBD</td>
         </tr>
         <tr>
-          <td>Refund on failure</td>
-          <td class="beamco">No charges collected (reserve model) <span class="tag-auto">SYSTEM</span></td>
-          <td class="ztor">Manual refund of collected payments <span class="tag-manual">MANUAL</span></td>
+          <td>Project announcement</td>
+          <td class="beamco">Updates posts on project page only</td>
+          <td class="ztor">Post-with-mention &rarr; surfaces on home feed for promotion</td>
         </tr>
         <tr>
-          <td>Team ownership</td>
-          <td class="beamco">Kerry &amp; Eric main team (Bingo system migration)</td>
-          <td class="ztor">Indonesia AI team (lightweight build), can run in parallel</td>
+          <td>Creator Studio</td>
+          <td class="beamco">Out of scope (Stage 3)</td>
+          <td class="ztor">Confirmed out of scope for May launch · all creator ops offline · plan to port AIC editor later</td>
+        </tr>
+        <tr>
+          <td>SKU / variants</td>
+          <td class="beamco">Not modeled</td>
+          <td class="ztor">Out of scope for May (size/color etc. handled offline)</td>
         </tr>
       </tbody>
     </table>
@@ -686,16 +726,25 @@
 
   <!-- ═══════ KEY NOTES ═══════ -->
   <div class="notes-section">
-    <h3>Key Decisions &amp; Notes from Meeting (Apr 13, 2026)</h3>
+    <h3>Decisions from 2025-10-27 meeting (Crowdfund Simple Version)</h3>
     <ul>
-      <li><strong>Validate first, build later</strong> &mdash; the entire approach is "ship a manual MVP to test if the crowdfund business model works on Ztor before investing in a full system."</li>
-      <li><strong>Don't port Bingo (Beamco) system</strong> &mdash; the most complex part is Artist Portal, which isn't needed. Front-end is relatively simple.</li>
-      <li><strong>Parallel workstreams</strong> &mdash; Bingo system migration (Kerry &amp; Eric) runs alongside this lightweight Store crowdfund (Indonesia AI team, onboarded as of Apr 13).</li>
-      <li><strong>Standalone page</strong> &mdash; crowdfund project lives on its own page, doesn't change main Store site architecture. After funding completes, page converts to a regular video page.</li>
-      <li><strong>First crowdfund project could happen by end of May 2026</strong> &mdash; likely an AI contest creator wanting to produce a longer series or pay-per-view short series.</li>
-      <li><strong>Revenue share is simple math</strong> &mdash; Store already tracks earnings per film. Backer % is known from the funding. Manual calculation &amp; payout.</li>
-      <li><strong>Comments / activity announcements</strong> need tech evaluation &mdash; may be separate from main site comment system. Deferred if complex.</li>
-      <li><strong>Creator onboarding</strong> is fully offline &mdash; Ztor team contacts creator, negotiates terms, sets everything up. No self-service.</li>
+      <li><strong>Eligibility = follow-based</strong> &mdash; user must follow the creator OR join the project. Replaces the prior POPCORN-purchase model. Q1 (project-level join vs creator-level follow) pending Sam legal review.</li>
+      <li><strong>Stripe Future Payment</strong> &mdash; no charge during pledge; batch capture on Funded transition in creator currency at Stripe daily FX rate (decimals OK).</li>
+      <li><strong>Backer reward = redeem code for free viewing</strong> &mdash; unique one-time code per pledge on Released; 30 days to activate, 48 hours to finish; no POPCORN charge.</li>
+      <li><strong>Physical fulfillment in scope</strong> &mdash; project-level <code>collectsAddress</code> toggle; ops handles manual shipping (順豐 / similar) and bulk-imports tracking; creator absorbs shipping cost (priced in tier).</li>
+      <li><strong>Platform fee model</strong> &mdash; deducted from creator income (e.g., backer pays 1000 → creator nets 950). All costs (including shipping) computed before charge.</li>
+      <li><strong>Comments + moderation</strong> &mdash; required; admin tool can soft-delete inappropriate content.</li>
+      <li><strong>Project announcements via post-mention</strong> &mdash; regular Ztor posts can mention crowdfund projects → surface on home feed for promotion. (Jeff × Eric to discuss tech.)</li>
+      <li><strong>No Creator Studio for May launch</strong> &mdash; all creator setup is offline via /admin. Plan to port AIC CMS Timeline editor for creators in a later phase.</li>
+      <li><strong>Cancel during funding NOT allowed</strong> in Simple v · refunds only for special creator-default cases via Finance + Stripe back-office. Taiwan 鑑賞期 legal pending.</li>
+      <li><strong>Pledges are private</strong> &mdash; only self-visible on the user's profile. Same backer can pledge multiple tiers (per-tier qty cap).</li>
+      <li><strong>SKU options out of scope for May</strong> &mdash; product variants (size/color) handled offline initially.</li>
+    </ul>
+    <h3 style="margin-top:24px;color:#d2a36f">Open questions (to close before spec freeze)</h3>
+    <ul>
+      <li><strong>Q1</strong> Eligibility level &mdash; project "join" vs creator "follow"? Leans project. Pending Sam legal.</li>
+      <li><strong>Q2</strong> Funding type &mdash; amount-based or share-based? Susan leans share-based. Affects calc + UI heavily.</li>
+      <li><strong>Q3</strong> Production status visibility &mdash; show beyond payment status? Creator self-update vs ops-mediated?</li>
     </ul>
   </div>
 

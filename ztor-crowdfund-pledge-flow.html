@@ -200,8 +200,8 @@
 <body>
 
 <div class="header">
-  <h1>Pledge Happy Path <span class="badge">Stage 2</span></h1>
-  <p>Backer-facing pledge flow &mdash; 5 steps from clicking 贊助 to confirmation. Updated 2026-04-29.</p>
+  <h1>Pledge Happy Path <span class="badge">Simple v · 2025-10-27</span></h1>
+  <p>Backer-facing pledge flow &mdash; 5 steps from clicking 贊助 to confirmation. Updated 2026-05-04 with 2025-10-27 meeting decisions.</p>
   <div class="nav">
     <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
     <a href="ztor-crowdfund-pledge-flow.html" class="current">Pledge happy path</a>
@@ -218,9 +218,10 @@
 <div class="canvas">
 
   <p class="intro">
-    The happy path assumes an <strong>eligible logged-in backer</strong> (prior Popcorn purchase) on a <strong>Live</strong> campaign.
+    The happy path assumes an <strong>eligible logged-in backer</strong> (<strong style="color:#d2a36f">follows the creator or has joined the project</strong>) on a <strong>Live</strong> campaign.
     Edge cases &mdash; ineligibility, card decline at capture, project canceled mid-flight &mdash; are covered in the
     <a href="ztor-crowdfund-flowchart.html" style="color:#b58850">lifecycle flowchart</a>.
+    Tier price displays in the creator's currency (HKD/TWD); other regions see live FX preview marked "參考價格".
   </p>
 
   <div class="steps">
@@ -242,10 +243,10 @@
       <div class="step-title">Eligibility</div>
       <div class="step-route">/pledge (step 2)</div>
       <div class="step-body">
-        System checks prior Popcorn purchase. Eligible users see a green "你符合贊助資格" panel and continue.
+        System checks if user follows the creator or has joined the project. Eligible users see a green "你符合贊助資格" panel. Ineligible users see "追蹤即可贊助" CTA inline.
       </div>
       <div class="step-mini">
-        <span class="pill system">SYSTEM</span> Reads from rewards service
+        <span class="pill system">SYSTEM</span> Reads from Follows service · Q1 level (project vs creator) TBD
       </div>
     </div>
 
@@ -303,11 +304,21 @@
     <div class="post-row">
       <div class="post-card">
         <div class="label">Campaign deadline (success)</div>
-        Stripe batch capture fires. Status flips to <code>已扣款</code>. Email N5 sent. Profile updates.
+        Stripe batch capture fires <strong>in creator currency at Stripe daily FX rate</strong>. Status flips to <code>已扣款</code>. Email N5 sent. Profile updates. If project collects shipping, ops asks backer to confirm address.
       </div>
       <div class="post-card">
         <div class="label">Campaign deadline (failure)</div>
         No charge made. Status stays <code>待扣款</code> momentarily then transitions per project state. Email N7 sent.
+      </div>
+    </div>
+    <div class="post-row">
+      <div class="post-card" style="border-color:#37b87a">
+        <div class="label" style="color:#6ee0a0">Project Released (success path)</div>
+        <strong>Redeem code issued</strong> &mdash; unique, one-time. Backer activates within 30 days; once activated, has 48 hours to finish. <strong>No POPCORN charge.</strong>
+      </div>
+      <div class="post-card">
+        <div class="label">Physical perks (if applicable)</div>
+        Project's <code>collectsAddress</code> flag determines whether shipping is collected. Ops handles fulfillment manually (順豐 / similar) and bulk-imports tracking.
       </div>
     </div>
   </div>
@@ -318,7 +329,7 @@
     <div class="post-row">
       <div class="post-card">
         <div class="label">Eligibility BEFORE terms</div>
-        Don't let an ineligible user read terms only to be blocked at the end. Step 2 short-circuits with a clear "buy Popcorn to qualify" path.
+        Don't let an ineligible user read terms only to be blocked at the end. Step 2 short-circuits with a clear "follow creator / join project to qualify" CTA.
       </div>
       <div class="post-card">
         <div class="label">Terms BEFORE card</div>
