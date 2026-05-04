@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor Crowdfund — Pledge Happy Path</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 32px 48px;
+    border-bottom: 2px solid #2a2a4a;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .header p { font-size: 14px; color: #8888aa; }
+  .header .badge {
+    display: inline-block;
+    background: #b58850;
+    color: #1a1a1a;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-left: 12px;
+    vertical-align: middle;
+  }
+  .header .nav { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .header .nav a {
+    font-size: 11px; color: #aaaadd;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid #2a2a4a;
+    padding: 5px 10px; border-radius: 6px;
+    text-decoration: none; transition: all 0.15s;
+  }
+  .header .nav a:hover { background: rgba(181,136,80,0.12); border-color: #b58850; color: #d2a36f; }
+  .header .nav a.current { background: rgba(181,136,80,0.2); border-color: #b58850; color: #fff; }
+
+  .stripe-callout {
+    background: linear-gradient(135deg, #1f3a2a 0%, #1a4a3a 100%);
+    border-left: 3px solid #37b87a;
+    padding: 14px 24px;
+    margin: 20px 48px 0;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #c8e8d8;
+    line-height: 1.5;
+  }
+  .stripe-callout strong { color: #6ee0a0; }
+
+  .canvas { padding: 48px; }
+  .intro {
+    max-width: 800px;
+    color: #999;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+  .intro strong { color: #d0d0e8; }
+
+  /* Step row */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+    overflow-x: auto;
+  }
+  .step {
+    background: #161628;
+    border: 1px solid #2a2a4a;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    min-width: 200px;
+  }
+  .step::after {
+    content: "→";
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    color: #4a4a6a;
+    font-weight: 300;
+    z-index: 1;
+  }
+  .step:last-child::after { display: none; }
+  .step-num {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #b58850;
+    color: #1a1a1a;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 28px;
+    margin-bottom: 12px;
+  }
+  .step-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .step-route {
+    font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 11px;
+    color: #6e8aaf;
+    margin-bottom: 14px;
+    word-break: break-all;
+  }
+  .step-body {
+    font-size: 13px;
+    color: #b0b0c8;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .step-mini {
+    background: #0e0e1a;
+    border: 1px dashed #2a2a4a;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: #888;
+    line-height: 1.4;
+  }
+  .step-mini strong { color: #b58850; }
+
+  .pill {
+    display: inline-block;
+    background: rgba(181,136,80,0.15);
+    color: #d2a36f;
+    border: 1px solid rgba(181,136,80,0.4);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .pill.system { background: rgba(74,158,255,0.15); color: #7eb8ff; border-color: rgba(74,158,255,0.4); }
+  .pill.success { background: rgba(55,184,122,0.15); color: #6ee0a0; border-color: rgba(55,184,122,0.4); }
+
+  .post {
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .post h3 {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .post-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .post-card {
+    background: #0e0e1a;
+    border: 1px solid #2a2a3a;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.5;
+  }
+  .post-card .label {
+    font-size: 10px;
+    color: #6e8aaf;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .post-card strong { color: #d0d0e8; }
+
+  @media (max-width: 1100px) {
+    .steps { grid-template-columns: 1fr; }
+    .step::after { display: none; }
+    .post-row { grid-template-columns: 1fr; }
+    .canvas { padding: 24px; }
+    .stripe-callout { margin-left: 24px; margin-right: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Pledge Happy Path <span class="badge">Stage 2</span></h1>
+  <p>Backer-facing pledge flow &mdash; 5 steps from clicking 贊助 to confirmation. Updated 2026-04-29.</p>
+  <div class="nav">
+    <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
+    <a href="ztor-crowdfund-pledge-flow.html" class="current">Pledge happy path</a>
+    <a href="ztor-crowdfund-state-machine.html">State machine</a>
+    <a href="ztor-crowdfund-architecture.html">System architecture</a>
+    <a href="https://ztor-crowdfund-proto.vercel.app" target="_blank">Live prototype ↗</a>
+  </div>
+</div>
+
+<div class="stripe-callout">
+  <strong>🔒 Stripe Future Payment</strong> &mdash; Step 4 collects card details only. Charge happens at Phase 3 of the lifecycle (campaign deadline), not now.
+</div>
+
+<div class="canvas">
+
+  <p class="intro">
+    The happy path assumes an <strong>eligible logged-in backer</strong> (prior Popcorn purchase) on a <strong>Live</strong> campaign.
+    Edge cases &mdash; ineligibility, card decline at capture, project canceled mid-flight &mdash; are covered in the
+    <a href="ztor-crowdfund-flowchart.html" style="color:#b58850">lifecycle flowchart</a>.
+  </p>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Review</div>
+      <div class="step-route">/crowdfund/[slug]/pledge?tier=…</div>
+      <div class="step-body">
+        Confirm the project + tier. Switch to a different tier inline (radio cards). See "what happens next" timeline (no charge yet).
+      </div>
+      <div class="step-mini">
+        <strong>Validates:</strong> tier exists + project status = <code>live</code>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Eligibility</div>
+      <div class="step-route">/pledge (step 2)</div>
+      <div class="step-body">
+        System checks prior Popcorn purchase. Eligible users see a green "你符合贊助資格" panel and continue.
+      </div>
+      <div class="step-mini">
+        <span class="pill system">SYSTEM</span> Reads from rewards service
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Terms</div>
+      <div class="step-route">/pledge (step 3)</div>
+      <div class="step-body">
+        Read 5-clause T&amp;C summary. Tick mandatory checkbox. Continue button stays disabled until checked.
+      </div>
+      <div class="step-mini">
+        <strong>5 clauses:</strong> not 投資 · charge on success only · refund policy · card decline · creator liability
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-title">Payment</div>
+      <div class="step-route">/pledge (step 4)</div>
+      <div class="step-body">
+        Enter card via Stripe. <strong>No charge.</strong> Card stored against the pledge ID for future capture.
+      </div>
+      <div class="step-mini">
+        <span class="pill system">STRIPE FP</span> Future Payment intent created
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-title">Confirmation</div>
+      <div class="step-route">/pledge (step 5)</div>
+      <div class="step-body">
+        Pledge ID + summary. State = <code>pending</code>. Email N1 sent. CTA to view on profile.
+      </div>
+      <div class="step-mini">
+        <span class="pill success">N1 sent</span> Pledge confirmed (email + in-app)
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Post-pledge timeline -->
+  <div class="post">
+    <h3>📅 What the backer sees after step 5</h3>
+    <div class="post-row">
+      <div class="post-card">
+        <div class="label">Immediately</div>
+        <strong>Confirmation screen</strong> &mdash; pledge ID shown. Email N1 fires. CTA "查看我的贊助" goes to <code>/profile/hungie?tab=pledges</code>.
+      </div>
+      <div class="post-card">
+        <div class="label">Anytime before campaign deadline</div>
+        <strong>Profile pledges tab</strong> shows the pledge with status pill <code>待扣款</code>. Backer can revisit project page; cannot cancel from UI in Stage 2.
+      </div>
+    </div>
+    <div class="post-row">
+      <div class="post-card">
+        <div class="label">Campaign deadline (success)</div>
+        Stripe batch capture fires. Status flips to <code>已扣款</code>. Email N5 sent. Profile updates.
+      </div>
+      <div class="post-card">
+        <div class="label">Campaign deadline (failure)</div>
+        No charge made. Status stays <code>待扣款</code> momentarily then transitions per project state. Email N7 sent.
+      </div>
+    </div>
+  </div>
+
+  <!-- Why this design -->
+  <div class="post">
+    <h3>🎯 Why this flow shape</h3>
+    <div class="post-row">
+      <div class="post-card">
+        <div class="label">Eligibility BEFORE terms</div>
+        Don't let an ineligible user read terms only to be blocked at the end. Step 2 short-circuits with a clear "buy Popcorn to qualify" path.
+      </div>
+      <div class="post-card">
+        <div class="label">Terms BEFORE card</div>
+        Legal needs explicit, time-stamped acceptance of the 製作支持-not-投資 framing before any payment instrument is captured.
+      </div>
+    </div>
+    <div class="post-row">
+      <div class="post-card">
+        <div class="label">Trust pill above tiers (detail page)</div>
+        "Stripe Future Payment · 募資成功才扣款" appears above the tier grid so users know the answer to "will I be charged now?" before they click.
+      </div>
+      <div class="post-card">
+        <div class="label">Profile-tab my-pledges</div>
+        Pledges live on the user profile (not a standalone page) so they sit alongside posts/likes/saves &mdash; matches the rest of Ztor's UX pattern.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

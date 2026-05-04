@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor Crowdfund — System Architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a; color: #e0e0e0; min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 32px 48px;
+    border-bottom: 2px solid #2a2a4a;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .header p { font-size: 14px; color: #8888aa; }
+  .header .badge {
+    display: inline-block; background: #b58850; color: #1a1a1a;
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 12px; margin-left: 12px; vertical-align: middle;
+  }
+  .header .nav { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .header .nav a {
+    font-size: 11px; color: #aaaadd;
+    background: rgba(255,255,255,0.04); border: 1px solid #2a2a4a;
+    padding: 5px 10px; border-radius: 6px; text-decoration: none; transition: all 0.15s;
+  }
+  .header .nav a:hover { background: rgba(181,136,80,0.12); border-color: #b58850; color: #d2a36f; }
+  .header .nav a.current { background: rgba(181,136,80,0.2); border-color: #b58850; color: #fff; }
+
+  .canvas { padding: 48px; max-width: 1400px; margin: 0 auto; }
+
+  .layers { display: grid; gap: 24px; }
+  .layer {
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+  }
+  .layer.user { border-top: 3px solid #b58850; }
+  .layer.admin { border-top: 3px solid #f59e0b; }
+  .layer.core { border-top: 3px solid #6e8aaf; }
+  .layer.ext { border-top: 3px solid #37b87a; border-style: dashed; border-color: #2a4a3a; border-top-style: solid; }
+  .layer.data { border-top: 3px solid #c084fc; }
+
+  .layer-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: #999; margin-bottom: 4px;
+  }
+  .layer-desc { font-size: 12px; color: #666; margin-bottom: 18px; }
+
+  .modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .module {
+    background: #1a1a28;
+    border: 1px solid #2a2a3a;
+    border-radius: 8px;
+    padding: 14px 16px;
+    position: relative;
+  }
+  .module .name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #d0d0e8;
+    margin-bottom: 4px;
+    font-family: ui-monospace, "SF Mono", monospace;
+  }
+  .module .role {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+  .module .br {
+    display: flex; gap: 4px; flex-wrap: wrap;
+  }
+  .module .br span {
+    font-size: 9px;
+    background: rgba(181,136,80,0.12);
+    color: #d2a36f;
+    border: 1px solid rgba(181,136,80,0.3);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .layer.ext .module { border-style: dashed; background: #0e1a14; border-color: #2a4a3a; }
+  .layer.ext .module .name { color: #6ee0a0; }
+  .layer.data .module { background: #1a0f24; border-color: #3a2a4a; border-radius: 16px; }
+  .layer.data .module .name { color: #c084fc; }
+
+  .flow-arrow {
+    text-align: center;
+    color: #4a4a6a;
+    font-size: 16px;
+    padding: 4px 0;
+  }
+
+  .interactions {
+    margin-top: 32px;
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .interactions h3 {
+    padding: 16px 24px;
+    font-size: 14px;
+    background: #1a1a2e;
+    border-bottom: 1px solid #222;
+    color: #aaa;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 12px 24px; text-align: left; border-bottom: 1px solid #1a1a1a; }
+  th {
+    color: #888; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 1px; background: #0f0f1a;
+  }
+  td code {
+    background: #0e0e1a;
+    padding: 2px 6px; border-radius: 4px;
+    color: #d2a36f; font-size: 12px;
+  }
+  td.action { color: #aaa; }
+  td.note { color: #666; font-size: 12px; }
+
+  @media (max-width: 800px) {
+    .canvas { padding: 24px; }
+    .layer { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>System Architecture <span class="badge">Stage 2</span></h1>
+  <p>Module map · BR cross-references · Internal vs external boundary</p>
+  <div class="nav">
+    <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
+    <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
+    <a href="ztor-crowdfund-state-machine.html">State machine</a>
+    <a href="ztor-crowdfund-architecture.html" class="current">System architecture</a>
+    <a href="https://ztor-crowdfund-proto.vercel.app" target="_blank">Live prototype ↗</a>
+  </div>
+</div>
+
+<div class="canvas">
+
+  <div class="layers">
+
+    <!-- Layer 1: User-Facing -->
+    <div class="layer user">
+      <div class="layer-title">User-facing surface (Store.com / Next.js)</div>
+      <div class="layer-desc">Backer-facing routes. Public access for browse; eligibility-gated for pledge.</div>
+      <div class="modules">
+        <div class="module">
+          <div class="name">/crowdfund</div>
+          <div class="role">Listing &mdash; 募資中 + 已完成 sections</div>
+          <div class="br"><span>BR-01</span></div>
+        </div>
+        <div class="module">
+          <div class="name">/crowdfund/[slug]</div>
+          <div class="role">Project detail &mdash; tiers, creator chip, progress, comments</div>
+          <div class="br"><span>BR-02</span></div>
+        </div>
+        <div class="module">
+          <div class="name">/crowdfund/[slug]/pledge</div>
+          <div class="role">5-step pledge flow with Stripe FP card collection</div>
+          <div class="br"><span>BR-04</span><span>BR-06</span></div>
+        </div>
+        <div class="module">
+          <div class="name">/profile/[username]</div>
+          <div class="role">Tabbed profile &mdash; pledges (backer) or campaigns (creator)</div>
+          <div class="br"><span>BR-10</span><span>BR-11</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Layer 2: Admin -->
+    <div class="layer admin">
+      <div class="layer-title">Internal admin console (CMS-lite)</div>
+      <div class="layer-desc">Schema-driven editor + state-machine driver + read-only audit. AI-built. Replaced by Beamco Creator Studio in Stage 3.</div>
+      <div class="modules">
+        <div class="module">
+          <div class="name">/admin</div>
+          <div class="role">Dashboard &mdash; KPI cards + project list + state transition menus + activity log</div>
+          <div class="br"><span>BR-14</span></div>
+        </div>
+        <div class="module">
+          <div class="name">/admin/projects/[slug]</div>
+          <div class="role">Project configurator &mdash; tiers, story, milestones, creator linkage</div>
+          <div class="br"><span>BR-12</span></div>
+        </div>
+        <div class="module">
+          <div class="name">/admin/pledges</div>
+          <div class="role">Pledge audit &mdash; filterable, searchable, with reminder log</div>
+          <div class="br"><span>BR-13</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Layer 3: Core Logic -->
+    <div class="layer core">
+      <div class="layer-title">Core logic services</div>
+      <div class="layer-desc">Stage 2 lives largely on Store.com frontend with thin backend. Stage 3 migrates to Beamco backend.</div>
+      <div class="modules">
+        <div class="module">
+          <div class="name">Eligibility Service</div>
+          <div class="role">Reads Popcorn rewards purchase history; gates pledge action</div>
+          <div class="br"><span>BR-03</span></div>
+        </div>
+        <div class="module">
+          <div class="name">State Machine</div>
+          <div class="role">Enforces 6-state lifecycle with allowed transitions + activity log</div>
+          <div class="br"><span>BR-07</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Capture &amp; Card Update</div>
+          <div class="role">Batch capture on Funded; 7-day grace + 2 retries on decline</div>
+          <div class="br"><span>BR-05</span><span>BR-08</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Refund Tracking (read-only)</div>
+          <div class="role">Reads Stripe refund events; no refund UI in admin</div>
+          <div class="br"><span>BR-09</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Currency &amp; Wording</div>
+          <div class="role">HK$/NT$ formatter; 募資/贊助 enforcement; 投資 ban</div>
+          <div class="br"><span>BR-15</span><span>BR-17</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Layer 4: External -->
+    <div class="layer ext">
+      <div class="layer-title">External integrations</div>
+      <div class="layer-desc">Dashed borders &mdash; not owned by the crowdfund codebase. Auth + secrets + rate-limit handled at integration boundary.</div>
+      <div class="modules">
+        <div class="module">
+          <div class="name">Stripe (Future Payment)</div>
+          <div class="role">Card vault, batch capture, retries, webhook events. Refund console used manually by ops.</div>
+          <div class="br"><span>DEP-01</span><span>DEP-09</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Notification Service</div>
+          <div class="role">Email + in-app delivery for N1–N13 lifecycle events</div>
+          <div class="br"><span>BR-16</span><span>DEP-03</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Popcorn Rewards Service</div>
+          <div class="role">Source of eligibility truth. NOT a payment instrument.</div>
+          <div class="br"><span>DEP-02</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+
+    <!-- Layer 5: Storage -->
+    <div class="layer data">
+      <div class="layer-title">Storage</div>
+      <div class="modules">
+        <div class="module">
+          <div class="name">Projects &middot; Tiers</div>
+          <div class="role">Configured via /admin; seeded by Ops per campaign</div>
+          <div class="br"><span>BR-12</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Pledges</div>
+          <div class="role">One row per pledge with Stripe payment-method ID, state, reminder log</div>
+          <div class="br"><span>BR-04</span><span>BR-05</span><span>BR-08</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Users (Ztor profile)</div>
+          <div class="role">Existing Ztor user schema · adds <code>isCreator</code> flag and creator linkage</div>
+          <div class="br"><span>DEP-05</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Key interactions -->
+  <div class="interactions">
+    <h3>Key system interactions</h3>
+    <table>
+      <thead>
+        <tr><th>Event</th><th>From</th><th>To</th><th>What happens</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>Pledge submitted</code></td>
+          <td class="action">/crowdfund/[slug]/pledge</td>
+          <td class="action">Stripe + Pledges DB + Notification</td>
+          <td class="note">Stripe Future Payment intent created · pledge row inserted with state = pending · N1 fired</td>
+        </tr>
+        <tr>
+          <td><code>Funding period end (Funded)</code></td>
+          <td class="action">State Machine cron</td>
+          <td class="action">Stripe + Pledges DB + Notification</td>
+          <td class="note">Project state → Funded · batch capture all pending pledges · N5/N6 per result</td>
+        </tr>
+        <tr>
+          <td><code>Funding period end (Unsuccessful)</code></td>
+          <td class="action">State Machine cron</td>
+          <td class="action">Pledges DB + Notification</td>
+          <td class="note">Project state → Unsuccessful · zero charges · N7 fired to all backers</td>
+        </tr>
+        <tr>
+          <td><code>Card decline at capture</code></td>
+          <td class="action">Stripe webhook</td>
+          <td class="action">Capture service + Notification</td>
+          <td class="note">Pledge state → card_update_required · grace deadline set · N2 + N3 (day 3) reminders fire</td>
+        </tr>
+        <tr>
+          <td><code>Refund processed (rare edge)</code></td>
+          <td class="action">Ops in Stripe console</td>
+          <td class="action">Stripe webhook → Pledges DB + Notification</td>
+          <td class="note">Webhook updates pledge state → refunded · N8 fired · Ops audit row in /admin/pledges</td>
+        </tr>
+        <tr>
+          <td><code>State transition (manual)</code></td>
+          <td class="action">Ops in /admin dashboard</td>
+          <td class="action">State Machine + activity log + Notification</td>
+          <td class="note">Validates allowed next state · writes activity log · fires notification per transition (e.g., N11 on Released)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+</body>
+</html>

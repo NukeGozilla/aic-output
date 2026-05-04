@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor Crowdfund — State Machine</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 32px 48px;
+    border-bottom: 2px solid #2a2a4a;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .header p { font-size: 14px; color: #8888aa; }
+  .header .badge {
+    display: inline-block; background: #b58850; color: #1a1a1a;
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 12px; margin-left: 12px; vertical-align: middle;
+  }
+  .header .nav { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .header .nav a {
+    font-size: 11px; color: #aaaadd;
+    background: rgba(255,255,255,0.04); border: 1px solid #2a2a4a;
+    padding: 5px 10px; border-radius: 6px; text-decoration: none; transition: all 0.15s;
+  }
+  .header .nav a:hover { background: rgba(181,136,80,0.12); border-color: #b58850; color: #d2a36f; }
+  .header .nav a.current { background: rgba(181,136,80,0.2); border-color: #b58850; color: #fff; }
+
+  .canvas { padding: 48px; max-width: 1200px; margin: 0 auto; }
+
+  .legend-row { display: flex; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; font-size: 12px; }
+  .legend-row .item { display: flex; align-items: center; gap: 8px; color: #999; }
+  .legend-row .swatch { width: 14px; height: 14px; border-radius: 50%; }
+
+  .diagram {
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 32px;
+    overflow-x: auto;
+  }
+
+  /* Positioned canvas: states placed absolutely; SVG overlay draws arrows */
+  .canvas-positioned {
+    position: relative;
+    width: 820px;
+    height: 600px;
+    margin: 0 auto;
+  }
+
+  .state-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .state {
+    background: #1a1a2e;
+    border: 2px solid;
+    border-radius: 16px;
+    padding: 14px 20px;
+    width: 200px;
+    text-align: center;
+    position: absolute;
+    z-index: 2;
+    box-sizing: border-box;
+  }
+  .state.s-live      { left: 310px; top: 30px;  }
+  .state.s-uns       { left: 50px;  top: 230px; }
+  .state.s-funded    { left: 310px; top: 230px; }
+  .state.s-cancel    { left: 570px; top: 230px; }
+  .state.s-inprod    { left: 310px; top: 430px; }
+  .state.s-released  { left: 570px; top: 430px; }
+  .state .zh { font-size: 18px; font-weight: 700; color: #fff; }
+  .state .en { font-size: 11px; color: #8888aa; margin-top: 2px; letter-spacing: 0.5px; }
+  .state .meta { font-size: 11px; color: #999; margin-top: 8px; line-height: 1.4; }
+
+  .state.live { border-color: #b58850; background: rgba(181,136,80,0.12); }
+  .state.funded { border-color: #37b87a; background: rgba(55,184,122,0.12); }
+  .state.in-prod { border-color: #6e8aaf; background: rgba(110,138,175,0.12); }
+  .state.released { border-color: #37b87a; background: rgba(55,184,122,0.18); }
+  .state.unsuccessful { border-color: #e25555; background: rgba(226,85,85,0.12); opacity: 0.85; }
+  .state.canceled { border-color: #e25555; background: rgba(226,85,85,0.12); opacity: 0.85; }
+
+  .state.terminal::after {
+    content: "TERMINAL";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #2a2a3a;
+    color: #888;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    border: 1px solid #3a3a4a;
+  }
+
+  /* Transition arrows via SVG layered */
+  .arrows-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Transition table */
+  .trans-table {
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .trans-table h3 {
+    padding: 16px 24px;
+    font-size: 14px;
+    background: #1a1a2e;
+    border-bottom: 1px solid #222;
+    color: #aaa;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td {
+    padding: 12px 24px;
+    text-align: left;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  th {
+    color: #888; font-weight: 600;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    background: #0f0f1a;
+  }
+  td.from { color: #d0d0e8; font-weight: 600; }
+  td.to { color: #6ee0a0; font-weight: 500; }
+  td.trigger { color: #aaa; }
+  .pill {
+    display: inline-block;
+    background: rgba(181,136,80,0.15);
+    color: #d2a36f;
+    border: 1px solid rgba(181,136,80,0.4);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .pill.system { background: rgba(74,158,255,0.15); color: #7eb8ff; border-color: rgba(74,158,255,0.4); }
+
+  @media (max-width: 900px) {
+    .canvas { padding: 24px; }
+    .diagram { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Project State Machine <span class="badge">Stage 2</span></h1>
+  <p>6 user-visible states · allowed transitions · driven by Ops via the admin tool</p>
+  <div class="nav">
+    <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
+    <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
+    <a href="ztor-crowdfund-state-machine.html" class="current">State machine</a>
+    <a href="ztor-crowdfund-architecture.html">System architecture</a>
+    <a href="https://ztor-crowdfund-proto.vercel.app" target="_blank">Live prototype ↗</a>
+  </div>
+</div>
+
+<div class="canvas">
+
+  <div class="legend-row">
+    <div class="item"><div class="swatch" style="background:#b58850"></div>Live · funding</div>
+    <div class="item"><div class="swatch" style="background:#37b87a"></div>Success path</div>
+    <div class="item"><div class="swatch" style="background:#6e8aaf"></div>In-progress</div>
+    <div class="item"><div class="swatch" style="background:#e25555"></div>Failure / canceled</div>
+    <div class="item"><strong style="color:#888">TERMINAL</strong> = no further transitions allowed</div>
+  </div>
+
+  <div class="diagram">
+    <div class="canvas-positioned">
+
+      <!-- SVG overlay with all transition arrows + labels -->
+      <svg class="state-svg" viewBox="0 0 820 600" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#888aaa"/>
+          </marker>
+          <marker id="arr-success" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#37b87a"/>
+          </marker>
+          <marker id="arr-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#e25555"/>
+          </marker>
+        </defs>
+
+        <!-- 1. Live → Funded (success path) -->
+        <path d="M 410 120 L 410 230" stroke="#37b87a" stroke-width="2" fill="none" marker-end="url(#arr-success)"/>
+        <text x="420" y="180" fill="#6ee0a0" font-size="11" font-weight="500">goal met</text>
+
+        <!-- 2. Live → Unsuccessful (fail path) -->
+        <path d="M 340 120 L 175 230" stroke="#e25555" stroke-width="2" fill="none" marker-end="url(#arr-fail)"/>
+        <text x="195" y="170" fill="#f0a0a0" font-size="11" font-weight="500" transform="rotate(-30 215 175)">goal missed</text>
+
+        <!-- 3. Live → Canceled (manual fail) -->
+        <path d="M 480 120 L 645 230" stroke="#e25555" stroke-width="2" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
+        <text x="540" y="170" fill="#f0a0a0" font-size="11" font-weight="500" transform="rotate(30 575 175)">ops pulls</text>
+
+        <!-- 4. Funded → In Production -->
+        <path d="M 410 320 L 410 430" stroke="#888aaa" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+        <text x="420" y="380" fill="#aaaadd" font-size="11" font-weight="500">funds disbursed</text>
+
+        <!-- 5. Funded → Canceled (edge) -->
+        <path d="M 510 268 L 570 268" stroke="#e25555" stroke-width="1.5" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
+        <text x="513" y="260" fill="#f0a0a0" font-size="10">creator default</text>
+
+        <!-- 6. In Production → Released (success) -->
+        <path d="M 510 460 L 570 460" stroke="#37b87a" stroke-width="2" fill="none" marker-end="url(#arr-success)"/>
+        <text x="515" y="452" fill="#6ee0a0" font-size="10" font-weight="500">live on Ztor</text>
+
+        <!-- 7. In Production → Canceled (edge — bent path right then up) -->
+        <path d="M 510 480 L 540 480 L 540 290 L 570 290" stroke="#e25555" stroke-width="1.5" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
+        <text x="546" y="385" fill="#f0a0a0" font-size="10">delivery fail</text>
+      </svg>
+
+      <!-- State boxes (positioned absolutely) -->
+      <div class="state live s-live">
+        <div class="zh">募資中</div>
+        <div class="en">LIVE</div>
+        <div class="meta">Funding period open<br>Pledges accepted</div>
+      </div>
+
+      <div class="state unsuccessful terminal s-uns">
+        <div class="zh">募資失敗</div>
+        <div class="en">UNSUCCESSFUL</div>
+        <div class="meta">Goal not met<br>No charge made</div>
+      </div>
+
+      <div class="state funded s-funded">
+        <div class="zh">目標達成</div>
+        <div class="en">FUNDED</div>
+        <div class="meta">Stripe batch capture<br>Disbursement queued</div>
+      </div>
+
+      <div class="state canceled terminal s-cancel">
+        <div class="zh">已取消</div>
+        <div class="en">CANCELED</div>
+        <div class="meta">Pulled by ops<br>Manual refunds if needed</div>
+      </div>
+
+      <div class="state in-prod s-inprod">
+        <div class="zh">製作中</div>
+        <div class="en">IN PRODUCTION</div>
+        <div class="meta">Funds disbursed<br>Creator building</div>
+      </div>
+
+      <div class="state released terminal s-released">
+        <div class="zh">已上架</div>
+        <div class="en">RELEASED</div>
+        <div class="meta">Content lives on Ztor<br>N11 sent to backers</div>
+      </div>
+
+    </div>
+
+    <p style="text-align:center; color:#888; font-size:12px; margin-top:24px;">
+      <span style="color:#6ee0a0">━ solid green</span> = success path &nbsp;·&nbsp;
+      <span style="color:#f0a0a0">┄ dashed red</span> = fail / edge case &nbsp;·&nbsp;
+      <span style="color:#aaaadd">━ solid grey</span> = neutral progression
+    </p>
+  </div>
+
+  <div class="trans-table">
+    <h3>Allowed transitions</h3>
+    <table>
+      <thead>
+        <tr><th>From</th><th>To</th><th>Trigger</th><th>Driven by</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="from">募資中 (Live)</td>
+          <td class="to">目標達成 (Funded)</td>
+          <td class="trigger">Goal met at funding period end · batch capture fires</td>
+          <td><span class="pill system">SYSTEM</span></td>
+        </tr>
+        <tr>
+          <td class="from">募資中 (Live)</td>
+          <td class="to">募資失敗 (Unsuccessful)</td>
+          <td class="trigger">Goal not met at funding period end · no charge made</td>
+          <td><span class="pill system">SYSTEM</span></td>
+        </tr>
+        <tr>
+          <td class="from">募資中 (Live)</td>
+          <td class="to">已取消 (Canceled)</td>
+          <td class="trigger">Ops/creator pulls campaign mid-flight</td>
+          <td><span class="pill">OPS</span></td>
+        </tr>
+        <tr>
+          <td class="from">目標達成 (Funded)</td>
+          <td class="to">製作中 (In Production)</td>
+          <td class="trigger">Funds disbursed to creator</td>
+          <td><span class="pill">OPS</span></td>
+        </tr>
+        <tr>
+          <td class="from">目標達成 (Funded)</td>
+          <td class="to">已取消 (Canceled)</td>
+          <td class="trigger">Edge case · creator default before production starts · ops manually refunds</td>
+          <td><span class="pill">OPS</span></td>
+        </tr>
+        <tr>
+          <td class="from">製作中 (In Production)</td>
+          <td class="to">已上架 (Released)</td>
+          <td class="trigger">Content lives on Ztor</td>
+          <td><span class="pill">OPS</span></td>
+        </tr>
+        <tr>
+          <td class="from">製作中 (In Production)</td>
+          <td class="to">已取消 (Canceled)</td>
+          <td class="trigger">Edge case · creator unable to deliver · ops processes refunds via Stripe back-office</td>
+          <td><span class="pill">OPS</span></td>
+        </tr>
+        <tr style="opacity:0.5">
+          <td class="from">募資失敗 / 已取消 / 已上架</td>
+          <td class="to" style="color:#888">— terminal —</td>
+          <td class="trigger">No further transitions allowed</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+</body>
+</html>
