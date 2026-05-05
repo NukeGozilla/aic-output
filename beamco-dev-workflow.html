@@ -233,15 +233,15 @@
     <div class="legend-item"><div class="swatch" style="background:var(--build)"></div>Build (engineering)</div>
     <div class="legend-item"><div class="swatch" style="background:var(--qa)"></div>QA gate ([QA tester])</div>
     <div class="legend-item"><div class="swatch" style="background:var(--uat)"></div>UAT gate (Ming)</div>
-    <div class="legend-item"><div class="swatch dashed"></div>Business Validation (no Status change)</div>
+    <div class="legend-item"><div class="swatch dashed"></div>Biz &amp; Ops gate (no Status change)</div>
     <div class="legend-item"><div class="swatch" style="background:var(--ship)"></div>Ship</div>
     <div class="legend-item"><div class="swatch" style="background:var(--bug)"></div>Bug Found (return path)</div>
     <div class="legend-item"><div class="swatch" style="background:var(--park)"></div>Parked</div>
   </div>
 
   <!-- ═══════════ SWIMLANE PIPELINE ═══════════ -->
-  <h2>End-to-end workflow — 4 phases, biz gates on both sides</h2>
-  <p>Pre-Development now mirrors the Test Gates: <strong>biz approves the spec before engineering starts</strong>, then approves the implementation after engineering finishes. Same Sam/Dan pair on both sides, same comment-only convention — <code>Biz Sign-off</code> and <code>Business Validation</code> live in <strong>comments + @-mentions</strong>, not as Status states.</p>
+  <h2>End-to-end workflow — 4 phases, biz &amp; ops gates on both sides</h2>
+  <p>Pre-Development mirrors the Test Gates: <strong>Biz &amp; Ops approve the spec before engineering starts</strong>, then approve the implementation after engineering finishes. Same Sam / Dan / Jesse trio on both sides, same comment-only convention — <code>Biz &amp; Ops Sign-off</code> and <code>Biz &amp; Ops Validation</code> live in <strong>comments + @-mentions</strong>, not as Status states.</p>
   <p><strong>New Status options</strong> to add to Asana: <code>BRD (high-level)</code>, <code>BRD Final</code>, <code>Prototype</code>, <code>QA</code>. <code>Bug Found</code> is the only return path; everything else moves forward.</p>
 
   <div class="pipeline-frame">
@@ -301,8 +301,8 @@
 
         <!-- 4 · Biz Sign-off — Biz (DASHED, no Status) -->
         <rect x="50" y="311" width="240" height="48" rx="24" fill="#faf5ff" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="6,4"/>
-        <text x="170" y="331" text-anchor="middle" fill="#7c3aed" font-size="9"  font-weight="800" letter-spacing="1.5">4 · BIZ · NO STATUS</text>
-        <text x="170" y="349" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="700">Biz Sign-off</text>
+        <text x="170" y="331" text-anchor="middle" fill="#7c3aed" font-size="9"  font-weight="800" letter-spacing="1.5">4 · BIZ &amp; OPS · NO STATUS</text>
+        <text x="170" y="349" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="700">Biz &amp; Ops Sign-off</text>
 
         <line x1="170" y1="359" x2="170" y2="381" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre)"/>
 
@@ -348,7 +348,7 @@
         <!-- 10 · Business Validation (DASHED) -->
         <rect x="670" y="599" width="200" height="50" rx="25" fill="#faf5ff" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="6,4"/>
         <text x="770" y="619" text-anchor="middle" fill="#7c3aed" font-size="9"  font-weight="800" letter-spacing="1.5">10 · GATE 3 · NO STATUS</text>
-        <text x="770" y="637" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="700">Business Validation</text>
+        <text x="770" y="637" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="700">Biz &amp; Ops Validation</text>
 
         <!-- Lane 3 → Lane 4 cross arrow -->
         <line x1="870" y1="624" x2="988" y2="624" stroke="#059669" stroke-width="2" marker-end="url(#ah-ship)"/>
@@ -402,9 +402,9 @@
       </div>
     </div>
 
-    <!-- Business Validation note -->
+    <!-- Biz & Ops Validation note -->
     <div class="biz-note">
-      <strong>How Business Validation works (no Status state):</strong> When Ming flips <code>UAT → Launch Ready</code>, she @-mentions the biz reviewer in her pass comment: <em>"UAT verified [date]. @Sam @Dan please confirm before deploy."</em> Sam/Dan reply <code>✅ approved</code>. Dev only deploys after seeing that comment. If Sam/Dan raise an issue, it becomes <code>Bug Found</code> and loops back to Development.
+      <strong>How Biz &amp; Ops Validation works (no Status state):</strong> When Ming flips <code>UAT → Launch Ready</code>, she @-mentions the biz &amp; ops reviewers in her pass comment: <em>"UAT verified [date]. @Sam @Dan @Jesse please confirm before deploy."</em> Sam / Dan / Jesse reply <code>✅ approved</code>. Dev only deploys after seeing that comment. If any reviewer raises an issue, it becomes <code>Bug Found</code> and loops back to Development. The same <code>@Sam @Dan @Jesse</code> mention pattern is used at the Pre-Dev <strong>Biz &amp; Ops Sign-off</strong> step (gate 4).
     </div>
 
     <!-- Parked states -->
@@ -441,26 +441,26 @@
       <div class="question">"Does this make sense to a real user?"</div>
       <dl>
         <dt>Looking for</dt>
-        <dd>User flow makes sense end-to-end, copy is clear, no surprises in the journey, feels right.</dd>
+        <dd>User flow makes sense end-to-end, no surprises in the journey, feels right. <strong>Chinese copy only</strong> — clarity, tone, accuracy.</dd>
         <dt>Background needed</dt>
         <dd>User empathy, designer's eye. Doesn't need to know how it's built.</dd>
         <dt>Out of scope</dt>
-        <dd>Functional bugs (QA should have caught them — bounce back via Bug Found). Design/copy changes are comments only, never edits.</dd>
+        <dd>Functional bugs (QA should have caught them — bounce back via Bug Found). <strong>English copy</strong> (Ming is not fluent in English — that ships to the Biz &amp; Ops Validation gate). Design/copy changes are comments only, never edits.</dd>
         <dt>Pass action</dt>
-        <dd>Flip Status → <code>Launch Ready</code>. @-mention Sam/Dan in the pass comment.</dd>
+        <dd>Flip Status → <code>Launch Ready</code>. @-mention <code>@Sam @Dan @Jesse</code> in the pass comment.</dd>
       </dl>
     </div>
     <div class="gate-card biz-c">
-      <h4>3 · Business Validation</h4>
-      <div class="who">Sam / Dan · runs THIRD · no Status change</div>
-      <div class="question">"Does this serve the business?"</div>
+      <h4>3 · Biz &amp; Ops Validation</h4>
+      <div class="who">Sam / Dan / Jesse · runs THIRD · no Status change</div>
+      <div class="question">"Does this serve the business and read right in English?"</div>
       <dl>
         <dt>Looking for</dt>
-        <dd>Does it match what was sold to the artist/partner? Pricing/packaging right? Anything that breaks an existing deal? Public-facing copy on-brand?</dd>
+        <dd>Does it match what was sold to the artist/partner? Pricing/packaging right? Anything that breaks an existing deal? <strong>English copy</strong> on-brand and accurate (since Ming verifies Chinese only).</dd>
         <dt>Background needed</dt>
-        <dd>Knowledge of artist/partner agreements and business commitments.</dd>
+        <dd>Knowledge of artist/partner agreements, business commitments, and English brand voice.</dd>
         <dt>Out of scope</dt>
-        <dd>Functional or UX bugs (QA/UAT's job). Net-new requirements (those go through PM/BR process).</dd>
+        <dd>Functional or UX bugs (QA/UAT's job). Chinese copy (Ming's job at UAT). Net-new requirements (those go through PM / BRD process).</dd>
         <dt>Pass action</dt>
         <dd>Reply <code>✅ approved</code> on the ticket. Dev only deploys after seeing this reply. Issue → flag as <code>Bug Found</code>.</dd>
       </dl>
@@ -526,7 +526,7 @@
     </div>
     <div class="rhythm-card uat-r">
       <div class="when">During the day</div>
-      <div class="what">Move tickets <code>UAT → Launch Ready</code> (pass) or <code>UAT → Bug Found</code> (fail, with reproduction steps + screenshot).</div>
+      <div class="what">Verify user flow + <strong>Chinese copy</strong>. Move tickets <code>UAT → Launch Ready</code> (pass) or <code>UAT → Bug Found</code> (fail, with reproduction steps + screenshot). On pass, @-mention <code>@Sam @Dan @Jesse</code> for Biz &amp; Ops Validation (English copy + business sign-off).</div>
     </div>
     <div class="rhythm-card uat-r">
       <div class="when">End of day</div>
@@ -543,7 +543,7 @@
     <tbody>
       <tr><td><strong>QA Queue</strong></td><td>Status = QA, across Bug Tracking + Release Plan</td><td>[QA tester]</td></tr>
       <tr><td><strong>UAT Queue</strong></td><td>Status = UAT, across Bug Tracking + Release Plan</td><td>Ming</td></tr>
-      <tr><td><strong>Awaiting Biz Validation</strong></td><td>Status = Launch Ready, no biz-approval comment yet</td><td>Sam / Dan</td></tr>
+      <tr><td><strong>Awaiting Biz &amp; Ops Validation</strong></td><td>Status = Launch Ready, no biz-approval comment yet</td><td>Sam / Dan / Jesse</td></tr>
       <tr><td><strong>In Test (overview)</strong></td><td>Status in [QA, UAT, Launch Ready] — everything currently in some test gate</td><td>Jeff / dev lead</td></tr>
       <tr><td><strong>This Week's Bugs</strong></td><td>Bug Release Plan, section = current week</td><td>Dev team</td></tr>
       <tr><td><strong>Stuck (&gt;5 days)</strong></td><td>Bug Tracking, Status in [Pending, Bug Found], modified &lt; today−5</td><td>Jeff (weekly)</td></tr>
