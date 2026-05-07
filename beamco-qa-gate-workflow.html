@@ -216,21 +216,41 @@
   .timing-row .target { color: var(--ink-soft); line-height: 1.55; }
   .timing-row .target strong { color: var(--ink); }
 
-  /* Asana settings checklist */
-  .asana-list {
+  /* Asana settings — spec card layout */
+  .asana-spec {
+    margin: 0;
     background: var(--card); border: 1px solid var(--line);
-    border-radius: 12px; padding: 18px 24px;
+    border-radius: 12px; padding: 4px 24px;
   }
-  .asana-list ul { margin: 0; padding: 0; list-style: none; }
-  .asana-list li {
-    font-size: 13px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 9px;
-    display: flex; align-items: baseline; gap: 10px;
+  .aspec-row {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    margin: 0;
   }
-  .asana-list li::before {
-    content: "✓"; color: var(--ship); font-weight: 800; font-size: 13px; flex-shrink: 0;
+  .aspec-row:last-child { border-bottom: none; }
+  .aspec-row dt {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin: 0 0 7px;
   }
-  .asana-list li strong { color: var(--ink); }
-  .asana-list code {
+  .aspec-label {
+    font-size: 13.5px; font-weight: 700; color: var(--ink);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .aspec-label::before {
+    content: "✓"; color: var(--ship); font-weight: 800; font-size: 13px;
+  }
+  .aspec-vals {
+    display: inline-flex; flex-wrap: wrap; gap: 5px;
+  }
+  .aspec-vals code {
+    background: #f3f4f6; padding: 2px 9px; border-radius: 5px; font-size: 12px;
+    border: 1px solid #e5e7eb; color: var(--ink); font-weight: 600;
+  }
+  .aspec-row dd {
+    margin: 0 0 0 22px; font-size: 13px; color: var(--ink-soft); line-height: 1.65;
+  }
+  .aspec-row dd em { color: var(--biz); font-style: italic; font-weight: 600; }
+  .aspec-row dd code {
     background: #f3f4f6; padding: 1px 6px; border-radius: 4px; font-size: 12px;
   }
 
@@ -530,13 +550,23 @@
 
     <!-- ═══════════ ASANA SETTINGS ═══════════ -->
     <h2>Asana settings to enable this flow</h2>
-    <div class="asana-list">
-      <ul>
-        <li><strong>Type field</strong> on Bug Tracking: <code>Bug</code> · <code>Change Request</code> — tester picks at filing; lane routing is determined by <em>assignee</em> (Designer = Lane B, Dev = Lane A, Jeff = Lane C). If the lane is wrong, the next person re-routes — no PM step needed.</li>
-        <li><strong>Priority field</strong>: existing field reused — no new severity scale needed.</li>
-        <li><strong>Auto-collaborator rule</strong>: when a ticket is created, the reporter is added as a collaborator and stays subscribed across all status changes.</li>
-      </ul>
-    </div>
+    <dl class="asana-spec">
+      <div class="aspec-row">
+        <dt>
+          <span class="aspec-label">Type field · Bug Tracking</span>
+          <span class="aspec-vals"><code>Bug</code><code>Change Request</code></span>
+        </dt>
+        <dd>Tester picks at filing. Lane routing follows the <em>assignee</em> — Designer for Lane B, Dev for Lane A, Jeff for Lane C. If the lane is wrong, the next person re-routes; no PM step needed.</dd>
+      </div>
+      <div class="aspec-row">
+        <dt><span class="aspec-label">Priority field</span></dt>
+        <dd>Existing field reused — no new severity scale needed.</dd>
+      </div>
+      <div class="aspec-row">
+        <dt><span class="aspec-label">Auto-collaborator rule</span></dt>
+        <dd>When a ticket is created, the reporter is added as a collaborator and stays subscribed across all status changes.</dd>
+      </div>
+    </dl>
 
     <div class="footer">Beamco · QA Gate Sub-Workflow · 2026-05-07 · draft for team review</div>
 
@@ -773,13 +803,23 @@
     </div>
 
     <h2>Asana 設定 — 啟用此流程</h2>
-    <div class="asana-list">
-      <ul>
-        <li><strong>Type 欄位</strong> 在 Bug Tracking：<code>Bug</code> · <code>變更需求</code> — 測試人員提單時選；lane 路由依 <em>assignee</em> 決定（設計師 = Lane B、工程師 = Lane A、Jeff = Lane C）。lane 標錯時下一個人自行轉手，不需 PM 介入。</li>
-        <li><strong>Priority 欄位</strong>：沿用既有欄位，不需要新增 severity。</li>
-        <li><strong>自動 collaborator 規則</strong>：建立 ticket 時自動把 reporter 加為 collaborator，整個生命週期保持訂閱。</li>
-      </ul>
-    </div>
+    <dl class="asana-spec">
+      <div class="aspec-row">
+        <dt>
+          <span class="aspec-label">Type 欄位 · Bug Tracking</span>
+          <span class="aspec-vals"><code>Bug</code><code>變更需求</code></span>
+        </dt>
+        <dd>測試人員提單時選。Lane 路由依 <em>assignee</em> 決定 — 設計師走 Lane B、工程師走 Lane A、Jeff 走 Lane C。lane 標錯時下一個人自行轉手，不需 PM 介入。</dd>
+      </div>
+      <div class="aspec-row">
+        <dt><span class="aspec-label">Priority 欄位</span></dt>
+        <dd>沿用既有欄位，不需要新增 severity。</dd>
+      </div>
+      <div class="aspec-row">
+        <dt><span class="aspec-label">自動 collaborator 規則</span></dt>
+        <dd>建立 ticket 時自動把 reporter 加為 collaborator，整個生命週期保持訂閱。</dd>
+      </div>
+    </dl>
 
     <div class="footer">Beamco · QA Gate 子流程 · 2026-05-07 · 給團隊審閱的草稿</div>
 
