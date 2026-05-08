@@ -167,8 +167,8 @@
 <body>
 
 <div class="header">
-  <h1>Project State Machine <span class="badge">Simple v · 2025-10-27</span></h1>
-  <p>6 user-visible states · allowed transitions · driven by Ops via the admin tool. <span style="color:#d2a36f">Q2 (funding type: amount vs share) and Q3 (production status) TBD — see open questions in BRD.</span></p>
+  <h1>Project State Machine <span class="badge">Simple v · BRD v5.2 (2026-05-08)</span></h1>
+  <p>6 user-visible states · allowed transitions · driven by Ops via the admin tool. <strong style="color:#37b87a">Q2 closed</strong> → amount-based funding with package-specific shares (only <code>isShareTier</code> tiers issue shares). <strong style="color:#37b87a">Q3 closed</strong> → production status surfaced via existing MilestoneTimeline.</p>
   <div class="nav">
     <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
     <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
@@ -354,10 +354,12 @@
   </div>
 
   <div style="margin-top:24px;background:#1a1a2e;border:1px dashed #3a3a5a;border-radius:8px;padding:16px 20px;font-size:12px;color:#aaaadd;line-height:1.6">
-    <strong style="color:#d2a36f">Open questions (2025-10-27 meeting):</strong><br>
-    · <strong>Q1</strong> Eligibility level — project-level "join" vs creator-level "follow"? Leans project-level. Pending Sam legal review.<br>
-    · <strong>Q2</strong> Funding type — amount-based or share-based? Susan leans share-based. Affects calc + UI heavily.<br>
-    · <strong>Q3</strong> Production status visibility — show beyond payment status? Creator self-update vs ops-mediated?
+    <strong style="color:#37b87a">Closed since 2025-10-27 meeting:</strong><br>
+    · <strong>Q1 closed (2026-05-04)</strong> — Eligibility = Creator-level join community (1 LP per creator gates pledging).<br>
+    · <strong>Q2 closed (2026-05-04 + 2026-05-07)</strong> — Amount-based funding with package-specific shares; only <code>isShareTier</code> tiers issue shares.<br>
+    · <strong>Q3 closed (2026-05-04)</strong> — Production status surfaced via existing MilestoneTimeline.<br>
+    <br>
+    <strong style="color:#d2a36f">Current open items</strong> — see <a href="https://ztor-crowdfund-proto.vercel.app/crowdfund/open-questions" style="color:#b58850" target="_blank">/crowdfund/open-questions</a> for full list with prototype decisions awaiting ops sign-off (Q1 TW 鑑賞期, Q2 success/fail definition, Q3 share-count cap, Q4 tier cap behavior, Q5 equity offered %, Q6 community-exit handling, Q7 notification list).
   </div>
 
 </div>

@@ -214,7 +214,7 @@
       <div class="modules">
         <div class="module">
           <div class="name">Eligibility Service</div>
-          <div class="role">Reads <strong style="color:#d2a36f">follows</strong> (creator + project) to gate pledge action. Q1 level (project vs creator) TBD — pending Sam legal.</div>
+          <div class="role">Reads <strong style="color:#37b87a">LP / community-membership</strong> (user→creator only). 1 LP per joined creator gates pledge action. <strong>Q1 closed 2026-05-04 → Creator-level only.</strong></div>
           <div class="br"><span>BR-03</span></div>
         </div>
         <div class="module">
@@ -278,8 +278,8 @@
           <div class="br"><span>BR-16</span><span>DEP-03</span></div>
         </div>
         <div class="module">
-          <div class="name">Follows Service</div>
-          <div class="role">Source of eligibility truth — user→creator and user→project follow/join relationships.</div>
+          <div class="name">LP / Community-Membership Service</div>
+          <div class="role">Source of eligibility truth — user→creator membership (1 LP per joined creator, non-cumulative). Replaces the prior follows-based source post-2026-05-04 IT meeting. May reuse Ztor&rsquo;s existing follow infra under the hood with rebranded UX.</div>
           <div class="br"><span>DEP-02</span></div>
         </div>
         <div class="module">
@@ -312,8 +312,8 @@
           <div class="br"><span>DEP-05</span></div>
         </div>
         <div class="module">
-          <div class="name">Follows</div>
-          <div class="role">User→creator and user→project relations. Source of pledge eligibility (Q1 level TBD).</div>
+          <div class="name">Community Memberships</div>
+          <div class="role">User→creator joined-community relations. 1 LP per joined creator, non-cumulative. Persists past community-exit (Q6 prototype decision). Source of pledge eligibility.</div>
           <div class="br"><span>BR-03</span></div>
         </div>
         <div class="module">

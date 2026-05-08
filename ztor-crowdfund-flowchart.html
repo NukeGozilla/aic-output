@@ -465,7 +465,7 @@
       <div class="arrow"></div>
 
       <div class="node node-decision">
-        Following<br>Creator/Project?
+        Joined Creator&rsquo;s<br>Community?
       </div>
 
       <div class="branch-container">
@@ -479,8 +479,8 @@
         <div class="branch-row">
           <div class="arrow"><span class="arrow-label no">NO</span></div>
           <div class="node node-process manual">
-            Inline CTA:<br>追蹤即可贊助
-            <div class="node-detail">User follows creator (or joins project — Q1 level TBD), then returns to pledge</div>
+            Inline CTA:<br>加入社群即可贊助
+            <div class="node-detail">User joins creator&rsquo;s community (1 LP granted), then returns to pledge. Q1 closed 2026-05-04 → Creator-level only.</div>
           </div>
         </div>
       </div>
@@ -531,7 +531,7 @@
 
       <div class="node node-decision">
         Goal Met<br>by Deadline?
-        <div style="font-size:9px;font-weight:400;margin-top:4px;color:#d2a36f">Q2: amount or shares TBD</div>
+        <div style="font-size:9px;font-weight:400;margin-top:4px;color:#37b87a">Amount-based · package-specific shares (BR-23)</div>
       </div>
 
       <div class="branch-container">
@@ -663,7 +663,7 @@
         <tr>
           <td>Eligibility</td>
           <td class="beamco">Prior POPCORN purchase qualifies</td>
-          <td class="ztor">Follow creator OR join project · Q1 level pending Sam legal</td>
+          <td class="ztor">Join Creator&rsquo;s community → 1 LP gates pledge (Creator-level only · Q1 closed 2026-05-04). LP not surfaced to backers.</td>
         </tr>
         <tr>
           <td>Currency</td>
@@ -703,7 +703,7 @@
         <tr>
           <td>Funding model</td>
           <td class="beamco">Implicitly all-or-nothing; O2 stretch goal open</td>
-          <td class="ztor">All-or-nothing only · no stretch · Q2 amount-vs-share TBD</td>
+          <td class="ztor">All-or-nothing · no stretch · <strong>amount-based with package-specific shares</strong> (only <code>isShareTier</code> tiers issue shares; Q2 closed 2026-05-04 + 2026-05-07 case-study refinement). Creator sets <code>equityOfferedPct</code>.</td>
         </tr>
         <tr>
           <td>Project announcement</td>
@@ -726,26 +726,33 @@
 
   <!-- ═══════ KEY NOTES ═══════ -->
   <div class="notes-section">
-    <h3>Decisions from 2025-10-27 meeting (Crowdfund Simple Version)</h3>
+    <h3>Decisions (BRD v5.2 · 2026-05-08)</h3>
     <ul>
-      <li><strong>Eligibility = follow-based</strong> &mdash; user must follow the creator OR join the project. Replaces the prior POPCORN-purchase model. Q1 (project-level join vs creator-level follow) pending Sam legal review.</li>
+      <li><strong>Eligibility = join Creator&rsquo;s community</strong> &mdash; user holds 1 LP per joined creator (non-cumulative); that LP gates pledge action. Replaces both prior POPCORN-purchase and follow-based models. Wording rename: 追蹤 → 加入社群 platform-wide for crowdfund flow. <strong>LP is internal only; not surfaced to backers.</strong></li>
+      <li><strong>Funding model = amount-based with package-specific shares</strong> &mdash; only <code>isShareTier</code> tiers issue shares (<code>shareUnits</code> per lot). Non-share tiers contribute to goal but issue zero shares. Creator sets <code>equityOfferedPct</code> (% offered to backers; creator keeps the rest). Per-tier <code>cap</code> controls oversubscription: cap = 0/blank → unlimited; cap > 0 → closes at cap.</li>
       <li><strong>Stripe Future Payment</strong> &mdash; no charge during pledge; batch capture on Funded transition in creator currency at Stripe daily FX rate (decimals OK).</li>
       <li><strong>Backer reward = redeem code for free viewing</strong> &mdash; unique one-time code per pledge on Released; 30 days to activate, 48 hours to finish; no POPCORN charge.</li>
       <li><strong>Physical fulfillment in scope</strong> &mdash; project-level <code>collectsAddress</code> toggle; ops handles manual shipping (順豐 / similar) and bulk-imports tracking; creator absorbs shipping cost (priced in tier).</li>
-      <li><strong>Platform fee model</strong> &mdash; deducted from creator income (e.g., backer pays 1000 → creator nets 950). All costs (including shipping) computed before charge.</li>
+      <li><strong>Platform fee model</strong> &mdash; deducted from creator income (e.g., backer pays 1000 → creator nets 950). Funding-plan fee HK$75K one-off baseline. All costs (including shipping) computed before charge.</li>
       <li><strong>Comments + moderation</strong> &mdash; required; admin tool can soft-delete inappropriate content.</li>
-      <li><strong>Project announcements via post-mention</strong> &mdash; regular Ztor posts can mention crowdfund projects → surface on home feed for promotion. (Jeff × Eric to discuss tech.)</li>
+      <li><strong>Project announcements via post-mention</strong> &mdash; sourced from Ztor social posts mentioning the project (BR-22). Manual project-level announcements deprecated.</li>
       <li><strong>No Creator Studio for May launch</strong> &mdash; all creator setup is offline via /admin. Plan to port AIC CMS Timeline editor for creators in a later phase.</li>
-      <li><strong>Cancel during funding NOT allowed</strong> in Simple v · refunds only for special creator-default cases via Finance + Stripe back-office. Taiwan 鑑賞期 legal pending.</li>
-      <li><strong>Pledges are private</strong> &mdash; only self-visible on the user's profile. Same backer can pledge multiple tiers (per-tier qty cap).</li>
+      <li><strong>Cancel during funding NOT allowed</strong> in Simple v · refunds only for special creator-default cases via Finance + Stripe back-office. Taiwan 鑑賞期 legal still pending Sam (now non-blocking — see open list).</li>
+      <li><strong>Pledges are private</strong> &mdash; only self-visible on the user&rsquo;s profile. Same backer can pledge multiple tiers (per-tier qty cap).</li>
       <li><strong>SKU options out of scope for May</strong> &mdash; product variants (size/color) handled offline initially.</li>
+      <li><strong>收藏 (bookmark) feature</strong> &mdash; not in scope for Simple v (Q8 closed 2026-05-08). Revisit Stage 3 based on user feedback.</li>
     </ul>
-    <h3 style="margin-top:24px;color:#d2a36f">Open questions (to close before spec freeze)</h3>
+    <h3 style="margin-top:24px;color:#d2a36f">Open items — current (Q1–Q7, all 🟡 non-blocking; prototype implements a default, ops sign-off pending)</h3>
     <ul>
-      <li><strong>Q1</strong> Eligibility level &mdash; project "join" vs creator "follow"? Leans project. Pending Sam legal.</li>
-      <li><strong>Q2</strong> Funding type &mdash; amount-based or share-based? Susan leans share-based. Affects calc + UI heavily.</li>
-      <li><strong>Q3</strong> Production status visibility &mdash; show beyond payment status? Creator self-update vs ops-mediated?</li>
+      <li><strong>Q1</strong> TW 鑑賞期 / cooling-off &mdash; <em>Sam (legal)</em>. Prototype keeps "no cancel during funding" (2025-10-27 decision); add cancel flow if Sam confirms TW law overrides.</li>
+      <li><strong>Q2</strong> Funded / Unsuccessful definition &mdash; <em>Agnes</em>. Prototype: no minimum backer count; success = <code>raised &gt;= goal</code> only.</li>
+      <li><strong>Q3</strong> Share-count cap &mdash; <em>Susan + Agnes</em>. Prototype: no platform-level cap; per-tier <code>cap × shareUnits</code> is implicit ceiling.</li>
+      <li><strong>Q4</strong> Tier cap &amp; oversubscription &mdash; <em>Susan + Agnes</em>. Prototype: per-tier rule (cap = 0/blank → unlimited; cap &gt; 0 → closes at cap). No project-level toggle.</li>
+      <li><strong>Q5</strong> Equity offered % &mdash; <em>Susan + Agnes</em>. Prototype: creator inputs <code>equityOfferedPct</code>; platform doesn&rsquo;t enforce share-unit-to-% mapping.</li>
+      <li><strong>Q6</strong> Community-exit handling &mdash; <em>Ops</em>. Prototype: user can exit; LP is NOT removed; existing pledges stay valid.</li>
+      <li><strong>Q7</strong> Notification list (N1–N13) &mdash; <em>Ops</em>. Admin Option A picker landed; default = all 13 enabled; needs content review.</li>
     </ul>
+    <p style="font-size:11px;color:#888;margin-top:12px">See <a href="https://ztor-crowdfund-proto.vercel.app/crowdfund/open-questions" style="color:#b58850" target="_blank">/crowdfund/open-questions</a> for full prototype-decision callouts on each item.</p>
   </div>
 
 </div>
