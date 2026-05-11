@@ -409,6 +409,23 @@
     *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   }
 
+  /* Cross-page nav (link to QA gate sub-workflow) */
+  .crosslink {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 16px;
+    font-size: 12.5px; font-weight: 600; color: var(--ink-soft);
+    text-decoration: none; margin: 0 0 24px;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .crosslink:hover { border-color: var(--qa); color: var(--qa-dk); background: #f0fdfa; }
+  .crosslink .arr { font-size: 14px; }
+  .crosslink .badge {
+    background: var(--qa); color: white; font-size: 9.5px; font-weight: 800;
+    letter-spacing: .12em; padding: 2px 7px; border-radius: 5px;
+    text-transform: uppercase;
+  }
+
   /* Language tabs */
   .lang-tabs {
     display: flex; gap: 2px; margin: 0 0 24px;
@@ -438,6 +455,8 @@
 
   <h1>Beamco Dev Workflow — Proposed</h1>
   <div class="sub">Single state machine across Release Plan, Bug Tracking, and Bug Release Plan · Ming's UAT role embedded · 2026-05-05</div>
+
+  <a class="crosslink" href="./beamco-qa-gate-workflow.html"><span class="badge">NEW</span> QA Gate sub-workflow — triage, three lanes, closure <span class="arr">→</span></a>
 
   <!-- Legend -->
   <div class="legend">
@@ -931,6 +950,8 @@
 
   <h1>Beamco 開發流程提案</h1>
   <div class="sub">跨 Release Plan、Bug Tracking、Bug Release Plan 的單一 Status 機制 · Ming 的 UAT 角色已嵌入 · 2026-05-05</div>
+
+  <a class="crosslink" href="./beamco-qa-gate-workflow.html"><span class="badge">NEW</span> QA Gate 子流程 — 分流、三 lane、結案 <span class="arr">→</span></a>
 
   <!-- 圖例 -->
   <div class="legend">
