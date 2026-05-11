@@ -502,6 +502,87 @@
     color: var(--merge);
   }
 
+  /* === Open questions === */
+  .open-questions {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 12px;
+    padding: 24px 28px;
+  }
+  .open-questions h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #115e59;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .open-questions h3::before {
+    content: "?";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: #0f766e;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .open-questions .stamp {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #115e59;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid #99f6e4;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+  }
+  .question-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .question-item {
+    background: rgba(255,255,255,0.7);
+    border: 1px solid #99f6e4;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .question-item .num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    background: #0f766e;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .question-item .q {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .question-item .q strong {
+    color: #115e59;
+    font-weight: 700;
+  }
+
   .flags {
     background: var(--flag-bg);
     border: 1px solid var(--flag-border);
@@ -587,6 +668,7 @@
     }
     .schema-fork ul { grid-template-columns: 1fr; }
     .paths { grid-template-columns: 1fr; }
+    .question-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -803,6 +885,40 @@
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2>Open questions — biz side</h2>
+
+    <div class="open-questions">
+      <span class="stamp">Needs full flow + edge cases from biz team</span>
+      <h3>Outstanding questions to resolve</h3>
+
+      <div class="question-grid">
+
+        <div class="question-item">
+          <div class="num">1</div>
+          <div class="q"><strong>Funds release to creators</strong> — by batch or one-off? What's the release mechanism?</div>
+        </div>
+
+        <div class="question-item">
+          <div class="num">2</div>
+          <div class="q"><strong>Campaign didn't hit target</strong> — refund full amount, or partial / something else?</div>
+        </div>
+
+        <div class="question-item">
+          <div class="num">3</div>
+          <div class="q"><strong>Creator didn't deliver</strong> — refund full amount? If funds already used by creator, does Ztor bear the loss for users? Partially or completely?</div>
+        </div>
+
+        <div class="question-item">
+          <div class="num">4</div>
+          <div class="q"><strong>Legal compliance</strong> — final confirmation on what makes us legal (flow + copywriting)?</div>
+        </div>
+
+      </div>
     </div>
   </section>
 
