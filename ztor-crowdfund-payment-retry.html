@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ztor Crowdfund — Payment Recovery Flow</title>
+<title>Ztor Crowdfund — Lifecycle & Payment Recovery</title>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -64,6 +64,94 @@
   }
   .intro strong { color: #d0d0e8; }
 
+  .section-title {
+    font-size: 18px;
+    color: #fff;
+    margin: 8px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+  .section-title::before {
+    content: "";
+    width: 4px;
+    height: 18px;
+    background: #b58850;
+    border-radius: 2px;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: #8888aa;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  /* CF top-line timeline (3 dots) */
+  .cf-timeline {
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 28px 28px 24px;
+    margin-bottom: 28px;
+  }
+  .cf-timeline .duration-tag {
+    display: inline-block;
+    background: rgba(181,136,80,0.15);
+    color: #d2a36f;
+    border: 1px solid rgba(181,136,80,0.4);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 24px;
+  }
+  .cf-track {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .cf-track::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 16.66%;
+    right: 16.66%;
+    height: 2px;
+    background: #2a2a4a;
+    z-index: 0;
+  }
+  .cf-node {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+  }
+  .cf-node .dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #16213e;
+    border: 3px solid #b58850;
+    margin: 0 auto 12px;
+  }
+  .cf-node .label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .cf-node .detail {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.5;
+    text-align: left;
+    display: inline-block;
+    max-width: 220px;
+  }
+  .cf-node .detail li { margin-left: 14px; }
+
   .chart {
     background: #0e0e1a;
     border: 1px dashed #2a2a4a;
@@ -74,69 +162,58 @@
   }
   .chart svg { display: block; margin: 0 auto; max-width: 100%; }
 
-  .deadline {
-    background: linear-gradient(135deg, #3a2a1f 0%, #4a3a1a 100%);
-    border-left: 3px solid #ffaa3c;
-    padding: 14px 18px;
-    border-radius: 6px;
-    margin: 0 0 32px;
-    font-size: 13px;
-    color: #ffe6c0;
-    line-height: 1.5;
-  }
-  .deadline strong { color: #ffd083; }
-
-  .outcomes {
+  /* Recovery checkpoint cards */
+  .checkpoints {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
     margin-bottom: 32px;
   }
-  .outcome {
+  .checkpoint {
     background: #111118;
     border: 1px solid #2a2a3a;
     border-radius: 12px;
-    padding: 20px 22px;
-  }
-  .outcome.success {
-    border-color: rgba(55,184,122,0.4);
-    background: linear-gradient(135deg, #0f1a14 0%, #14241c 100%);
-  }
-  .outcome.fail {
-    border-color: rgba(220,80,80,0.4);
-    background: linear-gradient(135deg, #1a0f0f 0%, #241414 100%);
-  }
-  .outcome h3 {
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .outcome.success h3 { color: #6ee0a0; }
-  .outcome.fail h3 { color: #ff8a8a; }
-  .outcome ul {
-    list-style: none;
-    padding: 0;
-    font-size: 13px;
-    color: #b8b8c8;
-    line-height: 1.6;
-  }
-  .outcome li {
-    padding-left: 18px;
+    padding: 18px 18px;
     position: relative;
-    margin-bottom: 6px;
   }
-  .outcome li::before {
-    content: "•";
-    position: absolute;
-    left: 4px;
-    color: #6e8aaf;
+  .checkpoint .pill {
+    display: inline-block;
+    background: rgba(181,136,80,0.15);
+    color: #d2a36f;
+    border: 1px solid rgba(181,136,80,0.4);
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
   }
-  .outcome.success li::before { color: #6ee0a0; }
-  .outcome.fail li::before { color: #ff8a8a; }
+  .checkpoint h3 {
+    font-size: 15px;
+    color: #fff;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .checkpoint p {
+    font-size: 12.5px;
+    color: #b8b8c8;
+    line-height: 1.55;
+  }
+  .checkpoint.auto { border-color: rgba(74,158,255,0.4); }
+  .checkpoint.auto .pill {
+    background: rgba(74,158,255,0.15); color: #7eb8ff; border-color: rgba(74,158,255,0.4);
+  }
+  .checkpoint.manual { border-color: rgba(232,170,60,0.4); }
+  .checkpoint.manual .pill {
+    background: rgba(232,170,60,0.15); color: #ffcf6a; border-color: rgba(232,170,60,0.4);
+  }
+  .checkpoint.ops { border-color: rgba(220,80,80,0.4); }
+  .checkpoint.ops .pill {
+    background: rgba(220,80,80,0.15); color: #ff8a8a; border-color: rgba(220,80,80,0.4);
+  }
 
+  /* Day-by-day timeline */
   .timeline {
     background: #111118;
     border: 1px solid #2a2a3a;
@@ -145,16 +222,17 @@
     margin-bottom: 24px;
   }
   .timeline h3 {
-    font-size: 14px;
+    font-size: 15px;
     color: #fff;
     margin-bottom: 16px;
     display: flex;
     align-items: center;
     gap: 8px;
+    font-weight: 600;
   }
   .tl-row {
     display: grid;
-    grid-template-columns: 80px 1fr;
+    grid-template-columns: 110px 1fr;
     gap: 16px;
     padding: 12px 0;
     border-top: 1px solid rgba(42,42,74,0.5);
@@ -176,7 +254,9 @@
   @media (max-width: 900px) {
     .canvas { padding: 24px; }
     .callout { margin-left: 24px; margin-right: 24px; }
-    .outcomes { grid-template-columns: 1fr; }
+    .cf-track { grid-template-columns: 1fr; gap: 24px; }
+    .cf-track::before { display: none; }
+    .checkpoints { grid-template-columns: 1fr; }
     .tl-row { grid-template-columns: 1fr; gap: 4px; }
   }
 </style>
@@ -184,8 +264,8 @@
 <body>
 
 <div class="header">
-  <h1>Payment Recovery Flow <span class="badge">Biz overview</span></h1>
-  <p>When a backer's pledge charge fails &mdash; automated retries first, then a clear path for the backer to fix it before the pledge expires.</p>
+  <h1>Crowdfund Lifecycle &amp; Payment Recovery <span class="badge">Biz overview</span></h1>
+  <p>End-to-end view: campaign launch → goal hit → charge attempt → (if needed) recovery → payout. Three key recovery checkpoints called out.</p>
   <div class="nav">
     <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
     <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
@@ -197,107 +277,161 @@
 </div>
 
 <div class="callout">
-  <strong>🔁 Two phases, one flow</strong> &mdash; the system tries to fix the failure on its own first (silently, without bothering the backer). Only if that fails do we email the backer and ask them to update their card.
+  <strong>🔁 Three recovery checkpoints</strong> &mdash; we don't give up after the first failed charge. The system retries silently for 7 days, then asks the backer to update their card for another 7 days, then escalates to ops only if both windows expire.
 </div>
 
 <div class="canvas">
 
   <p class="intro">
-    This flow picks up <strong>after a pledge's first charge attempt has failed</strong> at the
-    campaign deadline (card declined, expired, etc.). The goal is to recover the pledge with as
-    little backer friction as possible, while still giving the project a firm cut-off so production
-    planning isn't held hostage by unresolved payments.
+    Crowdfund runs <strong>all-or-nothing</strong>: backers are not charged when they click support &mdash; we only record their card. At campaign close, if the goal is met, we charge every backer in batch. This diagram covers that batch charge and what happens when some payments fail.
   </p>
+
+  <!-- ─────  CF top-line timeline  ───── -->
+  <h2 class="section-title">Campaign timeline</h2>
+  <p class="section-sub">The 30-day fundraising window itself &mdash; no money moves until the very end.</p>
+
+  <div class="cf-timeline">
+    <span class="duration-tag">CF Duration · 30 days</span>
+    <div class="cf-track">
+      <div class="cf-node">
+        <div class="dot"></div>
+        <div class="label">Start the CF</div>
+        <div class="detail">Campaign goes live on Ztor. Goal + duration locked.</div>
+      </div>
+      <div class="cf-node">
+        <div class="dot"></div>
+        <div class="label">Backer clicks support</div>
+        <ul class="detail">
+          <li>No pre-authorization</li>
+          <li>Just record the credit-card info</li>
+        </ul>
+      </div>
+      <div class="cf-node">
+        <div class="dot"></div>
+        <div class="label">Finish the CF</div>
+        <ul class="detail">
+          <li>Charge the backer (batch)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────  Main flowchart  ───── -->
+  <h2 class="section-title">What happens after the campaign closes</h2>
+  <p class="section-sub">All-or-nothing: if the goal is missed, nobody pays. If the goal is hit, we charge every backer &mdash; and recover from any failures via the three checkpoints below.</p>
 
   <div class="chart">
     <pre class="mermaid">
 flowchart TD
-    A[Payment fails] --> B[Auto-retry silently<br/>3 attempts over ~7 days]
-    B --> Q{Did any retry succeed?}
-    Q -->|Yes| OK[✓ Pledge confirmed<br/>Rewards ship]
-    Q -->|No| C[Email the backer:<br/>'Payment failed — please update your card']
-    C --> D[Backer opens 'Update payment' page]
-    D --> E[Backer enters a new card]
-    E --> F{Card charged?}
-    F -->|Yes| OK
-    F -->|No| G[Show error · ask for another card]
-    G --> E
-    D -.7-day deadline.-> X[✗ Pledge forfeited<br/>Order cancelled · slot released]
+    A[Finish the CF<br/>All-or-nothing approach] --> B{Goal reached?}
+    B -->|Fail · didn't reach the goal| F[No charge<br/>Campaign ends]
+    B -->|Success · reached the goal| C[Charge the backer]
+    C --> D1[Successfully charge<br/>all the backers]
+    C --> D2[Failure in some<br/>of the payments]
+    D1 --> P1[Proceed payment to creator]
+    D2 --> R[① 7-day auto-retry<br/>Silent background attempts]
+    R --> Rok[Recovered]
+    R --> Rfail[Still failing]
+    Rok --> P1
+    Rfail --> M[② 7-day manual recovery<br/>Follow up the backer · email link to update card]
+    M --> Mok[Recovered]
+    M --> Mfail[Still failing]
+    Mok --> P1
+    Mfail --> X[③ Ops considers<br/>cancel the project &amp; refund · manual]
 
     classDef ok fill:#1a4a3a,stroke:#37b87a,color:#c8e8d8
     classDef bad fill:#3a1a1a,stroke:#cc5050,color:#ffd0d0
     classDef neutral fill:#16213e,stroke:#b58850,color:#e0e0e0
-    class OK ok
-    class X bad
-    class A,B,C,D,E,G neutral
+    classDef auto fill:#1a2a4a,stroke:#4a9eff,color:#c8d8e8
+    classDef manual fill:#3a2a1a,stroke:#e8aa3c,color:#ffd0a0
+    classDef ops fill:#2a1f1a,stroke:#ff8a4a,color:#ffd0b0
+    class P1,Rok,Mok ok
+    class F,Rfail,Mfail bad
+    class A,B,C,D1,D2 neutral
+    class R auto
+    class M manual
+    class X ops
     </pre>
   </div>
 
-  <div class="deadline">
-    <strong>⏰ 7-day recovery window.</strong> Starting from when the recovery email is sent, the
-    backer has 7 days to complete payment on a new card. If they don't, the pledge is automatically
-    forfeited &mdash; the order is voided, no rewards ship, and the tier slot is released so another
-    backer can take it.
+  <!-- ─────  3 checkpoints called out  ───── -->
+  <h2 class="section-title">Three recovery checkpoints</h2>
+  <p class="section-sub">Each checkpoint gives the failing payment another chance to clear before we escalate.</p>
+
+  <div class="checkpoints">
+    <div class="checkpoint auto">
+      <span class="pill">① · 7 days</span>
+      <h3>Auto-retry</h3>
+      <p>
+        The system retries the charge silently in the background &mdash; backer is not
+        notified. Most temporary declines (insufficient funds, network blip) clear
+        within this window on their own.
+      </p>
+    </div>
+    <div class="checkpoint manual">
+      <span class="pill">② · 7 days</span>
+      <h3>Manual recovery</h3>
+      <p>
+        If auto-retries fail, the backer gets an email with a link to update their
+        card. They have 7 days to enter a new card and complete the payment in one
+        on-the-spot session.
+      </p>
+    </div>
+    <div class="checkpoint ops">
+      <span class="pill">③ · Manual</span>
+      <h3>Ops cancel + refund</h3>
+      <p>
+        If both windows expire and the gap is material, ops reviews the situation
+        and may cancel the project &mdash; refunding everyone who <em>did</em> pay.
+        Manual decision, not automatic.
+      </p>
+    </div>
   </div>
 
-  <div class="outcomes">
-    <div class="outcome success">
-      <h3>✓ Recovered successfully</h3>
-      <ul>
-        <li>Pledge flips to <strong>confirmed</strong></li>
-        <li>Backer receives confirmation email</li>
-        <li>Rewards ship per the project's fulfillment schedule</li>
-        <li>If silent retries did the job, backer never even knew there was a problem</li>
-      </ul>
-    </div>
-    <div class="outcome fail">
-      <h3>✗ Forfeited (7 days expired)</h3>
-      <ul>
-        <li>Pledge is voided &mdash; no charge, no rewards</li>
-        <li>Tier slot is released back into inventory</li>
-        <li>Backer receives a final notification email</li>
-        <li>Creator's funded total is adjusted in the dashboard</li>
-      </ul>
-    </div>
-  </div>
-
+  <!-- ─────  Worst-case timeline  ───── -->
   <div class="timeline">
-    <h3>📅 Day-by-day from a backer's point of view</h3>
+    <h3>📅 Worst-case timeline from a backer's point of view</h3>
     <div class="tl-row">
-      <div class="tl-when">Day 0</div>
+      <div class="tl-when">Day 0 → 30</div>
       <div class="tl-what">
-        <strong>Campaign deadline.</strong> Stripe attempts to charge each backer's saved card.
-        Most succeed; this flow only kicks in for the ones that don't.
+        <strong>Campaign live.</strong> Backer clicks support, card info is recorded &mdash;
+        no charge yet.
       </div>
     </div>
     <div class="tl-row">
-      <div class="tl-when">Day 0–7</div>
+      <div class="tl-when">Day 30</div>
       <div class="tl-what">
-        <strong>Silent auto-retries.</strong> The system tries 3 more times spread over the
-        week. Backer is not notified &mdash; most card declines are temporary and resolve on
-        their own.
+        <strong>Campaign closes.</strong> If goal hit, every backer is charged in batch.
+        Most charges succeed cleanly; the rest enter recovery.
       </div>
     </div>
     <div class="tl-row">
-      <div class="tl-when">Day 7</div>
+      <div class="tl-when">Day 30 → 37</div>
       <div class="tl-what">
-        <strong>If still failing → recovery email goes out.</strong> Backer clicks through to a
-        page where they enter a new card and confirm the charge there and then.
+        <strong>① 7-day auto-retry.</strong> Silent background retries. Backer doesn't know
+        anything is happening; project payout to creator is held until this window settles.
       </div>
     </div>
     <div class="tl-row">
-      <div class="tl-when">Day 7–14</div>
+      <div class="tl-when">Day 37</div>
       <div class="tl-what">
-        <strong>7-day window to act.</strong> Backer can update their card and retry as many
-        times as needed. Every attempt is on-the-spot &mdash; they see success or failure
-        immediately.
+        <strong>Recovery email sent</strong> to any backers whose charges are still failing.
+        Page link lets them enter a new card and pay on the spot.
       </div>
     </div>
     <div class="tl-row">
-      <div class="tl-when">Day 14</div>
+      <div class="tl-when">Day 37 → 44</div>
       <div class="tl-what">
-        <strong>Forfeit deadline.</strong> If no successful payment by now, the pledge is voided
-        and the tier slot is released.
+        <strong>② 7-day manual recovery.</strong> Backer can update their card and retry
+        as many times as needed within the window.
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">Day 44+</div>
+      <div class="tl-what">
+        <strong>③ Ops decision.</strong> If the failed-payment gap is material, ops considers
+        cancelling the project and refunding everyone who already paid. Manual call, not
+        automatic.
       </div>
     </div>
   </div>
@@ -324,13 +458,13 @@ flowchart TD
       clusterBorder: '#2a2a4a',
       defaultLinkColor: '#6e8aaf',
       fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
-      fontSize: '14px'
+      fontSize: '13px'
     },
     flowchart: {
       curve: 'basis',
       padding: 20,
       nodeSpacing: 40,
-      rankSpacing: 60
+      rankSpacing: 55
     }
   });
 </script>
