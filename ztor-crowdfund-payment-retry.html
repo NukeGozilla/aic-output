@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor Crowdfund — Payment Retry Flow</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 32px 48px;
+    border-bottom: 2px solid #2a2a4a;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .header p { font-size: 14px; color: #8888aa; }
+  .header .badge {
+    display: inline-block;
+    background: #b58850;
+    color: #1a1a1a;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-left: 12px;
+    vertical-align: middle;
+  }
+  .header .nav { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .header .nav a {
+    font-size: 11px; color: #aaaadd;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid #2a2a4a;
+    padding: 5px 10px; border-radius: 6px;
+    text-decoration: none; transition: all 0.15s;
+  }
+  .header .nav a:hover { background: rgba(181,136,80,0.12); border-color: #b58850; color: #d2a36f; }
+  .header .nav a.current { background: rgba(181,136,80,0.2); border-color: #b58850; color: #fff; }
+
+  .stripe-callout {
+    background: linear-gradient(135deg, #1f3a2a 0%, #1a4a3a 100%);
+    border-left: 3px solid #37b87a;
+    padding: 14px 24px;
+    margin: 20px 48px 0;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #c8e8d8;
+    line-height: 1.5;
+  }
+  .stripe-callout strong { color: #6ee0a0; }
+
+  .canvas { padding: 48px; max-width: 1200px; margin: 0 auto; }
+
+  .intro {
+    color: #999;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+  .intro strong { color: #d0d0e8; }
+
+  /* Step section */
+  .step-section {
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 28px;
+  }
+  .step-section h2 {
+    font-size: 18px;
+    color: #fff;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .step-section .step-badge {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #b58850;
+    color: #1a1a1a;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 30px;
+  }
+  .step-section .sub {
+    font-size: 13px;
+    color: #8888aa;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  /* Mermaid container — give the chart breathing room and a frame */
+  .chart {
+    background: #0e0e1a;
+    border: 1px dashed #2a2a4a;
+    border-radius: 8px;
+    padding: 24px;
+    margin: 16px 0 24px;
+    overflow-x: auto;
+  }
+  .chart svg { display: block; margin: 0 auto; max-width: 100%; }
+
+  /* Tables (retry schedule) */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 13px;
+    background: #0e0e1a;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  thead th {
+    background: rgba(181,136,80,0.12);
+    color: #d2a36f;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-bottom: 1px solid #2a2a4a;
+  }
+  tbody td {
+    padding: 10px 14px;
+    border-top: 1px solid rgba(42,42,74,0.5);
+    color: #c0c0d8;
+  }
+  tbody tr:first-child td { border-top: none; }
+
+  /* Outcome / detail cards */
+  .post {
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .post h3 {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .post-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .post-row:last-child { margin-bottom: 0; }
+  .post-card {
+    background: #0e0e1a;
+    border: 1px solid #2a2a3a;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.5;
+  }
+  .post-card .label {
+    font-size: 10px;
+    color: #6e8aaf;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .post-card strong { color: #d0d0e8; }
+  .post-card code {
+    background: rgba(181,136,80,0.12);
+    color: #d2a36f;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 11px;
+  }
+
+  .post-card.success { border-color: rgba(55,184,122,0.4); }
+  .post-card.success .label { color: #6ee0a0; }
+  .post-card.danger { border-color: rgba(220,80,80,0.4); }
+  .post-card.danger .label { color: #ff8a8a; }
+  .post-card.warn { border-color: rgba(232,170,60,0.4); }
+  .post-card.warn .label { color: #ffcf6a; }
+
+  /* Deadline highlight */
+  .deadline {
+    background: linear-gradient(135deg, #3a2a1f 0%, #4a3a1a 100%);
+    border-left: 3px solid #ffaa3c;
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin: 16px 0 24px;
+    font-size: 13px;
+    color: #ffe6c0;
+    line-height: 1.5;
+  }
+  .deadline strong { color: #ffd083; }
+
+  /* Implementation list */
+  .impl {
+    background: #0e0e1a;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 18px 24px;
+    margin: 16px 0 24px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #b0b0c8;
+  }
+  .impl li { margin-left: 20px; margin-bottom: 6px; }
+  .impl strong { color: #d0d0e8; }
+  .impl code {
+    background: rgba(181,136,80,0.12);
+    color: #d2a36f;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .canvas { padding: 24px; }
+    .step-section { padding: 20px; }
+    .post-row { grid-template-columns: 1fr; }
+    .stripe-callout { margin-left: 24px; margin-right: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Payment Retry Flow <span class="badge">Stripe Smart Retries · Stage 3</span></h1>
+  <p>From a failed pledge charge through silent background retries to an on-session manual-recovery window with the backer.</p>
+  <div class="nav">
+    <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
+    <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
+    <a href="ztor-crowdfund-state-machine.html">State machine</a>
+    <a href="ztor-crowdfund-architecture.html">System architecture</a>
+    <a href="ztor-crowdfund-payment-retry.html" class="current">Payment retry flow</a>
+    <a href="https://ztor-crowdfund-proto.vercel.app" target="_blank">Live prototype ↗</a>
+  </div>
+</div>
+
+<div class="stripe-callout">
+  <strong>🔁 Two-stage recovery</strong> &mdash; Step 3 retries in the background with no backer notification. If all retries fail, Step 4 hands control to the backer with an email + a recovery page that captures a new card and confirms payment <em>on-session</em>.
+</div>
+
+<div class="canvas">
+
+  <p class="intro">
+    This flow picks up <strong>after the initial off-session capture has failed</strong>
+    (a "card declined / insufficient funds / authentication required" response from
+    Stripe at campaign deadline). The goal is two-fold: minimise backer friction by
+    silently retrying first, then give the backer one clear path to fix it themselves
+    before the pledge is forfeited.
+  </p>
+
+  <!-- ─────────────────────────────  STEP 3  ───────────────────────────── -->
+  <div class="step-section">
+    <h2><span class="step-badge">3</span> Background smart retries</h2>
+    <p class="sub">
+      After the first charge fails, the background retry mechanism kicks in &mdash; either
+      Stripe Smart Retries or a custom cron job, whichever the team adopts. These retries
+      run <strong>silently</strong>: the backer is <em>not</em> notified.
+    </p>
+
+    <div class="chart">
+      <pre class="mermaid">
+flowchart TD
+    A[Charge failed] --> B[Trigger background retry<br/>Stripe Smart Retries or custom cron]
+    B --> R1[Silent retry 1<br/>e.g. +3 days]
+    B --> R2[Silent retry 2<br/>e.g. +5 days]
+    B --> R3[Silent retry 3<br/>e.g. +7 days]
+    R1 --> Q{Did any retry succeed?}
+    R2 --> Q
+    R3 --> Q
+    Q -->|Yes| S[Unlock backer tier<br/>Flow ends]
+    Q -->|No| N[Proceed to Step 4:<br/>Manual user recovery]
+      </pre>
+    </div>
+
+    <h3 style="font-size:13px; color:#d0d0e8; margin-bottom:6px;">Suggested retry schedule</h3>
+    <table>
+      <thead>
+        <tr><th style="width:30%">Attempt</th><th>Interval</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>+3 days</td></tr>
+        <tr><td>2</td><td>+5 days</td></tr>
+        <tr><td>3</td><td>+7 days</td></tr>
+      </tbody>
+    </table>
+
+    <div class="post-row">
+      <div class="post-card success">
+        <div class="label">Any retry succeeds</div>
+        <strong>Unlock backer tier.</strong> Pledge flips to <code>charged</code>. Flow ends.
+        No backer notification fired for the retries themselves &mdash; just the standard
+        capture-success email (N9).
+      </div>
+      <div class="post-card warn">
+        <div class="label">All retries fail</div>
+        <strong>Hand off to Step 4.</strong> Backer enters the manual recovery window with
+        a clear 7-day deadline.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────  STEP 4  ───────────────────────────── -->
+  <div class="step-section">
+    <h2><span class="step-badge">4</span> Manual user recovery</h2>
+    <p class="sub">
+      After all auto-retries fail, control passes back to the backer. The goal is to get
+      them onto the site, enter a new card, and confirm payment <strong>immediately while
+      still on-session</strong>.
+    </p>
+
+    <div class="deadline">
+      <strong>⏰ Recovery window: 7 days.</strong> Starting from when the recovery email
+      is sent, the backer has 7 days to complete payment on a new card. Anything past
+      that → the pledge is <strong>forfeited</strong>: the order is voided, no rewards
+      ship, and the tier slot is released.
+    </div>
+
+    <div class="chart">
+      <pre class="mermaid">
+flowchart TD
+    A[All auto-retries failed] --> B[Send recovery email:<br/>'Your pledge payment failed — action needed'<br/>with link to 'Update payment' page]
+    B --> C[Backer clicks link, lands on site]
+    C --> D[Create a fresh PaymentIntent<br/>NOT a SetupIntent<br/>setup_future_usage='off_session']
+    D --> E[Backer enters new card<br/>in Stripe Element]
+    E --> F[Confirm payment immediately<br/>while backer is on-session]
+    F --> G{Payment result}
+    G -->|Success| H[Payment succeeds]
+    G -->|Failure| I[Payment fails]
+    H --> H1[Save new card<br/>for future top-ups]
+    H --> H2[Set backer status: active]
+    H --> H3[Ship rewards · flow ends]
+    I --> I1[Show Stripe error inline]
+    I --> I2[Backer enters another card]
+    I --> I3[Retry immediately on-session]
+      </pre>
+    </div>
+
+    <h3 style="font-size:13px; color:#d0d0e8; margin-bottom:10px;">Key implementation details</h3>
+    <ul class="impl">
+      <li>
+        Use <strong><code>PaymentIntent</code>, not <code>SetupIntent</code></strong> &mdash;
+        this stage charges and saves the card in one step, not two.
+      </li>
+      <li>
+        Pass <code>setup_future_usage="off_session"</code> on the PaymentIntent so the new
+        card is retained for future top-ups or renewals.
+      </li>
+      <li>
+        Confirm the payment <strong>on-session</strong>. Don't queue it for a background
+        worker &mdash; the backer is right there in the browser, and 3DS authentication
+        only works while they're present.
+      </li>
+    </ul>
+
+    <div class="post-row">
+      <div class="post-card success">
+        <div class="label">✓ Payment succeeds</div>
+        <strong>New card saved</strong> for future top-ups.<br/>
+        Backer status flips to <strong>active</strong>.<br/>
+        Rewards ship. Flow ends.
+      </div>
+      <div class="post-card danger">
+        <div class="label">✕ Payment fails</div>
+        Stripe error shown inline. Backer enters a different card. Immediate on-session
+        retry from the "Confirm payment" step.<br/>
+        <strong>If 7-day deadline expires without success → pledge is forfeited:</strong>
+        order voided, no rewards ship, tier slot released.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────  Why this shape  ───────────────── -->
+  <div class="post">
+    <h3>🎯 Why this two-stage shape</h3>
+    <div class="post-row">
+      <div class="post-card">
+        <div class="label">Silent retries minimise friction</div>
+        Most card-decline causes (temporary insufficient funds, network blip, issuer
+        rate-limit) clear within days without the backer doing anything. Notifying
+        them on every retry is noisy and erodes trust. Stage 3 absorbs that.
+      </div>
+      <div class="post-card">
+        <div class="label">On-session for the manual step</div>
+        Off-session charges can't complete 3D Secure flows. Forcing on-session
+        confirmation in Stage 4 means SCA-required cards (most of EU/UK + many
+        APAC issuers) can actually finish the payment.
+      </div>
+    </div>
+    <div class="post-row">
+      <div class="post-card">
+        <div class="label">PaymentIntent over SetupIntent</div>
+        SetupIntent only saves a card; we'd still need a second hop to charge it.
+        PaymentIntent + <code>setup_future_usage</code> does both in one request,
+        with one 3DS challenge, in one user gesture.
+      </div>
+      <div class="post-card">
+        <div class="label">7-day deadline is firm</div>
+        Beyond 7 days, the project may have moved into production and capacity
+        planning depends on a final backer count. Forfeiting late-paying pledges
+        keeps the production timeline honest.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      darkMode: true,
+      background: '#0e0e1a',
+      primaryColor: '#1a1a2e',
+      primaryTextColor: '#e0e0e0',
+      primaryBorderColor: '#b58850',
+      lineColor: '#6e8aaf',
+      secondaryColor: '#2a2a4a',
+      tertiaryColor: '#16213e',
+      mainBkg: '#16213e',
+      secondBkg: '#2a2a4a',
+      nodeBorder: '#b58850',
+      clusterBkg: '#0e0e1a',
+      clusterBorder: '#2a2a4a',
+      defaultLinkColor: '#6e8aaf',
+      fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+      fontSize: '13px'
+    },
+    flowchart: {
+      curve: 'basis',
+      padding: 18,
+      nodeSpacing: 30,
+      rankSpacing: 50
+    }
+  });
+</script>
+
+</body>
+</html>
