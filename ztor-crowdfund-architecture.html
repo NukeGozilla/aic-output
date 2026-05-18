@@ -137,13 +137,15 @@
 <body>
 
 <div class="header">
-  <h1>System Architecture <span class="badge">Stage 2</span></h1>
-  <p>Module map · BR cross-references · Internal vs external boundary</p>
+  <h1>System Architecture <span class="badge">Simple v · 2025-10-27</span></h1>
+  <p>Module map · BR cross-references · Internal vs external boundary. Reflects post-2025-10-27 Simple Version decisions.</p>
   <div class="nav">
     <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
     <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
     <a href="ztor-crowdfund-state-machine.html">State machine</a>
     <a href="ztor-crowdfund-architecture.html" class="current">System architecture</a>
+    <a href="ztor-crowdfund-payment-retry.html">Payment retry</a>
+    <a href="ztor-crowdfund-cancellation.html">Project cancellation</a>
     <a href="https://ztor-crowdfund-proto.vercel.app" target="_blank">Live prototype ↗</a>
   </div>
 </div>
@@ -210,11 +212,11 @@
     <!-- Layer 3: Core Logic -->
     <div class="layer core">
       <div class="layer-title">Core logic services</div>
-      <div class="layer-desc">Stage 2 lives largely on Store.com frontend with thin backend. Stage 3 migrates to Beamco backend.</div>
+      <div class="layer-desc">Simple Version lives largely on Store.com frontend with thin backend. Stage 3 migrates to Beamco backend.</div>
       <div class="modules">
         <div class="module">
           <div class="name">Eligibility Service</div>
-          <div class="role">Reads Popcorn rewards purchase history; gates pledge action</div>
+          <div class="role">Reads <strong style="color:#37b87a">LP / community-membership</strong> (user→creator only). 1 LP per joined creator gates pledge action. <strong>Q1 closed 2026-05-04 → Creator-level only.</strong></div>
           <div class="br"><span>BR-03</span></div>
         </div>
         <div class="module">
@@ -224,18 +226,38 @@
         </div>
         <div class="module">
           <div class="name">Capture &amp; Card Update</div>
-          <div class="role">Batch capture on Funded; 7-day grace + 2 retries on decline</div>
+          <div class="role">Batch capture on Funded; 7-day grace + 2 retries on decline. Charge in creator currency at Stripe daily FX rate (decimals OK).</div>
           <div class="br"><span>BR-05</span><span>BR-08</span></div>
         </div>
         <div class="module">
-          <div class="name">Refund Tracking (read-only)</div>
-          <div class="role">Reads Stripe refund events; no refund UI in admin</div>
+          <div class="name">Refund Service (manual)</div>
+          <div class="role">Finance triggers refund in Stripe back-office for special cases (creator default); webhook updates pledge state.</div>
           <div class="br"><span>BR-09</span></div>
         </div>
         <div class="module">
-          <div class="name">Currency &amp; Wording</div>
-          <div class="role">HK$/NT$ formatter; 募資/贊助 enforcement; 投資 ban</div>
+          <div class="name">Currency &amp; FX</div>
+          <div class="role">Creator-selected currency (HKD/TWD) is canonical; live FX preview for other regions with "參考價格" disclosure; 募資/贊助 enforcement; 投資 ban.</div>
           <div class="br"><span>BR-15</span><span>BR-17</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Redeem Code Service</div>
+          <div class="role">On Released, issues unique one-time codes per pledge. 30d activate / 48h watch window. Free viewing (no POPCORN).</div>
+          <div class="br"><span>BR-18</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Comments &amp; Moderation</div>
+          <div class="role">Backers post comments on project page; Ops can delete inappropriate content via admin tool.</div>
+          <div class="br"><span>BR-19</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Fulfillment / Shipping</div>
+          <div class="role">Manual: address collection toggle per project; ops bulk-imports tracking numbers (順豐 etc.). Creator absorbs shipping cost.</div>
+          <div class="br"><span>BR-20</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Post-Mention</div>
+          <div class="role">Allow regular Ztor posts to mention crowdfund projects → surfaces on home feed for promotion.</div>
+          <div class="br"><span>BR-22</span></div>
         </div>
       </div>
     </div>
@@ -258,9 +280,14 @@
           <div class="br"><span>BR-16</span><span>DEP-03</span></div>
         </div>
         <div class="module">
-          <div class="name">Popcorn Rewards Service</div>
-          <div class="role">Source of eligibility truth. NOT a payment instrument.</div>
+          <div class="name">LP / Community-Membership Service</div>
+          <div class="role">Source of eligibility truth — user→creator membership (1 LP per joined creator, non-cumulative). Replaces the prior follows-based source post-2026-05-04 IT meeting. May reuse Ztor&rsquo;s existing follow infra under the hood with rebranded UX.</div>
           <div class="br"><span>DEP-02</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Stripe FX</div>
+          <div class="role">Daily FX rate at capture time when backer's display currency differs from creator currency.</div>
+          <div class="br"><span>DEP-11</span></div>
         </div>
       </div>
     </div>
@@ -273,18 +300,38 @@
       <div class="modules">
         <div class="module">
           <div class="name">Projects &middot; Tiers</div>
-          <div class="role">Configured via /admin; seeded by Ops per campaign</div>
-          <div class="br"><span>BR-12</span></div>
+          <div class="role">Configured via /admin; seeded by Ops per campaign. Tier supports per-tier purchase qty cap; project flags include <code>collectsAddress</code> + <code>currency</code>.</div>
+          <div class="br"><span>BR-12</span><span>BR-20</span><span>BR-21</span></div>
         </div>
         <div class="module">
           <div class="name">Pledges</div>
-          <div class="role">One row per pledge with Stripe payment-method ID, state, reminder log</div>
-          <div class="br"><span>BR-04</span><span>BR-05</span><span>BR-08</span></div>
+          <div class="role">One row per pledge with Stripe payment-method ID, state, reminder log, shipping address (when applicable). Same backer can have multiple pledges per project.</div>
+          <div class="br"><span>BR-04</span><span>BR-05</span><span>BR-08</span><span>BR-21</span></div>
         </div>
         <div class="module">
           <div class="name">Users (Ztor profile)</div>
           <div class="role">Existing Ztor user schema · adds <code>isCreator</code> flag and creator linkage</div>
           <div class="br"><span>DEP-05</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Community Memberships</div>
+          <div class="role">User→creator joined-community relations. 1 LP per joined creator, non-cumulative. Persists past community-exit (Q6 prototype decision). Source of pledge eligibility.</div>
+          <div class="br"><span>BR-03</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Redeem Codes</div>
+          <div class="role">One unique code per pledge on Released. Tracks 30d activation window + 48h watch window.</div>
+          <div class="br"><span>BR-18</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Comments</div>
+          <div class="role">Project-scoped backer comments. Soft-delete by ops via admin moderation.</div>
+          <div class="br"><span>BR-19</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Shipments</div>
+          <div class="role">Per-pledge tracking numbers (manual entry by ops, bulk import supported).</div>
+          <div class="br"><span>BR-20</span></div>
         </div>
       </div>
     </div>

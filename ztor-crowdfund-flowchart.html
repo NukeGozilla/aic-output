@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ztor Crowdfund Stage 2 — Lifecycle Flowchart</title>
+<title>Ztor Simple Crowdfund — Flowchart</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -39,47 +39,15 @@
     border-radius: 12px;
     margin-left: 12px;
     vertical-align: middle;
-    letter-spacing: 0.5px;
   }
-  .header .nav {
-    margin-top: 14px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
+  .header .nav { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
   .header .nav a {
-    font-size: 11px;
-    color: #aaaadd;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid #2a2a4a;
-    padding: 5px 10px;
-    border-radius: 6px;
-    text-decoration: none;
-    transition: all 0.15s;
+    font-size: 11px; color: #aaaadd;
+    background: rgba(255,255,255,0.04); border: 1px solid #2a2a4a;
+    padding: 5px 10px; border-radius: 6px; text-decoration: none; transition: all 0.15s;
   }
-  .header .nav a:hover {
-    background: rgba(181,136,80,0.12);
-    border-color: #b58850;
-    color: #d2a36f;
-  }
-  .header .nav a.current {
-    background: rgba(181,136,80,0.2);
-    border-color: #b58850;
-    color: #fff;
-  }
-
-  .stripe-callout {
-    background: linear-gradient(135deg, #1f3a2a 0%, #1a4a3a 100%);
-    border-left: 3px solid #37b87a;
-    padding: 14px 24px;
-    margin: 0 48px;
-    margin-top: 20px;
-    border-radius: 6px;
-    font-size: 13px;
-    color: #c8e8d8;
-    line-height: 1.5;
-  }
-  .stripe-callout strong { color: #6ee0a0; }
+  .header .nav a:hover { background: rgba(181,136,80,0.12); border-color: #b58850; color: #d2a36f; }
+  .header .nav a.current { background: rgba(181,136,80,0.2); border-color: #b58850; color: #fff; }
 
   .legend {
     display: flex;
@@ -108,34 +76,32 @@
     overflow-x: auto;
   }
 
-  .phase { margin-bottom: 56px; }
+  /* Phase sections */
+  .phase {
+    margin-bottom: 56px;
+  }
   .phase-label {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: #888;
-    margin-bottom: 6px;
-    padding-left: 4px;
-  }
-  .phase-label .role {
-    color: #b58850;
-    font-weight: 700;
-  }
-  .phase-desc {
-    font-size: 12px;
     color: #666;
-    padding-left: 4px;
     margin-bottom: 20px;
+    padding-left: 4px;
+  }
+  .phase-label span {
+    color: #888;
+    font-weight: 400;
   }
 
   .flow-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0;
     flex-wrap: nowrap;
   }
 
+  /* Nodes */
   .node {
     position: relative;
     flex-shrink: 0;
@@ -151,6 +117,7 @@
     min-width: 160px;
     max-width: 200px;
   }
+
   .node-process {
     background: #1e3a5f;
     border: 1.5px solid #2a5a8f;
@@ -168,19 +135,6 @@
     top: -8px;
     right: 10px;
     background: #7c3aed;
-    color: #fff;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-  .node-process.system::after {
-    content: "AUTO";
-    position: absolute;
-    top: -8px;
-    right: 10px;
-    background: #2a5a8f;
     color: #fff;
     font-size: 8px;
     font-weight: 700;
@@ -226,6 +180,7 @@
     border-radius: 8px;
     color: #a0e8e8;
   }
+
   .node-detail {
     font-size: 10px;
     font-weight: 400;
@@ -233,17 +188,8 @@
     opacity: 0.75;
     line-height: 1.3;
   }
-  .node-state {
-    margin-top: 8px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 10px;
-    font-family: ui-monospace, "SF Mono", monospace;
-    color: #fff;
-    letter-spacing: 0.5px;
-  }
 
+  /* Arrows */
   .arrow {
     flex-shrink: 0;
     display: flex;
@@ -282,12 +228,12 @@
   .arrow-label.yes { color: #4ade80; }
   .arrow-label.no { color: #f87171; }
 
+  /* Branch layout */
   .branch-container {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
     align-items: flex-start;
-    justify-content: center;
   }
   .branch-row {
     display: flex;
@@ -295,6 +241,7 @@
     gap: 0;
   }
 
+  /* Vertical connector */
   .v-connector {
     display: flex;
     flex-direction: column;
@@ -320,6 +267,7 @@
     margin: 2px 0;
   }
 
+  /* Annotation callout */
   .callout {
     background: #1a1a2e;
     border: 1px dashed #3a3a5a;
@@ -328,12 +276,70 @@
     font-size: 11px;
     color: #8888cc;
     line-height: 1.5;
-    max-width: 280px;
+    max-width: 260px;
     margin-top: 8px;
     align-self: center;
   }
-  .callout strong { color: #aaaaee; }
+  .callout strong {
+    color: #aaaaee;
+  }
 
+  /* Comparison table */
+  .comparison {
+    margin-top: 56px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .comparison h3 {
+    padding: 16px 24px;
+    font-size: 14px;
+    background: #1a1a2e;
+    border-bottom: 1px solid #222;
+    color: #aaa;
+  }
+  .comparison table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .comparison th, .comparison td {
+    padding: 10px 24px;
+    text-align: left;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .comparison th {
+    color: #888;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: #0f0f1a;
+  }
+  .comparison td:first-child { color: #aaa; }
+  .comparison .beamco { color: #f0a060; }
+  .comparison .ztor { color: #60c0f0; }
+  .comparison .tag-auto {
+    display: inline-block;
+    background: #1a3a1a;
+    color: #6fcf6f;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .comparison .tag-manual {
+    display: inline-block;
+    background: #2d1f4e;
+    color: #b090e0;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* Notes section */
   .notes-section {
     margin-top: 48px;
     padding: 24px;
@@ -346,11 +352,15 @@
     color: #aaa;
     margin-bottom: 12px;
   }
-  .notes-section ul { list-style: none; padding: 0; }
+  .notes-section ul {
+    list-style: none;
+    padding: 0;
+  }
   .notes-section li {
     font-size: 13px;
     color: #888;
-    padding: 6px 0 6px 20px;
+    padding: 6px 0;
+    padding-left: 20px;
     position: relative;
     line-height: 1.5;
   }
@@ -361,281 +371,390 @@
     color: #555;
   }
 
+  /* Responsive */
   @media (max-width: 1200px) {
     .flow-row { overflow-x: auto; }
     .canvas { padding: 24px; }
-    .stripe-callout { margin-left: 24px; margin-right: 24px; }
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>Ztor Crowdfund — Lifecycle Flowchart <span class="badge">Stage 2</span></h1>
-  <p>End-to-end project lifecycle aligned with the Stage 2 BRD · Updated 2026-04-29</p>
+  <h1>Ztor Crowdfund Lifecycle <span class="badge">Simple v · 2025-10-27</span></h1>
+  <p>End-to-end project lifecycle from Ops setup through backer rewards. Updated 2026-05-04 with 2025-10-27 meeting decisions.</p>
   <div class="nav">
     <a href="ztor-crowdfund-flowchart.html" class="current">Lifecycle</a>
     <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
     <a href="ztor-crowdfund-state-machine.html">State machine</a>
     <a href="ztor-crowdfund-architecture.html">System architecture</a>
+    <a href="ztor-crowdfund-payment-retry.html">Payment retry</a>
+    <a href="ztor-crowdfund-cancellation.html">Project cancellation</a>
     <a href="https://ztor-crowdfund-proto.vercel.app" target="_blank">Live prototype ↗</a>
   </div>
 </div>
 
-<div class="stripe-callout">
-  <strong>🔒 Stripe Future Payment</strong> &mdash; collect card during pledge, charge only on campaign success.
-  No card hold, no Popcorn / Popcoin as payment instrument. All user-facing pricing in fiat (HK$ / NT$).
-</div>
-
 <div class="legend">
   <div class="legend-item"><div class="legend-swatch" style="background:#1a4a3a;border:1px solid #2a7a5a"></div> Start / Trigger</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:#1e3a5f;border:1px solid #2a5a8f"></div> Automated (System)</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:#2d1f4e;border:1px solid #5a3d8a"></div> Manual (Ops / Creator)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#1e3a5f;border:1px solid #2a5a8f"></div> Automated Process</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#2d1f4e;border:1px solid #5a3d8a"></div> Manual Process</div>
   <div class="legend-item"><div class="legend-swatch" style="background:#5a3e10;border:1px solid #8a6a20;clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);width:18px;height:18px"></div> Decision</div>
   <div class="legend-item"><div class="legend-swatch" style="background:#1a5a2a;border:1px solid #2a8a3a"></div> Success End</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:#5a1a1a;border:1px solid #8a2a2a"></div> Fail / No-Charge</div>
-  <div class="legend-item"><div class="legend-swatch" style="background:#0d4a4a;border:1px solid #1a7a7a"></div> Output / State</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#5a1a1a;border:1px solid #8a2a2a"></div> Fail / Refund</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#0d4a4a;border:1px solid #1a7a7a"></div> Output / Deliverable</div>
 </div>
 
 <div class="canvas">
 
-  <!-- ═══════ PHASE 1: PROJECT SETUP ═══════ -->
+  <!-- ═══════ PHASE 1: SETUP ═══════ -->
   <div class="phase">
-    <div class="phase-label">Phase 1 &mdash; Project Setup <span class="role">Ops + Admin Tool</span></div>
-    <div class="phase-desc">Off-platform negotiation, then configure the campaign in <code>/admin</code>. No dev deploy needed.</div>
+    <div class="phase-label">Phase 1 &mdash; Project Setup <span>(Ops via /admin · No Creator Studio in Simple v)</span></div>
     <div class="flow-row">
 
       <div class="node node-start">
-        Identify creator
-        <div class="node-detail">From AI contests, Ztor talent pool, partner pitches</div>
+        Identify<br>Creator
+        <div class="node-detail">AI contest winners, Tastemakers, Filmmakers — any Ztor user</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process manual">
-        Negotiate terms
-        <div class="node-detail">Funding goal, tier shape, milestones, profit-share %</div>
+        Offline Negotiation<br>(creator + ops)
+        <div class="node-detail">Goal, deadline, fee split, deliverables, T&amp;C, physical perks, currency (HKD/TWD)</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process manual">
-        Configure in <code>/admin</code>
-        <div class="node-detail">Cover, story, tiers (price/perks/cap), milestones, budget, T&amp;C copy</div>
-      </div>
-
-      <div class="arrow"></div>
-
-      <div class="node node-process manual">
-        Link creator account
-        <div class="node-detail">Pick from Ztor users with <code>isCreator: true</code></div>
-      </div>
-
-      <div class="arrow"></div>
-
-      <div class="node node-process manual">
-        Launch campaign
-        <div class="node-detail">Ops flips state to Live; project appears on /crowdfund</div>
-        <div class="node-state">Live</div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ═══════ PHASE 2: BACKER PLEDGE ═══════ -->
-  <div class="phase">
-    <div class="phase-label">Phase 2 &mdash; Backer Pledge <span class="role">Eligible Backer + Stripe</span></div>
-    <div class="phase-desc">5-step flow on /crowdfund/[slug]/pledge. Card collected via Stripe Future Payment, no charge yet.</div>
-    <div class="flow-row">
-
-      <div class="node node-start">
-        Visit /crowdfund
-        <div class="node-detail">Listing or shared project link</div>
+        Configure in /admin
+        <div class="node-detail">Tiers + qty caps + story + currency + collectsAddress flag + creator picker</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process">
-        View project detail
-        <div class="node-detail">Tiers, creator chip, progress, milestones</div>
+        Link Creator User
+        <div class="node-detail">Set <code style="background:#0e0e1a;padding:1px 4px;border-radius:3px">isCreator</code> on backing user account &mdash; not a separate identity class</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        State = Live
+        <div class="node-detail">Project surfaces on /crowdfund and (optionally) home feed via post-mention</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════ PHASE 2: CAMPAIGN LIVE ═══════ -->
+  <div class="phase">
+    <div class="phase-label">Phase 2 &mdash; Campaign Live <span>(Backer-Facing · Stripe Future Payment, no charge yet)</span></div>
+    <div class="flow-row">
+
+      <div class="node node-start">
+        Backer<br>Discovers Project
+        <div class="node-detail">/crowdfund listing, home feed via post-mention, creator profile</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        View Project<br>Detail
+        <div class="node-detail">Story, tiers (in creator currency + FX preview), creator chip, comments</div>
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-decision">
-        Eligible to pledge?
+        Joined Creator&rsquo;s<br>Community?
       </div>
 
       <div class="branch-container">
         <div class="branch-row">
           <div class="arrow"><span class="arrow-label yes">YES</span></div>
           <div class="node node-process">
-            Step 1–4 pledge flow
-            <div class="node-detail">Review → terms checkbox → card via Stripe Future Payment</div>
-          </div>
-          <div class="arrow"></div>
-          <div class="node node-output">
-            Pledge registered
-            <div class="node-detail">Confirmation screen; no charge yet</div>
-            <div class="node-state">pending</div>
+            Click 贊助 &rarr;<br>Tier
+            <div class="node-detail">Tier-fill bar shows progress; per-tier qty cap enforced</div>
           </div>
         </div>
         <div class="branch-row">
           <div class="arrow"><span class="arrow-label no">NO</span></div>
-          <div class="node node-end-fail">
-            Locked + path to qualify
-            <div class="node-detail">CTA: 前往購買 Popcorn 🍿 (rewards) to unlock</div>
+          <div class="node node-process manual">
+            Inline CTA:<br>加入社群即可贊助
+            <div class="node-detail">User joins creator&rsquo;s community (1 LP granted), then returns to pledge. Q1 closed 2026-05-04 → Creator-level only.</div>
           </div>
         </div>
       </div>
 
     </div>
-    <div class="callout">
-      <strong>Eligibility (pending O3, Agnes):</strong> currently a single rule &mdash; user must have purchased Popcorn rewards.
-      Popcorn rewards are <em>not</em> a payment instrument; they only unlock pledge access.
+
+    <!-- Pledge flow row -->
+    <div class="v-connector" style="margin-left: 240px; margin-top: -1px;">
+      <div class="v-line"></div>
+      <div class="v-arrow"></div>
     </div>
-  </div>
+    <div class="flow-row" style="margin-left: 80px;">
 
-  <!-- ═══════ PHASE 3: CAMPAIGN DEADLINE ═══════ -->
-  <div class="phase">
-    <div class="phase-label">Phase 3 &mdash; Campaign Deadline <span class="role">System (Stripe batch capture)</span></div>
-    <div class="phase-desc">When the funding period ends, Stripe captures only on success. Card declines hit a 7-day grace + 2 retries.</div>
-    <div class="flow-row">
-
-      <div class="node node-process system">
-        Funding period ends
-        <div class="node-detail">Auto-evaluate raised vs goal</div>
+      <div class="node node-process">
+        T&amp;C<br>Acceptance
+        <div class="node-detail">Mandatory checkbox (5-clause summary)</div>
       </div>
 
       <div class="arrow"></div>
 
+      <div class="node node-process">
+        Stripe Future<br>Payment
+        <div class="node-detail"><strong style="color:#7eb8ff">No charge.</strong> Card vaulted via Stripe-hosted page; PM ID stored on pledge</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-output">
+        Pledge<br>Confirmed
+        <div class="node-detail">State = pending · N1 sent · profile pledges tab updated · pledge private (only self-visible)</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        Campaign<br>Continues
+        <div class="node-detail">Backer can pledge multiple tiers · cancel during funding NOT allowed in Simple v</div>
+      </div>
+
+    </div>
+
+    <!-- Funding period end -->
+    <div class="v-connector" style="margin-left: 700px; margin-top: -1px;">
+      <div class="v-line"></div>
+      <div class="v-arrow"></div>
+    </div>
+    <div class="flow-row" style="margin-left: 540px;">
+
       <div class="node node-decision">
-        Goal met?
+        Goal Met<br>by Deadline?
+        <div style="font-size:9px;font-weight:400;margin-top:4px;color:#37b87a">Amount-based · package-specific shares (BR-23)</div>
       </div>
 
       <div class="branch-container">
         <div class="branch-row">
           <div class="arrow"><span class="arrow-label yes">YES</span></div>
-          <div class="node node-process system">
-            Batch capture all pledges
-            <div class="node-detail">Stripe charges every <code>pending</code> pledge in order</div>
-            <div class="node-state">Funded</div>
-          </div>
-          <div class="arrow"></div>
-          <div class="node node-decision">
-            Card OK?
-          </div>
-          <div class="branch-container">
-            <div class="branch-row">
-              <div class="arrow"><span class="arrow-label yes">YES</span></div>
-              <div class="node node-end-success">
-                Charged · N5 sent
-                <div class="node-state">charged</div>
-              </div>
-            </div>
-            <div class="branch-row">
-              <div class="arrow"><span class="arrow-label no">DECLINE</span></div>
-              <div class="node node-process system">
-                7-day grace + 2 retries
-                <div class="node-detail">N2 + N3 reminders fire</div>
-                <div class="node-state">card_update_required</div>
-              </div>
-              <div class="arrow"></div>
-              <div class="node node-decision">
-                Recovered?
-              </div>
-              <div class="branch-container">
-                <div class="branch-row">
-                  <div class="arrow"><span class="arrow-label yes">YES</span></div>
-                  <div class="node node-end-success">
-                    Charged · N5 sent
-                    <div class="node-state">charged</div>
-                  </div>
-                </div>
-                <div class="branch-row">
-                  <div class="arrow"><span class="arrow-label no">NO</span></div>
-                  <div class="node node-end-fail">
-                    Forfeited · N4 sent
-                    <div class="node-state">forfeited</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div class="node node-end-success">
+            State = Funded<br>Batch Capture
+            <div class="node-detail">Stripe FX rate at capture · creator currency · decimals OK</div>
           </div>
         </div>
         <div class="branch-row">
           <div class="arrow"><span class="arrow-label no">NO</span></div>
           <div class="node node-end-fail">
-            Unsuccessful · N7 sent
-            <div class="node-detail">No charge made &mdash; Stripe FP never authorizes</div>
-            <div class="node-state">Unsuccessful</div>
+            State = Unsuccessful
+            <div class="node-detail">Zero charges (all-or-nothing) · N7 fired · terminal state</div>
           </div>
         </div>
       </div>
 
     </div>
-    <div class="callout">
-      <strong>Refund edge case:</strong> if a campaign is canceled mid-flight after some pledges have been charged
-      (rare in Stripe FP), Ops processes refunds <em>manually</em> via the Stripe back-office. SLA target 5–7 business days (O12).
-      No refund queue UI in /admin.
-    </div>
   </div>
 
-  <!-- ═══════ PHASE 4: PRODUCTION + RELEASE ═══════ -->
+  <!-- ═══════ PHASE 3: PRODUCTION ═══════ -->
   <div class="phase">
-    <div class="phase-label">Phase 4 &mdash; Production &amp; Release <span class="role">Creator + Ops</span></div>
-    <div class="phase-desc">Funds disbursed manually (Stage 2). Creator builds. Ops drives state through the lifecycle.</div>
+    <div class="phase-label">Phase 3 &mdash; Content Production <span>(Post-Funding · State = In Production)</span></div>
     <div class="flow-row">
 
-      <div class="node node-process manual">
-        Manual disbursement
-        <div class="node-detail">Finance bank-transfers to creator (minus HK$75K platform fee)</div>
+      <div class="node node-start" style="background:#1a5a2a;border-color:#2a8a3a;color:#a0f0a0;">
+        State = Funded
       </div>
 
       <div class="arrow"></div>
 
       <div class="node node-process manual">
-        Ops flips state
-        <div class="node-detail">Funded → In Production via /admin</div>
-        <div class="node-state">In Production</div>
+        Finance Disburses<br>(Stripe → creator)
+        <div class="node-detail">Transfer raised amount minus platform fee &amp; absorbed shipping (HK$75K flat funding-plan fee + case-by-case distribution)</div>
       </div>
 
       <div class="arrow"></div>
 
-      <div class="node node-process manual">
-        Creator produces content
-        <div class="node-detail">Posts updates to right-side announcement zone</div>
+      <div class="node node-process">
+        State = In Production
       </div>
 
       <div class="arrow"></div>
 
-      <div class="node node-process manual">
-        Ops flips state
-        <div class="node-detail">In Production → Released when content lives on Ztor</div>
-        <div class="node-state">Released</div>
+      <div class="node node-process">
+        Creator Builds<br>(via AIC editor)
+        <div class="node-detail">Plan: port AIC CMS Timeline editor for creators. Production status visibility = Q3 TBD</div>
       </div>
 
       <div class="arrow"></div>
 
-      <div class="node node-end-success">
-        Backers notified · N11
-        <div class="node-detail">Email + in-app; content viewable on Ztor</div>
+      <div class="node node-decision">
+        Delivered?
+      </div>
+
+      <div class="branch-container">
+        <div class="branch-row">
+          <div class="arrow"><span class="arrow-label yes">YES</span></div>
+          <div class="node node-end-success">
+            Proceed to<br>Phase 4
+          </div>
+        </div>
+        <div class="branch-row">
+          <div class="arrow"><span class="arrow-label no">EDGE</span></div>
+          <div class="node node-end-fail">
+            Ops decides:<br>Extend / Refund / Cancel
+            <div class="node-detail">Finance manual refund via Stripe back-office; state → Canceled if non-recoverable</div>
+          </div>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <!-- ═══════ NOTES ═══════ -->
+  <!-- ═══════ PHASE 4: RELEASE & REWARDS ═══════ -->
+  <div class="phase">
+    <div class="phase-label">Phase 4 &mdash; Release &amp; Backer Rewards <span>(State = Released · terminal)</span></div>
+    <div class="flow-row">
+
+      <div class="node node-start" style="background:#1a5a2a;border-color:#2a8a3a;color:#a0f0a0;">
+        Content Ready
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process">
+        State = Released<br>(content on Ztor)
+        <div class="node-detail">Project page → integrated movie page with 簡介 / 募資 tabs · N11 fires</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-output">
+        Issue Redeem<br>Codes to Backers
+        <div class="node-detail">Unique one-time code per pledge · 30 days to activate · 48 hours to finish · free viewing (no POPCORN)</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-process manual">
+        Ship Physical Perks<br>(if applicable)
+        <div class="node-detail">Ops collects addresses → manual fulfillment via 順豐 / similar → bulk-import tracking numbers</div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node node-output">
+        Backer Receives<br>Reward
+        <div class="node-detail">Activates code · watches free · receives perks (if any) · pledge marked 已完成</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════ COMPARISON TABLE ═══════ -->
+  <div class="comparison">
+    <h3>What changed in 2025-10-27 meeting (vs prior Stage 2 BRD)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:20%">Topic</th>
+          <th style="width:38%">Before (Stage 2 BRD)</th>
+          <th style="width:42%">Simple v (post 2025-10-27)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Eligibility</td>
+          <td class="beamco">Prior POPCORN purchase qualifies</td>
+          <td class="ztor">Join Creator&rsquo;s community → 1 LP gates pledge (Creator-level only · Q1 closed 2026-05-04). LP not surfaced to backers.</td>
+        </tr>
+        <tr>
+          <td>Currency</td>
+          <td class="beamco">Single canonical fiat (HK$/NT$), no FX</td>
+          <td class="ztor">Creator-selected (HKD/TWD) · live FX preview elsewhere · Stripe daily rate at capture · decimals OK</td>
+        </tr>
+        <tr>
+          <td>Backer reward</td>
+          <td class="beamco">Tier perks; viewing model unspecified</td>
+          <td class="ztor">Free viewing via redeem code (30d/48h, unique one-time, no POPCORN charge)</td>
+        </tr>
+        <tr>
+          <td>Physical fulfillment</td>
+          <td class="beamco">Out of scope</td>
+          <td class="ztor">In scope · address collection toggle · ops manual shipping · bulk tracking import · creator absorbs cost</td>
+        </tr>
+        <tr>
+          <td>Comments</td>
+          <td class="beamco">O5 unresolved</td>
+          <td class="ztor">Required + admin moderation tool</td>
+        </tr>
+        <tr>
+          <td>Cancel during funding</td>
+          <td class="beamco">O14 unresolved</td>
+          <td class="ztor">NOT allowed in Simple v</td>
+        </tr>
+        <tr>
+          <td>Pledge visibility</td>
+          <td class="beamco">O16 unresolved</td>
+          <td class="ztor">Private &mdash; only self-visible</td>
+        </tr>
+        <tr>
+          <td>Multiple pledges</td>
+          <td class="beamco">Allowed (edge case)</td>
+          <td class="ztor">Explicitly allowed · per-tier qty cap</td>
+        </tr>
+        <tr>
+          <td>Funding model</td>
+          <td class="beamco">Implicitly all-or-nothing; O2 stretch goal open</td>
+          <td class="ztor">All-or-nothing · no stretch · <strong>amount-based with package-specific shares</strong> (only <code>isShareTier</code> tiers issue shares; Q2 closed 2026-05-04 + 2026-05-07 case-study refinement). Creator sets <code>equityOfferedPct</code>.</td>
+        </tr>
+        <tr>
+          <td>Project announcement</td>
+          <td class="beamco">Updates posts on project page only</td>
+          <td class="ztor">Post-with-mention &rarr; surfaces on home feed for promotion</td>
+        </tr>
+        <tr>
+          <td>Creator Studio</td>
+          <td class="beamco">Out of scope (Stage 3)</td>
+          <td class="ztor">Confirmed out of scope for May launch · all creator ops offline · plan to port AIC editor later</td>
+        </tr>
+        <tr>
+          <td>SKU / variants</td>
+          <td class="beamco">Not modeled</td>
+          <td class="ztor">Out of scope for May (size/color etc. handled offline)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════ KEY NOTES ═══════ -->
   <div class="notes-section">
-    <h3>Notes &amp; deferred items</h3>
+    <h3>Decisions (BRD v5.2 · 2026-05-08)</h3>
     <ul>
-      <li><strong>Out of scope (Stage 3):</strong> creator self-serve portal, automated refunds, automated revenue reports, Stripe Payouts to creators, link-attribution eligibility, pre-launch state, push notifications.</li>
-      <li><strong>Pledges live on the user profile</strong> at <code>/profile/[username]?tab=pledges</code>, not on a standalone page. Legacy <code>/crowdfund/my-pledges</code> 307-redirects.</li>
-      <li><strong>Creator profile</strong> at <code>/profile/[creator]?tab=campaigns</code> shows aggregate KPIs + per-campaign progress + recent backers. Read-only in Stage 2 (no announcement publishing from creator profile yet).</li>
-      <li><strong>Wording rule:</strong> 募資 = program · 贊助 = user verb · 投資 banned in user-facing copy.</li>
-      <li><strong>Currency:</strong> user-local (HKD for HK, TWD for TW). All tier prices are stored as numbers in the project's currency.</li>
-      <li><strong>Open items still gating dev:</strong> O3 final eligibility list (Agnes legal), O4 final notification list (Ops). See <a href="https://ztor-crowdfund-proto.vercel.app/crowdfund/open-questions" style="color:#b58850">open-questions page</a> for the full list.</li>
+      <li><strong>Eligibility = join Creator&rsquo;s community</strong> &mdash; user holds 1 LP per joined creator (non-cumulative); that LP gates pledge action. Replaces both prior POPCORN-purchase and follow-based models. Wording rename: 追蹤 → 加入社群 platform-wide for crowdfund flow. <strong>LP is internal only; not surfaced to backers.</strong></li>
+      <li><strong>Funding model = amount-based with package-specific shares</strong> &mdash; only <code>isShareTier</code> tiers issue shares (<code>shareUnits</code> per lot). Non-share tiers contribute to goal but issue zero shares. Creator sets <code>equityOfferedPct</code> (% offered to backers; creator keeps the rest). Per-tier <code>cap</code> controls oversubscription: cap = 0/blank → unlimited; cap > 0 → closes at cap.</li>
+      <li><strong>Stripe Future Payment</strong> &mdash; no charge during pledge; batch capture on Funded transition in creator currency at Stripe daily FX rate (decimals OK).</li>
+      <li><strong>Backer reward = redeem code for free viewing</strong> &mdash; unique one-time code per pledge on Released; 30 days to activate, 48 hours to finish; no POPCORN charge.</li>
+      <li><strong>Physical fulfillment in scope</strong> &mdash; project-level <code>collectsAddress</code> toggle; ops handles manual shipping (順豐 / similar) and bulk-imports tracking; creator absorbs shipping cost (priced in tier).</li>
+      <li><strong>Platform fee model</strong> &mdash; deducted from creator income (e.g., backer pays 1000 → creator nets 950). Funding-plan fee HK$75K one-off baseline. All costs (including shipping) computed before charge.</li>
+      <li><strong>Comments + moderation</strong> &mdash; required; admin tool can soft-delete inappropriate content.</li>
+      <li><strong>Project announcements via post-mention</strong> &mdash; sourced from Ztor social posts mentioning the project (BR-22). Manual project-level announcements deprecated.</li>
+      <li><strong>No Creator Studio for May launch</strong> &mdash; all creator setup is offline via /admin. Plan to port AIC CMS Timeline editor for creators in a later phase.</li>
+      <li><strong>Cancel during funding NOT allowed</strong> in Simple v · refunds only for special creator-default cases via Finance + Stripe back-office. Taiwan 鑑賞期 legal still pending Sam (now non-blocking — see open list).</li>
+      <li><strong>Pledges are private</strong> &mdash; only self-visible on the user&rsquo;s profile. Same backer can pledge multiple tiers (per-tier qty cap).</li>
+      <li><strong>SKU options out of scope for May</strong> &mdash; product variants (size/color) handled offline initially.</li>
+      <li><strong>收藏 (bookmark) feature</strong> &mdash; not in scope for Simple v (Q8 closed 2026-05-08). Revisit Stage 3 based on user feedback.</li>
     </ul>
+    <h3 style="margin-top:24px;color:#d2a36f">Open items — current (Q1–Q7, all 🟡 non-blocking; prototype implements a default, ops sign-off pending)</h3>
+    <ul>
+      <li><strong>Q1</strong> TW 鑑賞期 / cooling-off &mdash; <em>Sam (legal)</em>. Prototype keeps "no cancel during funding" (2025-10-27 decision); add cancel flow if Sam confirms TW law overrides.</li>
+      <li><strong>Q2</strong> Funded / Unsuccessful definition &mdash; <em>Agnes</em>. Prototype: no minimum backer count; success = <code>raised &gt;= goal</code> only.</li>
+      <li><strong>Q3</strong> Share-count cap &mdash; <em>Susan + Agnes</em>. Prototype: no platform-level cap; per-tier <code>cap × shareUnits</code> is implicit ceiling.</li>
+      <li><strong>Q4</strong> Tier cap &amp; oversubscription &mdash; <em>Susan + Agnes</em>. Prototype: per-tier rule (cap = 0/blank → unlimited; cap &gt; 0 → closes at cap). No project-level toggle.</li>
+      <li><strong>Q5</strong> Equity offered % &mdash; <em>Susan + Agnes</em>. Prototype: creator inputs <code>equityOfferedPct</code>; platform doesn&rsquo;t enforce share-unit-to-% mapping.</li>
+      <li><strong>Q6</strong> Community-exit handling &mdash; <em>Ops</em>. Prototype: user can exit; LP is NOT removed; existing pledges stay valid.</li>
+      <li><strong>Q7</strong> Notification list (N1–N13) &mdash; <em>Ops</em>. Admin Option A picker landed; default = all 13 enabled; needs content review.</li>
+    </ul>
+    <p style="font-size:11px;color:#888;margin-top:12px">See <a href="https://ztor-crowdfund-proto.vercel.app/crowdfund/open-questions" style="color:#b58850" target="_blank">/crowdfund/open-questions</a> for full prototype-decision callouts on each item.</p>
   </div>
 
 </div>

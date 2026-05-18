@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Crowdfund Tech Plan — Ztor + Beamco → Full Version</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --surface: #ffffff;
+    --ink: #18181b;           /* darker for max readability */
+    --ink-soft: #3f3f46;      /* was #57534e — bumped for better contrast */
+    --ink-faint: #71717a;     /* was #a8a29e — biggest fix; now AA on light bg */
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+
+    --ztor: #9a3412;          /* movie / warm — darker for AA */
+    --ztor-bg: #fff7ed;
+    --ztor-border: #fed7aa;
+
+    --beamco: #155e75;        /* music / cool — darker for AA */
+    --beamco-bg: #ecfeff;
+    --beamco-border: #a5f3fc;
+
+    --merge: #5b21b6;         /* darker purple */
+    --merge-bg: #f5f3ff;
+    --merge-border: #ddd6fe;
+
+    --shipped: #15803d;       /* was #16a34a — passes AA on tinted bg */
+    --progress: #b45309;      /* was #d97706 — passes AA */
+    --pending: #52525b;       /* was #6b7280 */
+
+    --flag: #991b1b;          /* darker red */
+    --flag-bg: #fef2f2;
+    --flag-border: #fecaca;
+
+    --assumption-bg: #fefce8;
+    --assumption-border: #fde68a;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  header.top {
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  header.top h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  header.top .meta {
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  section { margin-bottom: 36px; }
+  section > h2 {
+    margin: 0 0 16px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+  }
+
+  /* === Track timeline === */
+  .tracks {
+    display: grid;
+    grid-template-columns: 90px 1fr 72px 280px;
+    grid-template-rows: auto auto;
+    row-gap: 18px;
+    column-gap: 16px;
+    align-items: stretch;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+  }
+  .track-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 13px;
+    border-right: 2px solid var(--border);
+    padding-right: 16px;
+  }
+  .track-label.ztor { color: var(--ztor); border-right-color: var(--ztor-border); }
+  .track-label.beamco { color: var(--beamco); border-right-color: var(--beamco-border); }
+
+  .track-stages {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 14px 12px;
+    position: relative;
+    transition: transform 0.15s ease;
+  }
+  .stage.ztor { border-color: var(--ztor-border); background: var(--ztor-bg); }
+  .stage.beamco { border-color: var(--beamco-border); background: var(--beamco-bg); }
+
+  /* Per-row convergence arrows (one per track row, not spanning) */
+  .converge-arrow {
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .converge-arrow svg {
+    width: 72px;
+    height: 56px;
+    display: block;
+    overflow: visible;
+  }
+
+  .full-panel {
+    grid-column: 4;
+    grid-row: 1 / 3;
+    background: var(--merge-bg);
+    border: 1px solid var(--merge-border);
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+  .full-panel::before {
+    content: "Convergence";
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: var(--merge);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .full-panel .stage-head { margin-bottom: 8px; }
+  .full-panel h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--merge);
+  }
+  .full-panel p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .full-panel .tagline {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--merge-border);
+    font-size: 11px;
+    color: var(--merge);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .stage-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.9);
+    color: var(--ink);
+  }
+  .pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--pending);
+  }
+  .pill.shipped { color: var(--shipped); }
+  .pill.shipped .dot { background: var(--shipped); }
+  .pill.progress { color: var(--progress); }
+  .pill.progress .dot { background: var(--progress); }
+  .pill.pending { color: var(--pending); }
+  .pill.pending .dot { background: var(--pending); }
+
+  .stage h3 {
+    margin: 0 0 5px;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .stage p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .stage .date {
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+  .stage .note {
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  /* convergence arrows */
+  .converge-cell {
+    grid-column: 2 / 3;
+    position: relative;
+    height: 36px;
+    margin-top: -6px;
+    margin-bottom: -6px;
+  }
+  .converge-cell svg { width: 100%; height: 100%; display: block; }
+
+  /* === Ztor 2.0 === */
+  .ztor2 {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .ztor2-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ztor2-header h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ztor);
+  }
+  .ztor2-header .dates {
+    font-size: 13px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+  .ztor2-header .dates strong { color: var(--ink); font-weight: 700; }
+
+  .ztor2-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1.4fr;
+    gap: 20px;
+  }
+
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    background: #fdfcfa;
+  }
+  .panel h4 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+  }
+  .panel ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .panel ul li {
+    padding: 7px 0;
+    font-size: 13px;
+    color: var(--ink);
+    border-bottom: 1px dashed var(--border-strong);
+    line-height: 1.5;
+  }
+  .panel ul li:last-child { border-bottom: 0; }
+  .panel ul li .risk-tag {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 7px;
+    background: var(--flag-bg);
+    color: var(--flag);
+    border: 1px solid var(--flag-border);
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .panel ul li .li-meta {
+    color: var(--ink-soft);
+    font-size: 11.5px;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .cs-phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--ztor);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .cs-phase:last-child { margin-bottom: 0; }
+  .cs-phase .label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 3px;
+  }
+  .cs-phase .label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ztor);
+  }
+  .cs-phase .date-pill {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .cs-phase.merge .date-pill {
+    color: var(--merge);
+    border-color: var(--merge-border);
+    background: var(--merge-bg);
+  }
+  .cs-phase .title {
+    font-size: 13.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .cs-phase .desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .cs-phase.merge {
+    border-left-color: var(--merge);
+  }
+  .cs-phase.merge .label { color: var(--merge); }
+
+  /* === Bottom grid (assumption + flags) === */
+  .bottom {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+  }
+
+  .assumption {
+    background: var(--assumption-bg);
+    border: 1px solid var(--assumption-border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .assumption h3 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .assumption .stamp {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #713f12;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--assumption-border);
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .assumption p {
+    margin: 0 0 14px;
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+
+  .paths {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+    margin: 16px 0 18px;
+  }
+  .path {
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .path.ztor { border-color: var(--ztor-border); }
+  .path.beamco { border-color: var(--beamco-border); }
+  .path .who {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 2px;
+  }
+  .path.ztor .who { color: var(--ztor); }
+  .path.beamco .who { color: var(--beamco); }
+  .path .what {
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .arrow-merge {
+    font-size: 18px;
+    color: var(--merge);
+    font-weight: 700;
+  }
+
+  .schema-fork {
+    background: var(--surface);
+    border: 1px solid var(--merge-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .schema-fork .lead {
+    font-size: 12px;
+    color: var(--merge);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .schema-fork ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+  }
+  .schema-fork ul li {
+    font-size: 12px;
+    color: var(--ink);
+    padding-left: 12px;
+    position: relative;
+  }
+  .schema-fork ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--merge);
+  }
+
+  /* === Open questions === */
+  .open-questions {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 12px;
+    padding: 24px 28px;
+  }
+  .open-questions h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #115e59;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .open-questions h3::before {
+    content: "?";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: #0f766e;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .open-questions .stamp {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #115e59;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid #99f6e4;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+  }
+  .question-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .question-item {
+    background: rgba(255,255,255,0.7);
+    border: 1px solid #99f6e4;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .question-item .num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    background: #0f766e;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .question-item .q {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .question-item .q strong {
+    color: #115e59;
+    font-weight: 700;
+  }
+
+  .flags {
+    background: var(--flag-bg);
+    border: 1px solid var(--flag-border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .flags h3 {
+    margin: 0 0 14px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--flag);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .flags h3::before {
+    content: "⚠";
+    font-size: 14px;
+  }
+  .flag-item {
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--flag-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .flag-item:last-child { margin-bottom: 0; }
+  .flag-item .title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .flag-item .body {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* === Legend === */
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .legend-item .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+  }
+  .legend-item .swatch.ztor { background: var(--ztor-bg); border-color: var(--ztor-border); }
+  .legend-item .swatch.beamco { background: var(--beamco-bg); border-color: var(--beamco-border); }
+  .legend-item .swatch.merge { background: var(--merge-bg); border-color: var(--merge-border); }
+
+  @media (max-width: 960px) {
+    .ztor2-grid { grid-template-columns: 1fr; }
+    .bottom { grid-template-columns: 1fr; }
+    .track-stages { grid-template-columns: 1fr; }
+    .tracks {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+    .track-label { border-right: 0; border-bottom: 2px solid var(--border); padding: 8px 0; margin-bottom: 6px; }
+    .converge-arrows {
+      grid-column: 1;
+      grid-row: auto;
+      height: 60px;
+    }
+    .converge-arrows svg { transform: rotate(90deg); }
+    .full-panel {
+      grid-column: 1;
+      grid-row: auto;
+      margin-top: 16px;
+    }
+    .schema-fork ul { grid-template-columns: 1fr; }
+    .paths { grid-template-columns: 1fr; }
+    .question-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="top">
+    <h1>Crowdfund Tech Plan — Ztor + Beamco → Full Version</h1>
+    <div class="meta">Cross-project · 2026-05-10</div>
+  </header>
+
+  <!-- ============================================== -->
+  <section>
+    <h2>Current plan</h2>
+
+    <div class="legend">
+      <span class="legend-item"><span class="swatch ztor"></span>Ztor (movie)</span>
+      <span class="legend-item"><span class="swatch beamco"></span>Beamco (music)</span>
+      <span class="legend-item"><span class="swatch merge"></span>Convergence — Full version</span>
+      <span class="legend-item"><span class="pill shipped"><span class="dot"></span>shipped</span></span>
+      <span class="legend-item"><span class="pill progress"><span class="dot"></span>in progress</span></span>
+      <span class="legend-item"><span class="pill pending"><span class="dot"></span>pending</span></span>
+    </div>
+
+    <div class="tracks">
+
+      <!-- Row 1: Ztor track -->
+      <div class="track-label ztor">Ztor</div>
+      <div class="track-stages">
+        <div class="stage ztor">
+          <div class="stage-head">
+            <span class="pill shipped"><span class="dot"></span>shipped</span>
+          </div>
+          <h3>Dummy version</h3>
+          <p>Stage 1 banner</p>
+          <div class="date">End of April</div>
+        </div>
+
+        <div class="stage ztor">
+          <div class="stage-head">
+            <span class="pill progress"><span class="dot"></span>in progress</span>
+          </div>
+          <h3>Simple version</h3>
+          <p>Built on Ztor 1.0. No creator portal — ops flow offline.</p>
+          <div class="date">UAT May 25 · Delivery ~Jun 1</div>
+          <div class="note">≠ ztor-crowdfund-proto mockup</div>
+        </div>
+      </div>
+
+      <!-- Ztor arrow (row 1) -->
+      <div class="converge-arrow">
+        <svg viewBox="0 0 72 56" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowZtor" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#9a3412"/>
+            </marker>
+          </defs>
+          <path d="M 4 14 Q 36 14 64 40" stroke="#9a3412" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="5,4" marker-end="url(#arrowZtor)"/>
+        </svg>
+      </div>
+
+      <!-- Convergence panel: Full version (spans both rows) -->
+      <div class="full-panel">
+        <div class="stage-head">
+          <span class="pill pending"><span class="dot"></span>pending</span>
+        </div>
+        <h3>Full version</h3>
+        <p>Part of <strong>Ztor 2.0</strong>. Merges Beamco crowdfund. Requires new infra to unify <strong>Ztor + Beamco + Bookyay</strong>.</p>
+        <div class="tagline">"3-in-1"</div>
+      </div>
+
+      <!-- Row 2: Beamco track -->
+      <div class="track-label beamco">Beamco</div>
+      <div class="track-stages">
+        <div class="stage beamco">
+          <div class="stage-head">
+            <span class="pill shipped"><span class="dot"></span>on prod</span>
+          </div>
+          <h3>Phase 1 — core investor flow</h3>
+          <p>Publish · invest · Stripe · contract. Biz &amp; Ops validation in progress.</p>
+        </div>
+
+        <div class="stage beamco">
+          <div class="stage-head">
+            <span class="pill pending"><span class="dot"></span>pending BRD</span>
+          </div>
+          <h3>Phase 2</h3>
+          <p>Dividend / royalty distribution · fan KYC at withdrawal · extra-share purchase · refund flow · BO tools.</p>
+          <div class="note">Pending BRD → BA agent → review</div>
+        </div>
+      </div>
+
+      <!-- Beamco arrow (row 2) -->
+      <div class="converge-arrow">
+        <svg viewBox="0 0 72 56" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowBeamco" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#155e75"/>
+            </marker>
+          </defs>
+          <path d="M 4 42 Q 36 42 64 16" stroke="#155e75" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="5,4" marker-end="url(#arrowBeamco)"/>
+        </svg>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2>Ztor 2.0</h2>
+
+    <div class="ztor2">
+      <div class="ztor2-header">
+        <h3>Ztor 2.0 — unifying foundation</h3>
+      </div>
+
+      <div class="ztor2-grid">
+
+        <div class="panel">
+          <h4>Infra &amp; foundation</h4>
+          <ul>
+            <li>Gateway · BFF · Auth (RS256 + Redis)</li>
+            <li>Unified User DB merge (Beamco + Ztor) <span class="risk-tag">biggest risk</span></li>
+            <li>Kafka event bus · Ledger Service · Observability stack</li>
+            <li>Beamco codebase audit + wrap as microservice<span class="li-meta">to serve the new infra for Ztor 2.0 + Creator Studio</span></li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h4>Redesign</h4>
+          <ul>
+            <li>Mostly frontend</li>
+            <li>Backend on new infra (microservices)</li>
+            <li><strong>Prototype Jun 15</strong></li>
+            <li><strong>Beta Jul 15</strong></li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h4>Creator Studio</h4>
+
+          <div class="cs-phase">
+            <div class="label-row">
+              <div class="label">Phase 1</div>
+              <div class="date-pill">TBC · Aug</div>
+            </div>
+            <div class="title">eShop for creator</div>
+            <div class="desc">Add more value for creators ahead of crowdfund merge.</div>
+          </div>
+
+          <div class="cs-phase merge">
+            <div class="label-row">
+              <div class="label">Phase 2 — Crowdfund merge</div>
+              <div class="date-pill">TBC · Sept</div>
+            </div>
+            <div class="title">Merge Beamco crowdfund features → Full version</div>
+            <div class="desc">After Ztor Simple + Beamco Phase 1/2 run with real artists, take learnings → merge.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2>Open questions — biz side</h2>
+
+    <div class="open-questions">
+      <span class="stamp">Needs full flow + edge cases from biz team</span>
+      <h3>Outstanding questions to resolve</h3>
+
+      <div class="question-grid">
+
+        <div class="question-item">
+          <div class="num">1</div>
+          <div class="q"><strong>Funds release to creators</strong> — by batch or one-off? What's the release mechanism?</div>
+        </div>
+
+        <div class="question-item">
+          <div class="num">2</div>
+          <div class="q"><strong>Campaign didn't hit target</strong> — refund full amount, or partial / something else?</div>
+        </div>
+
+        <div class="question-item">
+          <div class="num">3</div>
+          <div class="q"><strong>Creator didn't deliver</strong> — refund full amount? If funds already used by creator, does Ztor bear the loss for users? Partially or completely?</div>
+        </div>
+
+        <div class="question-item">
+          <div class="num">4</div>
+          <div class="q"><strong>Legal compliance</strong> — final confirmation on what makes us legal (flow + copywriting)?</div>
+        </div>
+
+        <div class="question-item">
+          <div class="num">5</div>
+          <div class="q"><strong>Do Ztor &amp; Beamco crowdfund need to mirror?</strong> Working assumption: no — each takes its own path; Full version must cover both. Decide this week.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

@@ -167,13 +167,15 @@
 <body>
 
 <div class="header">
-  <h1>Project State Machine <span class="badge">Stage 2</span></h1>
-  <p>6 user-visible states · allowed transitions · driven by Ops via the admin tool</p>
+  <h1>Project State Machine <span class="badge">Simple v · BRD v5.2 (2026-05-08)</span></h1>
+  <p>6 user-visible states · allowed transitions · driven by Ops via the admin tool. <strong style="color:#37b87a">Q2 closed</strong> → amount-based funding with package-specific shares (only <code>isShareTier</code> tiers issue shares). <strong style="color:#37b87a">Q3 closed</strong> → production status surfaced via existing MilestoneTimeline.</p>
   <div class="nav">
     <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
     <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
     <a href="ztor-crowdfund-state-machine.html" class="current">State machine</a>
     <a href="ztor-crowdfund-architecture.html">System architecture</a>
+    <a href="ztor-crowdfund-payment-retry.html">Payment retry</a>
+    <a href="ztor-crowdfund-cancellation.html">Project cancellation</a>
     <a href="https://ztor-crowdfund-proto.vercel.app" target="_blank">Live prototype ↗</a>
   </div>
 </div>
@@ -256,7 +258,7 @@
       <div class="state canceled terminal s-cancel">
         <div class="zh">已取消</div>
         <div class="en">CANCELED</div>
-        <div class="meta">Pulled by ops<br>Manual refunds if needed</div>
+        <div class="meta">Pulled by ops<br>Finance refunds via Stripe</div>
       </div>
 
       <div class="state in-prod s-inprod">
@@ -337,6 +339,29 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="trans-table" style="margin-top:24px">
+    <h3>Released → Backer rewards (post-state-machine)</h3>
+    <table>
+      <tbody>
+        <tr>
+          <td class="from">已上架 (Released)</td>
+          <td class="to">Redeem codes issued to backers</td>
+          <td class="trigger">Unique one-time codes; 30 days to activate · 48 hours to finish · free viewing (no POPCORN)</td>
+          <td><span class="pill system">SYSTEM</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:24px;background:#1a1a2e;border:1px dashed #3a3a5a;border-radius:8px;padding:16px 20px;font-size:12px;color:#aaaadd;line-height:1.6">
+    <strong style="color:#37b87a">Closed since 2025-10-27 meeting:</strong><br>
+    · <strong>Q1 closed (2026-05-04)</strong> — Eligibility = Creator-level join community (1 LP per creator gates pledging).<br>
+    · <strong>Q2 closed (2026-05-04 + 2026-05-07)</strong> — Amount-based funding with package-specific shares; only <code>isShareTier</code> tiers issue shares.<br>
+    · <strong>Q3 closed (2026-05-04)</strong> — Production status surfaced via existing MilestoneTimeline.<br>
+    <br>
+    <strong style="color:#d2a36f">Current open items</strong> — see <a href="https://ztor-crowdfund-proto.vercel.app/crowdfund/open-questions" style="color:#b58850" target="_blank">/crowdfund/open-questions</a> for full list with prototype decisions awaiting ops sign-off (Q1 TW 鑑賞期, Q2 success/fail definition, Q3 share-count cap, Q4 tier cap behavior, Q5 equity offered %, Q6 community-exit handling, Q7 notification list).
   </div>
 
 </div>

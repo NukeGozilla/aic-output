@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Beamco Dev Workflow — Proposed (2026-05-05)</title>
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --ink: #111827;
+    --ink-soft: #374151;
+    --muted: #6b7280;
+    --line: #e5e1d8;
+    --card: #ffffff;
+    --shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
+
+    --pre-dev: #6366f1;
+    --build:   #f97316;
+    --qa:      #0d9488;
+    --qa-dk:   #0f766e;
+    --uat:     #2563eb;
+    --biz:     #7c3aed;
+    --ship:    #059669;
+    --bug:     #dc2626;
+    --park:    #6b7280;
+    --ming:    #b45309;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+      "PingFang TC", "Microsoft JhengHei", sans-serif; }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 36px 28px 80px; }
+
+  /* Typography */
+  h1  { font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 6px; }
+  .sub { color: var(--ink-soft); font-size: 15px; margin-bottom: 36px; }
+  h2  { font-size: 19px; font-weight: 700; margin: 44px 0 14px;
+        padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+  h3  { font-size: 15px; font-weight: 700; color: var(--ink-soft); margin: 22px 0 10px; }
+  p   { color: var(--ink-soft); line-height: 1.6; margin: 0 0 12px; font-size: 14px; }
+  code { background: #f1efe9; padding: 1px 6px; border-radius: 4px; font-size: 12.5px; }
+
+  /* Legend */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px 20px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 18px; margin-bottom: 28px;
+    font-size: 12.5px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 7px; color: var(--ink-soft); }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+  .swatch.dashed { background: transparent;
+    border: 2px dashed var(--biz); width: 14px; height: 14px; }
+
+  /* ═══════════════════════════════════════════════
+     INTAKE MINI-DIAGRAM
+  ═══════════════════════════════════════════════ */
+  .intake-frame {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 18px 22px; margin-bottom: 20px;
+  }
+  .intake-row {
+    display: grid; grid-template-columns: minmax(220px, 1.1fr) 130px minmax(280px, 1.6fr);
+    gap: 14px; align-items: stretch;
+  }
+  .intake-source {
+    background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+    border: 1.5px solid #d1d5db; border-radius: 10px;
+    padding: 14px 16px; display: flex; flex-direction: column; justify-content: center;
+  }
+  .intake-source .lbl {
+    font-size: 9px; font-weight: 800; letter-spacing: .14em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .intake-source .name { font-size: 15px; font-weight: 800; color: var(--ink); margin-top: 4px; }
+  .intake-source .meta { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  .intake-pivot {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--muted); padding: 0 4px;
+  }
+  .intake-pivot .arr { font-size: 26px; line-height: 1; color: var(--ink-soft); }
+  .intake-pivot .lbl {
+    font-size: 9.5px; font-weight: 800; letter-spacing: .12em;
+    color: var(--muted); text-transform: uppercase; margin-top: 4px; text-align: center;
+  }
+  .intake-dests { display: flex; flex-direction: column; gap: 8px; }
+  .intake-dest {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 10px; font-size: 13px;
+    border: 1.5px solid;
+  }
+  .intake-dest.bug-d  { background: #fef2f2; border-color: #fecaca; }
+  .intake-dest.req-d  { background: #eef2ff; border-color: #c7d2fe; }
+  .intake-dest .tag {
+    font-size: 9.5px; font-weight: 800; letter-spacing: .1em;
+    padding: 4px 9px; border-radius: 5px; flex-shrink: 0; white-space: nowrap;
+  }
+  .intake-dest.bug-d .tag { background: var(--bug); color: white; }
+  .intake-dest.req-d .tag { background: var(--pre-dev); color: white; }
+  .intake-dest .target { font-weight: 700; color: var(--ink); }
+  .intake-dest .into { color: var(--muted); font-size: 12px; }
+  .intake-dest .into strong { color: var(--ink-soft); }
+
+  @media (max-width: 760px) {
+    .intake-row { grid-template-columns: 1fr; }
+    .intake-pivot { flex-direction: row; gap: 8px; }
+  }
+
+  /* ═══════════════════════════════════════════════
+     SWIMLANE PIPELINE
+  ═══════════════════════════════════════════════ */
+  .pipeline-frame {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px 22px 20px;
+    margin-bottom: 28px;
+  }
+  .swimlane-wrap { overflow-x: auto; }
+  .swimlane-svg {
+    width: 100%;
+    min-width: 880px;
+    height: auto;
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+      "PingFang TC", "Microsoft JhengHei", sans-serif;
+  }
+
+  /* Hard rule callout */
+  .hard-rule {
+    margin: 18px 0 0;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-radius: 12px; padding: 14px 22px;
+  }
+  .hard-rule .hr-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ming); margin-bottom: 5px;
+  }
+  .hard-rule .hr-rule {
+    font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .hard-rule .hr-detail { font-size: 12.5px; color: #4b5563; line-height: 1.6; }
+  .hard-rule .hr-detail strong { color: var(--ming); }
+  .hard-rule .hr-detail code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; border: 1px solid #f9d470;
+  }
+
+  /* Biz validation note */
+  .biz-note {
+    margin-top: 12px;
+    background: #faf5ff; border-left: 3px solid var(--biz);
+    border-radius: 6px; padding: 12px 16px;
+    font-size: 13px; color: var(--ink-soft); line-height: 1.6;
+  }
+  .biz-note strong { color: var(--biz); }
+  .biz-note code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; border: 1px solid #ddd6fe;
+  }
+
+  /* Parked states */
+  .parked-section {
+    margin-top: 12px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .parked-label {
+    font-size: 11px; font-weight: 800; color: var(--muted);
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+  .parked-pill {
+    background: #f3f4f6; border: 1.5px solid #d1d5db;
+    border-radius: 8px; padding: 6px 14px;
+    font-size: 12.5px; color: var(--park); font-weight: 600;
+  }
+  .parked-pill em {
+    font-style: normal; font-weight: 400; font-size: 11.5px;
+    margin-left: 6px; color: var(--muted);
+  }
+
+  /* Gate split */
+  .gate-split {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  .gate-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .gate-card.qa-c  { border-top: 4px solid var(--qa); }
+  .gate-card.uat-c { border-top: 4px solid var(--uat); }
+  .gate-card.biz-c { border-top: 4px solid var(--biz); }
+  .gate-card h4 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+  .gate-card.qa-c  h4 { color: var(--qa-dk); }
+  .gate-card.uat-c h4 { color: var(--uat); }
+  .gate-card.biz-c h4 { color: var(--biz); }
+  .gate-card .who { font-size: 12px; color: var(--muted); margin-bottom: 10px; letter-spacing: .03em; }
+  .gate-card .question {
+    font-size: 13.5px; font-weight: 600; font-style: italic;
+    color: var(--ink); margin-bottom: 10px;
+    padding: 7px 12px; background: #fafafa; border-radius: 6px;
+  }
+  .gate-card dl { margin: 0; }
+  .gate-card dt {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted); margin-top: 10px;
+  }
+  .gate-card dd {
+    margin: 3px 0 0; font-size: 13px; color: var(--ink-soft); line-height: 1.5;
+  }
+
+  /* Simplified small-change flow */
+  .small-flow {
+    display: flex; align-items: center; gap: 4px; padding: 18px 20px;
+    flex-wrap: wrap; justify-content: center;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    margin-bottom: 14px;
+  }
+  .sf-pill {
+    padding: 10px 16px; border-radius: 22px;
+    color: white; font-size: 12.5px; font-weight: 700;
+    white-space: nowrap;
+  }
+  .sf-pill .num {
+    display: inline-block; opacity: .6; font-size: 11px; margin-right: 4px;
+  }
+  .sf-arrow { color: var(--ink-soft); font-size: 18px; padding: 0 2px; }
+
+  /* Bug submission flow — 4 sources → 1 destination */
+  .bugflow-frame {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 22px 24px; margin-bottom: 14px;
+  }
+  .bugflow-row {
+    display: grid; grid-template-columns: 1.2fr 130px 1.2fr;
+    gap: 16px; align-items: center;
+  }
+  .bugflow-sources { display: flex; flex-direction: column; gap: 8px; }
+  .bugflow-source {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 10px 14px; border-radius: 9px;
+    font-size: 13px; line-height: 1.3;
+    border: 1.5px solid;
+  }
+  .bugflow-source .who { font-weight: 700; color: var(--ink); flex-shrink: 0; }
+  .bugflow-source .where { font-size: 11.5px; color: var(--muted); }
+  .bugflow-source.qa-bf  { background: #f0fdfa; border-color: #99e6d8; }
+  .bugflow-source.uat-bf { background: #eff6ff; border-color: #93c5fd; }
+  .bugflow-source.biz-bf { background: #faf5ff; border-color: #c7d2fe; }
+  .bugflow-source.prod-bf { background: #fef2f2; border-color: #fecaca; }
+
+  .bugflow-pivot {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .bugflow-pivot .arr { font-size: 30px; color: var(--ink-soft); line-height: 1; }
+  .bugflow-pivot .lbl {
+    font-size: 9.5px; font-weight: 800; letter-spacing: .12em;
+    color: var(--muted); text-transform: uppercase; margin-top: 4px; text-align: center; line-height: 1.4;
+  }
+
+  .bugflow-dest {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border: 2px solid var(--bug); border-radius: 11px;
+    padding: 16px 18px; text-align: center;
+  }
+  .bugflow-dest .dest-name {
+    font-size: 16px; font-weight: 800; color: var(--bug); letter-spacing: .02em;
+  }
+  .bugflow-dest .dest-meta {
+    font-size: 12px; color: #7f1d1d; margin-top: 5px; line-height: 1.5;
+  }
+  .bugflow-dest .dest-meta code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 11.5px; border: 1px solid #fecaca; color: var(--bug);
+  }
+
+  /* Required fields list */
+  .bug-fields {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 18px 22px; margin-bottom: 14px;
+  }
+  .bug-fields .bf-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .14em;
+    color: var(--bug); text-transform: uppercase; margin-bottom: 12px;
+  }
+  .bug-fields ul { margin: 0; padding-left: 0; list-style: none; }
+  .bug-fields li {
+    font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 7px;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .bug-fields li::before {
+    content: "✓"; color: var(--ship); font-weight: 800; font-size: 13px; flex-shrink: 0;
+  }
+  .bug-fields li strong { color: var(--ink); }
+  .bug-fields li code {
+    background: #f3f4f6; padding: 1px 6px; border-radius: 4px; font-size: 12px;
+  }
+
+  /* Feature ticket side note */
+  .feature-side-note {
+    background: #fff7ed; border-left: 3px solid var(--build);
+    border-radius: 6px; padding: 12px 16px; margin-bottom: 14px;
+    font-size: 13px; color: var(--ink-soft); line-height: 1.6;
+  }
+  .feature-side-note .fsn-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .14em;
+    color: var(--build); text-transform: uppercase; margin-bottom: 4px;
+  }
+  .feature-side-note code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; border: 1px solid #fed7aa;
+  }
+  .found-in-callout {
+    background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+    border: 1px solid #c7d2fe; border-radius: 12px;
+    padding: 16px 22px;
+  }
+  .found-in-callout .fi-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .14em;
+    text-transform: uppercase; color: #6366f1; margin-bottom: 4px;
+  }
+  .found-in-callout .fi-name {
+    font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 10px;
+  }
+  .found-in-callout .fi-name code {
+    background: #fff; padding: 2px 8px; border-radius: 5px;
+    font-size: 13.5px; border: 1px solid #c7d2fe;
+  }
+  .found-in-callout .fi-rows {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .fi-row {
+    font-size: 12px; font-weight: 700; padding: 4px 12px;
+    border-radius: 6px; letter-spacing: .04em;
+  }
+  .fi-row.qa-fi   { background: #d1f7f0; color: var(--qa-dk); border: 1px solid #99e6d8; }
+  .fi-row.uat-fi  { background: #dbeafe; color: var(--uat); border: 1px solid #93c5fd; }
+  .fi-row.biz-fi  { background: #ede9fe; color: var(--biz); border: 1px solid #c7d2fe; }
+  .fi-row.prod-fi { background: #fee2e2; color: var(--bug); border: 1px solid #fecaca; }
+  .found-in-callout .fi-meta { font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; }
+  .found-in-callout .fi-meta code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; border: 1px solid #c7d2fe;
+  }
+
+  /* Boards table */
+  table {
+    width: 100%; border-collapse: collapse;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 11px 14px; text-align: left;
+    border-bottom: 1px solid var(--line); vertical-align: top;
+  }
+  th { background: #faf8f3; font-weight: 700; font-size: 12.5px;
+       letter-spacing: .04em; color: var(--ink); }
+  tr:last-child td { border-bottom: none; }
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+  }
+  .pill.feat { background: #ede9fe; color: #6366f1; }
+  .pill.bug  { background: #fee2e2; color: var(--bug); }
+  .pill.ship-p { background: #d1fae5; color: var(--ship); }
+  .pill.ops-p { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+
+  /* Daily rhythm */
+  .rhythm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .rhythm-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .rhythm-card.qa-r  { border-left: 4px solid var(--qa); }
+  .rhythm-card.uat-r { border-left: 4px solid var(--ming); }
+  .rhythm-card .when {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .rhythm-card.qa-r  .when { color: var(--qa-dk); }
+  .rhythm-card.uat-r .when { color: var(--ming); }
+  .rhythm-card .what { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+
+  /* Kill list */
+  .kill {
+    background: #fef2f2; border: 1px solid #fecaca;
+    border-radius: 10px; padding: 16px 20px;
+  }
+  .kill h4 { margin: 0 0 8px; color: var(--bug); font-size: 14px; }
+  .kill ul { margin: 0; padding-left: 20px; }
+  .kill li { font-size: 13.5px; color: #7f1d1d; line-height: 1.6; margin-bottom: 5px; }
+  .kill code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; color: var(--ink); border: 1px solid #fecaca;
+  }
+
+  /* Footer */
+  .footer { margin-top: 44px; text-align: center; color: var(--muted); font-size: 12px; }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    .gate-split, .rhythm, .bugflow-row { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+
+  /* Cross-page nav (link to QA gate sub-workflow) */
+  .crosslink {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 16px;
+    font-size: 12.5px; font-weight: 600; color: var(--ink-soft);
+    text-decoration: none; margin: 0 0 24px;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .crosslink:hover { border-color: var(--qa); color: var(--qa-dk); background: #f0fdfa; }
+  .crosslink .arr { font-size: 14px; }
+  .crosslink .badge {
+    background: var(--qa); color: white; font-size: 9.5px; font-weight: 800;
+    letter-spacing: .12em; padding: 2px 7px; border-radius: 5px;
+    text-transform: uppercase;
+  }
+
+  /* Language tabs */
+  .lang-tabs {
+    display: flex; gap: 2px; margin: 0 0 24px;
+    border-bottom: 2px solid var(--line);
+  }
+  .lang-tab {
+    padding: 10px 22px; background: transparent; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    font-family: inherit; letter-spacing: .02em;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .lang-tab:hover { color: var(--ink-soft); }
+  .lang-tab.active { color: var(--pre-dev); border-bottom-color: var(--pre-dev); }
+  .lang-tab:focus-visible { outline: 2px solid var(--pre-dev); outline-offset: 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="lang-tabs" role="tablist">
+    <button class="lang-tab active" data-lang="en" role="tab">English</button>
+    <button class="lang-tab" data-lang="zh" role="tab">中文</button>
+  </div>
+
+  <div class="lang-content lang-en">
+
+  <h1>Beamco Dev Workflow — Proposed</h1>
+  <div class="sub">Single state machine across Release Plan, Bug Tracking, and Bug Release Plan · Ming's UAT role embedded · 2026-05-05</div>
+
+  <a class="crosslink" href="./beamco-qa-gate-workflow.html"><span class="badge">NEW</span> QA Gate sub-workflow — triage, three lanes, closure <span class="arr">→</span></a>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="swatch" style="background:var(--pre-dev)"></div>Pre-Dev (planning)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--build)"></div>Build (engineering)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--qa)"></div>QA gate ([QA tester])</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--uat)"></div>UAT gate (Ming)</div>
+    <div class="legend-item"><div class="swatch" style="background:#06b6d4"></div>UAT Ready (queue for biz)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--biz)"></div>Biz &amp; Ops gate · Sam/Dan (72h SLA)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--ship)"></div>Ship</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--bug)"></div>Bug Found (return path)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--park)"></div>Parked</div>
+  </div>
+
+  <!-- ═══════════ INTAKE MINI-DIAGRAM ═══════════ -->
+  <h2>Ticket intake — Ops handoff to dev boards</h2>
+
+  <div class="intake-frame">
+    <div class="intake-row">
+      <div class="intake-source">
+        <div class="lbl">UPSTREAM · OPS-OWNED</div>
+        <div class="name">Ops Bug Tracking</div>
+        <div class="meta">Sam / Dan / Jesse · prod issues, customer reports, change requests · <a href="https://app.asana.com/1/1205221415135461/project/1213723482858214/list/1213723479219123" style="color:#6366f1;">board link</a></div>
+      </div>
+      <div class="intake-pivot">
+        <div class="arr">→</div>
+        <div class="lbl">Ops triages,<br/>then promotes</div>
+      </div>
+      <div class="intake-dests">
+        <div class="intake-dest bug-d">
+          <span class="tag">BUG</span>
+          <span><span class="target">Bug Tracking · Triage</span> <span class="into">→ enters at <strong>step 8 (Development)</strong></span></span>
+        </div>
+        <div class="intake-dest req-d">
+          <span class="tag">NEW REQ / CHANGE</span>
+          <span><span class="target">Release Plan · Triage</span> <span class="into">→ enters at <strong>step 1 (BRD + AC)</strong></span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SWIMLANE PIPELINE ═══════════ -->
+  <h2>End-to-end workflow — 4 phases, two biz &amp; ops gates</h2>
+  <p>Two Biz &amp; Ops gates wrap engineering — Design + Copy sign-off at <strong>gate 5</strong>, then implementation validation at <strong>gate 12</strong>. <strong>Approval rule:</strong> Sam <em>or</em> Dan replies <code>✅ approved</code> (Jesse facilitates and nudges if stuck). <strong>SLA:</strong> 72 hours per gate (full-feature flow only — change requests run the simplified 5-step flow with no biz gates). If no response, PM escalates and the ticket can move forward conditionally. <strong>Step 7</strong> is a Dev + Ming design review (≤30 min sync) so the engineer fully understands the design and requirements before coding. <strong>Step 11 UAT Ready</strong> is the queue state between UAT pass and Biz &amp; Ops Validation pickup. New Status options to add: <code>BRD (high-level)</code>, <code>BRD Final</code>, <code>Prototype</code>, <code>Sign-off · Design + Copy</code>, <code>Design Review</code>, <code>QA</code>, <code>UAT Ready</code>, <code>Biz &amp; Ops Validation</code>. New custom field on Bug Tracking: <code>Found in</code>.</p>
+
+  <div class="pipeline-frame">
+    <div class="swimlane-wrap">
+      <svg class="swimlane-svg" viewBox="0 0 1280 960" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Beamco development workflow swimlane diagram">
+
+        <defs>
+          <marker id="ah-pre"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/></marker>
+          <marker id="ah-build" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f97316"/></marker>
+          <marker id="ah-qa"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0d9488"/></marker>
+          <marker id="ah-uat"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+          <marker id="ah-biz"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+          <marker id="ah-ship"  viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#059669"/></marker>
+          <marker id="ah-red"      viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+          <marker id="ah-uatready" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#06b6d4"/></marker>
+        </defs>
+
+        <!-- Lane backgrounds -->
+        <rect x="30"  y="80" width="280" height="800" rx="14" fill="#eef2ff"/>
+        <rect x="330" y="80" width="280" height="800" rx="14" fill="#fff7ed"/>
+        <rect x="630" y="80" width="280" height="800" rx="14" fill="#f0fdfa"/>
+        <rect x="930" y="80" width="320" height="800" rx="14" fill="#ecfdf5"/>
+
+        <!-- Lane headers -->
+        <rect x="30"  y="30" width="280" height="42" rx="10" fill="#e0e7ff"/>
+        <text x="170" y="56" text-anchor="middle" fill="#4f46e5" font-size="12" font-weight="800" letter-spacing="2.5">PRE-DEVELOPMENT</text>
+
+        <rect x="330" y="30" width="280" height="42" rx="10" fill="#fed7aa"/>
+        <text x="470" y="56" text-anchor="middle" fill="#c2410c" font-size="12" font-weight="800" letter-spacing="2.5">BUILD</text>
+
+        <rect x="630" y="30" width="280" height="42" rx="10" fill="#a7f3d0"/>
+        <text x="770" y="56" text-anchor="middle" fill="#0f766e" font-size="12" font-weight="800" letter-spacing="2.5">TEST GATES</text>
+
+        <rect x="930" y="30" width="320" height="42" rx="10" fill="#86efac"/>
+        <text x="1090" y="56" text-anchor="middle" fill="#047857" font-size="12" font-weight="800" letter-spacing="2.5">SHIP</text>
+
+        <!-- ═══ LANE 1: PRE-DEVELOPMENT (6 stages) ═══ -->
+        <rect x="50" y="95" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="115" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">1 · BIZ &amp; OPS · START</text>
+        <text x="170" y="133" text-anchor="middle" fill="white" font-size="14" font-weight="700">BRD + AC (high-level)</text>
+        <line x1="170" y1="143" x2="170" y2="165" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre)"/>
+
+        <rect x="50" y="167" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="187" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">2 · PM (JEFF)</text>
+        <text x="170" y="205" text-anchor="middle" fill="white" font-size="14" font-weight="700">BRD Final</text>
+        <line x1="170" y1="215" x2="170" y2="237" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre)"/>
+
+        <rect x="50" y="239" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="259" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">3 · PM (PAT)</text>
+        <text x="170" y="277" text-anchor="middle" fill="white" font-size="14" font-weight="700">Prototype</text>
+        <line x1="170" y1="287" x2="170" y2="309" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre)"/>
+
+        <!-- 4 · Design — Designer (Yves) -->
+        <rect x="50" y="311" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="331" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">4 · DESIGNER · YVES</text>
+        <text x="170" y="349" text-anchor="middle" fill="white" font-size="14" font-weight="700">Design</text>
+        <line x1="170" y1="359" x2="170" y2="381" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre)"/>
+
+        <!-- 5 · Sign-off · Design + Copy — Biz & Ops (SOLID Status) -->
+        <rect x="50" y="383" width="240" height="48" rx="24" fill="#7c3aed"/>
+        <text x="170" y="403" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">5 · BIZ &amp; OPS GATE · SLA 72h</text>
+        <text x="170" y="421" text-anchor="middle" fill="white" font-size="13" font-weight="700">Sign-off · Design + Copy</text>
+        <line x1="170" y1="431" x2="170" y2="453" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre)"/>
+
+        <!-- 6 · Ready For Development -->
+        <rect x="50" y="455" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="475" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">6 · HANDOFF</text>
+        <text x="170" y="493" text-anchor="middle" fill="white" font-size="14" font-weight="700">Ready For Development</text>
+
+        <!-- Lane 1 → Lane 2 cross arrow (enters Design Review) -->
+        <line x1="290" y1="479" x2="368" y2="479" stroke="#f97316" stroke-width="2" marker-end="url(#ah-build)"/>
+
+        <!-- ═══ LANE 2: BUILD (2 stages) ═══ -->
+        <!-- 7 · Design Review — Dev + Ming -->
+        <rect x="370" y="455" width="200" height="48" rx="24" fill="#fb923c"/>
+        <text x="470" y="475" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">7 · DEV + MING</text>
+        <text x="470" y="493" text-anchor="middle" fill="white" font-size="14" font-weight="700">Design Review</text>
+        <line x1="470" y1="503" x2="470" y2="525" stroke="#f97316" stroke-width="2" marker-end="url(#ah-build)"/>
+
+        <!-- 8 · Development -->
+        <rect x="370" y="527" width="200" height="48" rx="24" fill="#f97316"/>
+        <text x="470" y="547" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">8 · ENGINEER</text>
+        <text x="470" y="565" text-anchor="middle" fill="white" font-size="14" font-weight="700">Development</text>
+
+        <!-- Lane 2 → Lane 3 cross arrow -->
+        <line x1="570" y1="551" x2="668" y2="551" stroke="#0d9488" stroke-width="2" marker-end="url(#ah-qa)"/>
+
+        <!-- ═══ LANE 3: TEST GATES (4 stages) ═══ -->
+        <rect x="670" y="527" width="200" height="48" rx="24" fill="#0d9488"/>
+        <text x="770" y="547" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">9 · GATE 1 · QA TESTER</text>
+        <text x="770" y="565" text-anchor="middle" fill="white" font-size="14" font-weight="700">QA</text>
+        <line x1="770" y1="575" x2="770" y2="597" stroke="#2563eb" stroke-width="2" marker-end="url(#ah-uat)"/>
+        <text x="785" y="592" fill="#0f766e" font-size="10" font-style="italic">pass</text>
+
+        <rect x="670" y="599" width="200" height="48" rx="24" fill="#2563eb"/>
+        <text x="770" y="619" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">10 · GATE 2 · MING, PAT</text>
+        <text x="770" y="637" text-anchor="middle" fill="white" font-size="14" font-weight="700">UAT</text>
+        <line x1="770" y1="647" x2="770" y2="669" stroke="#06b6d4" stroke-width="2" marker-end="url(#ah-uatready)"/>
+        <text x="785" y="664" fill="#2563eb" font-size="10" font-style="italic">pass</text>
+
+        <!-- 11 · UAT Ready (NEW) - cyan, queue state -->
+        <rect x="670" y="671" width="200" height="48" rx="24" fill="#06b6d4"/>
+        <text x="770" y="691" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">11 · QUEUE FOR BIZ</text>
+        <text x="770" y="709" text-anchor="middle" fill="white" font-size="14" font-weight="700">UAT Ready</text>
+        <line x1="770" y1="719" x2="770" y2="741" stroke="#7c3aed" stroke-width="2" marker-end="url(#ah-biz)"/>
+
+        <!-- 12 · Biz & Ops Validation (SOLID Status, was dashed) -->
+        <rect x="670" y="743" width="200" height="48" rx="24" fill="#7c3aed"/>
+        <text x="770" y="763" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">12 · GATE 3 · SLA 72h</text>
+        <text x="770" y="781" text-anchor="middle" fill="white" font-size="13" font-weight="700">Biz &amp; Ops Validation</text>
+
+        <!-- Lane 3 → Lane 4 cross arrow -->
+        <line x1="870" y1="767" x2="988" y2="767" stroke="#059669" stroke-width="2" marker-end="url(#ah-ship)"/>
+
+        <!-- ═══ LANE 4: SHIP (2 stages) ═══ -->
+        <rect x="990" y="743" width="200" height="48" rx="24" fill="#059669"/>
+        <text x="1090" y="771" text-anchor="middle" fill="white" font-size="14" font-weight="700">13 · Launch Ready</text>
+        <line x1="1090" y1="793" x2="1090" y2="815" stroke="#059669" stroke-width="2" marker-end="url(#ah-ship)"/>
+
+        <rect x="990" y="819" width="200" height="44" rx="22" fill="#047857"/>
+        <text x="1090" y="845" text-anchor="middle" fill="white" font-size="14" font-weight="700">14 · Launched ✓</text>
+
+        <!-- ═══ BUG FOUND RETURN PATH ═══ -->
+        <line x1="870" y1="551" x2="906" y2="551" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="876" y="547" font-size="13" font-weight="800" fill="#dc2626">✗</text>
+        <line x1="870" y1="623" x2="906" y2="623" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="876" y="619" font-size="13" font-weight="800" fill="#dc2626">✗</text>
+        <line x1="870" y1="767" x2="906" y2="767" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="876" y="763" font-size="13" font-weight="800" fill="#dc2626">✗</text>
+
+        <line x1="906" y1="551" x2="906" y2="910" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4"/>
+        <line x1="906" y1="910" x2="760" y2="910" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4"/>
+
+        <rect x="540" y="890" width="220" height="40" rx="20" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+        <text x="650" y="908" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="800" letter-spacing="1.5">✗ BUG FOUND</text>
+        <text x="650" y="923" text-anchor="middle" fill="#7f1d1d" font-size="10" font-style="italic">any gate fails → fix &amp; redeploy</text>
+
+        <line x1="540" y1="910" x2="460" y2="910" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4"/>
+        <line x1="460" y1="910" x2="460" y2="579" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#ah-red)"/>
+
+      </svg>
+    </div>
+
+    <!-- Hard rule callout -->
+    <div class="hard-rule">
+      <div class="hr-label">⚡ Hard Rules</div>
+      <ol class="hr-detail" style="margin:0; padding-left:20px;">
+        <li style="margin-bottom:8px;"><strong>UAT Status only flips when the change is deployed to the UAT environment.</strong> Engineers must <strong>not</strong> flip <code>Status → QA</code> from a local branch. QA must <strong>not</strong> flip <code>QA → UAT</code> until they've verified on the UAT env. Each handoff carries a comment — engineer → QA logs spec/AC + what changed; QA → UAT logs "covered X, didn't cover Y".</li>
+        <li><strong>Gates 5 and 12 — if the 72h SLA is breached, the pre-determined timeline must be adjusted.</strong> Jesse escalates to PM (Jeff) at the 72h mark. Jeff either fast-tracks approval via WhatsApp or pushes the launch date with the team. <strong>Don't silently let the deadline slip</strong> — visibility is the whole point of the SLA.</li>
+      </ol>
+    </div>
+
+    <!-- Step 7 Design Review note -->
+    <div class="biz-note" style="background:#fff7ed;border-left-color:var(--build);">
+      <strong style="color:var(--build);">Step 7 · Design Review (≤30 min sync):</strong> engineer + Ming meet so the engineer fully understands the design and requirements before coding. Engineer walks through the design, raises edge cases / unclear interactions; Ming confirms intent. Ticket flips to <code>Development</code> after the meeting.
+    </div>
+
+    <!-- Biz & Ops Validation note -->
+    <div class="biz-note">
+      <strong>Biz &amp; Ops gates (5 and 12) — approval mechanics:</strong>
+      <ul style="margin:6px 0 0; padding-left:20px;">
+        <li><strong>Entry trigger:</strong> whoever flips the Status into the gate also @-mentions <code>@Sam @Dan @Jesse</code> in the same comment (Yves at gate 5; Ming at UAT Ready feeding gate 12).</li>
+        <li><strong>Approval:</strong> Sam <em>or</em> Dan replies <code>✅ approved</code> on the ticket — only one of them is needed.</li>
+        <li><strong>Status moves forward</strong> after the approval comment: gate 5 → <code>Ready For Development</code>; gate 12 → <code>Launch Ready</code>.</li>
+        <li><strong>Jesse facilitates:</strong> tracks pending reviews each morning, nudges Sam/Dan in WhatsApp at the 48h mark, escalates to Jeff at 72h SLA. Change requests run the simplified 5-step flow and skip these gates entirely.</li>
+        <li><strong>Issue raised instead of approval:</strong> reply <code>❌ blocked: [reason]</code> → ticket flips to <code>Bug Found</code>, loops back.</li>
+      </ul>
+    </div>
+
+    <!-- Hotfix exception -->
+    <div class="biz-note" style="background:#fef2f2;border-left-color:var(--bug);">
+      <strong style="color:var(--bug);">🚨 Hotfix exception (P0 prod bugs):</strong> skip pre-dev gates entirely. Report in WhatsApp group → ticket created on Bug Tracking with <code>Found in = Production</code>, <code>Severity = Blocker</code> → straight to Development → fast-tracked QA → Biz &amp; Ops Validation can be confirmed via WhatsApp reply (any one of Sam / Dan / Jesse).
+    </div>
+
+    <!-- Parked states -->
+    <div class="parked-section">
+      <span class="parked-label">Parked states (off main flow):</span>
+      <span class="parked-pill">Pending<em>awaiting external input</em></span>
+      <span class="parked-pill">Not a bug<em>rejected after triage</em></span>
+    </div>
+  </div>
+
+  <!-- Simplified flow for small change requests -->
+  <h2>Simplified flow — small change requests</h2>
+  <p>The 14-step flow above is for <strong>full new features</strong> (e.g. Crowdfund Phase 2). For <strong>small change requests</strong> (copy tweaks, small UI fixes, config changes, internal-only updates), Ops/PM at Triage classifies the ticket and routes it through this lighter path — <strong>QA verification is the only gate</strong>. Skip Pre-Dev, Design Review, UAT, and Biz &amp; Ops Validation entirely.</p>
+
+  <div class="small-flow">
+    <div class="sf-pill" style="background: var(--park);"><span class="num">1</span>Triage</div>
+    <div class="sf-arrow">→</div>
+    <div class="sf-pill" style="background: var(--build);"><span class="num">2</span>Development</div>
+    <div class="sf-arrow">→</div>
+    <div class="sf-pill" style="background: var(--qa);"><span class="num">3</span>QA</div>
+    <div class="sf-arrow">→</div>
+    <div class="sf-pill" style="background: var(--ship);"><span class="num">4</span>Launch Ready</div>
+    <div class="sf-arrow">→</div>
+    <div class="sf-pill" style="background: #047857;"><span class="num">5</span>Launched ✓</div>
+  </div>
+
+  <div class="biz-note">
+    <strong>Triage classification rule:</strong> Items with significant UI/UX, brand-facing copy changes, or new business commitments → full 14-step flow. Items affecting only backend, internal tooling, dev-only config, or trivial UI changes (e.g. typo fix, padding tweak) → simplified 5-step flow. Ops/PM marks the classification at Triage; once classified <code>small</code>, the ticket only needs QA pass before Launch Ready.
+  </div>
+
+  <!-- Gate scope reference -->
+  <h2>Gate scope reference</h2>
+  <p>Four gates total — one in Pre-Dev (gate 5), three in Test (gates 9, 10, 12). Each answers a different question. Overlap is intentional — complementary lenses, not duplicated effort.</p>
+
+  <div class="gate-split" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="gate-card biz-c">
+      <h4>Gate 5 · Sign-off · Design + Copy</h4>
+      <div class="who">Sam / Dan (Jesse facilitates) · pre-build · 72h SLA</div>
+      <div class="question">"Is the Design + Copy right before we build it?"</div>
+      <dl>
+        <dt>Looking for</dt>
+        <dd>Final design matches the BRD intent. Copy on-brand (English + Chinese). No commitments to artists/partners that the implementation can't honor.</dd>
+        <dt>Out of scope</dt>
+        <dd>Functional concerns (no code yet). Net-new requirements (re-open BRD if scope grew).</dd>
+        <dt>Pass action</dt>
+        <dd>Sam <em>or</em> Dan replies <code>✅ approved</code>. Status flips → <code>Ready For Development</code>. Issue → <code>Bug Found</code> back to Design.</dd>
+      </dl>
+    </div>
+    <div class="gate-card qa-c">
+      <h4>Gate 9 · QA</h4>
+      <div class="who">[QA tester] · post-build</div>
+      <div class="question">"Does this work as built?"</div>
+      <dl>
+        <dt>Looking for</dt>
+        <dd>Functional bugs, edge cases, regressions, cross-browser, broken API behavior, data validation, performance.</dd>
+        <dt>Out of scope</dt>
+        <dd>UX opinions, copy ideas. If noticed, leave a comment — don't return as Bug Found.</dd>
+        <dt>Pass action</dt>
+        <dd>Flip Status → <code>UAT</code>. Comment: "QA passed [date], covered X, didn't cover Y".</dd>
+      </dl>
+    </div>
+    <div class="gate-card uat-c">
+      <h4>Gate 10 · UAT</h4>
+      <div class="who">Ming · runs after QA</div>
+      <div class="question">"Does this make sense to a real user?"</div>
+      <dl>
+        <dt>Looking for</dt>
+        <dd>End-to-end user flow makes sense, no surprises in the journey, feels right. <strong>Chinese copy only</strong> — clarity, tone, accuracy.</dd>
+        <dt>Out of scope</dt>
+        <dd>Functional bugs (QA's job — bounce back via Bug Found). English copy (Biz &amp; Ops Validation handles).</dd>
+        <dt>Pass action</dt>
+        <dd>Flip Status → <code>UAT Ready</code>. @-mention <code>@Sam @Dan @Jesse</code> in pass comment.</dd>
+      </dl>
+    </div>
+    <div class="gate-card biz-c">
+      <h4>Gate 12 · Biz &amp; Ops Validation</h4>
+      <div class="who">Sam / Dan (Jesse facilitates) · pre-launch · 72h SLA</div>
+      <div class="question">"Does this serve the business and read right in English?"</div>
+      <dl>
+        <dt>Looking for</dt>
+        <dd>Matches what was sold to artist/partner. Pricing/packaging right. Doesn't break existing deals. <strong>English copy</strong> on-brand and accurate.</dd>
+        <dt>Out of scope</dt>
+        <dd>Functional/UX bugs (QA/UAT's job). Chinese copy (Ming's job). Net-new requirements (PM/BRD process).</dd>
+        <dt>Pass action</dt>
+        <dd>Sam <em>or</em> Dan replies <code>✅ approved</code>. Status flips → <code>Launch Ready</code>. Issue → <code>Bug Found</code>.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Bug submission flow -->
+  <h2>Bug submission — UAT, QA, Biz, and Production bugs</h2>
+  <p>Every bug = a new ticket on Bug Tracking · Triage, regardless of source. The <code>Found in</code> field tags it. <em>(Why not a comment? Bug tickets carry screenshot, repro-steps, severity fields — comments don't.)</em></p>
+
+  <!-- 4 sources → 1 destination flow visual -->
+  <div class="bugflow-frame">
+    <div class="bugflow-row">
+      <div class="bugflow-sources">
+        <div class="bugflow-source qa-bf"><span class="who">QA finds it</span><span class="where">at QA gate</span></div>
+        <div class="bugflow-source uat-bf"><span class="who">Ming finds it</span><span class="where">at UAT gate</span></div>
+        <div class="bugflow-source biz-bf"><span class="who">Sam / Dan / Jesse find it</span><span class="where">at Biz Validation</span></div>
+        <div class="bugflow-source prod-bf"><span class="who">Ops promotes it</span><span class="where">prod report from Ops board</span></div>
+      </div>
+      <div class="bugflow-pivot">
+        <div class="arr">→</div>
+        <div class="lbl">all bugs<br/>land here</div>
+      </div>
+      <div class="bugflow-dest">
+        <div class="dest-name">Bug Tracking · Triage</div>
+        <div class="dest-meta">tagged with <code>Found in</code> · linked to parent feature if applicable · enters dev workflow at <strong>step 8 (Development)</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Required fields when submitting a bug -->
+  <div class="bug-fields">
+    <div class="bf-label">⚙ Required fields when submitting a bug ticket</div>
+    <ul>
+      <li><strong>Title</strong> — short, specific (e.g. <em>"Crowdfund · pledge button doesn't submit on Safari"</em>)</li>
+      <li><strong>Found in</strong> — single-select: <code>QA</code> / <code>UAT</code> / <code>Biz Validation</code> / <code>Production</code></li>
+      <li><strong>Severity</strong> — Blocker / High / Medium / Low</li>
+      <li><strong>Screenshot or video</strong> — visual evidence (UAT env URL or prod screenshot)</li>
+      <li><strong>Steps to reproduce</strong> — numbered, deterministic</li>
+      <li><strong>Linked feature ticket</strong> — use Asana task dependency if the bug came out of a feature in flight (so the feature is blocked from shipping until the bug is done)</li>
+      <li><strong>Assignee</strong> — leave blank; Ops triages each morning to assign</li>
+    </ul>
+  </div>
+
+  <!-- What happens to the parent feature ticket -->
+  <div class="feature-side-note">
+    <div class="fsn-label">⚙ Meanwhile, the parent feature ticket</div>
+    Flips to <code>Bug Found</code> (blocked). Re-enters QA once all linked bug tickets reach Done. The bugs travel the same swimlane independently.
+  </div>
+
+  <!-- Found in custom field reference -->
+  <div class="found-in-callout">
+    <div class="fi-label">⚙ <code>Found in</code> — new single-select on Bug Tracking</div>
+    <div class="fi-rows">
+      <span class="fi-row qa-fi">QA</span>
+      <span class="fi-row uat-fi">UAT</span>
+      <span class="fi-row biz-fi">Biz Validation</span>
+      <span class="fi-row prod-fi">Production</span>
+    </div>
+    <div class="fi-meta">Default = <code>Production</code> for Ops-promoted tickets. Unlocks gate-effectiveness metric: % of defects caught at each gate vs slipping to prod.</div>
+  </div>
+
+  <!-- Boards table -->
+  <h2>Each board does exactly one job</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:22%">Board</th>
+        <th style="width:22%">Single purpose</th>
+        <th style="width:28%">What goes here</th>
+        <th>Section axis</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Ops Bug Tracking</strong><br/><span style="color:var(--muted);font-size:12px;">upstream · ops-owned</span></td>
+        <td><span class="pill ops-p">Intake</span> Ops upstream — customer/prod issues</td>
+        <td>All ops-side reports (customer feedback, prod issues, change requests). Triaged by Ops before promoting to dev boards.</td>
+        <td>Ops-managed (<a href="https://app.asana.com/1/1205221415135461/project/1213723482858214/list/1213723479219123" style="color:#6366f1;">board link</a>)</td>
+      </tr>
+      <tr>
+        <td><strong>Release Plan</strong><br/><span style="color:var(--muted);font-size:12px;">Front/Backend DEV</span></td>
+        <td><span class="pill feat">Features</span> Feature pipeline by release</td>
+        <td>New features + change requests promoted from Ops. Bugs <strong>do not</strong> live here.</td>
+        <td><code>Triage</code> (Ops handoff) → Release version (<code>2.2 [Apr 29]</code>, <code>2.2.1 [May 6]</code>, <code>2.3 [Jun 3]</code>…)</td>
+      </tr>
+      <tr>
+        <td><strong>Bug Tracking</strong><br/><span style="color:var(--muted);font-size:12px;">Tech - Testing/Bug Tracking</span></td>
+        <td><span class="pill bug">Bugs</span> Source-of-truth for every bug</td>
+        <td>All bugs (QA-found + UAT-found + prod-reported via Ops). One row per bug, forever.</td>
+        <td>Lifecycle: <code>Triage</code> (Ops handoff) → <code>To Do → In Progress → QA → UAT → Launch Ready → Done</code></td>
+      </tr>
+      <tr>
+        <td><strong>Bug Release Plan</strong><br/><span style="color:var(--muted);font-size:12px;">Tech - Dev board (Bug Releases)</span></td>
+        <td><span class="pill ship-p">Ship plan</span> Weekly bug-deploy planning</td>
+        <td>Bugs scheduled for a specific weekly deploy. Multi-homed from Bug Tracking.</td>
+        <td>Ship-week date (<code>2026-05-06</code>, <code>2026-05-13</code>…)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Daily rhythm -->
+  <h2>Daily rhythm — QA and UAT</h2>
+  <h3 style="color:var(--qa-dk);">[QA tester] · QA role</h3>
+  <div class="rhythm">
+    <div class="rhythm-card qa-r">
+      <div class="when">Morning</div>
+      <div class="what">Open <strong>QA Queue</strong> saved view (Status = QA). Pull from top of priority list.</div>
+    </div>
+    <div class="rhythm-card qa-r">
+      <div class="when">During the day</div>
+      <div class="what">Run functional tests on UAT env. Move tickets <code>QA → UAT</code> (pass) or <code>QA → Bug Found</code> (fail, with steps + screenshot).</div>
+    </div>
+    <div class="rhythm-card qa-r">
+      <div class="when">Goal</div>
+      <div class="what">Nothing waits &gt;24h in QA — drain the queue daily so Ming's UAT pipeline stays full but never blocked.</div>
+    </div>
+  </div>
+
+  <h3 style="color:var(--ming);margin-top:24px;">Ming · UAT role</h3>
+  <div class="rhythm">
+    <div class="rhythm-card uat-r">
+      <div class="when">Morning</div>
+      <div class="what">Open <strong>UAT Queue</strong> saved view (Status = UAT). Only tickets that already passed QA appear here.</div>
+    </div>
+    <div class="rhythm-card uat-r">
+      <div class="when">During the day</div>
+      <div class="what">Verify user flow + <strong>Chinese copy</strong>. Move tickets <code>UAT → UAT Ready</code> (pass) or <code>UAT → Bug Found</code> (fail, with reproduction steps + screenshot). On pass, @-mention <code>@Sam @Dan @Jesse</code> for Biz &amp; Ops Validation (English copy + business sign-off).</div>
+    </div>
+    <div class="rhythm-card uat-r">
+      <div class="when">End of day</div>
+      <div class="what">Post 3 lines to team channel: <em>tested · found · blocked.</em> Comment-only on tickets — never edit copy or design.</div>
+    </div>
+  </div>
+
+  <h3 style="color:var(--biz);margin-top:24px;">Sam / Dan / Jesse · Biz &amp; Ops role</h3>
+  <div class="rhythm">
+    <div class="rhythm-card" style="border-left:4px solid var(--biz);">
+      <div class="when" style="color:var(--biz);">Morning batch</div>
+      <div class="what">Pick up tickets queued at <code>Sign-off · Design + Copy</code> (gate 5 entry) and <code>UAT Ready</code> (gate 12 entry). Sam <em>or</em> Dan reviews and replies <code>✅ approved</code>; the reviewer flips Status forward (gate 5 → <code>Ready For Development</code>; gate 12: <code>UAT Ready</code> → <code>Biz &amp; Ops Validation</code> while reviewing → <code>Launch Ready</code> after approval).</div>
+    </div>
+    <div class="rhythm-card" style="border-left:4px solid var(--biz);">
+      <div class="when" style="color:var(--biz);">SLA enforcement</div>
+      <div class="what">Each gate has a <strong>72-hour SLA</strong> from when the ticket enters the queue (full features only — change requests skip these gates). Jesse pings @Sam @Dan in WhatsApp at the 48h mark if no reply. At 72h, escalate to PM (Jeff) for conditional move-forward.</div>
+    </div>
+    <div class="rhythm-card" style="border-left:4px solid var(--biz);">
+      <div class="when" style="color:var(--biz);">Weekly call</div>
+      <div class="what">Review gate-effectiveness metrics, queue depth, any tickets that hit SLA escalation, and any unresolved disagreements between biz and dev.</div>
+    </div>
+  </div>
+
+  <!-- Saved views -->
+  <h2>Saved Asana views to set up</h2>
+  <table>
+    <thead>
+      <tr><th>View</th><th>Filter</th><th>Owner</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>QA Queue</strong></td><td>Status = QA, across Bug Tracking + Release Plan</td><td>[QA tester]</td></tr>
+      <tr><td><strong>UAT Queue</strong></td><td>Status = UAT, across Bug Tracking + Release Plan</td><td>Ming</td></tr>
+      <tr><td><strong>Biz &amp; Ops Queue</strong></td><td>Status in [<code>Sign-off · Design + Copy</code>, <code>UAT Ready</code>, <code>Biz &amp; Ops Validation</code>] — both gate 5 and gate 12 entry/active</td><td>Sam / Dan / Jesse</td></tr>
+      <tr><td><strong>In Test (overview)</strong></td><td>Status in [QA, UAT, Launch Ready] — everything currently in some test gate</td><td>Jeff / dev lead</td></tr>
+      <tr><td><strong>This Week's Bugs</strong></td><td>Bug Release Plan, section = current week</td><td>Dev team</td></tr>
+      <tr><td><strong>Stuck (&gt;5 days)</strong></td><td>Bug Tracking, Status in [Pending, Bug Found], modified &lt; today−5</td><td>Jeff (weekly)</td></tr>
+      <tr><td><strong>Triage Queue</strong></td><td>Bug Tracking, section = Triage, no assignee</td><td>Ops (Jesse, mornings)</td></tr>
+      <tr><td><strong>UAT Bug Backlog</strong></td><td>Bug Tracking, <code>Found in = UAT</code>, Status != Done</td><td>Ming</td></tr>
+      <tr><td><strong>Prod Bug Triage</strong></td><td>Bug Tracking, <code>Found in = Production</code>, section = Triage</td><td>Ops + dev lead</td></tr>
+      <tr><td><strong>Defects by gate</strong></td><td>Bug Tracking, group by <code>Found in</code> — gate-effectiveness overview</td><td>Jeff (weekly)</td></tr>
+      <tr><td><strong>My Open Tickets</strong></td><td>Assignee = me, completed = false</td><td>Each engineer</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Kill list -->
+  <h2>Kill list — what to retire</h2>
+  <div class="kill">
+    <h4>Asana fields/options to delete or hide</h4>
+    <ul>
+      <li>Status options to retire: <code>Done</code>, <code>Fixed</code>, <code>Discussion</code>, <code>Copywriting</code> — replace with the 14-step flow above. <code>Copywriting</code> is already covered by the existing <code>Type</code> field. <em>(<code>Design Review</code> is kept — it's now step 7.)</em></li>
+      <li>Custom fields: <code>Copy of Priority</code>, <code>Priority -</code>, <code>Task Progress</code> — duplicates of <code>Priority</code> / <code>Status</code>.</li>
+      <li>Stale section "<code>UAT April 27 - 28, 12PM (on test env)</code>" on Bug Tracking — tickets are stranded there. Replace with date sections on the Bug Release Plan board.</li>
+    </ul>
+  </div>
+
+  <div class="footer">Beamco · Dev Workflow Proposal · 2026-05-05 · draft for team review</div>
+
+  </div><!-- /.lang-en -->
+
+  <!-- ═══════════════════════════════════════════════
+       中文版本 · CHINESE VERSION
+       (技術詞彙保留英文:BRD、UAT、QA、Status、Found in 等)
+  ═══════════════════════════════════════════════ -->
+  <div class="lang-content lang-zh" hidden>
+
+  <h1>Beamco 開發流程提案</h1>
+  <div class="sub">跨 Release Plan、Bug Tracking、Bug Release Plan 的單一 Status 機制 · Ming 的 UAT 角色已嵌入 · 2026-05-05</div>
+
+  <a class="crosslink" href="./beamco-qa-gate-workflow.html"><span class="badge">NEW</span> QA Gate 子流程 — 分流、三 lane、結案 <span class="arr">→</span></a>
+
+  <!-- 圖例 -->
+  <div class="legend">
+    <div class="legend-item"><div class="swatch" style="background:var(--pre-dev)"></div>Pre-Dev(規劃)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--build)"></div>Build(工程)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--qa)"></div>QA gate([QA tester])</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--uat)"></div>UAT gate(Ming)</div>
+    <div class="legend-item"><div class="swatch" style="background:#06b6d4"></div>UAT Ready(biz queue)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--biz)"></div>Biz &amp; Ops gate · Sam/Dan(72h SLA)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--ship)"></div>Ship</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--bug)"></div>Bug Found(退回路徑)</div>
+    <div class="legend-item"><div class="swatch" style="background:var(--park)"></div>Parked(擱置)</div>
+  </div>
+
+  <!-- ═══════════ 工單入口 ═══════════ -->
+  <h2>工單入口 — Ops 交接給 dev 看板</h2>
+
+  <div class="intake-frame">
+    <div class="intake-row">
+      <div class="intake-source">
+        <div class="lbl">上游 · OPS 擁有</div>
+        <div class="name">Ops Bug Tracking</div>
+        <div class="meta">Sam / Dan / Jesse · 線上問題、客戶回報、變更需求 · <a href="https://app.asana.com/1/1205221415135461/project/1213723482858214/list/1213723479219123" style="color:#6366f1;">看板連結</a></div>
+      </div>
+      <div class="intake-pivot">
+        <div class="arr">→</div>
+        <div class="lbl">Ops 先分流,<br/>再轉送</div>
+      </div>
+      <div class="intake-dests">
+        <div class="intake-dest bug-d">
+          <span class="tag">BUG</span>
+          <span><span class="target">Bug Tracking · Triage</span> <span class="into">→ 進入 <strong>step 8 (Development)</strong></span></span>
+        </div>
+        <div class="intake-dest req-d">
+          <span class="tag">新需求 / 變更</span>
+          <span><span class="target">Release Plan · Triage</span> <span class="into">→ 進入 <strong>step 1 (BRD + AC)</strong></span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ 主流程 ═══════════ -->
+  <h2>端到端流程 — 4 個階段,兩道 biz &amp; ops 把關</h2>
+  <p>兩道 Biz &amp; Ops gate 包住工程階段 — <strong>gate 5</strong> 把關 Design + Copy、<strong>gate 12</strong> 把關實作。<strong>核可規則:</strong>Sam <em>或</em> Dan 任一人回 <code>✅ approved</code> 即可(Jesse 負責協調,如卡住則 nudge)。<strong>SLA:</strong>每道 gate 72 小時內必須回應(只適用完整功能流程;change request 走簡化 5-step 流程,沒有 biz gate)。沒回應則 PM 升級處理,工單可有條件先往前。<strong>Step 7</strong> 是 Dev + Ming 在開始寫程式前的設計 review(≤30 分鐘),讓工程師完全理解設計與需求後再動工。<strong>Step 11 UAT Ready</strong> 是 UAT 通過後、Biz &amp; Ops Validation 還沒接手前的 queue 狀態。要新增的 Status 選項:<code>BRD (high-level)</code>、<code>BRD Final</code>、<code>Prototype</code>、<code>Sign-off · Design + Copy</code>、<code>Design Review</code>、<code>QA</code>、<code>UAT Ready</code>、<code>Biz &amp; Ops Validation</code>。Bug Tracking 板要新增的自訂欄位:<code>Found in</code>。</p>
+
+  <div class="pipeline-frame">
+    <div class="swimlane-wrap">
+      <svg class="swimlane-svg" viewBox="0 0 1280 960" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Beamco development workflow swimlane diagram">
+
+        <defs>
+          <marker id="ah-pre-zh"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6366f1"/></marker>
+          <marker id="ah-build-zh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f97316"/></marker>
+          <marker id="ah-qa-zh"    viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0d9488"/></marker>
+          <marker id="ah-uat-zh"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+          <marker id="ah-biz-zh"   viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+          <marker id="ah-ship-zh"  viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#059669"/></marker>
+          <marker id="ah-red-zh"      viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+          <marker id="ah-uatready-zh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#06b6d4"/></marker>
+        </defs>
+
+        <rect x="30"  y="80" width="280" height="800" rx="14" fill="#eef2ff"/>
+        <rect x="330" y="80" width="280" height="800" rx="14" fill="#fff7ed"/>
+        <rect x="630" y="80" width="280" height="800" rx="14" fill="#f0fdfa"/>
+        <rect x="930" y="80" width="320" height="800" rx="14" fill="#ecfdf5"/>
+
+        <rect x="30"  y="30" width="280" height="42" rx="10" fill="#e0e7ff"/>
+        <text x="170" y="56" text-anchor="middle" fill="#4f46e5" font-size="12" font-weight="800" letter-spacing="2.5">PRE-DEVELOPMENT</text>
+
+        <rect x="330" y="30" width="280" height="42" rx="10" fill="#fed7aa"/>
+        <text x="470" y="56" text-anchor="middle" fill="#c2410c" font-size="12" font-weight="800" letter-spacing="2.5">BUILD</text>
+
+        <rect x="630" y="30" width="280" height="42" rx="10" fill="#a7f3d0"/>
+        <text x="770" y="56" text-anchor="middle" fill="#0f766e" font-size="12" font-weight="800" letter-spacing="2.5">TEST GATES</text>
+
+        <rect x="930" y="30" width="320" height="42" rx="10" fill="#86efac"/>
+        <text x="1090" y="56" text-anchor="middle" fill="#047857" font-size="12" font-weight="800" letter-spacing="2.5">SHIP</text>
+
+        <rect x="50" y="95" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="115" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">1 · BIZ &amp; OPS · START</text>
+        <text x="170" y="133" text-anchor="middle" fill="white" font-size="14" font-weight="700">BRD + AC (high-level)</text>
+        <line x1="170" y1="143" x2="170" y2="165" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre-zh)"/>
+
+        <rect x="50" y="167" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="187" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">2 · PM (JEFF)</text>
+        <text x="170" y="205" text-anchor="middle" fill="white" font-size="14" font-weight="700">BRD Final</text>
+        <line x1="170" y1="215" x2="170" y2="237" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre-zh)"/>
+
+        <rect x="50" y="239" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="259" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">3 · PM (PAT)</text>
+        <text x="170" y="277" text-anchor="middle" fill="white" font-size="14" font-weight="700">Prototype</text>
+        <line x1="170" y1="287" x2="170" y2="309" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre-zh)"/>
+
+        <rect x="50" y="311" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="331" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">4 · DESIGNER · YVES</text>
+        <text x="170" y="349" text-anchor="middle" fill="white" font-size="14" font-weight="700">Design</text>
+        <line x1="170" y1="359" x2="170" y2="381" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre-zh)"/>
+
+        <rect x="50" y="383" width="240" height="48" rx="24" fill="#7c3aed"/>
+        <text x="170" y="403" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">5 · BIZ &amp; OPS GATE · SLA 72h</text>
+        <text x="170" y="421" text-anchor="middle" fill="white" font-size="13" font-weight="700">Sign-off · Design + Copy</text>
+        <line x1="170" y1="431" x2="170" y2="453" stroke="#6366f1" stroke-width="2" marker-end="url(#ah-pre-zh)"/>
+
+        <rect x="50" y="455" width="240" height="48" rx="24" fill="#6366f1"/>
+        <text x="170" y="475" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">6 · HANDOFF</text>
+        <text x="170" y="493" text-anchor="middle" fill="white" font-size="14" font-weight="700">Ready For Development</text>
+
+        <line x1="290" y1="479" x2="368" y2="479" stroke="#f97316" stroke-width="2" marker-end="url(#ah-build-zh)"/>
+
+        <rect x="370" y="455" width="200" height="48" rx="24" fill="#fb923c"/>
+        <text x="470" y="475" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">7 · DEV + MING</text>
+        <text x="470" y="493" text-anchor="middle" fill="white" font-size="14" font-weight="700">Design Review</text>
+        <line x1="470" y1="503" x2="470" y2="525" stroke="#f97316" stroke-width="2" marker-end="url(#ah-build-zh)"/>
+
+        <rect x="370" y="527" width="200" height="48" rx="24" fill="#f97316"/>
+        <text x="470" y="547" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">8 · ENGINEER</text>
+        <text x="470" y="565" text-anchor="middle" fill="white" font-size="14" font-weight="700">Development</text>
+
+        <line x1="570" y1="551" x2="668" y2="551" stroke="#0d9488" stroke-width="2" marker-end="url(#ah-qa-zh)"/>
+
+        <rect x="670" y="527" width="200" height="48" rx="24" fill="#0d9488"/>
+        <text x="770" y="547" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">9 · GATE 1 · QA TESTER</text>
+        <text x="770" y="565" text-anchor="middle" fill="white" font-size="14" font-weight="700">QA</text>
+        <line x1="770" y1="575" x2="770" y2="597" stroke="#2563eb" stroke-width="2" marker-end="url(#ah-uat-zh)"/>
+        <text x="785" y="592" fill="#0f766e" font-size="10" font-style="italic">pass</text>
+
+        <rect x="670" y="599" width="200" height="48" rx="24" fill="#2563eb"/>
+        <text x="770" y="619" text-anchor="middle" fill="rgba(255,255,255,0.78)" font-size="9"  font-weight="800" letter-spacing="1.5">10 · GATE 2 · MING, PAT</text>
+        <text x="770" y="637" text-anchor="middle" fill="white" font-size="14" font-weight="700">UAT</text>
+        <line x1="770" y1="647" x2="770" y2="669" stroke="#06b6d4" stroke-width="2" marker-end="url(#ah-uatready-zh)"/>
+        <text x="785" y="664" fill="#2563eb" font-size="10" font-style="italic">pass</text>
+
+        <rect x="670" y="671" width="200" height="48" rx="24" fill="#06b6d4"/>
+        <text x="770" y="691" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">11 · QUEUE FOR BIZ</text>
+        <text x="770" y="709" text-anchor="middle" fill="white" font-size="14" font-weight="700">UAT Ready</text>
+        <line x1="770" y1="719" x2="770" y2="741" stroke="#7c3aed" stroke-width="2" marker-end="url(#ah-biz-zh)"/>
+
+        <rect x="670" y="743" width="200" height="48" rx="24" fill="#7c3aed"/>
+        <text x="770" y="763" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="9"  font-weight="800" letter-spacing="1.5">12 · GATE 3 · SLA 72h</text>
+        <text x="770" y="781" text-anchor="middle" fill="white" font-size="13" font-weight="700">Biz &amp; Ops Validation</text>
+
+        <line x1="870" y1="767" x2="988" y2="767" stroke="#059669" stroke-width="2" marker-end="url(#ah-ship-zh)"/>
+
+        <rect x="990" y="743" width="200" height="48" rx="24" fill="#059669"/>
+        <text x="1090" y="771" text-anchor="middle" fill="white" font-size="14" font-weight="700">13 · Launch Ready</text>
+        <line x1="1090" y1="793" x2="1090" y2="815" stroke="#059669" stroke-width="2" marker-end="url(#ah-ship-zh)"/>
+
+        <rect x="990" y="819" width="200" height="44" rx="22" fill="#047857"/>
+        <text x="1090" y="845" text-anchor="middle" fill="white" font-size="14" font-weight="700">14 · Launched ✓</text>
+
+        <line x1="870" y1="551" x2="906" y2="551" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="876" y="547" font-size="13" font-weight="800" fill="#dc2626">✗</text>
+        <line x1="870" y1="623" x2="906" y2="623" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="876" y="619" font-size="13" font-weight="800" fill="#dc2626">✗</text>
+        <line x1="870" y1="767" x2="906" y2="767" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="876" y="763" font-size="13" font-weight="800" fill="#dc2626">✗</text>
+
+        <line x1="906" y1="551" x2="906" y2="910" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4"/>
+        <line x1="906" y1="910" x2="760" y2="910" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4"/>
+
+        <rect x="540" y="890" width="220" height="40" rx="20" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+        <text x="650" y="908" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="800" letter-spacing="1.5">✗ BUG FOUND</text>
+        <text x="650" y="923" text-anchor="middle" fill="#7f1d1d" font-size="10" font-style="italic">any gate fails → fix &amp; redeploy</text>
+
+        <line x1="540" y1="910" x2="460" y2="910" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4"/>
+        <line x1="460" y1="910" x2="460" y2="579" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#ah-red-zh)"/>
+
+      </svg>
+    </div>
+
+    <!-- 硬性規定 -->
+    <div class="hard-rule">
+      <div class="hr-label">⚡ 硬性規定</div>
+      <ol class="hr-detail" style="margin:0; padding-left:20px;">
+        <li style="margin-bottom:8px;"><strong>UAT Status 只有在變更部署到 UAT 環境後才能翻。</strong>工程師<strong>不要</strong>從本地分支翻 <code>Status → QA</code>。QA <strong>不要</strong>在 UAT 環境上沒驗證過就翻成 <code>UAT</code>。每次交接都要附留言 — 工程 → QA 寫明 spec/AC + 改了什麼;QA → UAT 寫明「測了什麼,沒測什麼」。</li>
+        <li><strong>Gate 5 與 12 — 如果卡到 72h SLA 沒有核可,原本訂好的時程就要調整。</strong>Jesse 在 72h 時升級給 PM (Jeff)。Jeff 用 WhatsApp 加速核可,或跟團隊一起把上線日期往後挪。<strong>不要讓 deadline 默默滑走</strong> — 可見度就是 SLA 的重點。</li>
+      </ol>
+    </div>
+
+    <!-- Step 7 Design Review note -->
+    <div class="biz-note" style="background:#fff7ed;border-left-color:var(--build);">
+      <strong style="color:var(--build);">Step 7 · Design Review(≤30 分鐘同步會議):</strong>工程師和 Ming 一起開會,讓工程師在開始寫程式前完全理解設計和需求。工程師逐步走過設計、提出邊界 case 和不清楚的互動;Ming 確認意圖。會議結束後翻成 <code>Development</code>。
+    </div>
+
+    <!-- Biz & Ops 把關規範 -->
+    <div class="biz-note">
+      <strong>Biz &amp; Ops gates(5 與 12)— 核可機制:</strong>
+      <ul style="margin:6px 0 0; padding-left:20px;">
+        <li><strong>進入觸發:</strong>翻 Status 進入 gate 的人在同一則留言中 @-mention <code>@Sam @Dan @Jesse</code>(gate 5 是 Yves;gate 12 之前的 UAT Ready 是 Ming)。</li>
+        <li><strong>核可:</strong>Sam <em>或</em> Dan 任一人在工單回覆 <code>✅ approved</code> — 不需兩人都回。</li>
+        <li><strong>Status 往前走:</strong>gate 5 → <code>Ready For Development</code>;gate 12 → <code>Launch Ready</code>。</li>
+        <li><strong>Jesse 協調:</strong>每天早上追蹤待審核的工單,48h 在 WhatsApp 提醒 Sam/Dan,72h SLA 過期則升級給 Jeff。Change request 走簡化 5-step 流程,完全跳過這兩道 gate。</li>
+        <li><strong>有問題改回意見:</strong>回 <code>❌ blocked: [原因]</code> → 工單翻成 <code>Bug Found</code> 退回。</li>
+      </ul>
+    </div>
+
+    <!-- Hotfix 例外 -->
+    <div class="biz-note" style="background:#fef2f2;border-left-color:var(--bug);">
+      <strong style="color:var(--bug);">🚨 Hotfix 例外(P0 線上 bug):</strong>跳過所有 pre-dev gate。在 WhatsApp 群組回報 → 在 Bug Tracking 開工單,<code>Found in = Production</code>、<code>Severity = Blocker</code> → 直接進 Development → 加速 QA → Biz &amp; Ops Validation 用 WhatsApp 回覆確認(Sam / Dan / Jesse 任一人)。
+    </div>
+
+    <!-- 擱置狀態 -->
+    <div class="parked-section">
+      <span class="parked-label">擱置狀態(不在主流程上):</span>
+      <span class="parked-pill">Pending<em>等候外部回應</em></span>
+      <span class="parked-pill">Not a bug<em>分流後判定不是 bug</em></span>
+    </div>
+  </div>
+
+  <!-- 簡化流程(小變更) -->
+  <h2>簡化流程 — 小型變更需求</h2>
+  <p>上面的 14-step 流程是用在<strong>全新功能</strong>(例如 Crowdfund Phase 2)。<strong>小型變更需求</strong>(文案微調、小 UI 修正、設定變更、僅內部用)在 Triage 由 Ops/PM 分類後走這條較輕的路徑 — <strong>只有 QA 一道把關</strong>,跳過 Pre-Dev、Design Review、UAT、與 Biz &amp; Ops Validation。</p>
+
+  <div class="small-flow">
+    <div class="sf-pill" style="background: var(--park);"><span class="num">1</span>Triage</div>
+    <div class="sf-arrow">→</div>
+    <div class="sf-pill" style="background: var(--build);"><span class="num">2</span>Development</div>
+    <div class="sf-arrow">→</div>
+    <div class="sf-pill" style="background: var(--qa);"><span class="num">3</span>QA</div>
+    <div class="sf-arrow">→</div>
+    <div class="sf-pill" style="background: var(--ship);"><span class="num">4</span>Launch Ready</div>
+    <div class="sf-arrow">→</div>
+    <div class="sf-pill" style="background: #047857;"><span class="num">5</span>Launched ✓</div>
+  </div>
+
+  <div class="biz-note">
+    <strong>Triage 分類規則:</strong>有重大 UI/UX、面向客戶的文案變更、或新業務承諾 → 走完整 14-step 流程。只影響後端、內部工具、開發設定、或微小 UI(例如修錯字、調整間距)→ 走簡化 5-step 流程。Ops/PM 在 Triage 時標記;一旦標為 <code>small</code>,工單只需通過 QA 即可進入 Launch Ready。
+  </div>
+
+  <!-- 把關說明 -->
+  <h2>把關說明</h2>
+  <p>共四道 gate — Pre-Dev 一道(gate 5)、Test 三道(gates 9、10、12)。每道 gate 回答的問題不同,重疊是有意設計,是互補的視角。</p>
+
+  <div class="gate-split" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="gate-card biz-c">
+      <h4>Gate 5 · Sign-off · Design + Copy</h4>
+      <div class="who">Sam / Dan(Jesse 協調)· 開發前 · 72h SLA</div>
+      <div class="question">「開始做之前,Design 和 Copy 對嗎?」</div>
+      <dl>
+        <dt>看什麼</dt>
+        <dd>最終 design 跟 BRD 對得上。Copy 符合品牌(中文+英文)。沒有跟藝人/合作方承諾的東西在實作上做不到。</dd>
+        <dt>不在範圍內</dt>
+        <dd>功能問題(還沒寫程式)。全新需求(範圍長大就回頭重開 BRD)。</dd>
+        <dt>通過時做什麼</dt>
+        <dd>Sam <em>或</em> Dan 回 <code>✅ approved</code>。翻 Status → <code>Ready For Development</code>。有問題 → <code>Bug Found</code> 退回 Design。</dd>
+      </dl>
+    </div>
+    <div class="gate-card qa-c">
+      <h4>Gate 9 · QA</h4>
+      <div class="who">[QA tester] · 開發後</div>
+      <div class="question">「這個東西照建好的方式能跑嗎?」</div>
+      <dl>
+        <dt>看什麼</dt>
+        <dd>功能 bug、邊界 case、回歸問題、跨瀏覽器、API 行為錯誤、資料驗證、效能。</dd>
+        <dt>不在範圍內</dt>
+        <dd>UX 意見、文案想法。看到的話留言就好,不要退回 Bug Found。</dd>
+        <dt>通過時做什麼</dt>
+        <dd>翻 Status → <code>UAT</code>。留言:「QA passed [日期],測了 X,沒測 Y」。</dd>
+      </dl>
+    </div>
+    <div class="gate-card uat-c">
+      <h4>Gate 10 · UAT</h4>
+      <div class="who">Ming · 在 QA 之後</div>
+      <div class="question">「這個東西對真正的使用者來說合理嗎?」</div>
+      <dl>
+        <dt>看什麼</dt>
+        <dd>使用者流程從頭到尾合理、體驗中沒有意外、感覺對。<strong>只測中文文案</strong> — 清晰度、語氣、準確度。</dd>
+        <dt>不在範圍內</dt>
+        <dd>功能 bug(QA 的工作 — 退回 Bug Found)。英文文案(Biz &amp; Ops Validation 處理)。</dd>
+        <dt>通過時做什麼</dt>
+        <dd>翻 Status → <code>UAT Ready</code>。在通過留言中 @-mention <code>@Sam @Dan @Jesse</code>。</dd>
+      </dl>
+    </div>
+    <div class="gate-card biz-c">
+      <h4>Gate 12 · Biz &amp; Ops Validation</h4>
+      <div class="who">Sam / Dan(Jesse 協調)· 上線前 · 72h SLA</div>
+      <div class="question">「這符合業務需求,英文文案讀起來對嗎?」</div>
+      <dl>
+        <dt>看什麼</dt>
+        <dd>跟賣給藝人/合作方的條件吻合。定價/方案對。不會打破現有合約。<strong>英文文案</strong>符合品牌與正確。</dd>
+        <dt>不在範圍內</dt>
+        <dd>功能/UX bug(QA/UAT 的工作)。中文文案(Ming 的工作)。全新需求(PM/BRD 流程)。</dd>
+        <dt>通過時做什麼</dt>
+        <dd>Sam <em>或</em> Dan 回 <code>✅ approved</code>。翻 Status → <code>Launch Ready</code>。有問題 → <code>Bug Found</code>。</dd>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Bug 提交流程 -->
+  <h2>Bug 提交流程 — UAT、QA、Biz、Production bug</h2>
+  <p>每個 bug = Bug Tracking · Triage 上的一張新工單,不論誰找到的。<code>Found in</code> 欄位標記來源。<em>(為什麼不直接留言?bug 工單有截圖、重現步驟、嚴重度欄位 — 留言保留不了這個結構。)</em></p>
+
+  <div class="bugflow-frame">
+    <div class="bugflow-row">
+      <div class="bugflow-sources">
+        <div class="bugflow-source qa-bf"><span class="who">QA 找到</span><span class="where">在 QA gate</span></div>
+        <div class="bugflow-source uat-bf"><span class="who">Ming 找到</span><span class="where">在 UAT gate</span></div>
+        <div class="bugflow-source biz-bf"><span class="who">Sam / Dan / Jesse 找到</span><span class="where">在 Biz Validation</span></div>
+        <div class="bugflow-source prod-bf"><span class="who">Ops 轉送</span><span class="where">從 Ops 看板來的線上回報</span></div>
+      </div>
+      <div class="bugflow-pivot">
+        <div class="arr">→</div>
+        <div class="lbl">所有 bug<br/>都進這裡</div>
+      </div>
+      <div class="bugflow-dest">
+        <div class="dest-name">Bug Tracking · Triage</div>
+        <div class="dest-meta">標記 <code>Found in</code> · 有對應 feature 工單就連起來 · 進入 dev 流程的 <strong>step 8 (Development)</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bug-fields">
+    <div class="bf-label">⚙ 提交 bug 工單時的必填欄位</div>
+    <ul>
+      <li><strong>Title</strong> — 簡短具體(例如 <em>「Crowdfund · pledge 按鈕在 Safari 上送不出去」</em>)</li>
+      <li><strong>Found in</strong> — 單選:<code>QA</code> / <code>UAT</code> / <code>Biz Validation</code> / <code>Production</code></li>
+      <li><strong>Severity</strong> — Blocker / High / Medium / Low</li>
+      <li><strong>Screenshot or video</strong> — 視覺證據(UAT 環境網址或線上截圖)</li>
+      <li><strong>Steps to reproduce</strong> — 編號的、可重現的步驟</li>
+      <li><strong>Linked feature ticket</strong> — 如果是測 feature 時發現的 bug,用 Asana task dependency(feature 在 bug 修好前不能上線)</li>
+      <li><strong>Assignee</strong> — 留空;Ops 早上 triage 時會指派</li>
+    </ul>
+  </div>
+
+  <div class="feature-side-note">
+    <div class="fsn-label">⚙ 同時,原本的 feature 工單</div>
+    翻成 <code>Bug Found</code>(卡住)。等所有連結的 bug 工單都 Done 後再回 QA 重測。bug 修復本身走同一條 swimlane,獨立進行。
+  </div>
+
+  <div class="found-in-callout">
+    <div class="fi-label">⚙ <code>Found in</code> — Bug Tracking 上的新單選欄位</div>
+    <div class="fi-rows">
+      <span class="fi-row qa-fi">QA</span>
+      <span class="fi-row uat-fi">UAT</span>
+      <span class="fi-row biz-fi">Biz Validation</span>
+      <span class="fi-row prod-fi">Production</span>
+    </div>
+    <div class="fi-meta">Ops 轉送的工單預設為 <code>Production</code>。解鎖 gate 有效性指標:每道 gate 抓到多少 % 的問題、漏到 prod 的多少。</div>
+  </div>
+
+  <!-- 看板分工 -->
+  <h2>每個看板各司其職</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:22%">看板</th>
+        <th style="width:22%">單一用途</th>
+        <th style="width:28%">放什麼</th>
+        <th>Section 軸</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Ops Bug Tracking</strong><br/><span style="color:var(--muted);font-size:12px;">上游 · ops 擁有</span></td>
+        <td><span class="pill ops-p">Intake</span> Ops 上游 — 客戶/線上問題</td>
+        <td>所有 ops 端的回報(客戶意見、線上問題、變更需求)。Ops 先 triage 才轉送到 dev 板。</td>
+        <td>Ops 自管(<a href="https://app.asana.com/1/1205221415135461/project/1213723482858214/list/1213723479219123" style="color:#6366f1;">看板連結</a>)</td>
+      </tr>
+      <tr>
+        <td><strong>Release Plan</strong><br/><span style="color:var(--muted);font-size:12px;">前後端 DEV</span></td>
+        <td><span class="pill feat">Features</span> 按 release 走的 feature pipeline</td>
+        <td>新 feature + 從 Ops 轉來的變更需求。Bug <strong>不在這裡</strong>。</td>
+        <td><code>Triage</code>(Ops 轉送)→ Release version(<code>2.2 [Apr 29]</code>、<code>2.2.1 [May 6]</code>、<code>2.3 [Jun 3]</code>…)</td>
+      </tr>
+      <tr>
+        <td><strong>Bug Tracking</strong><br/><span style="color:var(--muted);font-size:12px;">Tech - Testing/Bug Tracking</span></td>
+        <td><span class="pill bug">Bugs</span> 所有 bug 的單一真實來源</td>
+        <td>所有 bug(QA 找到 + UAT 找到 + 從 Ops 來的線上回報)。每個 bug 一筆,永遠保留。</td>
+        <td>Lifecycle:<code>Triage</code>(Ops 轉送)→ <code>To Do → In Progress → QA → UAT → Launch Ready → Done</code></td>
+      </tr>
+      <tr>
+        <td><strong>Bug Release Plan</strong><br/><span style="color:var(--muted);font-size:12px;">Tech - Dev board (Bug Releases)</span></td>
+        <td><span class="pill ship-p">Ship plan</span> 每週 bug 部署規劃</td>
+        <td>排定週部署的 bug。從 Bug Tracking multi-home 過來。</td>
+        <td>Ship-week date(<code>2026-05-06</code>、<code>2026-05-13</code>…)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 每日節奏 -->
+  <h2>每日節奏 — QA 與 UAT</h2>
+  <h3 style="color:var(--qa-dk);">[QA tester] · QA 角色</h3>
+  <div class="rhythm">
+    <div class="rhythm-card qa-r">
+      <div class="when">早上</div>
+      <div class="what">打開 <strong>QA Queue</strong> 過濾視圖(Status = QA)。從優先度最高的開始拉。</div>
+    </div>
+    <div class="rhythm-card qa-r">
+      <div class="when">白天</div>
+      <div class="what">在 UAT 環境跑功能測試。把工單從 <code>QA → UAT</code>(過)或 <code>QA → Bug Found</code>(沒過,附步驟+截圖)。</div>
+    </div>
+    <div class="rhythm-card qa-r">
+      <div class="when">目標</div>
+      <div class="what">沒有東西在 QA 等超過 24 小時 — 每天清空,讓 Ming 的 UAT pipeline 持續有東西但不會卡住。</div>
+    </div>
+  </div>
+
+  <h3 style="color:var(--ming);margin-top:24px;">Ming · UAT 角色</h3>
+  <div class="rhythm">
+    <div class="rhythm-card uat-r">
+      <div class="when">早上</div>
+      <div class="what">打開 <strong>UAT Queue</strong> 過濾視圖(Status = UAT)。只有過了 QA 的工單會出現。</div>
+    </div>
+    <div class="rhythm-card uat-r">
+      <div class="when">白天</div>
+      <div class="what">驗證使用者流程 + <strong>中文文案</strong>。把工單從 <code>UAT → UAT Ready</code>(過)或 <code>UAT → Bug Found</code>(沒過,附重現步驟+截圖)。過了之後 @-mention <code>@Sam @Dan @Jesse</code> 做 Biz &amp; Ops Validation(英文文案+業務確認)。</div>
+    </div>
+    <div class="rhythm-card uat-r">
+      <div class="when">下班前</div>
+      <div class="what">在團隊頻道貼 3 行字:<em>測了什麼 · 找到什麼 · 卡住什麼。</em>在工單上只能留言 — 不要直接改文案或設計。</div>
+    </div>
+  </div>
+
+  <h3 style="color:var(--biz);margin-top:24px;">Sam / Dan / Jesse · Biz &amp; Ops 角色</h3>
+  <div class="rhythm">
+    <div class="rhythm-card" style="border-left:4px solid var(--biz);">
+      <div class="when" style="color:var(--biz);">早上批次</div>
+      <div class="what">處理排在 <code>Sign-off · Design + Copy</code>(gate 5 入口)與 <code>UAT Ready</code>(gate 12 入口)的工單。Sam <em>或</em> Dan 審核並回 <code>✅ approved</code>;審核者翻 Status 往前(gate 5 → <code>Ready For Development</code>;gate 12:<code>UAT Ready</code> → <code>Biz &amp; Ops Validation</code> 表示審核中 → <code>Launch Ready</code> 核可後)。</div>
+    </div>
+    <div class="rhythm-card" style="border-left:4px solid var(--biz);">
+      <div class="when" style="color:var(--biz);">SLA 執行</div>
+      <div class="what">每道 gate <strong>72 小時 SLA</strong>(從工單進入 queue 算起;只適用全新功能,change request 跳過這兩道 gate)。Jesse 在 48h 時於 WhatsApp 提醒 @Sam @Dan;72h 還沒回應則升級給 PM (Jeff) 處理「有條件先往前」。</div>
+    </div>
+    <div class="rhythm-card" style="border-left:4px solid var(--biz);">
+      <div class="when" style="color:var(--biz);">每週會議</div>
+      <div class="what">檢視 gate 有效性指標、queue 深度、SLA 升級的工單,以及 biz 與 dev 之間還沒解決的分歧。</div>
+    </div>
+  </div>
+
+  <!-- Saved views -->
+  <h2>需要建立的 Asana 過濾視圖</h2>
+  <table>
+    <thead>
+      <tr><th>視圖</th><th>過濾條件</th><th>負責人</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>QA Queue</strong></td><td>Status = QA,跨 Bug Tracking + Release Plan</td><td>[QA tester]</td></tr>
+      <tr><td><strong>UAT Queue</strong></td><td>Status = UAT,跨 Bug Tracking + Release Plan</td><td>Ming</td></tr>
+      <tr><td><strong>Biz &amp; Ops Queue</strong></td><td>Status in [<code>Sign-off · Design + Copy</code>、<code>UAT Ready</code>、<code>Biz &amp; Ops Validation</code>] — gate 5 與 gate 12 的進入/審核中工單</td><td>Sam / Dan / Jesse</td></tr>
+      <tr><td><strong>In Test (overview)</strong></td><td>Status in [QA, UAT, Launch Ready] — 所有正在某道 gate 中的工單</td><td>Jeff / dev lead</td></tr>
+      <tr><td><strong>This Week's Bugs</strong></td><td>Bug Release Plan,section = 當週</td><td>Dev team</td></tr>
+      <tr><td><strong>Stuck (&gt;5 days)</strong></td><td>Bug Tracking,Status in [Pending, Bug Found],修改於 &lt; 今天−5</td><td>Jeff(每週)</td></tr>
+      <tr><td><strong>Triage Queue</strong></td><td>Bug Tracking,section = Triage,沒有 assignee</td><td>Ops(Jesse,早上)</td></tr>
+      <tr><td><strong>UAT Bug Backlog</strong></td><td>Bug Tracking,<code>Found in = UAT</code>,Status != Done</td><td>Ming</td></tr>
+      <tr><td><strong>Prod Bug Triage</strong></td><td>Bug Tracking,<code>Found in = Production</code>,section = Triage</td><td>Ops + dev lead</td></tr>
+      <tr><td><strong>Defects by gate</strong></td><td>Bug Tracking,按 <code>Found in</code> 分組 — gate 有效性概覽</td><td>Jeff(每週)</td></tr>
+      <tr><td><strong>My Open Tickets</strong></td><td>Assignee = me,completed = false</td><td>每位工程師</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 廢除清單 -->
+  <h2>廢除清單 — 該下架的設定</h2>
+  <div class="kill">
+    <h4>該刪除/隱藏的 Asana 欄位/選項</h4>
+    <ul>
+      <li>要廢除的 Status 選項:<code>Done</code>、<code>Fixed</code>、<code>Discussion</code>、<code>Copywriting</code> — 用上面的 14-step 流程取代。<code>Copywriting</code> 已經由現有的 <code>Type</code> 欄位涵蓋。<em>(<code>Design Review</code> 保留 — 現在是 step 7。)</em></li>
+      <li>自訂欄位:<code>Copy of Priority</code>、<code>Priority -</code>、<code>Task Progress</code> — <code>Priority</code> / <code>Status</code> 的重複。</li>
+      <li>Bug Tracking 上的舊 section「<code>UAT April 27 - 28, 12PM (on test env)</code>」— 工單卡在那裡。改用 Bug Release Plan 上的日期 section。</li>
+    </ul>
+  </div>
+
+  <div class="footer">Beamco · Dev Workflow 提案 · 2026-05-05 · 給團隊審閱的草稿</div>
+
+  </div><!-- /.lang-zh -->
+
+</div><!-- /.wrap -->
+
+<script>
+  document.querySelectorAll('.lang-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      document.querySelectorAll('.lang-tab').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      document.querySelectorAll('.lang-content').forEach(c => {
+        c.hidden = !c.classList.contains('lang-' + lang);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

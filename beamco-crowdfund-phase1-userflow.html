@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beamco Crowdfund — Phase 1 User Flow</title>
+<style>
+  :root {
+    --bg: #0a0a0e;
+    --bg-2: #11111a;
+    --surface: #16161f;
+    --surface-2: #1c1c28;
+    --surface-3: #232333;
+    --border: #2a2a3a;
+    --border-strong: #3a3a4f;
+    --text: #e8e8ee;
+    --text-2: #b8b8c8;
+    --muted: #7a7a90;
+
+    --artist: #ff7eb6;
+    --artist-bg: rgba(255,126,182,0.08);
+    --artist-border: rgba(255,126,182,0.35);
+    --fan: #6cb8ff;
+    --fan-bg: rgba(108,184,255,0.08);
+    --fan-border: rgba(108,184,255,0.35);
+    --system: #b48cff;
+    --system-bg: rgba(180,140,255,0.08);
+    --system-border: rgba(180,140,255,0.32);
+    --admin: #ffc36c;
+    --admin-bg: rgba(255,195,108,0.08);
+
+    --draft: #8a8a9e;
+    --upcoming: #fdcb6e;
+    --live: #2ecc71;
+    --completed: #00d4aa;
+    --failed: #ff6b6b;
+    --phase2: #5a5a78;
+
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* === HEADER === */
+  header.app {
+    background: linear-gradient(135deg, #1a1226 0%, #0e1a2a 100%);
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  header.app h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.01em; }
+  header.app .sub { color: var(--text-2); font-size: 13px; max-width: 880px; }
+  header.app .badges { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+  header.app .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    background: rgba(255,126,182,0.12); color: var(--artist);
+    border: 1px solid var(--artist-border);
+  }
+  header.app .badge.fan { color: var(--fan); background: var(--fan-bg); border-color: var(--fan-border); }
+  header.app .badge.sys { color: var(--system); background: var(--system-bg); border-color: var(--system-border); }
+  header.app .meta {
+    display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px;
+    font-size: 12px; color: var(--muted);
+  }
+  header.app .meta a { color: var(--fan); text-decoration: none; border-bottom: 1px dotted var(--fan); }
+  header.app .meta a:hover { color: #fff; border-color: #fff; }
+
+  /* === TABS === */
+  .tabs {
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    gap: 4px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .tab {
+    background: none;
+    border: none;
+    padding: 14px 22px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: #fff;
+    border-bottom-color: var(--fan);
+  }
+  .tab .tab-pill {
+    font-size: 10px;
+    padding: 1px 7px;
+    background: var(--surface-3);
+    color: var(--text-2);
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    font-weight: 600;
+  }
+  .tab.active .tab-pill {
+    background: var(--fan-bg);
+    color: var(--fan);
+    border-color: var(--fan-border);
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  section {
+    padding: 28px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  section h2 {
+    font-size: 16px; font-weight: 700; letter-spacing: 0.02em;
+    color: #fff; margin-bottom: 4px; text-transform: uppercase;
+  }
+  section h2 .num {
+    display: inline-block; width: 26px; height: 26px;
+    line-height: 26px; text-align: center;
+    background: var(--surface-3); color: var(--text-2);
+    border-radius: 50%; font-size: 12px; margin-right: 10px;
+    border: 1px solid var(--border);
+  }
+  section .lede { color: var(--text-2); font-size: 13px; margin-bottom: 22px; max-width: 920px; }
+
+  /* ============================================================ */
+  /* === SIMPLE TAB === */
+  /* ============================================================ */
+
+  /* Hero summary */
+  .hero {
+    padding: 36px 40px;
+    background: linear-gradient(180deg, rgba(180,140,255,0.06), transparent);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h2 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 12px;
+    color: #fff;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    max-width: 900px;
+  }
+  .hero h2 em {
+    font-style: normal;
+    background: linear-gradient(120deg, var(--artist), var(--fan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+  }
+  .hero p {
+    font-size: 15px;
+    color: var(--text-2);
+    max-width: 800px;
+  }
+
+  /* Big simple status pills */
+  .simple-states {
+    display: flex; align-items: center; flex-wrap: nowrap;
+    padding: 8px 0;
+    overflow-x: auto;
+    gap: 0;
+  }
+  .simple-state {
+    flex-shrink: 0;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    text-align: left;
+    min-width: 170px;
+    position: relative;
+  }
+  .simple-state .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .simple-state .name { font-size: 16px; font-weight: 700; color: #fff; margin: 4px 0 4px; }
+  .simple-state .when { font-size: 12px; color: var(--text-2); }
+  .simple-state.draft .name     { color: var(--draft); }
+  .simple-state.upcoming .name  { color: var(--upcoming); }
+  .simple-state.live .name      { color: var(--live); }
+  .simple-state.completed       { border-color: var(--completed); }
+  .simple-state.completed .name { color: var(--completed); }
+  .simple-state.failed          { border-color: var(--failed); }
+  .simple-state.failed .name    { color: var(--failed); }
+  /* Terminal-state visual cue */
+  .simple-state.completed::after,
+  .simple-state.failed::after {
+    content: "Final"; position: absolute; top: 8px; right: 10px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.04); color: var(--muted);
+    border: 1px solid var(--border-strong);
+  }
+  .simple-arrow {
+    flex-shrink: 0;
+    color: var(--muted);
+    font-size: 22px;
+    padding: 0 8px;
+  }
+  /* Y-fork connector: vertical timeline → branches into two terminals */
+  .state-fork-wrap {
+    display: flex; align-items: stretch; gap: 0;
+  }
+  .state-fork-svg {
+    width: 70px; flex-shrink: 0; align-self: stretch;
+  }
+  .state-fork-svg svg { width: 100%; height: 100%; display: block; }
+  .terminal-stack {
+    display: flex; flex-direction: column; gap: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Simple side-by-side journey */
+  .journey {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 6px;
+  }
+  .role-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .role-header {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .role-header.artist { background: var(--artist-bg); border: 1px solid var(--artist-border); color: var(--artist); }
+  .role-header.fan    { background: var(--fan-bg);    border: 1px solid var(--fan-border);    color: var(--fan); }
+  .role-header .role-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.06); font-size: 16px;
+  }
+  .role-header .role-sub {
+    font-size: 11px;
+    color: var(--text-2);
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: auto;
+  }
+
+  .simple-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px 14px 14px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    position: relative;
+  }
+  .simple-step.artist { border-left: 3px solid var(--artist); }
+  .simple-step.fan    { border-left: 3px solid var(--fan); }
+  .simple-step.deferred { border-style: dashed; opacity: 0.5; }
+  .simple-step .num {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .simple-step.artist .num { background: var(--artist-bg); border-color: var(--artist-border); color: var(--artist); }
+  .simple-step.fan    .num { background: var(--fan-bg);    border-color: var(--fan-border);    color: var(--fan); }
+  .simple-step .body { flex: 1; min-width: 0; }
+  .simple-step h4 {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 3px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .simple-step h4 .icon { font-size: 16px; }
+  .simple-step p {
+    font-size: 12.5px;
+    color: var(--text-2);
+    line-height: 1.5;
+  }
+  .simple-step .when {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+  .simple-step .interaction-tag {
+    display: inline-block;
+    padding: 1px 8px;
+    background: var(--system-bg);
+    color: var(--system);
+    border: 1px solid var(--system-border);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* === FLOWCHART (standard shapes) === */
+  .flowcharts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 4px;
+  }
+  .fc-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px 8px;
+    overflow-x: auto;
+  }
+  .fc-wrap .fc-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .fc-wrap.artist .fc-title { color: var(--artist); }
+  .fc-wrap.fan    .fc-title { color: var(--fan); }
+  .fc-wrap .fc-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.06); font-size: 14px;
+  }
+  .fc-wrap .fc-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+  .fc-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  /* Flowchart shape styling — applied via inline fill but exposed for tweaking */
+  .fc-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 14px 16px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--text-2);
+  }
+  .fc-key-item { display: flex; align-items: center; gap: 8px; }
+  .fc-key-shape {
+    width: 32px; height: 18px; flex-shrink: 0;
+    background: var(--surface-2);
+    border: 1.5px solid var(--border-strong);
+  }
+  .fc-key-shape.start { border-radius: 9px; background: #0a0a0e; border-color: #5a5a78; }
+  .fc-key-shape.action { border-radius: 3px; background: rgba(180,140,255,0.12); border-color: var(--system); }
+  .fc-key-shape.decision {
+    transform: rotate(45deg) scale(0.75);
+    background: rgba(108,184,255,0.12);
+    border-color: var(--fan);
+  }
+  .fc-key-shape.choice { border-radius: 3px; background: rgba(180,140,255,0.06); border-color: var(--system-border); border-style: dashed; }
+
+  /* In/out of scope simple cards */
+  .scope-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .scope-card {
+    padding: 18px 20px;
+    border-radius: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .scope-card.in {
+    border-color: rgba(46,204,113,0.4);
+    background: linear-gradient(180deg, rgba(46,204,113,0.05), var(--surface));
+  }
+  .scope-card.out {
+    border: 1px dashed var(--phase2);
+    opacity: 0.85;
+  }
+  .scope-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scope-card.in h3  { color: var(--live); }
+  .scope-card.out h3 { color: var(--phase2); }
+  .scope-card ul { list-style: none; padding: 0; }
+  .scope-card li {
+    padding: 5px 0 5px 20px;
+    position: relative;
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+  }
+  .scope-card.in li::before {
+    content: "✓";
+    position: absolute; left: 0; top: 5px;
+    color: var(--live); font-weight: 700;
+  }
+  .scope-card.out li::before {
+    content: "⏳";
+    position: absolute; left: 0; top: 5px;
+    opacity: 0.7;
+  }
+  .scope-card li b { color: var(--text); font-weight: 600; }
+
+  /* Quick reference - simple matrix */
+  .quick-ref {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .quick-ref table { width: 100%; border-collapse: collapse; }
+  .quick-ref th, .quick-ref td {
+    padding: 11px 14px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .quick-ref th {
+    background: var(--surface-2);
+    color: var(--text-2);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .quick-ref tr:last-child td { border-bottom: none; }
+  .quick-ref td .a { color: var(--artist); font-weight: 600; }
+  .quick-ref td .f { color: var(--fan); font-weight: 600; }
+  .quick-ref td .s { color: var(--system); font-weight: 600; }
+
+  /* CTAs in plain English */
+  .cta-row {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .cta-card {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    flex: 1;
+    min-width: 220px;
+  }
+  .cta-card .label {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .cta-card.locked .label {
+    background: var(--surface-3);
+    color: var(--muted);
+    border: 1px dashed var(--border-strong);
+  }
+  .cta-card.go .label {
+    background: var(--fan-bg);
+    color: var(--fan);
+    border: 1px solid var(--fan-border);
+  }
+  .cta-card p { font-size: 12px; color: var(--text-2); }
+
+  /* ============================================================ */
+  /* === TECH TAB === */
+  /* ============================================================ */
+
+  /* state strip (tech) */
+  .state-strip {
+    display: flex; align-items: stretch; flex-wrap: wrap; gap: 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px;
+  }
+  .state {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    padding: 12px 14px; min-width: 130px; flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2); border: 1px solid var(--border-strong);
+  }
+  .state .name { font-size: 12px; font-weight: 700; color: #fff; }
+  .state .cond {
+    font-size: 10px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.04em; line-height: 1.4;
+  }
+  .state.draft     { border-color: var(--draft); }
+  .state.upcoming  { border-color: var(--upcoming); }
+  .state.live      { border-color: var(--live); }
+  .state.completed { border-color: var(--completed); }
+  .state.failed    { border-color: var(--failed); }
+  .state.phase2    { border-style: dashed; opacity: 0.7; }
+  .arrow { flex-shrink: 0; padding: 0 8px; color: var(--muted); font-size: 18px; align-self: center; }
+  .arrow.dashed { color: var(--phase2); }
+  .branch { display: flex; flex-direction: column; gap: 8px; padding: 0 4px; align-self: center; }
+  .branch .arrow { padding: 0; font-size: 13px; }
+  .branch .arrow .lbl { font-size: 10px; color: var(--muted); margin-left: 4px; }
+
+  /* Flow grid (tech) */
+  .flow {
+    display: grid;
+    grid-template-columns: 1fr 220px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .lane-header {
+    padding: 12px 16px; border-radius: var(--radius);
+    font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    text-align: center; margin-bottom: 12px;
+  }
+  .lane-header.artist { background: var(--artist-bg); border: 1px solid var(--artist-border); color: var(--artist); }
+  .lane-header.fan    { background: var(--fan-bg);    border: 1px solid var(--fan-border);    color: var(--fan); }
+  .lane-header.middle { background: var(--system-bg); border: 1px solid var(--system-border); color: var(--system); }
+
+  .lane { display: flex; flex-direction: column; gap: 12px; }
+  .step {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+  }
+  .step.artist { border-left: 3px solid var(--artist); }
+  .step.fan    { border-left: 3px solid var(--fan); }
+  .step.system { border-left: 3px solid var(--system); background: var(--bg-2); }
+
+  .step .head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; margin-bottom: 6px; flex-wrap: wrap;
+  }
+  .step .head .num {
+    font-size: 10px; color: var(--muted); font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .step .head .pill {
+    font-size: 10px; padding: 2px 7px; border-radius: 4px;
+    background: var(--surface-3); color: var(--text-2);
+    border: 1px solid var(--border-strong);
+    font-weight: 600;
+  }
+  .step .head .pill.draft     { color: var(--draft); }
+  .step .head .pill.upcoming  { color: var(--upcoming); border-color: rgba(253,203,110,0.4); background: rgba(253,203,110,0.08); }
+  .step .head .pill.live      { color: var(--live); border-color: rgba(46,204,113,0.4); background: rgba(46,204,113,0.08); }
+  .step .head .pill.completed { color: var(--completed); border-color: rgba(0,212,170,0.4); background: rgba(0,212,170,0.08); }
+  .step .head .pill.phase2    { color: var(--phase2); border-style: dashed; }
+  .step .head .pill.system    { color: var(--system); border-color: var(--system-border); background: var(--system-bg); }
+
+  .step h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #fff; }
+  .step .screen {
+    font-size: 11px; color: var(--muted);
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    margin-bottom: 8px; word-break: break-all;
+  }
+  .step ul { list-style: none; padding: 0; margin: 0; font-size: 12px; color: var(--text-2); }
+  .step ul li { padding: 3px 0 3px 14px; position: relative; }
+  .step ul li::before { content: "›"; position: absolute; left: 0; top: 3px; color: var(--muted); font-size: 11px; }
+  .step ul li b { color: var(--text); font-weight: 600; }
+  .step .fr-tag {
+    display: inline-block; font-size: 9px; padding: 1px 5px;
+    background: var(--surface-3); border: 1px solid var(--border-strong);
+    border-radius: 3px; color: var(--muted); margin-left: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace; vertical-align: middle;
+    font-weight: 500;
+  }
+  .step .note {
+    margin-top: 8px; padding: 6px 8px;
+    background: rgba(180,140,255,0.06); border-left: 2px solid var(--system);
+    font-size: 11px; color: var(--text-2);
+    border-radius: 0 4px 4px 0;
+  }
+  .step .note.warn { background: rgba(253,203,110,0.06); border-color: var(--upcoming); }
+
+  .interaction {
+    background: transparent;
+    border: 1px dashed var(--system-border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-size: 11px; color: var(--text-2);
+    text-align: center;
+  }
+  .interaction.solid { background: var(--system-bg); border-style: solid; }
+  .interaction.dim { opacity: 0.45; }
+  .interaction .arrow-row {
+    display: flex; align-items: center; gap: 6px;
+    justify-content: center;
+    color: var(--system); font-weight: 700;
+    margin-bottom: 4px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .interaction .desc { font-size: 11px; color: var(--text-2); margin-top: 2px; line-height: 1.4; }
+
+  .boundary {
+    background: linear-gradient(90deg, transparent 0%, var(--system-bg) 50%, transparent 100%);
+    border-top: 1px dashed var(--system); border-bottom: 1px dashed var(--system);
+    padding: 14px 24px; text-align: center; margin: 6px 0;
+    grid-column: 1 / -1;
+  }
+  .boundary .tag {
+    display: inline-block; padding: 4px 14px;
+    background: var(--bg); border: 1px solid var(--system); color: var(--system);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .boundary .desc { color: var(--text-2); font-size: 12px; margin-top: 6px; }
+
+  .matrix {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .matrix table { width: 100%; border-collapse: collapse; }
+  .matrix th, .matrix td {
+    padding: 10px 14px; text-align: left;
+    font-size: 12px; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .matrix th {
+    background: var(--surface-2); color: var(--text-2);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .matrix td.actor { color: var(--text); font-weight: 600; white-space: nowrap; }
+  .matrix td.actor .a { color: var(--artist); }
+  .matrix td.actor .f { color: var(--fan); }
+  .matrix td.actor .s { color: var(--system); }
+  .matrix td.actor .ad { color: var(--admin); }
+  .matrix td.action { color: var(--text-2); }
+  .matrix td.refs { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 10px; color: var(--muted); white-space: nowrap; }
+  .matrix tr:last-child td { border-bottom: none; }
+  .matrix tr:hover td { background: var(--surface-2); }
+
+  .questions {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .q {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--upcoming);
+    border-radius: var(--radius); padding: 12px 14px;
+  }
+  .q.high { border-left-color: var(--failed); }
+  .q .tag {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--upcoming); margin-bottom: 4px; display: block;
+  }
+  .q.high .tag { color: var(--failed); }
+  .q h4 { font-size: 13px; color: #fff; font-weight: 600; margin-bottom: 4px; }
+  .q p { font-size: 11px; color: var(--text-2); }
+  .q .owner { font-size: 10px; color: var(--muted); margin-top: 6px; font-family: 'SF Mono', Menlo, Consolas, monospace; }
+
+  /* === RELEASE CR TABLES === */
+  .cr-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .cr-group-header {
+    padding: 12px 16px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--upcoming);
+  }
+  .cr-group-header .count {
+    background: var(--surface-3); color: var(--text-2);
+    padding: 2px 8px; border-radius: 999px;
+    font-size: 11px; border: 1px solid var(--border-strong);
+  }
+  .cr-table { width: 100%; border-collapse: collapse; }
+  .cr-table th, .cr-table td {
+    padding: 9px 14px; text-align: left; font-size: 12px;
+    border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  .cr-table th {
+    background: var(--bg-2); color: var(--muted);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .cr-table tr:last-child td { border-bottom: none; }
+  .cr-table td.id {
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 11px; color: var(--text); font-weight: 700; white-space: nowrap;
+  }
+  .cr-table td.name { color: var(--text); font-weight: 500; }
+  .cr-table td.what { color: var(--text-2); }
+  .cr-status {
+    display: inline-block; padding: 1px 7px;
+    border-radius: 4px; font-size: 10px; font-weight: 700;
+    border: 1px solid var(--border-strong); background: var(--surface-3); color: var(--text-2);
+    white-space: nowrap;
+  }
+  .cr-status.uat   { color: #6cb8ff; border-color: var(--fan-border); background: var(--fan-bg); }
+  .cr-status.dev   { color: var(--upcoming); border-color: rgba(253,203,110,0.4); background: rgba(253,203,110,0.08); }
+  .cr-status.done  { color: var(--completed); border-color: rgba(0,212,170,0.4); background: rgba(0,212,170,0.08); }
+  .cr-status.rfd   { color: var(--system); border-color: var(--system-border); background: var(--system-bg); }
+  .cr-status.copy  { color: var(--artist); border-color: var(--artist-border); background: var(--artist-bg); }
+  .cr-impact {
+    display: inline-block; padding: 1px 6px;
+    border-radius: 3px; font-size: 10px; font-weight: 600;
+  }
+  .cr-impact.logic { background: rgba(255,107,107,0.10); color: var(--failed); border: 1px solid rgba(255,107,107,0.35); }
+  .cr-impact.copy  { background: var(--surface-3); color: var(--muted); border: 1px solid var(--border-strong); }
+
+  .deferred {
+    background: var(--surface); border: 1px dashed var(--phase2);
+    border-radius: var(--radius); padding: 16px 18px; color: var(--text-2);
+  }
+  .deferred ul { padding: 0; margin: 8px 0 0 0; list-style: none; }
+  .deferred li { padding: 4px 0 4px 22px; position: relative; font-size: 12px; }
+  .deferred li::before {
+    content: "⏳"; position: absolute; left: 0; top: 4px; font-size: 11px; opacity: 0.6;
+  }
+  .deferred li b { color: var(--text); }
+
+  .admin-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--admin); border-radius: var(--radius);
+    padding: 14px 18px;
+  }
+  .admin-block h3 { font-size: 14px; color: var(--admin); margin-bottom: 6px; }
+  .admin-block ul { list-style: none; padding: 0; }
+  .admin-block li { padding: 3px 0 3px 14px; position: relative; font-size: 12px; color: var(--text-2); }
+  .admin-block li::before { content: "·"; position: absolute; left: 4px; color: var(--admin); }
+  .admin-block li b { color: var(--text); }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 18px;
+    padding: 14px 40px;
+    background: var(--bg-2);
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; color: var(--text-2); }
+  .swatch {
+    width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0;
+    border: 1px solid var(--border-strong);
+  }
+  .swatch.artist { background: var(--artist); }
+  .swatch.fan    { background: var(--fan); }
+  .swatch.system { background: var(--system); }
+  .swatch.admin  { background: var(--admin); }
+  .swatch.draft     { background: var(--draft); }
+  .swatch.upcoming  { background: var(--upcoming); }
+  .swatch.live      { background: var(--live); }
+  .swatch.completed { background: var(--completed); }
+  .swatch.failed    { background: var(--failed); }
+  .swatch.phase2    { background: var(--phase2); border-style: dashed; }
+
+  footer.app {
+    padding: 24px 40px;
+    text-align: center;
+    color: var(--muted); font-size: 11px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 1100px) {
+    .flow { grid-template-columns: 1fr; }
+    .journey { grid-template-columns: 1fr; }
+    .scope-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="badges">
+    <h1>Beamco Crowdfund — Phase 1 User Flow</h1>
+    <span class="badge">Phase 1</span>
+    <span class="badge fan">Artist × Fan × Admin</span>
+  </div>
+  <p class="sub">End-to-end journey for both roles, the cross-role interactions, and the Phase 1 / Phase 2 boundary.</p>
+  <div class="meta">
+    <span>Source · Crowdfund Project BRD (Notion · 2025-12-04, reviewed 2026-03-22)</span>
+    <span>·</span>
+    <span>UAT · artists.beamco.co + fans.beamco.co (UAT is canonical)</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="simple">
+    Simple Flow
+    <span class="tab-pill">For ops</span>
+  </button>
+  <button class="tab" data-tab="tech">
+    Technical Detail
+    <span class="tab-pill">For dev / design</span>
+  </button>
+</nav>
+
+<!-- ============================================================ -->
+<!-- ============================================================ -->
+<!-- SIMPLE FLOW TAB -->
+<!-- ============================================================ -->
+<!-- ============================================================ -->
+<div class="panel active" id="panel-simple">
+
+<div class="hero">
+  <h2>Phase 1 lets fans <em>commit</em> to projects.<br>The actual money changes hands in Phase 2.</h2>
+  <p>Artists build a campaign, fans pledge to plans they like, the system tracks who's in. No one's card gets charged in Phase 1 — that's Phase 2's job. Here's how the two sides play out.</p>
+</div>
+
+<!-- ============== SIMPLE STATE TIMELINE ============== -->
+<section>
+  <h2>Project goes through 5 stages</h2>
+  <p class="lede">The project status moves automatically based on dates and how many shares get reserved. The artist doesn't manually flip these — the system does.</p>
+
+  <div class="simple-states">
+    <div class="simple-state draft">
+      <div class="lbl">Stage 1</div>
+      <div class="name">Draft</div>
+      <div class="when">Artist is still building it</div>
+    </div>
+    <div class="simple-arrow">→</div>
+    <div class="simple-state upcoming">
+      <div class="lbl">Stage 2</div>
+      <div class="name">Not Started</div>
+      <div class="when">Published, but preview date hasn't arrived</div>
+    </div>
+    <div class="simple-arrow">→</div>
+    <div class="simple-state upcoming">
+      <div class="lbl">Stage 3</div>
+      <div class="name">Upcoming</div>
+      <div class="when">Fans can see it, can't invest yet</div>
+    </div>
+    <div class="simple-arrow">→</div>
+    <div class="simple-state live">
+      <div class="lbl">Stage 4</div>
+      <div class="name">In Progress</div>
+      <div class="when">Live · fans can invest &amp; upgrade</div>
+    </div>
+
+    <!-- Y-fork: end date arrives → either Completed (target hit) or Unsuccessful (target missed) -->
+    <div class="state-fork-svg" aria-label="forks to two terminal states">
+      <svg viewBox="0 0 70 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs>
+          <marker id="state-arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#7a7a90"/>
+          </marker>
+        </defs>
+        <!-- top fork: → Completed -->
+        <path d="M 0,100 Q 35,100 35,40 Q 35,40 60,40" fill="none" stroke="#00d4aa" stroke-width="2" marker-end="url(#state-arrow)"/>
+        <!-- bottom fork: → Unsuccessful -->
+        <path d="M 0,100 Q 35,100 35,160 Q 35,160 60,160" fill="none" stroke="#ff6b6b" stroke-width="2" marker-end="url(#state-arrow)"/>
+        <!-- decision dot at branching point -->
+        <circle cx="0" cy="100" r="3" fill="#7a7a90"/>
+        <text x="35" y="108" text-anchor="middle" fill="#7a7a90" font-size="9" font-family="monospace">end&#10;date</text>
+      </svg>
+    </div>
+
+    <div class="terminal-stack">
+      <div class="simple-state completed">
+        <div class="lbl">Stage 5a · success path</div>
+        <div class="name">Completed</div>
+        <div class="when">Hit the share target by end date · → Phase 2 charge &amp; assignment</div>
+      </div>
+      <div class="simple-state failed">
+        <div class="lbl">Stage 5b · failure path</div>
+        <div class="name">Unsuccessful</div>
+        <div class="when">Missed the share target by end date · reservations released, no charge</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FLOWCHARTS (standard shapes) ============== -->
+<section>
+  <h2>What each side does, step by step</h2>
+  <p class="lede">Standard flowchart notation: <b style="color: #fff;">capsule</b> = start/end, <b style="color: var(--system);">rectangle</b> = action, <b style="color: var(--fan);">diamond</b> = decision, <b style="color: var(--system);">dashed rectangle</b> = a choice option. Read top to bottom.</p>
+
+  <div class="flowcharts">
+
+    <!-- ============= ARTIST FLOWCHART ============= -->
+    <div class="fc-wrap artist">
+      <div class="fc-title">
+        <span class="fc-icon">🎤</span>
+        Artist · Beamco Artist Portal
+      </div>
+      <div class="fc-sub">Desktop · creator side · Phase 1</div>
+
+      <svg class="fc-svg" viewBox="0 0 700 1380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow-a" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#7a7a90"/>
+          </marker>
+        </defs>
+
+        <!-- 1. START -->
+        <g>
+          <rect x="250" y="20" width="200" height="56" rx="28" fill="#0a0a0e" stroke="#5a5a78" stroke-width="2"/>
+          <text x="350" y="46" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Verified artist</text>
+          <text x="350" y="64" text-anchor="middle" fill="#b8b8c8" font-size="11">artist contract signed</text>
+        </g>
+        <line x1="350" y1="76" x2="350" y2="116" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-a)"/>
+
+        <!-- 2. ACTION: Build project -->
+        <g>
+          <rect x="220" y="120" width="260" height="70" rx="6" fill="rgba(255,126,182,0.12)" stroke="#ff7eb6" stroke-width="2"/>
+          <text x="350" y="148" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Build project</text>
+          <text x="350" y="168" text-anchor="middle" fill="#b8b8c8" font-size="11">4-step wizard · Draft state</text>
+        </g>
+        <line x1="350" y1="190" x2="350" y2="234" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-a)"/>
+
+        <!-- 3. DECISION: All required fields filled? -->
+        <g>
+          <polygon points="350,238 510,330 350,422 190,330" fill="rgba(108,184,255,0.10)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="320" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Validation</text>
+          <text x="350" y="338" text-anchor="middle" fill="#b8b8c8" font-size="11">all required fields,</text>
+          <text x="350" y="354" text-anchor="middle" fill="#b8b8c8" font-size="11">images, dates, plans?</text>
+        </g>
+        <!-- No: loop back to step 2 -->
+        <path d="M 190,330 Q 100,330 100,160 Q 100,154 220,154" fill="none" stroke="#7a7a90" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrow-a)"/>
+        <text x="115" y="252" fill="#fdcb6e" font-size="10" font-weight="700">No · fix &amp; retry</text>
+        <!-- Yes: down -->
+        <line x1="350" y1="422" x2="350" y2="466" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-a)"/>
+        <text x="360" y="448" fill="#2ecc71" font-size="10" font-weight="700">Yes</text>
+
+        <!-- 4. ACTION: Publish -->
+        <g>
+          <rect x="220" y="470" width="260" height="70" rx="6" fill="rgba(255,126,182,0.12)" stroke="#ff7eb6" stroke-width="2"/>
+          <text x="350" y="498" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Publish project</text>
+          <text x="350" y="518" text-anchor="middle" fill="#b8b8c8" font-size="11">visible to fans at preview date</text>
+        </g>
+        <line x1="350" y1="540" x2="350" y2="584" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-a)"/>
+
+        <!-- 5. SYSTEM ACTION: Status auto-flips -->
+        <g>
+          <rect x="200" y="588" width="300" height="80" rx="6" fill="rgba(180,140,255,0.10)" stroke="#b48cff" stroke-width="2" stroke-dasharray="6,3"/>
+          <text x="350" y="616" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">System: status auto-flips by date</text>
+          <text x="350" y="636" text-anchor="middle" fill="#b8b8c8" font-size="11">Not Started → Upcoming → In Progress</text>
+          <text x="350" y="652" text-anchor="middle" fill="#7a7a90" font-size="10" font-style="italic">artist cannot manually change</text>
+        </g>
+        <line x1="350" y1="668" x2="350" y2="712" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-a)"/>
+
+        <!-- 6. ACTION: Manage live project -->
+        <g>
+          <rect x="200" y="716" width="300" height="86" rx="6" fill="rgba(255,126,182,0.12)" stroke="#ff7eb6" stroke-width="2"/>
+          <text x="350" y="744" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Manage live project</text>
+          <text x="350" y="764" text-anchor="middle" fill="#b8b8c8" font-size="11">monitor pledges · post updates</text>
+          <text x="350" y="782" text-anchor="middle" fill="#b8b8c8" font-size="11">(General · Milestone Completed · Delayed)</text>
+        </g>
+        <!-- Self-loop on management -->
+        <path d="M 500,759 Q 580,759 580,825 Q 580,890 500,890" fill="none" stroke="#7a7a90" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrow-a)"/>
+        <line x1="350" y1="802" x2="350" y2="846" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-a)"/>
+
+        <!-- 7. DECISION: End date reached? -->
+        <g>
+          <polygon points="350,850 510,940 350,1030 190,940" fill="rgba(108,184,255,0.10)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="932" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">End date</text>
+          <text x="350" y="950" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">reached?</text>
+        </g>
+        <!-- No: loop back to manage -->
+        <path d="M 510,940 Q 600,940 600,759 Q 600,716 500,737" fill="none" stroke="#7a7a90" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrow-a)"/>
+        <text x="540" y="848" fill="#fdcb6e" font-size="10" font-weight="700">No · keep managing</text>
+        <!-- Yes: down -->
+        <line x1="350" y1="1030" x2="350" y2="1074" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-a)"/>
+        <text x="360" y="1056" fill="#2ecc71" font-size="10" font-weight="700">Yes</text>
+
+        <!-- 8. DECISION: Reserved >= min? -->
+        <g>
+          <polygon points="350,1078 510,1170 350,1262 190,1170" fill="rgba(108,184,255,0.10)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="1158" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Reserved shares</text>
+          <text x="350" y="1176" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">≥ minimum?</text>
+        </g>
+        <!-- Yes: right -->
+        <path d="M 510,1170 L 565,1170 Q 600,1170 600,1208 L 600,1264" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-a)"/>
+        <text x="525" y="1158" fill="#2ecc71" font-size="10" font-weight="700">Yes</text>
+        <!-- No: down-left -->
+        <path d="M 190,1170 L 135,1170 Q 100,1170 100,1208 L 100,1264" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-a)"/>
+        <text x="145" y="1158" fill="#ff6b6b" font-size="10" font-weight="700">No</text>
+
+        <!-- 9a. END: Completed (right) -->
+        <g>
+          <rect x="500" y="1268" width="200" height="56" rx="28" fill="rgba(0,212,170,0.12)" stroke="#00d4aa" stroke-width="2"/>
+          <text x="600" y="1294" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">COMPLETED</text>
+          <text x="600" y="1312" text-anchor="middle" fill="#b8b8c8" font-size="10">→ Phase 2 settlement</text>
+        </g>
+
+        <!-- 9b. END: Unsuccessful (left) -->
+        <g>
+          <rect x="0" y="1268" width="200" height="56" rx="28" fill="rgba(255,107,107,0.10)" stroke="#ff6b6b" stroke-width="2"/>
+          <text x="100" y="1294" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">UNSUCCESSFUL</text>
+          <text x="100" y="1312" text-anchor="middle" fill="#b8b8c8" font-size="10">loyalty revoked · no charge</text>
+        </g>
+
+      </svg>
+    </div>
+
+    <!-- ============= FAN FLOWCHART ============= -->
+    <div class="fc-wrap fan">
+      <div class="fc-title">
+        <span class="fc-icon">🙋</span>
+        Fan · Beamco Fans
+      </div>
+      <div class="fc-sub">Mobile · supporter side · Phase 1</div>
+
+      <svg class="fc-svg" viewBox="0 0 700 1980" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow-f" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#7a7a90"/>
+          </marker>
+        </defs>
+
+        <!-- 1. START -->
+        <g>
+          <rect x="250" y="20" width="200" height="56" rx="28" fill="#0a0a0e" stroke="#5a5a78" stroke-width="2"/>
+          <text x="350" y="46" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">New user</text>
+          <text x="350" y="64" text-anchor="middle" fill="#b8b8c8" font-size="11">visits Beamco</text>
+        </g>
+        <line x1="350" y1="76" x2="350" y2="116" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+
+        <!-- 2. ACTION: Sign up -->
+        <g>
+          <rect x="220" y="120" width="260" height="60" rx="6" fill="rgba(108,184,255,0.12)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="148" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Sign up · follow artist</text>
+          <text x="350" y="166" text-anchor="middle" fill="#b8b8c8" font-size="11">browse artist's store</text>
+        </g>
+        <line x1="350" y1="180" x2="350" y2="222" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+
+        <!-- 3. DECISION: Become a top fan -->
+        <g>
+          <polygon points="350,226 530,318 350,410 170,318" fill="rgba(108,184,255,0.10)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="310" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Become a top fan</text>
+          <text x="350" y="328" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">(earn ≥1 loyalty pt)</text>
+          <text x="350" y="346" text-anchor="middle" fill="#7a7a90" font-size="10">either path works</text>
+        </g>
+
+        <!-- 4. CHOICE A — Join community -->
+        <path d="M 250,400 Q 170,420 145,438" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <g>
+          <rect x="20" y="440" width="250" height="80" rx="6" fill="rgba(180,140,255,0.06)" stroke="#b48cff" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="145" y="464" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">A · Join community</text>
+          <text x="145" y="484" text-anchor="middle" fill="#b8b8c8" font-size="11">tap "Join {Artist}'s community"</text>
+          <text x="145" y="502" text-anchor="middle" fill="#2ecc71" font-size="11" font-weight="600">→ instant 1 point</text>
+        </g>
+
+        <!-- 4. CHOICE B — Any purchase -->
+        <path d="M 450,400 Q 530,420 555,438" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <g>
+          <rect x="430" y="440" width="250" height="80" rx="6" fill="rgba(180,140,255,0.06)" stroke="#b48cff" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="555" y="464" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">B · Any purchase</text>
+          <text x="555" y="484" text-anchor="middle" fill="#b8b8c8" font-size="11">incl. $0 / free items</text>
+          <text x="555" y="502" text-anchor="middle" fill="#2ecc71" font-size="11" font-weight="600">→ ≥28 points (1:28 ratio)</text>
+        </g>
+
+        <!-- merge -->
+        <path d="M 145,520 Q 145,560 290,572" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <path d="M 555,520 Q 555,560 410,572" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+
+        <!-- 5. ACTION: Eligibility unlocked -->
+        <g>
+          <rect x="180" y="576" width="340" height="64" rx="6" fill="rgba(46,204,113,0.10)" stroke="#2ecc71" stroke-width="2"/>
+          <text x="350" y="603" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Eligibility unlocked instantly</text>
+          <text x="350" y="623" text-anchor="middle" fill="#b8b8c8" font-size="11">no 7-day wait · permanent flag (per artist)</text>
+        </g>
+        <line x1="350" y1="640" x2="350" y2="684" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+
+        <!-- 6. ACTION: Discover project -->
+        <g>
+          <rect x="220" y="688" width="260" height="60" rx="6" fill="rgba(108,184,255,0.12)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="716" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Discover project</text>
+          <text x="350" y="734" text-anchor="middle" fill="#b8b8c8" font-size="11">"{Artist}'s Fanvestor" in store</text>
+        </g>
+        <line x1="350" y1="748" x2="350" y2="790" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+
+        <!-- 7. DECISION: In Progress? -->
+        <g>
+          <polygon points="350,794 510,886 350,978 190,886" fill="rgba(108,184,255,0.10)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="876" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Project status:</text>
+          <text x="350" y="894" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">In Progress?</text>
+        </g>
+        <!-- No: visible only, wait loop -->
+        <path d="M 190,886 L 100,886 Q 60,886 60,778 Q 60,718 220,718" fill="none" stroke="#7a7a90" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrow-f)"/>
+        <text x="20" y="836" fill="#fdcb6e" font-size="10" font-weight="700">Upcoming · wait</text>
+        <!-- Yes: down -->
+        <line x1="350" y1="978" x2="350" y2="1022" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <text x="360" y="1004" fill="#2ecc71" font-size="10" font-weight="700">Yes</text>
+
+        <!-- 8. ACTION: Tap Fanvest Now -->
+        <g>
+          <rect x="200" y="1026" width="300" height="60" rx="6" fill="rgba(108,184,255,0.12)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="1051" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Tap "Fanvest Now"</text>
+          <text x="350" y="1070" text-anchor="middle" fill="#b8b8c8" font-size="11">eligible-only CTA on In Progress projects</text>
+        </g>
+        <line x1="350" y1="1086" x2="350" y2="1124" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+
+        <!-- 9. ACTION: "Choose your plan" bottom sheet — tier tabs -->
+        <g>
+          <rect x="180" y="1128" width="340" height="50" rx="6" fill="rgba(108,184,255,0.12)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="1148" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">"Choose your plan" bottom sheet</text>
+          <text x="350" y="1166" text-anchor="middle" fill="#b8b8c8" font-size="10">tabs across plan tiers</text>
+        </g>
+        <!-- 2 choice rectangles (actual production: Basic / Plus) -->
+        <g>
+          <rect x="100" y="1206" width="220" height="50" rx="6" fill="rgba(180,140,255,0.06)" stroke="#b48cff" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="210" y="1228" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">Basic</text>
+          <text x="210" y="1244" text-anchor="middle" fill="#b8b8c8" font-size="10">e.g. 4341 pts · 50 contracts</text>
+        </g>
+        <g>
+          <rect x="380" y="1206" width="220" height="50" rx="6" fill="rgba(180,140,255,0.06)" stroke="#b48cff" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="490" y="1228" text-anchor="middle" fill="#fff" font-size="11" font-weight="600">Plus</text>
+          <text x="490" y="1244" text-anchor="middle" fill="#b8b8c8" font-size="10">higher tier</text>
+        </g>
+        <path d="M 290,1178 Q 230,1191 210,1206" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <path d="M 410,1178 Q 470,1191 490,1206" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <path d="M 210,1256 Q 210,1306 280,1316" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <path d="M 490,1256 Q 490,1306 420,1316" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+
+        <!-- 10. DECISION: Royalty Shares available? -->
+        <g>
+          <polygon points="350,1312 510,1404 350,1496 190,1404" fill="rgba(108,184,255,0.10)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="1402" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Royalty Shares</text>
+          <text x="350" y="1420" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">available?</text>
+        </g>
+        <path d="M 190,1404 L 100,1404 Q 60,1404 60,1191 Q 60,1151 240,1151" fill="none" stroke="#7a7a90" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrow-f)"/>
+        <text x="20" y="1336" fill="#fdcb6e" font-size="10" font-weight="700">No · pick another</text>
+        <line x1="350" y1="1496" x2="350" y2="1540" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <text x="360" y="1522" fill="#2ecc71" font-size="10" font-weight="700">Yes</text>
+
+        <!-- 11. ACTION: Complete invest flow -->
+        <g>
+          <rect x="140" y="1544" width="420" height="140" rx="6" fill="rgba(108,184,255,0.12)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="1572" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Complete invest flow</text>
+          <text x="350" y="1592" text-anchor="middle" fill="#b8b8c8" font-size="11">1. Enter shipping address</text>
+          <text x="350" y="1610" text-anchor="middle" fill="#b8b8c8" font-size="11">2. Sign "Fan Royalty Participation Agreement"</text>
+          <text x="350" y="1628" text-anchor="middle" fill="#b8b8c8" font-size="11">3. Checkout screen → tap "Place Order"</text>
+          <text x="350" y="1646" text-anchor="middle" fill="#b8b8c8" font-size="11">4. Stripe modal → "Confirm Payment" (no charge)</text>
+          <text x="350" y="1664" text-anchor="middle" fill="#b8b8c8" font-size="11">5. "Thank you for your purchase!" → reservation</text>
+        </g>
+        <line x1="350" y1="1664" x2="350" y2="1708" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+
+        <!-- 12. DECISION: Outcome -->
+        <g>
+          <polygon points="350,1712 510,1804 350,1896 190,1804" fill="rgba(108,184,255,0.10)" stroke="#6cb8ff" stroke-width="2"/>
+          <text x="350" y="1794" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Outcome</text>
+          <text x="350" y="1812" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">at end date?</text>
+        </g>
+        <path d="M 510,1804 L 565,1804 Q 600,1804 600,1846 L 600,1902" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <text x="525" y="1792" fill="#2ecc71" font-size="10" font-weight="700">Completed</text>
+        <path d="M 190,1804 L 135,1804 Q 100,1804 100,1846 L 100,1902" fill="none" stroke="#7a7a90" stroke-width="2" marker-end="url(#arrow-f)"/>
+        <text x="115" y="1792" fill="#ff6b6b" font-size="10" font-weight="700">Unsuccessful</text>
+
+        <!-- 13a. END: Funded -->
+        <g>
+          <rect x="500" y="1906" width="200" height="56" rx="28" fill="rgba(0,212,170,0.12)" stroke="#00d4aa" stroke-width="2"/>
+          <text x="600" y="1932" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">FUNDED</text>
+          <text x="600" y="1950" text-anchor="middle" fill="#b8b8c8" font-size="10">awaits Phase 2 charge</text>
+        </g>
+
+        <!-- 13b. END: Released -->
+        <g>
+          <rect x="0" y="1906" width="200" height="56" rx="28" fill="rgba(255,107,107,0.10)" stroke="#ff6b6b" stroke-width="2"/>
+          <text x="100" y="1932" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">RELEASED</text>
+          <text x="100" y="1950" text-anchor="middle" fill="#b8b8c8" font-size="10">eligibility kept · loyalty revoked</text>
+        </g>
+
+      </svg>
+    </div>
+
+  </div>
+
+  <div class="fc-key">
+    <div class="fc-key-item"><span class="fc-key-shape start"></span> <b style="color: var(--text);">Start / End</b> — entry or exit point</div>
+    <div class="fc-key-item"><span class="fc-key-shape action"></span> <b style="color: var(--text);">Action</b> — user or system step</div>
+    <div class="fc-key-item"><span class="fc-key-shape decision"></span> <b style="color: var(--text);">Decision</b> — branches the flow</div>
+    <div class="fc-key-item"><span class="fc-key-shape choice"></span> <b style="color: var(--text);">Choice option</b> — one of multiple paths</div>
+    <div class="fc-key-item" style="margin-left: auto;"><b style="color: var(--text);">Solid arrow</b> = forward · <b style="color: var(--text);">dashed arrow</b> = loop back</div>
+  </div>
+</section>
+
+<!-- ============== KEY CTAS / TERMS ============== -->
+<section>
+  <h2>The two CTAs your team will see</h2>
+  <p class="lede">These are the actual button labels in the design. Knowing which one a fan should be seeing is the fastest way to debug eligibility issues.</p>
+
+  <div class="cta-row">
+    <div class="cta-card locked">
+      <span class="label">View Requirement</span>
+      <p>What a fan sees if they're <b>not yet eligible</b>. Replaces the invest button. The screen reads:<br><i style="color: var(--text-2);">"Exclusive Access: Top Fans Only. This is reserved for {Creator}'s top fans. To qualify, either: (1) Grab something from {Creator}'s shop; or (2) Join {Creator}'s community."</i></p>
+    </div>
+    <div class="cta-card go">
+      <span class="label">Fanvest Now</span>
+      <p>What an <b>eligible</b> fan sees on a project that's <b>In Progress</b>. Starts the invest flow (opens a "Choose your plan" bottom sheet). Doesn't appear on Upcoming projects.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SIMPLE INTERACTION REF ============== -->
+<section>
+  <h2>Cross-role interactions in plain English</h2>
+  <p class="lede">For ops triage: these are the touch points where one role's action visibly affects the other.</p>
+
+  <div class="quick-ref">
+    <table>
+      <thead>
+        <tr>
+          <th>When this happens</th>
+          <th style="width: 220px;">It affects</th>
+          <th>Effect</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="a">Artist</span> publishes a project</td>
+          <td><span class="f">Fans</span> see it</td>
+          <td>Project shows up in artist's store under "Fanvestor" once preview date is reached.</td>
+        </tr>
+        <tr>
+          <td><span class="f">Fan</span> joins the artist's community <i style="color: var(--muted);">— OR —</i> makes any purchase (incl. $0 / free items)</td>
+          <td><span class="s">System</span> only</td>
+          <td>Fan earns ≥1 loyalty point and is <b>permanently unlocked</b> to invest in that artist. Instant — no waiting period. A $0 purchase awards 28 points (1:28 ratio).</td>
+        </tr>
+        <tr>
+          <td><span class="f">Fan</span> taps "Fanvest Now" and confirms</td>
+          <td><span class="a">Artist</span> dashboard</td>
+          <td>Remaining shares drop. % Sold goes up. Fan appears in Top Fans list. <b>No card charged.</b></td>
+        </tr>
+        <tr>
+          <td><span class="f">Fan</span> upgrades plan</td>
+          <td><span class="a">Artist</span> dashboard</td>
+          <td>Old <b>Royalty Share slot</b> returns to availability, new one taken. Numbers retally.</td>
+        </tr>
+        <tr>
+          <td><span class="a">Artist</span> posts an update</td>
+          <td><span class="f">Investors</span></td>
+          <td>Email + in-app for Milestone Completed/Delayed. Investors-only updates hidden from non-investors.</td>
+        </tr>
+        <tr>
+          <td><span class="a">Artist</span> misses a milestone</td>
+          <td><span class="a">Artist</span> + <span class="f">Fans</span></td>
+          <td>System blocks artist from posting "Completed" until they post "Delayed" with a new date. Fans see "X days overdue" badge.</td>
+        </tr>
+        <tr>
+          <td>End date arrives</td>
+          <td><span class="a">Artist</span> + <span class="f">Fans</span></td>
+          <td>Project flips to <b>Completed</b> or <b>Unsuccessful</b>. On Unsuccessful, that project's investment loyalty points get wiped (eligibility stays).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============== SCOPE ============== -->
+<section>
+  <h2>What's in Phase 1 vs out of scope</h2>
+  <p class="lede">Anything in the right column is <b>not built</b> in this phase, but the architecture must support adding it later without rework.</p>
+
+  <div class="scope-grid">
+    <div class="scope-card in">
+      <h3>✓ In Phase 1</h3>
+      <ul>
+        <li><b>Project creation</b> — the full 4-step wizard</li>
+        <li><b>Status machine</b> — Draft → Not Started → Upcoming → In Progress → Completed/Unsuccessful</li>
+        <li><b>Eligibility system</b> — instant unlock via community-join OR any purchase (incl. free), 1-point threshold, permanent flag</li>
+        <li><b>Invest flow</b> — pick plan, Royalty Shares availability check, shipping, Fan Royalty Participation Agreement, Checkout (Place Order), Stripe Future Payment Setup, "Thank you" screen</li>
+        <li><b>Plan upgrade</b> — upward-only</li>
+        <li><b>Reserved shares</b> — committed but not yet assigned</li>
+        <li><b>Updates</b> — General + Milestone Completed + Milestone Delayed, with overdue branching</li>
+        <li><b>Loyalty points</b> — earn on community-join + invest + upgrade; revoke on Unsuccessful project</li>
+        <li><b>Contracts</b> — fan + artist (display only, not enforced)</li>
+        <li><b>Admin config</b> — X / Y values, contract templates (EN + zh-TW)</li>
+      </ul>
+    </div>
+    <div class="scope-card out">
+      <h3>⏳ Phase 2 (deferred)</h3>
+      <ul>
+        <li><b>Payment collection</b> — Stripe captures method but never charges in P1</li>
+        <li><b>Share assignment</b> — shares stay reserved, never assigned in P1</li>
+        <li><b>Charge retry</b> — retry count, intervals, failure templates</li>
+        <li><b>Fan contract enforcement</b> — display only in P1, legal force in P2</li>
+        <li><b>FX settlement model</b> — exact Stripe settlement per currency pair</li>
+        <li><b>Membership card delivery</b> — only ships post-funding</li>
+        <li><b>Shipping disputes / refunds / fulfilment failures</b></li>
+        <li><b>Inventory reservation</b> — Beamco doesn't reserve physical stock during the campaign</li>
+        <li><b>Comments on updates</b> — Phase 1 has likes only</li>
+        <li><b>A/B testing &amp; notification analytics</b></li>
+        <li><b>Admin retry settings</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div> <!-- /panel-simple -->
+
+
+<!-- ============================================================ -->
+<!-- ============================================================ -->
+<!-- TECH TAB -->
+<!-- ============================================================ -->
+<!-- ============================================================ -->
+<div class="panel" id="panel-tech">
+
+<div class="legend">
+  <div class="legend-item"><span class="swatch artist"></span> Artist Portal (desktop)</div>
+  <div class="legend-item"><span class="swatch fan"></span> Fan Site (mobile)</div>
+  <div class="legend-item"><span class="swatch system"></span> Shared / system event</div>
+  <div class="legend-item"><span class="swatch admin"></span> Admin</div>
+  <span style="color: var(--border-strong);">|</span>
+  <div class="legend-item"><span class="swatch draft"></span> Draft</div>
+  <div class="legend-item"><span class="swatch upcoming"></span> Not Started · Upcoming</div>
+  <div class="legend-item"><span class="swatch live"></span> In Progress</div>
+  <div class="legend-item"><span class="swatch completed"></span> Completed</div>
+  <div class="legend-item"><span class="swatch failed"></span> Unsuccessful</div>
+  <div class="legend-item"><span class="swatch phase2"></span> Phase 2 deferred</div>
+</div>
+
+<!-- 1. STATE MACHINE -->
+<section>
+  <h2><span class="num">1</span>Project status state machine</h2>
+  <p class="lede">FR-07 / FR-08 — status transitions are <b>system-driven by date and share threshold</b>. Artists cannot manually flip status. There is <b>no review/approval state</b>; once published a project is live to fans subject to dates.</p>
+
+  <div class="state-strip">
+    <div class="state draft">
+      <div class="name">Draft</div>
+      <div class="cond">During creation<br>All fields editable</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="state upcoming">
+      <div class="name">Not Started</div>
+      <div class="cond">now &lt; preview date<br>Hidden from fans</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="state upcoming">
+      <div class="name">Upcoming</div>
+      <div class="cond">preview ≤ now &lt; launch<br>Visible · cannot invest</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="state live">
+      <div class="name">In Progress</div>
+      <div class="cond">launch ≤ now ≤ end<br>Fans can invest + upgrade</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="branch">
+      <div class="arrow">↗ <span class="lbl">reserved ≥ min</span></div>
+      <div class="arrow">↘ <span class="lbl">reserved &lt; min</span></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px; align-self: center;">
+      <div class="state completed"><div class="name">Completed</div><div class="cond">→ Phase 2 charge</div></div>
+      <div class="state failed"><div class="name">Unsuccessful</div><div class="cond">No charge · loyalty revoked<br><span style="color: var(--upcoming);">(was "Failed" · BR-203)</span></div></div>
+    </div>
+    <div class="arrow dashed">⤳</div>
+    <div class="state phase2">
+      <div class="name">Phase 2</div>
+      <div class="cond">Charge · assign shares · ship</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. FLOW -->
+<section>
+  <h2><span class="num">2</span>End-to-end flow · two lanes, one timeline</h2>
+  <p class="lede">CTA labels and update visibility (<b>Everyone</b> / <b>Fanvestors only</b>) reflect what's currently shipping in UAT. Where UAT differs from the BRD, UAT is canonical here — the BRD is reference only.</p>
+
+  <div class="flow">
+    <div class="lane-header artist">Artist · Beamco Artist Portal</div>
+    <div class="lane-header middle">System / Cross-role event</div>
+    <div class="lane-header fan">Fan · Beamco Fans (mobile)</div>
+
+    <!-- Setup -->
+    <div class="lane">
+      <div class="step artist">
+        <div class="head"><span class="num">A1 · Setup</span><span class="pill">Foundational</span></div>
+        <h3>Agree to artist contract</h3>
+        <div class="screen">/crowdfunding (verified artist required) <span class="fr-tag">FR-01</span></div>
+        <ul>
+          <li><b>Artist contract</b> shown before first publish: revenue share %, platform fee, settlement currency, key obligations <span class="fr-tag">FR-52..54</span></li>
+          <li>Agreement recorded; contract accessible from portal afterwards</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="interaction dim">
+        <div class="arrow-row"><span>⇄ Independent</span></div>
+        <div class="desc">Both sides set up in parallel.</div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="step fan">
+        <div class="head"><span class="num">F1 · Setup</span><span class="pill">Foundational</span></div>
+        <h3>Earn first loyalty point on the artist</h3>
+        <div class="screen">/store/{artist}</div>
+        <ul>
+          <li>Eligibility unlocked once fan earns <b>≥1 loyalty point</b> on this artist, via either:
+            <ul style="margin-left: 12px; margin-top: 2px;">
+              <li><b>Path A — Join community:</b> tap "Join {Artist}'s community" → instant 1 point</li>
+              <li><b>Path B — Any purchase:</b> includes $0 / free items (28 pts at 1:28 ratio)</li>
+            </ul>
+          </li>
+          <li>Eligibility flag is <b>permanent per-artist</b> once earned <span class="fr-tag">FR-23 · FR-24</span></li>
+          <li>Supersedes the original 7-day / 200-point model from FR-22 / FR-45 — see Tab 2 §7 (BR-236)</li>
+        </ul>
+        <div class="note warn"><b>Known bug deferred to P2:</b> user can join community → earn 1 point → leave community, but eligibility flag is retained. Owner: Al.</div>
+      </div>
+    </div>
+
+    <!-- Build -->
+    <div class="lane">
+      <div class="step artist">
+        <div class="head"><span class="num">A2 · Build</span><span class="pill draft">Draft</span></div>
+        <h3>Create Project · 4-step wizard</h3>
+        <div class="screen">/crowdfunding → Create Project</div>
+        <ul>
+          <li><b>Step 1 — Project Basic Settings:</b> portrait image (req'd), landscape image (req'd), project name, <b>product name</b> (separate), category, location, preview date · launch date · end date <span class="fr-tag">FR-02 · FR-06</span></li>
+          <li><b>Step 2 — Funding &amp; Rewards:</b> total shares, minimum required shares, Plans <span class="fr-tag">FR-04</span> — each Plan: name · item list · price · share count. Validation: <b>min ≤ total</b>, dates in order <span class="fr-tag">FR-05</span></li>
+          <li><b>Step 3 — Campaign Details:</b> Story (req'd) · Roadmap milestones (req'd) · Fund Allocation (display) · FAQ · Team (display)</li>
+          <li><b>Step 4 — Completion &amp; Preview:</b> phone preview + per-section "Go to Edit" checklist before publish</li>
+        </ul>
+        <div class="note warn"><b>OQ-4:</b> Category / Location field types · <b>OQ-5:</b> max plans per project</div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="interaction dim">
+        <div class="arrow-row"><span>Hidden from fans</span></div>
+        <div class="desc">Draft is invisible to the fan side until publish.</div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="step fan" style="opacity: 0.55;">
+        <div class="head"><span class="num">F2 · Browse</span><span class="pill">Passive</span></div>
+        <h3>Pre-publish store view</h3>
+        <div class="screen">/store/{artist}</div>
+        <ul>
+          <li>"{Artist}'s Fanvestor" section is empty until artist publishes a project</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Publish -->
+    <div class="lane">
+      <div class="step artist">
+        <div class="head"><span class="num">A3 · Publish</span><span class="pill upcoming">Not Started → Upcoming</span></div>
+        <h3>Publish project</h3>
+        <div class="screen">/crowdfunding (list view)</div>
+        <ul>
+          <li>Validation: portrait + landscape images, name, ≥1 plan, ≥1 milestone, story content, dates ordered, min ≤ total <span class="fr-tag">AC-02..09</span></li>
+          <li>Status auto-flips by date — no manual review/approval <span class="fr-tag">FR-07 · FR-08</span></li>
+          <li>Once first investment lands, plan structure is <b>locked</b> <span class="fr-tag">FR-12</span> (subject to OQ-11)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="interaction solid">
+        <div class="arrow-row"><span>PUBLISH →</span></div>
+        <div class="desc"><b>Visible</b> in fan store under "{Artist}'s Fanvestor" once preview date is reached.</div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="step fan">
+        <div class="head"><span class="num">F3 · Discover</span><span class="pill upcoming">Upcoming · cannot invest</span></div>
+        <h3>See "{Artist}'s Fanvestor"</h3>
+        <div class="screen">/store/{artist}</div>
+        <ul>
+          <li>Hero card with progress bar (% raised) and "X Days Left" countdown</li>
+          <li>If status = Upcoming: visible but no Invest CTA <span class="fr-tag">FR-09 · AC-11</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Eligibility -->
+    <div class="lane">
+      <div class="step artist" style="opacity: 0.55;">
+        <div class="head"><span class="num">A·passive</span><span class="pill">No-op</span></div>
+        <h3>(no artist-side step)</h3>
+        <ul><li>Eligibility enforced automatically against fan's per-artist eligibility flag.</li></ul>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="interaction"><div class="arrow-row"><span>← GATE</span></div><div class="desc">CTA decided per fan based on eligibility flag.</div></div>
+    </div>
+    <div class="lane">
+      <div class="step fan">
+        <div class="head"><span class="num">F4 · Eligibility</span><span class="pill system">Per-artist gate</span></div>
+        <h3>"View Requirement" vs "Fanvest Now"</h3>
+        <ul>
+          <li><b>Not eligible:</b> CTA = "View Requirement" <span class="fr-tag">FR-25 · AC-28</span></li>
+          <li><b>Eligible:</b> CTA = <b>"Fanvest Now"</b> on In Progress projects only <span class="fr-tag">FR-27 · AC-30</span></li>
+          <li>Eligibility is permanent once earned <span class="fr-tag">FR-23 · FR-24 · AC-31</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Invest -->
+    <div class="lane">
+      <div class="step artist">
+        <div class="head"><span class="num">A4 · Manage</span><span class="pill live">In Progress</span></div>
+        <h3>Project management — 4 tabs</h3>
+        <div class="screen">/project/detail?id={id}</div>
+        <ul>
+          <li><b>Project Detail</b> — Basic Information, Selling Price &amp; Amount, Sale Method, Featured Product. Shows progress (Already cast / Target). Status pill (Draft / In Progress / etc.)</li>
+          <li><b>Project Blueprint</b> — content builder: "Add Block Type +" for Story / Roadmap / Fund Allocation / FAQ / Team blocks (post-publish edit surface)</li>
+          <li><b>Data Center</b> — Total Crowdfunded Amount, Total number of Backers, Views, Viewers Conversion Rate. Date filter (e.g. Last 30 days). Download button. <i>"Data will only be displayed after the crowdfunding/sales of the project."</i></li>
+          <li><b>Sales Record</b> — pledge / investor list (empty state: "No Data")</li>
+          <li>Top right: <b>"Share the Campaign"</b> link</li>
+          <li>Reserved Shares + % Sold update atomically as fans pledge <span class="fr-tag">FR-34 · FR-37 · AC-36</span></li>
+          <li>Fan added to investor list (Sales Record) + Top Fans rollup. Loyalty points credited immediately <span class="fr-tag">FR-35</span></li>
+        </ul>
+        <div class="note warn"><b>OQ-3:</b> "raised amount" formula for mixed-price multi-plan projects.</div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="interaction solid"><div class="arrow-row"><span>← INVEST</span></div><div class="desc">Reservation created · payment captured via Stripe · <b>not charged</b>.</div></div>
+    </div>
+    <div class="lane">
+      <div class="step fan">
+        <div class="head"><span class="num">F5 · Invest</span><span class="pill live">In Progress</span></div>
+        <h3>Fanvest Now · invest flow</h3>
+        <div class="screen">/product/fundraising?id={id}</div>
+        <ul>
+          <li>1. Tap "Fanvest Now" → opens <b>"Choose your plan"</b> bottom sheet (Vant UI popup) <span class="fr-tag">FR-27 · FR-28</span></li>
+          <li>2. Tabs across plan tiers (e.g. <b>Basic / Plus</b>); each shows Loyalty Points, Song Backer Contract count + description, Plan details. Header subtitle reads e.g. "The project will move forward only if we reach a minimum of 1000 slots"</li>
+          <li>3. <b>Royalty Shares availability check</b> on selected plan — error if 0 left <span class="fr-tag">FR-29 · AC-33</span></li>
+          <li>4. Bottom CTA: <b>"Fanvest for $X"</b> (price computed from plan)</li>
+          <li>5. Enter shipping address <span class="fr-tag">FR-31</span></li>
+          <li>6. Sign <b>"Fan Royalty Participation Agreement"</b> (production name; BRD calls this "fan contract") with dynamic values · tick "I agree" <span class="fr-tag">FR-33 · FR-49 · FR-50 · AC-34/35</span></li>
+          <li>7. Checkout screen → tap <b>"Place Order"</b></li>
+          <li>8. Stripe modal — tap <b>"Confirm Payment"</b> (Future Payment Setup, no charge captured today) <span class="fr-tag">FR-32</span></li>
+          <li>9. Success: <b>"Thank you for your purchase!"</b> → reservation written, loyalty credited, status pending <span class="fr-tag">FR-34 · AC-32</span></li>
+          <li>One active plan per project <span class="fr-tag">FR-36 · AC-38</span></li>
+        </ul>
+        <div class="note warn"><b>OQ-12:</b> "Royalty Shares remaining" — derived (total_shares / plan.share_count) or artist-set per plan? UAT shows "1000 slots" minimum threshold which suggests artist-set.</div>
+      </div>
+    </div>
+
+    <!-- Upgrade -->
+    <div class="lane">
+      <div class="step artist">
+        <div class="head"><span class="num">A5 · Live data</span><span class="pill live">In Progress</span></div>
+        <h3>Upgrade reflected on dashboard</h3>
+        <ul>
+          <li>Reserved shares re-tally to new plan's share count <span class="fr-tag">FR-41</span></li>
+          <li>% Sold &amp; raised amount update atomically <span class="fr-tag">AC-42</span></li>
+          <li>Old plan's Royalty Shares returned · new plan's Royalty Shares decremented</li>
+          <li>Loyalty points credited (FR-46 — value TBD)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="interaction"><div class="arrow-row"><span>← UPGRADE</span></div><div class="desc"><b>Upward only.</b> No downgrade, no cancellation.</div></div>
+    </div>
+    <div class="lane">
+      <div class="step fan">
+        <div class="head"><span class="num">F6 · Upgrade (optional)</span><span class="pill live">In Progress</span></div>
+        <h3>Upgrade to a higher plan</h3>
+        <ul>
+          <li>From "My investments" → choose higher tier <span class="fr-tag">FR-38 · AC-39</span></li>
+          <li>Royalty Shares availability check on target plan <span class="fr-tag">FR-40 · AC-41</span></li>
+          <li><b>No downgrade. No cancellation.</b> <span class="fr-tag">FR-39 · AC-40</span></li>
+          <li>Final charge amount (Phase 2) becomes upgraded plan's price</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Updates -->
+    <div class="lane">
+      <div class="step artist">
+        <div class="head"><span class="num">A6 · Communicate</span><span class="pill live">In Progress</span></div>
+        <h3>Post project updates</h3>
+        <ul>
+          <li>Three update types <span class="fr-tag">FR-14</span>:
+            <ul style="margin-left: 12px; margin-top: 2px;">
+              <li><b>General Post</b> — text + attachments (image · video · audio)</li>
+              <li><b>Milestone Completed</b> — marks roadmap node done</li>
+              <li><b>Milestone Delayed</b> — requires new target date · mandatory notification</li>
+            </ul>
+          </li>
+          <li>Visibility per update: <b>Everyone</b> or <b>Fanvestors only</b> <span class="fr-tag">FR-16 · AC-23/24</span></li>
+          <li>Likes only — comments not in scope <span class="fr-tag">FR-17</span></li>
+          <li><b>Overdue branching:</b> if milestone overdue → Milestone Completed update <b>blocked</b> until artist posts Milestone Delayed first <span class="fr-tag">FR-19 · FR-20 · AC-25/26/27</span></li>
+          <li>Roadmap date change post-publish requires "Notify Users" update <span class="fr-tag">FR-13 · AC-19</span></li>
+        </ul>
+        <div class="note warn"><b>OQ-7:</b> do General Posts trigger investor email?</div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="interaction solid"><div class="arrow-row"><span>NOTIFY →</span></div><div class="desc">Email + push to investors at post time. Visibility scope honoured.</div></div>
+    </div>
+    <div class="lane">
+      <div class="step fan">
+        <div class="head"><span class="num">F7 · Stay informed</span><span class="pill live">In Progress</span></div>
+        <h3>Receive update notifications</h3>
+        <ul>
+          <li>Investors emailed on Milestone Completed + Milestone Delayed <span class="fr-tag">FR-18</span></li>
+          <li>"Fanvestors only" updates hidden from non-investors <span class="fr-tag">AC-23</span></li>
+          <li>Tap → opens project timeline at the update</li>
+          <li>Likes available; no commenting in P1</li>
+          <li>Overdue milestone shows "X days overdue" <span class="fr-tag">FR-19</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Boundary -->
+    <div class="boundary">
+      <span class="tag">▼ End of Phase 1 · Phase 2 begins ▼</span>
+      <div class="desc">Phase 1 holds <b>reserved shares</b> only. Payment, assignment, retry, fulfilment, FX, refunds, contract enforcement, membership card delivery — all Phase 2.</div>
+    </div>
+
+    <!-- Resolve -->
+    <div class="lane">
+      <div class="step artist">
+        <div class="head"><span class="num">A7 · Outcome</span><span class="pill completed">Completed / Unsuccessful</span></div>
+        <h3>Date-driven resolution at end date</h3>
+        <ul>
+          <li><b>Completed:</b> reserved ≥ min · status flips · handed to Phase 2 <span class="fr-tag">FR-07 · AC-13</span></li>
+          <li><b>Unsuccessful</b> <span style="color: var(--upcoming);">(BR-203 · was "Failed")</span><b>:</b> reserved &lt; min · investment loyalty <b>revoked</b> · no shares assigned · eligibility flags <b>retained</b> <span class="fr-tag">FR-47 · AC-14</span></li>
+          <li>Project becomes read-only</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="interaction solid"><div class="arrow-row"><span>⇄ RESOLVE</span></div><div class="desc">System computes reserved vs min at end date and flips status.</div></div>
+    </div>
+    <div class="lane">
+      <div class="step fan">
+        <div class="head"><span class="num">F8 · Outcome</span><span class="pill completed">Completed / Unsuccessful</span></div>
+        <h3>See result on project page</h3>
+        <ul>
+          <li><b>Completed:</b> "Funded" badge · reserved shares + loyalty visible · awaits P2 charge</li>
+          <li><b>Unsuccessful</b> <span style="color: var(--upcoming);">(BR-203)</span><b>:</b> reservation released · investment loyalty revoked · eligibility stays <span class="fr-tag">FR-23 · AC-31</span></li>
+          <li>Outcome notification sent</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="lane">
+      <div class="step artist" style="opacity: 0.55; border-style: dashed;">
+        <div class="head"><span class="num">A8 · Phase 2</span><span class="pill phase2">Deferred</span></div>
+        <h3>Settlement &amp; assignment</h3>
+        <ul>
+          <li>Funds settled to artist wallet (with FX)</li>
+          <li>Reserved shares assigned to fans on successful charge <span class="fr-tag">FR-43</span></li>
+          <li>Charge retry · failure enforcement · membership card delivery</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="interaction dim" style="border-style: dashed;"><div class="arrow-row"><span>PHASE 2</span></div><div class="desc">Out of scope.</div></div>
+    </div>
+    <div class="lane">
+      <div class="step fan" style="opacity: 0.55; border-style: dashed;">
+        <div class="head"><span class="num">F9 · Phase 2</span><span class="pill phase2">Deferred</span></div>
+        <h3>Card charged · share assigned</h3>
+        <ul>
+          <li>Stripe payment captured against reservation</li>
+          <li>Share record assigned to wallet</li>
+          <li>Payment fail: no shares · investment loyalty revoked · eligibility kept <span class="fr-tag">FR-44 · FR-48</span></li>
+          <li>Fan contract becomes downloadable PDF <span class="fr-tag">FR-51</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. INTERACTION MATRIX -->
+<section>
+  <h2><span class="num">3</span>Role interaction matrix</h2>
+  <p class="lede">Every cross-lane edge above, condensed. Admin events surface here too.</p>
+
+  <div class="matrix">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 220px;">Trigger</th>
+          <th style="width: 160px;">From → To</th>
+          <th>Effect</th>
+          <th style="width: 130px;">Refs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="actor">Configure loyalty / eligibility</td><td class="actor"><span class="ad">Admin</span> → <span class="s">System</span></td><td class="action">Sets the loyalty point ratio (1:28 for $0 purchases, dollar-pegged otherwise) and the 1-point eligibility threshold. New values only apply to fans not yet eligible.</td><td class="refs">FR-55 · AC-43</td></tr>
+        <tr><td class="actor">Manage contract templates</td><td class="actor"><span class="ad">Admin</span> → <span class="s">System</span></td><td class="action">Creates / edits / versions fan + artist contracts in EN and zh-TW.</td><td class="refs">FR-56 · AC-44</td></tr>
+        <tr><td class="actor">Agree to artist contract</td><td class="actor"><span class="a">Artist</span> → <span class="s">System</span></td><td class="action">Required before publish; agreement recorded; contract accessible in portal.</td><td class="refs">FR-52..54</td></tr>
+        <tr><td class="actor">Publish project</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Project becomes visible at preview date in fan store under "{Artist}'s Fanvestor". Status auto-flips by date.</td><td class="refs">FR-07 · FR-08</td></tr>
+        <tr><td class="actor">Earn first loyalty point</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span></td><td class="action">Two paths, instant: <b>(A)</b> Join artist's community → 1 point · <b>(B)</b> Any purchase incl. $0 → ≥28 points. On either, fan is permanently eligible to invest in that artist.</td><td class="refs">FR-22 · FR-45 (per BR-236)</td></tr>
+        <tr><td class="actor">Tap "Fanvest Now"</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Plan picker → Royalty Shares availability check → shipping → Fan Royalty Participation Agreement → Checkout → Stripe modal → Place Order (no charge captured).</td><td class="refs">FR-27..37 · AC-32..36</td></tr>
+        <tr><td class="actor">Upgrade pledge</td><td class="actor"><span class="f">Fan</span> → <span class="s">System</span> → <span class="a">Artist</span></td><td class="action">Higher tier only. Old Royalty Shares returned, new ones taken.</td><td class="refs">FR-38..41 · AC-39..42</td></tr>
+        <tr><td class="actor">Post General update</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Visibility-aware. Email scope is open question.</td><td class="refs">FR-14..18 · AC-20</td></tr>
+        <tr><td class="actor">Post Milestone Completed</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">Investors emailed. Blocked if milestone is overdue.</td><td class="refs">FR-14 · FR-20 · AC-21/26</td></tr>
+        <tr><td class="actor">Post Milestone Delayed</td><td class="actor"><span class="a">Artist</span> → <span class="f">Fan</span></td><td class="action">New target date required. Investors emailed. Clears overdue gate.</td><td class="refs">FR-14 · FR-20 · AC-22/27</td></tr>
+        <tr><td class="actor">Edit roadmap date post-publish</td><td class="actor"><span class="a">Artist</span> → <span class="s">System</span></td><td class="action">System forces "Notify Users" update before save.</td><td class="refs">FR-13 · AC-19</td></tr>
+        <tr><td class="actor">End date reached</td><td class="actor"><span class="s">System</span> → <span class="a">Artist</span> + <span class="f">Fan</span></td><td class="action">Status → Completed (reserved ≥ min) or Unsuccessful.</td><td class="refs">FR-07 · FR-47 · AC-13/14</td></tr>
+        <tr><td class="actor">Phase 2 charge fails</td><td class="actor"><span class="s">System</span> → <span class="f">Fan</span></td><td class="action">No shares assigned for that fan; that investment's loyalty revoked.</td><td class="refs">FR-44 · FR-48</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 4. PHASE 2 DEFERRED -->
+<section>
+  <h2><span class="num">4</span>Phase 2 — explicitly out of scope</h2>
+  <p class="lede">Direct from BRD "Out of Scope (Phase 1)". Architecture must support Phase 2 layering on without rework.</p>
+
+  <div class="deferred">
+    <ul>
+      <li><b>Payment collection</b> — methods captured via Stripe Future Payment Setup but never charged.</li>
+      <li><b>Share assignment</b> — shares are reserved in P1, assigned in P2 only after Completed + successful payment.</li>
+      <li><b>Charge retry logic</b> — retry count, intervals, failure notif templates.</li>
+      <li><b>Fan contract enforcement</b> — shown in P1; legal force from P2.</li>
+      <li><b>Minimum net collected logic.</b></li>
+      <li><b>FX settlement model.</b></li>
+      <li><b>Inventory reservation</b> — Beamco does not reserve physical inventory during the campaign.</li>
+      <li><b>Shipping disputes / refunds / fulfilment failures.</b></li>
+      <li><b>Membership card delivery</b> — only after funding (Phase 2).</li>
+      <li><b>Comments on updates</b> — likes only in Phase 1.</li>
+      <li><b>Admin payment retry settings.</b></li>
+      <li><b>A/B testing &amp; notification analytics.</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 5. ADMIN -->
+<section>
+  <h2><span class="num">5</span>Admin surface (FR-55 · FR-56)</h2>
+  <p class="lede">Sparse but required for launch.</p>
+
+  <div class="admin-block">
+    <h3>Admin panel</h3>
+    <ul>
+      <li><b>Loyalty / eligibility config:</b> X (days), Y (points). Platform-wide. New values apply only to fans not yet eligible. <span class="fr-tag">FR-55 · AC-43</span></li>
+      <li><b>Contract template management:</b> create · edit · version · localise (EN + zh-TW). Fan + artist templates. <span class="fr-tag">FR-56 · AC-44</span></li>
+      <li><b>Launch blocker:</b> default X / Y values must be set before launch (OQ-1).</li>
+      <li><b>Out of scope for P1:</b> retry count, failure notif templates, payment-retry settings.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 6. OQ -->
+<section>
+  <h2><span class="num">6</span>Open questions · 12 outstanding</h2>
+  <p class="lede">Verbatim from BRD. <b>10 blocking</b> design or development; <b>1 HIGH PRIORITY (legal)</b>.</p>
+
+  <div class="questions">
+    <div class="q high">
+      <span class="tag">High priority · Legal · before design</span>
+      <h4>OQ-10 · "Equity-like shares" — legal status</h4>
+      <p>Regulated financial instrument in Malaysia, Taiwan, Singapore, or US? Affects whether "shares" framing can ship at all.</p>
+      <div class="owner">owner: Legal</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before development</span>
+      <h4>OQ-1 · Default X / Y values</h4>
+      <p>Initial values for follow-streak days (X) and loyalty points (Y) at launch.</p>
+      <div class="owner">owner: Product / Admin</div>
+    </div>
+    <div class="q" style="border-left-color: var(--phase2); opacity: 0.85;">
+      <span class="tag" style="color: var(--phase2);">Resolved by BR-236</span>
+      <h4 style="text-decoration: line-through; opacity: 0.65;">OQ-2 · "X consecutive days" — unfollow reset?</h4>
+      <p><b style="color: var(--upcoming);">Resolved:</b> the X-day-streak model was scrapped by BR-236. Replacement bug (P2): user joins community → earns 1 pt → leaves community but keeps eligibility. Owner: Al to confirm fix path.</p>
+      <div class="owner">superseded · BR-236</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before design</span>
+      <h4>OQ-3 · "Raised amount" formula</h4>
+      <p>Reserved shares × (plan_price / plan_share_count)? Multi-plan with different per-share values?</p>
+      <div class="owner">owner: Product / Engineering</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before design</span>
+      <h4>OQ-4 · Category / Location field types</h4>
+      <p>Free text or predefined dropdowns?</p>
+      <div class="owner">owner: Product / Content</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before design</span>
+      <h4>OQ-5 · Max plans per project</h4>
+      <p>Cap? Same share count allowed across plans?</p>
+      <div class="owner">owner: Product</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before development</span>
+      <h4>OQ-6 · Loyalty value for invest / upgrade</h4>
+      <p>Fixed value or proportional to plan price?</p>
+      <div class="owner">owner: Product</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before development</span>
+      <h4>OQ-7 · General Post — email scope</h4>
+      <p>Trigger investor emails, or only Milestone Completed/Delayed?</p>
+      <div class="owner">owner: Product</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before design</span>
+      <h4>OQ-8 · Post-publish project deletion</h4>
+      <p>Can artist delete after publish, or after fans invested?</p>
+      <div class="owner">owner: Product / Legal</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before design</span>
+      <h4>OQ-9 · BRD flowcharts blank</h4>
+      <p>Original Artist + Fan Journey diagrams need re-rendering before design hand-off.</p>
+      <div class="owner">owner: PM</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before design</span>
+      <h4>OQ-11 · FR-12 plan edit window</h4>
+      <p>Plan details editable after publish but before first investment?</p>
+      <div class="owner">owner: Product</div>
+    </div>
+    <div class="q">
+      <span class="tag">Before design</span>
+      <h4>OQ-12 · Royalty Shares remaining trigger <span style="color: var(--upcoming); font-size: 10px;">(was "Spots" · BR-265/267)</span></h4>
+      <p>Derived (total_shares / plan.share_count) or artist-set max?</p>
+      <div class="owner">owner: Product / Engineering</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. RELEASE CRs (April 29 UX refinement) -->
+<section>
+  <h2><span class="num">7</span>Release change requests · April 29 UX refinement</h2>
+  <p class="lede">Tickets in section <b>"2.2 [April 29] UX refinement"</b> of the Beamco Front/Backend DEV project that touch the crowdfund flow. Logic-changing CRs are reflected in the diagram (Tab 1); copy-only and minor display tweaks are footnoted here only.</p>
+
+  <!-- Top-level CRs -->
+  <div class="cr-group">
+    <div class="cr-group-header">
+      Primary release CRs
+      <span class="count">5 tickets</span>
+    </div>
+    <table class="cr-table">
+      <thead>
+        <tr>
+          <th style="width: 80px;">BR</th>
+          <th style="width: 110px;">Status</th>
+          <th style="width: 90px;">Impact</th>
+          <th style="width: 240px;">Title</th>
+          <th>What it changes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="id">BR-236</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact logic">Logic</span></td>
+          <td class="name">[Crowdfunding] Logic &amp; Display</td>
+          <td class="what">Eligibility revamp. Removes 7-day wait + 200-point threshold; fan unlocks instantly with ≥1 loyalty point. Two paths: <b>(a)</b> join community → 1 pt, <b>(b)</b> any purchase incl. $0 → ≥28 pts (1:28 ratio). Updates "View Requirement" copy to <i>"Exclusive Access: Top Fans Only…"</i>. Known Phase 2 carry-over: leaving community after earning eligibility doesn't revoke the flag (owner: Al).</td>
+        </tr>
+        <tr>
+          <td class="id">BR-203</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">BBQ-CF-018 Unclear 'Failed' status</td>
+          <td class="what">Rename status label <b>"Failed" → "Unsuccessful"</b> across creator portal + fan-facing surfaces. Underlying state machine name unchanged in code; only the user-facing label.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-265</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">"Spots" change to "Royalty shares" (creator)</td>
+          <td class="what">Creator-side terminology rename on plan editor + project mgmt views. Replaces all instances of "Spots" / "spots remaining" with "Royalty Shares".</td>
+        </tr>
+        <tr>
+          <td class="id">BR-267</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">[Fans] "Spots" change to "Royalty Shares"</td>
+          <td class="what">Fan-side counterpart of BR-265. Replaces "Spots" on project detail, plan picker, and invest flow.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-180</td>
+          <td><span class="cr-status dev">Development</span></td>
+          <td><span class="cr-impact logic">Parent</span></td>
+          <td class="name">[Crowdfunding] UX Enhancement</td>
+          <td class="what">Parent ticket bundling 26 subtasks. No spec on parent itself — see breakdown below.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BR-180 subtasks -->
+  <div class="cr-group">
+    <div class="cr-group-header">
+      BR-180 subtasks · Crowdfunding UX enhancement (creator-side, mostly)
+      <span class="count">26 tickets</span>
+    </div>
+    <table class="cr-table">
+      <thead>
+        <tr>
+          <th style="width: 80px;">BR</th>
+          <th style="width: 110px;">Status</th>
+          <th style="width: 90px;">Impact</th>
+          <th style="width: 250px;">Title</th>
+          <th>What it changes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="id">BR-194</td>
+          <td><span class="cr-status rfd">Ready for Dev</span></td>
+          <td><span class="cr-impact logic">Logic</span></td>
+          <td class="name">Suppress "Project Created" toast on Project Creation</td>
+          <td class="what">Reshapes the Create Project entry. No project record created on click; draft auto-saved only after Title is filled. Empty/abandoned drafts auto-deleted. Toast shows only on manual Save ("Draft saved") or Publish ("Project published"). Fixes the multi-ghost-projects bug from repeated clicks.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-184</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact logic">Logic</span></td>
+          <td class="name">Fundraising Launch Date &amp; Time — purpose of second field unclear</td>
+          <td class="what">Relabels the two date pickers in Set Publish Date as <b>"Fundraising Start Date &amp; Time"</b> and <b>"Fundraising End Date &amp; Time"</b>. Confirms two distinct timestamps drive the lifecycle (already modeled in our state machine).</td>
+        </tr>
+        <tr>
+          <td class="id">BR-185</td>
+          <td><span class="cr-status done">Done</span></td>
+          <td><span class="cr-impact logic">Logic</span></td>
+          <td class="name">"Project Preview Date" — needs help text or tooltip</td>
+          <td class="what">Confirms a discrete <b>Preview state</b>: campaign page is publicly visible (read-only) before pledges open. Already reflected in our state machine as <b>Upcoming</b>.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-205</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact logic">Logic</span></td>
+          <td class="name">BBQ-CF-008 "Organize Team" Step — no way to add team members</td>
+          <td class="what">Adds an <b>Add Member / Invite</b> action on the Organize Team step. Turns it from a passive auto-added-creator step into an interactive collaborator-invite step.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-206</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact logic">Logic</span></td>
+          <td class="name">BBQ-CF-016 [FANS] Fans not receiving update notifications when artist updates events</td>
+          <td class="what">When the artist updates the campaign roadmap, fans receive update notifications. Reskins fan-side updates UI to mirror the artist roadmap layout. Strengthens the cross-role notification edge already in our flow (F7).</td>
+        </tr>
+        <tr>
+          <td class="id">BR-202</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact logic">Bug</span></td>
+          <td class="name">Cant Create Campaign Even though everything filled up (Infinite Loading)</td>
+          <td class="what">Fix for Create Campaign hanging on submit. Affects the success edge from the wizard's final step.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-191</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact logic">Logic</span></td>
+          <td class="name">Possible Bug: Can't click Next because requirements unclear</td>
+          <td class="what">Adds required-field validation messaging on wizard Next button. Affects step transitions in the Build Project flow.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-209</td>
+          <td><span class="cr-status done">Done</span></td>
+          <td><span class="cr-impact logic">Bug</span></td>
+          <td class="name">Organize Team shows Completed before details filled out</td>
+          <td class="what">Fixes step-completion state logic on the Organize Team wizard step. Cosmetic but affects perceived progress.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-213</td>
+          <td><span class="cr-status none">No status</span></td>
+          <td><span class="cr-impact copy">Display</span></td>
+          <td class="name">Remove toast in fans preview when empty</td>
+          <td class="what">Suppresses the empty-state toast on fan-side preview when campaign info hasn't been filled in yet. Minor display rule on the preview surface.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-181</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Membership card — function not explained, design unreadable, name vs display name unclear</td>
+          <td class="what">Adds description of card purpose, redesigns cluttered preview-over-form modal, clarifies "Card name" vs "Card display name" with longer character limits.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-182</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">"Plan copyright settings" — purpose unexplained</td>
+          <td class="what">Adds tooltip / description on the Plan copyright settings section in Funding &amp; Rewards explaining that copyright slots are ownership shares, and clarifies whether slot count is independent from fund-allocation %.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-183</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Project Roadmap milestone — description field needs explanation when editing dates</td>
+          <td class="what">Roadmap milestone description field gets hover effects + template subtext alongside the date editor.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-186</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Two name fields — "Fundraising Project Name" vs "Product Name After Successful Funding"</td>
+          <td class="what">Either consolidates the two name fields in Project Basic Settings, or adds help text explaining where each surfaces.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-192</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Remove "All" from Purchase condition + change copy</td>
+          <td class="what">Removes the "All" option from Purchase condition selector and updates surrounding copy.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-193</td>
+          <td><span class="cr-status copy">Copywriting</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Set up crowdfunding basics</td>
+          <td class="what">Placeholder for copywriting around the "Set up crowdfunding basics" wizard step. No body yet.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-195</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Add helper text across crowdfunding forms</td>
+          <td class="what">Adds persistent helper text <b>above</b> form inputs (not inside) so guidance stays visible after typing — Indiegogo-style.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-196</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Populate Primary and Secondary Category fields</td>
+          <td class="what">Adds Primary/Secondary category options (currently only "digital merchandise: music"); reviews naming.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-204</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Display</span></td>
+          <td class="name">BBQ-CF-007 Currency Inconsistencies: Fund Allocation, Funding/Rewards</td>
+          <td class="what">Fund Allocation donut chart shows "NT $0" even when settlement currency is USD — settlement currency must propagate consistently across surfaces.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-207</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Display</span></td>
+          <td class="name">BBQ-CF-017 Crowdfund dashboard lacks primary navigation</td>
+          <td class="what">Adds a Back button on the crowdfunding project Overview page so artists can return to /crowdfunding without breadcrumbs.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-208</td>
+          <td><span class="cr-status uat">UAT</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">[Production - Artist] Copywriting</td>
+          <td class="what">Generic artist-side copywriting tweaks. Screenshot-only ticket, no body text.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-187</td>
+          <td><span class="cr-status done">Done</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Publish Date Fields Very Confusing</td>
+          <td class="what">Cleanup of the publish-date field cluster — companion to BR-184.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-188</td>
+          <td><span class="cr-status done">Done</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">"Demo media" field — purpose and use case not explained</td>
+          <td class="what">Renames "Demo media" (e.g. to "Campaign Preview Video") and adds help text on purpose, accepted formats, size limits.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-189</td>
+          <td><span class="cr-status done">Done</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Cover photo upload — no example shown</td>
+          <td class="what">Adds visual example/placeholder for cover photo upload (rec. 16:9, 1920×1080) plus quality and orientation guidance.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-190</td>
+          <td><span class="cr-status done">Done</span></td>
+          <td><span class="cr-impact copy">Copy</span></td>
+          <td class="name">Need to Amend the Categories</td>
+          <td class="what">Companion of BR-196. Amends category list. Done.</td>
+        </tr>
+        <tr>
+          <td class="id">BR-214</td>
+          <td><span class="cr-status none">No status</span></td>
+          <td><span class="cr-impact copy">—</span></td>
+          <td class="name">(untitled subtask)</td>
+          <td class="what">Empty placeholder ticket. Should be cleaned up in Asana.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; font-size: 12px; color: var(--text-2);">
+    <b style="color: var(--text);">Diagram impact summary:</b>
+    The flow in Tab 1 reflects all <b style="color: var(--failed);">Logic</b>-impact CRs above. <b>Copy</b>/<b>Display</b>-only items don't change the flow shape, so they're documented here only — your design and dev teams can reference this table when implementing them. The major structural change in this release is BR-236 (eligibility revamp) — see Tab 1's fan flowchart and §2 F1 above.
+  </div>
+</section>
+
+<!-- 8. EDGES -->
+<section>
+  <h2><span class="num">8</span>Edge cases to validate</h2>
+  <p class="lede">12 cases the BRD flagged. Each needs defined behaviour before launch.</p>
+
+  <div class="matrix">
+    <table>
+      <tbody>
+        <tr><td class="actor">Race</td><td class="action">Two fans tap Confirm on the last Royalty Share at the same instant — reject one, or allow both with overflow?</td></tr>
+        <tr><td class="actor">Date collapse</td><td class="action">Preview date == launch date → is "Upcoming" skipped?</td></tr>
+        <tr><td class="actor">Boundary</td><td class="action">Upgrade attempt at the exact end-date timestamp — accept or reject?</td></tr>
+        <tr><td class="actor">Operations</td><td class="action">Maximum overdue duration on a milestone — auto-escalation? Admin visibility?</td></tr>
+        <tr><td class="actor">Specificity</td><td class="action">Does Milestone Completed update require selecting which milestone it applies to?</td></tr>
+        <tr><td class="actor">Computation</td><td class="action">Raised amount with mixed-price plans (linked to OQ-3).</td></tr>
+        <tr><td class="actor">Eligibility</td><td class="action">Unfollow + refollow during X-day window — counter behaviour (linked to OQ-2).</td></tr>
+        <tr><td class="actor">Operations</td><td class="action">Artist account suspension mid-campaign with active investments.</td></tr>
+        <tr><td class="actor">Display</td><td class="action">Multi-currency fan base — fan home currency ≠ project currency.</td></tr>
+        <tr><td class="actor">Mutability</td><td class="action">Shipping address change after invest but before P2 fulfilment.</td></tr>
+        <tr><td class="actor">Concurrency</td><td class="action">Same fan starting a 2nd investment flow on the same project before 1st confirms.</td></tr>
+        <tr><td class="actor">Versioning</td><td class="action">Fan contract template updated after a fan invested — which version binds?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div> <!-- /panel-tech -->
+
+<footer class="app">
+  Beamco · Crowdfund Phase 1 · User flow synthesised from full BRD (2025-12-04) + review (2026-03-22) + UAT capture (2026-04-30) · 56 FRs · 44 ACs · 12 OQs
+</footer>
+
+<script>
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
+      document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + target));
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+  });
+</script>
+
+</body>
+</html>

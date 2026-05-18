@@ -3,310 +3,700 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ztor 2.0 — Creator Studio Phase 1 Architecture</title>
+<title>Ztor 2.0 — Phase 1 Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* ───────────────────────── DESIGN TOKENS ───────────────────────── */
   :root {
-    --eric: #3b82f6;
-    --eric-bg: #dbeafe;
-    --eric-border: #93bbfd;
-    --kerry: #10b981;
-    --kerry-bg: #d1fae5;
-    --kerry-border: #6ee7b7;
-    --newteam: #f97316;
-    --newteam-bg: #fed7aa;
-    --newteam-border: #fdba74;
-    --shared: #8b5cf6;
-    --shared-bg: #ede9fe;
-    --shared-border: #c4b5fd;
-    --open: #ef4444;
-    --open-bg: #fef2f2;
-    --open-border: #fca5a5;
-    --gray: #6b7280;
-    --gray-bg: #f3f4f6;
-    --gray-border: #d1d5db;
+    /* Team palettes — accent (saturated), tint (very light bg) */
+    --kerry-500: #059669;
+    --kerry-600: #047857;
+    --kerry-tint: #ecfdf5;
+    --kerry-line: #a7f3d0;
+
+    --china-500: #2563eb;
+    --china-600: #1d4ed8;
+    --china-tint: #eff6ff;
+    --china-line: #bfdbfe;
+
+    --indo-500: #ea580c;
+    --indo-600: #c2410c;
+    --indo-tint: #fff7ed;
+    --indo-line: #fed7aa;
+
+    --platform-500: #7c3aed;
+    --platform-600: #6d28d9;
+    --platform-tint: #f5f3ff;
+    --platform-line: #ddd6fe;
+
+    --out-500: #94a3b8;
+    --out-tint: #f8fafc;
+    --out-line: #e2e8f0;
+
+    --danger-500: #dc2626;
+    --danger-tint: #fef2f2;
+    --danger-line: #fecaca;
+
+    /* Neutral ramp */
+    --ink: #0a0e1a;
+    --ink-1: #1e2330;
+    --ink-2: #4b5563;
+    --ink-3: #6b7280;
+    --ink-4: #9ca3af;
+    --ink-5: #d1d5db;
+
+    --surface: #ffffff;
+    --surface-2: #fafbfc;
+    --surface-3: #f4f6f8;
+    --line: #e6e8ec;
+    --line-soft: #eef0f3;
+
+    /* Type */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+
+    /* Spacing */
+    --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
+    --s-5: 20px;  --s-6: 24px;  --s-8: 32px;  --s-10: 40px;
+    --s-12: 48px; --s-16: 64px; --s-20: 80px;
+
+    /* Radii */
+    --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px; --r-2xl: 28px;
+
+    /* Shadows */
+    --shadow-xs: 0 1px 2px rgba(10,14,26,0.04);
+    --shadow-sm: 0 1px 2px rgba(10,14,26,0.05), 0 1px 3px rgba(10,14,26,0.06);
+    --shadow-md: 0 4px 12px rgba(10,14,26,0.05), 0 2px 4px rgba(10,14,26,0.04);
+    --shadow-lg: 0 12px 32px rgba(10,14,26,0.07), 0 4px 8px rgba(10,14,26,0.04);
+    --shadow-glow: 0 0 0 4px rgba(124,58,237,0.10);
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* ───────────────────────── RESET & BASE ───────────────────────── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: #f8fafc;
-    color: #1e293b;
-    padding: 32px;
-    line-height: 1.5;
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    color: var(--ink-1);
+    line-height: 1.55;
+    min-height: 100vh;
+    background:
+      radial-gradient(1200px 600px at 100% -200px, rgba(124,58,237,0.06), transparent 60%),
+      radial-gradient(900px 500px at -200px 100px, rgba(37,99,235,0.05), transparent 60%),
+      linear-gradient(180deg, #fafbfc 0%, #f4f6f8 100%);
   }
 
-  .header {
-    text-align: center;
-    margin-bottom: 40px;
+  .container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: clamp(var(--s-6), 4vw, var(--s-12)) clamp(var(--s-4), 3vw, var(--s-10));
   }
 
-  .header h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 6px;
+  /* ───────────────────────── HEADER ───────────────────────── */
+  .page-header {
+    margin-bottom: var(--s-12);
+    padding-bottom: var(--s-10);
+    border-bottom: 1px solid var(--line);
   }
 
-  .header p {
-    font-size: 14px;
-    color: #64748b;
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    box-shadow: var(--shadow-xs);
   }
 
+  .eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--platform-500);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.18);
+  }
+
+  .page-header h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--ink);
+    margin: var(--s-5) 0 var(--s-3);
+  }
+
+  .page-header .lede {
+    font-size: clamp(15px, 1.6vw, 17px);
+    color: var(--ink-2);
+    max-width: 760px;
+    line-height: 1.55;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-6) var(--s-8);
+    margin-top: var(--s-6);
+    padding-top: var(--s-6);
+    border-top: 1px dashed var(--line);
+  }
+
+  .meta-cell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+  }
+
+  .meta-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-4);
+  }
+
+  .meta-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-1);
+  }
+
+  /* ───────────────────────── LEGEND ───────────────────────── */
   .legend {
     display: flex;
-    justify-content: center;
-    gap: 24px;
-    margin-bottom: 36px;
     flex-wrap: wrap;
+    gap: var(--s-2);
+    margin: 0 0 var(--s-8);
   }
 
-  .legend-item {
-    display: flex;
+  .legend-chip {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-size: 13px;
+    gap: var(--s-2);
+    padding: 6px 12px 6px 8px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-size: 12px;
     font-weight: 500;
+    color: var(--ink-1);
+    box-shadow: var(--shadow-xs);
   }
 
-  .legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
   }
+  .swatch-kerry    { background: var(--kerry-500); }
+  .swatch-china    { background: var(--china-500); }
+  .swatch-indo     { background: var(--indo-500); }
+  .swatch-platform { background: var(--platform-500); }
+  .swatch-out      { background: var(--out-500); }
 
-  /* Tabs */
+  /* ───────────────────────── TABS ───────────────────────── */
   .tabs {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    margin-bottom: 32px;
-    background: #e2e8f0;
-    border-radius: 10px;
+    display: inline-flex;
+    gap: 2px;
     padding: 4px;
-    max-width: 720px;
-    margin-left: auto;
-    margin-right: auto;
+    background: var(--surface-3);
+    border: 1px solid var(--line);
+    border-radius: var(--r-xl);
+    margin-bottom: var(--s-10);
+    box-shadow: var(--shadow-xs);
   }
 
   .tab {
-    flex: 1;
-    padding: 10px 16px;
+    appearance: none;
     border: none;
     background: transparent;
-    font-size: 14px;
-    font-weight: 600;
-    color: #64748b;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .tab:hover { color: #334155; }
-  .tab.active { background: #fff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  /* Section titles */
-  .section-title {
+    padding: 10px 18px;
+    font-family: var(--font-sans);
     font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: #94a3b8;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #e2e8f0;
+    font-weight: 600;
+    color: var(--ink-3);
+    cursor: pointer;
+    border-radius: 14px;
+    transition: color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
   }
 
-  /* Cards grid */
+  .tab-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink-4);
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+  }
+
+  .tab:hover { color: var(--ink-1); }
+  .tab:focus-visible {
+    outline: 2px solid var(--platform-500);
+    outline-offset: 2px;
+  }
+
+  .tab.active {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+  }
+  .tab.active .tab-num {
+    color: var(--platform-600);
+    border-color: var(--platform-line);
+    background: var(--platform-tint);
+  }
+
+  /* ───────────────────────── PANELS ───────────────────────── */
+  .panel { display: none; }
+  .panel.active {
+    display: block;
+    animation: panelIn 0.32s ease-out;
+  }
+
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ───────────────────────── SECTION TITLES ───────────────────────── */
+  .section-header {
+    margin: var(--s-10) 0 var(--s-6);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-4);
+  }
+  .section-header:first-child { margin-top: 0; }
+
+  .section-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+
+  .section-title {
+    font-size: clamp(20px, 2.4vw, 24px);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+
+  .section-sub {
+    font-size: 14px;
+    color: var(--ink-2);
+    max-width: 720px;
+  }
+
+  .section-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    padding: 4px 10px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ───────────────────────── CARDS ───────────────────────── */
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    margin-bottom: 36px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--s-4);
+    margin-bottom: var(--s-8);
   }
 
   .card {
-    border-radius: 12px;
-    padding: 20px;
-    border: 1.5px solid;
-    transition: transform 0.15s, box-shadow 0.15s;
     position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--s-6);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    overflow: hidden;
+  }
+
+  /* Colored accent bar — the polish move */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--accent, var(--ink-4));
   }
 
   .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent, var(--line));
+  }
+
+  .card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin-bottom: var(--s-3);
   }
 
   .card h3 {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
   }
 
   .card p {
-    font-size: 13px;
-    color: #475569;
+    font-size: 13.5px;
+    color: var(--ink-2);
     line-height: 1.6;
   }
 
-  .card .lead-tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    margin-top: 12px;
+  .card-foot {
+    margin-top: var(--s-4);
+    padding-top: var(--s-4);
+    border-top: 1px dashed var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
   }
 
-  .card .transfer-note {
-    font-size: 11px;
+  .lead-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 600;
-    color: var(--newteam);
-    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent, var(--ink-3));
   }
 
-  /* Team color classes */
-  .card-eric { background: var(--eric-bg); border-color: var(--eric-border); }
-  .card-eric h3 { color: #1e40af; }
-  .card-eric .lead-tag { background: var(--eric); color: #fff; }
+  .lead-tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent, var(--ink-4));
+  }
 
-  .card-kerry { background: var(--kerry-bg); border-color: var(--kerry-border); }
-  .card-kerry h3 { color: #065f46; }
-  .card-kerry .lead-tag { background: var(--kerry); color: #fff; }
+  /* Card team variants */
+  .card-kerry    { --accent: var(--kerry-500);    background: linear-gradient(180deg, var(--kerry-tint) 0%, var(--surface) 60%); }
+  .card-china    { --accent: var(--china-500);    background: linear-gradient(180deg, var(--china-tint) 0%, var(--surface) 60%); }
+  .card-indo     { --accent: var(--indo-500);     background: linear-gradient(180deg, var(--indo-tint) 0%, var(--surface) 60%); }
+  .card-platform { --accent: var(--platform-500); background: linear-gradient(180deg, var(--platform-tint) 0%, var(--surface) 60%); }
+  .card-out      { --accent: var(--out-500);      background: var(--surface); opacity: 0.88; }
 
-  .card-newteam { background: var(--newteam-bg); border-color: var(--newteam-border); }
-  .card-newteam h3 { color: #9a3412; }
-  .card-newteam .lead-tag { background: var(--newteam); color: #fff; }
-
-  .card-shared { background: var(--shared-bg); border-color: var(--shared-border); }
-  .card-shared h3 { color: #5b21b6; }
-  .card-shared .lead-tag { background: var(--shared); color: #fff; }
-
-  .card-open { background: var(--open-bg); border-color: var(--open-border); }
-  .card-open h3 { color: #b91c1c; }
-
-  .card-gray { background: var(--gray-bg); border-color: var(--gray-border); }
-  .card-gray h3 { color: #374151; }
-  .card-gray .lead-tag { background: var(--gray); color: #fff; }
+  .card-open {
+    --accent: var(--danger-500);
+    background: var(--surface);
+  }
 
   /* Phase badge */
   .phase-badge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-mono);
     font-size: 10px;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 4px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 5px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
-  .badge-p1 { background: #059669; color: #fff; }
-  .badge-p2 { background: #94a3b8; color: #fff; }
-  .badge-open { background: #ef4444; color: #fff; }
+  .badge-p1         { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+  .badge-p2         { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+  .badge-foundation { background: var(--platform-tint); color: var(--platform-600); border: 1px solid var(--platform-line); }
 
-  /* Architecture diagram */
-  .arch-diagram {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 32px;
-    margin-bottom: 36px;
-    overflow-x: auto;
+  /* ───────────────────────── ARCHITECTURE STACK ───────────────────────── */
+  .arch-shell {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-2xl);
+    padding: clamp(var(--s-6), 3vw, var(--s-10));
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .arch-shell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(800px 300px at 100% 0%, rgba(124,58,237,0.04), transparent 70%);
+    pointer-events: none;
+  }
+
+  .arch-stack {
+    position: relative;
+  }
+
+  /* The vertical spine */
+  .arch-spine {
+    position: absolute;
+    left: 22px;
+    top: 36px;
+    bottom: 36px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--platform-line) 0%, var(--line) 50%, var(--platform-line) 100%);
+    border-radius: 2px;
+    pointer-events: none;
   }
 
   .arch-layer {
-    margin-bottom: 28px;
+    position: relative;
+    padding-left: 60px;
+    margin-bottom: var(--s-6);
   }
-
   .arch-layer:last-child { margin-bottom: 0; }
 
-  .layer-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #94a3b8;
-    margin-bottom: 12px;
-  }
-
-  .layer-row {
+  .arch-layer-marker {
+    position: absolute;
+    left: 12px;
+    top: 28px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--platform-500);
+    box-shadow: var(--shadow-glow);
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .arch-box {
-    flex: 1;
-    min-width: 200px;
-    border-radius: 10px;
-    padding: 16px;
-    border: 2px solid;
-    font-size: 13px;
-  }
-
-  .arch-box .box-title {
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 9px;
     font-weight: 700;
-    font-size: 14px;
-    margin-bottom: 6px;
+    color: var(--platform-600);
+    z-index: 1;
   }
 
-  .arch-box .box-detail {
+  .arch-layer-body {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--s-5) var(--s-6);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease;
+  }
+  .arch-layer:hover .arch-layer-body { box-shadow: var(--shadow-md); }
+
+  .arch-layer-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin-bottom: var(--s-4);
+    padding-bottom: var(--s-3);
+    border-bottom: 1px dashed var(--line);
+  }
+
+  .arch-layer-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+  }
+
+  .arch-layer-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-4);
+    letter-spacing: 0.06em;
+  }
+
+  .arch-layer-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+
+  .arch-layer-sub {
     font-size: 12px;
-    color: #475569;
+    color: var(--ink-3);
+    font-style: italic;
+  }
+
+  /* Connector between layers */
+  .arch-connector {
+    position: relative;
+    height: 24px;
+    margin-left: 60px;
+    margin-bottom: var(--s-6);
+  }
+  .arch-connector svg {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    color: var(--ink-4);
+    opacity: 0.55;
+  }
+
+  /* Service rows */
+  .arch-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--s-3);
+  }
+
+  .svc-box {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: var(--s-4);
+    box-shadow: var(--shadow-xs);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .svc-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent, var(--ink-4));
+  }
+
+  .svc-box:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent, var(--line));
+    box-shadow: var(--shadow-md);
+  }
+
+  .svc-box-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--s-2);
+  }
+
+  .svc-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+
+  .svc-port {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+
+  .svc-desc {
+    font-size: 12px;
+    color: var(--ink-2);
     line-height: 1.5;
   }
 
-  .arch-box .box-endpoints {
-    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-    font-size: 11px;
-    color: #64748b;
-    margin-top: 8px;
-    line-height: 1.8;
-  }
-
-  .arch-box.eric { background: var(--eric-bg); border-color: var(--eric-border); }
-  .arch-box.eric .box-title { color: #1e40af; }
-  .arch-box.kerry { background: var(--kerry-bg); border-color: var(--kerry-border); }
-  .arch-box.kerry .box-title { color: #065f46; }
-  .arch-box.newteam { background: var(--newteam-bg); border-color: var(--newteam-border); }
-  .arch-box.newteam .box-title { color: #9a3412; }
-  .arch-box.shared { background: var(--shared-bg); border-color: var(--shared-border); }
-  .arch-box.shared .box-title { color: #5b21b6; }
-  .arch-box.interim { background: #fff; border-color: #d1d5db; border-style: dashed; }
-  .arch-box.interim .box-title { color: #6b7280; }
-
-  .divider {
-    text-align: center;
-    font-size: 11px;
-    color: #94a3b8;
-    letter-spacing: 1px;
-    padding: 12px 0;
-    border-top: 1px dashed #cbd5e1;
-    margin: 4px 0 16px;
-  }
-
-  /* Event bus */
-  .event-bus {
-    background: #fefce8;
-    border: 1.5px solid #fde68a;
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-
-  .event-bus .bus-title {
-    font-size: 13px;
+  .svc-tag {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 9px;
     font-weight: 700;
-    color: #a16207;
-    margin-bottom: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+  }
+  .svc-tag.p1 { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+  .svc-tag.p2 { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+  .svc-box.kerry    { --accent: var(--kerry-500);    background: linear-gradient(135deg, var(--kerry-tint) 0%, var(--surface) 50%); }
+  .svc-box.china    { --accent: var(--china-500);    background: linear-gradient(135deg, var(--china-tint) 0%, var(--surface) 50%); }
+  .svc-box.indo     { --accent: var(--indo-500);     background: linear-gradient(135deg, var(--indo-tint) 0%, var(--surface) 50%); }
+  .svc-box.platform { --accent: var(--platform-500); background: linear-gradient(135deg, var(--platform-tint) 0%, var(--surface) 50%); }
+  .svc-box.out      { --accent: var(--out-500); opacity: 0.72; }
+  .svc-box.mixed    {
+    --accent: transparent;
+    background: var(--surface);
+  }
+  .svc-box.mixed::before {
+    background: linear-gradient(180deg, var(--china-500) 0%, var(--china-500) 33%, var(--kerry-500) 33%, var(--kerry-500) 66%, var(--indo-500) 66%, var(--indo-500) 100%);
+  }
+
+  /* Subgroups inside microservice layer */
+  .svc-subgroup {
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r-md);
+    padding: var(--s-4);
+    margin-bottom: var(--s-3);
+  }
+  .svc-subgroup:last-child { margin-bottom: 0; }
+
+  .svc-subgroup-head {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-bottom: var(--s-3);
+  }
+
+  .svc-subgroup-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+  }
+
+  .svc-subgroup-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--line) 0%, transparent 100%);
+  }
+
+  /* Event tags row */
+  .event-row {
+    margin-top: var(--s-4);
+    padding-top: var(--s-4);
+    border-top: 1px dashed var(--line);
+  }
+
+  .event-row-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    margin-bottom: var(--s-2);
   }
 
   .event-tags {
@@ -316,671 +706,896 @@
   }
 
   .event-tag {
-    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
     padding: 4px 10px;
-    border-radius: 6px;
-    background: #fef9c3;
+    border-radius: 5px;
+    background: #fefce8;
     border: 1px solid #fde68a;
     color: #854d0e;
   }
 
-  /* DB Layer */
-  .db-row {
+  /* Architectural rules grid */
+  .rules-grid {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--s-6);
+    margin-top: var(--s-6);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--s-3) var(--s-6);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .rule {
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--s-3);
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.55;
   }
 
-  .db-item {
-    flex: 1;
-    min-width: 140px;
-    text-align: center;
-    padding: 14px 12px;
-    border-radius: 10px;
-    border: 1.5px solid;
-    background: #fff;
+  .rule::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: var(--platform-500);
+    border-radius: 50%;
+    margin-top: 8px;
+    flex-shrink: 0;
   }
 
-  .db-item .db-icon { font-size: 20px; margin-bottom: 4px; }
-  .db-item .db-name { font-size: 12px; font-weight: 700; color: #1e293b; }
-  .db-item .db-tech { font-size: 10px; color: #94a3b8; }
-  .db-item .db-owner { font-size: 11px; font-weight: 600; margin-top: 4px; }
-
-  .db-item.eric { border-color: var(--eric-border); }
-  .db-item.eric .db-owner { color: var(--eric); }
-  .db-item.kerry { border-color: var(--kerry-border); }
-  .db-item.kerry .db-owner { color: var(--kerry); }
-  .db-item.newteam { border-color: var(--newteam-border); }
-  .db-item.newteam .db-owner { color: var(--newteam); }
-  .db-item.shared-db { border-color: var(--shared-border); }
-  .db-item.shared-db .db-owner { color: var(--shared); }
-
-  /* Open questions */
+  /* ───────────────────────── OPEN QUESTIONS ───────────────────────── */
   .question-card {
-    background: #fff;
-    border: 1.5px solid #fca5a5;
-    border-left: 4px solid #ef4444;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: var(--s-6);
+    margin-bottom: var(--s-3);
+    position: relative;
+    box-shadow: var(--shadow-xs);
+    transition: box-shadow 0.18s ease;
   }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 3px;
+    background: var(--danger-500);
+  }
+
+  .question-card:hover { box-shadow: var(--shadow-md); }
 
   .question-card h3 {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
-    color: #b91c1c;
-    margin-bottom: 8px;
+    color: var(--ink);
+    margin-bottom: var(--s-2);
+    letter-spacing: -0.01em;
+  }
+
+  .question-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--danger-500);
+    font-weight: 600;
+    margin-right: var(--s-2);
   }
 
   .question-card p {
-    font-size: 13px;
-    color: #475569;
+    font-size: 13.5px;
+    color: var(--ink-2);
     line-height: 1.6;
-    margin-bottom: 8px;
+    margin-bottom: var(--s-2);
   }
 
-  .question-card .options {
+  .question-card code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 1px 6px;
+    background: var(--surface-3);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--ink-1);
+  }
+
+  .options {
     display: flex;
-    gap: 8px;
     flex-wrap: wrap;
-    margin-top: 10px;
+    gap: 6px;
+    margin: var(--s-3) 0 var(--s-3);
   }
 
   .option-pill {
     font-size: 12px;
     padding: 5px 12px;
-    border-radius: 20px;
-    background: #fef2f2;
-    border: 1px solid #fecaca;
+    border-radius: 999px;
+    background: var(--danger-tint);
+    border: 1px solid var(--danger-line);
     color: #991b1b;
     font-weight: 500;
   }
 
   .decision-owner {
+    font-family: var(--font-mono);
     font-size: 11px;
-    font-weight: 600;
-    color: #94a3b8;
-    margin-top: 10px;
+    font-weight: 500;
+    color: var(--ink-3);
+    padding-top: var(--s-3);
+    border-top: 1px dashed var(--line);
+    letter-spacing: 0.03em;
   }
 
-  /* Ownership ramp */
-  .ramp-timeline {
+  .decision-owner::before {
+    content: '→ ';
+    color: var(--ink-4);
+  }
+
+  /* ───────────────────────── FOOTER ───────────────────────── */
+  .footer {
+    margin-top: var(--s-16);
+    padding-top: var(--s-6);
+    border-top: 1px solid var(--line);
     display: flex;
-    gap: 0;
-    margin: 16px 0 24px;
-  }
-
-  .ramp-phase {
-    flex: 1;
-    padding: 16px;
-    border: 2px solid;
-    text-align: center;
-    position: relative;
-  }
-
-  .ramp-phase:first-child { border-radius: 10px 0 0 10px; }
-  .ramp-phase:last-child { border-radius: 0 10px 10px 0; }
-
-  .ramp-phase .ramp-label {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  .ramp-phase .ramp-weeks {
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    font-family: var(--font-mono);
     font-size: 11px;
-    font-weight: 600;
-    color: #94a3b8;
-    margin-bottom: 8px;
+    color: var(--ink-4);
+    letter-spacing: 0.04em;
   }
 
-  .ramp-phase .ramp-desc {
-    font-size: 11px;
-    color: #475569;
-    line-height: 1.5;
+  /* ───────────────────────── A11Y & PRINT ───────────────────────── */
+  :focus-visible {
+    outline: 2px solid var(--platform-500);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 
-  .ramp-phase.m1 { background: #fff7ed; border-color: var(--newteam-border); }
-  .ramp-phase.m1 .ramp-label { color: var(--newteam); }
-  .ramp-phase.m2 { background: #fef3c7; border-color: #fbbf24; }
-  .ramp-phase.m2 .ramp-label { color: #d97706; }
-  .ramp-phase.m3 { background: #ecfdf5; border-color: var(--kerry-border); }
-  .ramp-phase.m3 .ramp-label { color: var(--kerry); }
-  .ramp-phase.m4 { background: var(--eric-bg); border-color: var(--eric-border); }
-  .ramp-phase.m4 .ramp-label { color: var(--eric); }
-
-  .arch-rules {
-    background: #f8fafc;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 24px;
-    columns: 2;
-    column-gap: 32px;
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
-  .arch-rules p {
-    font-size: 12px;
-    color: #475569;
-    margin-bottom: 6px;
-    break-inside: avoid;
-    line-height: 1.5;
+  @media print {
+    body { background: #fff; }
+    .tabs { display: none; }
+    .panel { display: block !important; page-break-inside: avoid; }
+    .panel + .panel { page-break-before: always; }
+    .arch-shell, .card, .svc-box, .question-card { break-inside: avoid; }
   }
 
-  .arch-rules code {
-    font-size: 11px;
-    background: #e2e8f0;
-    padding: 1px 5px;
-    border-radius: 3px;
-  }
-
-  .footnote {
-    text-align: center;
-    font-size: 12px;
-    color: #94a3b8;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #e2e8f0;
-  }
-
-  @media (max-width: 768px) {
-    body { padding: 16px; }
-    .card-grid { grid-template-columns: 1fr; }
-    .ramp-timeline { flex-direction: column; }
-    .ramp-phase { border-radius: 10px !important; margin-bottom: 8px; }
-    .arch-rules { columns: 1; }
-    .tabs { flex-wrap: wrap; }
+  @media (max-width: 720px) {
+    .arch-layer { padding-left: 44px; }
+    .arch-spine { left: 14px; }
+    .arch-layer-marker { left: 4px; }
+    .arch-connector { margin-left: 44px; }
+    .meta-row { gap: var(--s-4); }
+    .legend { gap: 6px; }
+    .legend-chip { font-size: 11px; }
+    .tabs { width: 100%; }
+    .tab { flex: 1; justify-content: center; padding: 10px var(--s-2); }
+    .tab-num { display: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>Ztor 2.0 — Creator Studio Phase 1</h1>
-  <p>Architecture & Ownership Briefing &middot; April 1, 2026 &middot; Jeff &times; Howard &times; Eric &times; Kerry</p>
-</div>
+<div class="container">
 
-<div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:var(--eric)"></div> Eric's Team</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--kerry)"></div> Kerry's Team</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--newteam)"></div> New Team (day-one)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--gray)"></div> Interim &rarr; transfers</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--shared)"></div> Shared Infrastructure</div>
-</div>
-
-<div class="tabs">
-  <button class="tab active" onclick="showPanel('deliverables')">Phase 1 Deliverables</button>
-  <button class="tab" onclick="showPanel('architecture')">System Design</button>
-  <button class="tab" onclick="showPanel('questions')">Open Questions</button>
-</div>
-
-<!-- ===== PANEL 1: PHASE 1 DELIVERABLES ===== -->
-<div id="deliverables" class="panel active">
-
-  <div class="section-title">Applications — One Team, One App</div>
-  <div class="card-grid">
-    <div class="card card-eric">
-      <h3>Ztor Fans <span class="phase-badge badge-p1">Phase 1</span></h3>
-      <p>User-facing streaming + social app. VOD, PPV, Live, Feed, Events. Embeds Kerry's modules (Crowdfunding widget, Loyalty Points display).</p>
-      <div class="lead-tag">Lead: Eric</div>
-    </div>
-    <div class="card card-kerry">
-      <h3>Ztor Creator Studio <span class="phase-badge badge-p1">Phase 1</span></h3>
-      <p>Inherits Beamco Artist Portal. Upload, Merch, Crowdfunding, Revenue. Gated by Creator-tier KYC. Separate app at <code>studio.ztor.com</code>.</p>
-      <div class="lead-tag">Lead: Kerry</div>
-    </div>
-    <div class="card card-newteam">
-      <h3>Back Office <span class="phase-badge badge-p2">Later</span></h3>
-      <p>3 back offices run independently at start. Merge into one over time. Inherits from Eric + Kerry.</p>
-      <div class="lead-tag">Lead: New Team</div>
-    </div>
-  </div>
-
-  <div class="section-title">Phase 1 Confirmed Deliverables</div>
-  <div class="card-grid">
-    <div class="card card-kerry">
-      <h3>Creator Upload Flow</h3>
-      <p>Transplant Film Owner Portal's <em>creator-facing</em> upload into Creator Studio. Metadata entry, file upload, content status tracking. <strong>Approval workflow required</strong> — creators cannot publish directly.</p>
-      <div class="lead-tag">Kerry</div>
-    </div>
-    <div class="card card-kerry">
-      <h3>Crowdfunding</h3>
-      <p>Port existing crowdfunding into Creator Studio project structure. Config under Projects in Kerry's domain. Stays on Stripe (even if other flows move to 2C2P).</p>
-      <div class="lead-tag">Kerry</div>
-    </div>
-    <div class="card card-kerry">
-      <h3>Loyalty Points Microservice</h3>
-      <p>Extract into standalone microservice. Consumed by both Eric's consumer frontend and Kerry's Creator Studio. Earn triggers, tier upgrades, perk gating.</p>
-      <div class="lead-tag">Kerry</div>
-    </div>
-    <div class="card card-open">
-      <h3>Unified User DB (Store + Bookyay) <span class="phase-badge badge-open">TBD</span></h3>
-      <p>Merge user databases. Foundation for unified identity layer. <strong>Critical path</strong> — most features depend on a single user model. Kerry built Bookyay's foundation; Eric owns both DBs in production. Ownership to be decided Apr 1.</p>
-      <div class="lead-tag" style="background:#ef4444;color:#fff;">Owner TBD</div>
-    </div>
-    <div class="card card-newteam">
-      <h3>IP Bank — Backend Records Only</h3>
-      <p>No UI in Phase 1. Backend tracks IP records from day one — which IP is used in each content upload, revenue attribution for future splits. "有紀錄就好了"</p>
-      <div class="lead-tag">New Team</div>
-    </div>
-  </div>
-
-  <div class="section-title">Out of Scope (Phase 2+)</div>
-  <div class="card-grid">
-    <div class="card card-gray">
-      <h3>IP Bank UI & Marketplace</h3>
-      <p>Rental config, portfolio management, marketplace listings. Full UI comes after backend records are stable.</p>
-      <div class="lead-tag">Phase 2+</div>
-    </div>
-    <div class="card card-gray">
-      <h3>E-Shop</h3>
-      <p>Product CRUD, orders, merch. Cannot run simultaneously with Events — must be staggered.</p>
-      <div class="lead-tag">Phase 2+</div>
-    </div>
-    <div class="card card-gray">
-      <h3>Events / Ticketing</h3>
-      <p>Must exist before Bingo can sunset. Includes Bookie's seating chart system (座位表) — significant migration complexity.</p>
-      <div class="lead-tag">Phase 2+</div>
-    </div>
-    <div class="card card-gray">
-      <h3>Auction</h3>
-      <p>Prototype shown in 3/31 meeting. Module-based design for future reuse. Deferred.</p>
-      <div class="lead-tag">Phase 2+</div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== PANEL 2: OPEN QUESTIONS ===== -->
-<div id="questions" class="panel">
-
-  <div class="section-title">Decisions Needed — April 1 Meeting</div>
-
-  <div class="question-card">
-    <h3>1. Film Upload Feature Ownership</h3>
-    <p>The film upload feature currently sits in Eric's codebase. Eric has suggested he continue owning it since it's already integrated with his pipeline. However, this feature also depends on Ztor's existing <strong>Back Office approval workflow</strong> — creators cannot publish directly; content must go through team review before going live.</p>
-    <p>If Eric keeps it, Kerry's Creator Studio calls Eric's upload API (cross-team dependency), and the BO approval flow stays intact. If Kerry takes it, the upload migration is larger upfront and the approval workflow must also be ported or integrated via API.</p>
-    <div class="options">
-      <span class="option-pill">Eric keeps upload + approval</span>
-      <span class="option-pill">Kerry takes over (incl. approval)</span>
-      <span class="option-pill">Kerry owns upload, BO approval stays with Eric</span>
-    </div>
-    <div class="decision-owner">Decision: Jeff + Eric + Kerry</div>
-  </div>
-
-  <div class="question-card">
-    <h3>2. Unified User Database — Team Ownership</h3>
-    <p>Store and Bingo (Bookyay) user databases need to merge into one unified model. The complication: <strong>Kerry's team already built the foundation for Bookyay</strong> and understands its data model, but <strong>Eric currently owns both the Ztor and Bookyay user databases</strong> in production.</p>
-    <p>This is critical path — most Phase 1 features depend on a single user model. Whoever owns this must handle the migration without breaking either platform.</p>
-    <div class="options">
-      <span class="option-pill">Eric owns (already has both DBs)</span>
-      <span class="option-pill">Kerry owns (built Bookyay foundation)</span>
-      <span class="option-pill">Joint migration, Eric owns final DB</span>
-    </div>
-    <div class="decision-owner">Decision: Jeff + Eric + Kerry</div>
-  </div>
-
-  <div class="question-card">
-    <h3>3. Large File Upload Strategy (&gt;1GB)</h3>
-    <p>Browser uploads break above ~1GB. AI-generated films could hit multi-GB sizes. Need a solution that doesn't force creators to leave the platform.</p>
-    <div class="options">
-      <span class="option-pill">Desktop app with resume</span>
-      <span class="option-pill">Browser &lt;1GB / app &gt;1GB</span>
-      <span class="option-pill">Browser-only for Phase 1</span>
-    </div>
-    <div class="decision-owner">Decision: Eric (technical feasibility)</div>
-  </div>
-
-  <div class="question-card">
-    <h3>4. Payment Infrastructure — Gateway + Ownership</h3>
-    <p><strong>Gateway:</strong> Replace Stripe with 2C2P for non-crowdfunding payments? Two approaches: hosted redirect (simpler, worse UX) vs full API integration (more work, better UX). Sam evaluating if 2C2P covers CC + Google Pay + Apple Pay globally.</p>
-    <p><strong>Ownership:</strong> Which team owns the payment layer going forward? Today it's in Eric's codebase, but Creator Studio adds new touchpoints (payouts, crowdfunding, content purchases).</p>
-    <div class="options">
-      <span class="option-pill">Eric owns (shared svc)</span>
-      <span class="option-pill">Kerry owns (creator backend)</span>
-      <span class="option-pill">Standalone microservice</span>
-    </div>
-    <div class="decision-owner">Decision: Jeff + Eric + Kerry &middot; Sam confirms 2C2P feasibility</div>
-  </div>
-
-  <div class="question-card">
-    <h3>5. Event Migration Priority</h3>
-    <p>Events must exist in Store 2.0 before Bingo can shut down. Bookie's event system includes seating charts (座位表) and complex ticketing — significant migration, not a simple port. E-Shop and Events cannot be simultaneous.</p>
-    <div class="options">
-      <span class="option-pill">Phase 2 (sooner)</span>
-      <span class="option-pill">Phase 3 (later)</span>
-    </div>
-    <div class="decision-owner">Decision: Business (Jeff + stakeholders)</div>
-  </div>
-
-  <div class="question-card">
-    <h3>6. Beamco Artist Portal Codebase Inheritance</h3>
-    <p>Creator Studio inherits the Beamco Artist Portal codebase. The dev team has flagged that the <strong>existing codebase needs refactoring</strong> before it can scale into Creator Studio's scope. Two paths forward — and each has very different timeline and risk implications:</p>
-    <p><strong>Option A:</strong> Refactor the existing codebase end-to-end. How long would this take? Does the team have a realistic estimate, or is this an open-ended effort that will bleed into Phase 1 delivery?</p>
-    <p><strong>Option B:</strong> Keep the existing backend and convert it into microservices (the backend logic is reusable), but <strong>build the frontend fresh</strong> for Creator Studio. This avoids the frontend refactor trap and lets the team ship a clean UI on top of proven backend services.</p>
-    <div class="options">
-      <span class="option-pill">Full refactor (timeline TBD)</span>
-      <span class="option-pill">Backend &rarr; microservices, new frontend</span>
-      <span class="option-pill">Ship as-is, refactor later</span>
-    </div>
-    <div class="decision-owner">Decision: Kerry's team (technical assessment) + Jeff (timeline impact)</div>
-  </div>
-
-  <div class="question-card">
-    <h3>7. Microservice Architecture Design</h3>
-    <p>The ownership map defines <strong>which team owns which service</strong>, but several architectural decisions still need alignment before development begins:</p>
-    <p><strong>Service boundaries:</strong> Are the current service boundaries the right cut? E.g., should Auth/Identity and the Unified User DB be one service or two? Should Crowdfunding and NFT/Mint be merged since minting is triggered by crowdfunding participation?</p>
-    <p><strong>Communication patterns:</strong> The plan calls for Kafka async events + sync HTTP via Gateway. What's the latency budget for sync calls? Do we need a saga orchestrator for multi-step flows (e.g., crowdfunding &rarr; payment &rarr; NFT mint)?</p>
-    <p><strong>Deployment & infra:</strong> Containerized (K8s) or serverless (Lambda/Cloud Run)? Mono-repo or poly-repo? CI/CD pipeline ownership per team or centralized?</p>
-    <p><strong>Observability from day one:</strong> Distributed tracing (OpenTelemetry), centralized logging, health checks — who sets up the shared observability stack?</p>
-    <div class="options">
-      <span class="option-pill">Discuss at Apr 1 meeting</span>
-      <span class="option-pill">Separate tech design session</span>
-      <span class="option-pill">Eric + Kerry propose independently</span>
-    </div>
-    <div class="decision-owner">Decision: Eric + Kerry (technical leads) + Jeff (prioritization)</div>
-  </div>
-</div>
-
-<!-- ===== PANEL 3: SYSTEM DESIGN ===== -->
-<div id="architecture" class="panel">
-
-  <div class="section-title">Layer 1 — Client Applications</div>
-  <div class="arch-diagram">
-    <div class="layer-row">
-      <div class="arch-box eric">
-        <div class="box-title">Ztor Fans</div>
-        <div class="box-detail">Next.js 14 (web) &middot; React Native (iOS/Android) &middot; TV cast receiver</div>
-        <div class="box-endpoints">
-          GET /api/content/:id, /api/events/:id<br>
-          POST /api/events/stream, /api/events/ticket<br>
-          POST /api/tastemaker/attribution<br>
-          WS /ws/liveFeed
-        </div>
+  <!-- ========== HEADER ========== -->
+  <header class="page-header">
+    <span class="eyebrow">Architecture Briefing · V1.1.0 Foundation</span>
+    <h1>Ztor 2.0 — Phase 1 Architecture</h1>
+    <p class="lede">
+      The 2.0 platform skeleton plus Crowdfund. This document maps team responsibility across the stack and separates what ships in Phase 1 from what waits for later phases.
+    </p>
+    <div class="meta-row">
+      <div class="meta-cell">
+        <span class="meta-label">Updated</span>
+        <span class="meta-value">May 18, 2026</span>
       </div>
-      <div class="arch-box kerry">
-        <div class="box-title">Ztor Creator Studio</div>
-        <div class="box-detail">Next.js 14 (web) &middot; Permission-controlled module rendering</div>
-        <div class="box-endpoints">
-          POST /api/crowdfunding, /api/ip/rent<br>
-          POST /api/nft/mint<br>
-          GET /api/creator/dashboard/:projectId
-        </div>
+      <div class="meta-cell">
+        <span class="meta-label">Scope</span>
+        <span class="meta-value">Crowdfund + 2.0 Foundation</span>
       </div>
-      <div class="arch-box newteam">
-        <div class="box-title">Back Office</div>
-        <div class="box-detail">Next.js 14 (web) &middot; 3 BOs independent &rarr; unified shell at M4</div>
-        <div class="box-endpoints">
-          GET /api/audit/export/:projectId<br>
-          POST /api/compliance/freeze<br>
-          GET /api/revenue/waterfall/:projectId<br>
-          GET /api/admin/users, /api/admin/ips
-        </div>
+      <div class="meta-cell">
+        <span class="meta-label">Source</span>
+        <span class="meta-value">Dev handoff V1.1.0 (Apr 28–29)</span>
+      </div>
+      <div class="meta-cell">
+        <span class="meta-label">Audience</span>
+        <span class="meta-value">Jeff · Howard · Eric · Kerry</span>
       </div>
     </div>
+  </header>
+
+  <!-- ========== LEGEND ========== -->
+  <div class="legend" role="list" aria-label="Team color legend">
+    <span class="legend-chip" role="listitem"><span class="legend-swatch swatch-kerry"></span>Kerry's Team</span>
+    <span class="legend-chip" role="listitem"><span class="legend-swatch swatch-china"></span>Eric — China Team</span>
+    <span class="legend-chip" role="listitem"><span class="legend-swatch swatch-indo"></span>Eric — Indo Team</span>
+    <span class="legend-chip" role="listitem"><span class="legend-swatch swatch-platform"></span>Shared Platform</span>
+    <span class="legend-chip" role="listitem"><span class="legend-swatch swatch-out"></span>Out of Scope (Phase 2+)</span>
   </div>
 
-  <div class="section-title">Layer 2 — API Gateway</div>
-  <div class="arch-diagram">
-    <div class="arch-box interim" style="width:100%">
-      <div class="box-title">API Gateway <span style="font-size:11px;font-weight:600;color:var(--gray);margin-left:8px;">ERIC &rarr; NEW TEAM AT M2</span></div>
-      <div class="box-detail">Kong / custom Node.js &middot; Single ingress &middot; No app talks directly to a service</div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;">
-        <span style="font-size:11px;padding:4px 10px;background:#dbeafe;border-radius:6px;color:#1e40af;font-weight:600;">JWT validation</span>
-        <span style="font-size:11px;padding:4px 10px;background:#dbeafe;border-radius:6px;color:#1e40af;font-weight:600;">Role & permission check</span>
-        <span style="font-size:11px;padding:4px 10px;background:#dbeafe;border-radius:6px;color:#1e40af;font-weight:600;">Rate limiting</span>
-        <span style="font-size:11px;padding:4px 10px;background:#dbeafe;border-radius:6px;color:#1e40af;font-weight:600;">Request routing</span>
-        <span style="font-size:11px;padding:4px 10px;background:#dbeafe;border-radius:6px;color:#1e40af;font-weight:600;">Feature flag enforcement</span>
-        <span style="font-size:11px;padding:4px 10px;background:#dbeafe;border-radius:6px;color:#1e40af;font-weight:600;">Circuit breaker</span>
-        <span style="font-size:11px;padding:4px 10px;background:#dbeafe;border-radius:6px;color:#1e40af;font-weight:600;">API versioning /v1/ /v2/</span>
+  <!-- ========== TABS ========== -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" role="tab" aria-selected="true" aria-controls="scope" onclick="showPanel('scope', this)">
+      <span class="tab-num">01</span> Phase 1 Scope
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="architecture" onclick="showPanel('architecture', this)">
+      <span class="tab-num">02</span> Architecture
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="questions" onclick="showPanel('questions', this)">
+      <span class="tab-num">03</span> Open Questions
+    </button>
+  </div>
+
+  <!-- ========== PANEL 1: SCOPE ========== -->
+  <div id="scope" class="panel active" role="tabpanel">
+
+    <div class="section-header">
+      <div class="section-title-group">
+        <h2 class="section-title">Applications</h2>
+        <p class="section-sub">Phase 1 ownership at the surface layer.</p>
       </div>
+      <span class="section-count">3 surfaces</span>
+    </div>
+
+    <div class="card-grid">
+      <article class="card card-china">
+        <div class="card-head">
+          <h3>Ztor Fans</h3>
+          <span class="phase-badge badge-p1">Phase 1</span>
+        </div>
+        <p>User-facing app — surfaces the Crowdfund pledge experience for fans. Stays on the existing Ztor stack and is backed by the new 2.0 gateway and foundation services.</p>
+        <div class="card-foot">
+          <span class="lead-tag">Lead · Eric</span>
+        </div>
+      </article>
+
+      <article class="card card-kerry">
+        <div class="card-head">
+          <h3>Ztor Creator Studio</h3>
+          <span class="phase-badge badge-p1">Phase 1</span>
+        </div>
+        <p>Creator-side app — campaign setup, pledge tracking and payout visibility for Crowdfund. Inherits the Beamco Artist Portal foundation.</p>
+        <div class="card-foot">
+          <span class="lead-tag">Lead · Kerry</span>
+        </div>
+      </article>
+
+      <article class="card card-out">
+        <div class="card-head">
+          <h3>Back Office</h3>
+          <span class="phase-badge badge-p2">No change in P1</span>
+        </div>
+        <p>The three existing back-offices continue as-is for Phase 1 — no consolidation, no UI changes. The new BackOffice Gateway and BFF are built as foundation but only front existing flows. Unification is a Phase 2+ initiative.</p>
+        <div class="card-foot">
+          <span class="lead-tag">No Change</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title-group">
+        <h2 class="section-title">Phase 1 Foundation</h2>
+        <p class="section-sub">The 2.0 platform skeleton. Everything below is required to ship Crowdfund on the new architecture — foundation is what makes future phases possible.</p>
+      </div>
+      <span class="section-count">11 services</span>
+    </div>
+
+    <div class="card-grid">
+      <article class="card card-platform">
+        <div class="card-head"><h3>API Gateways ×3</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Fans, Studio and BackOffice gateways — JWT auth, rate limit, routing. App-token at the edge; user identity stays in services.</p>
+        <div class="card-foot"><span class="lead-tag">Eric · Kerry · Indo</span></div>
+      </article>
+
+      <article class="card card-platform">
+        <div class="card-head"><h3>Service Discovery — Consul</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Three-node Consul cluster. All services register and discover here. Replaces hard-coded service URLs.</p>
+        <div class="card-foot"><span class="lead-tag">Platform</span></div>
+      </article>
+
+      <article class="card card-platform">
+        <div class="card-head"><h3>BFFs ×3</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>One backend-for-frontend per surface — composes the right data shape for each frontend. Keeps mobile, web and admin queries fast and isolated.</p>
+        <div class="card-foot"><span class="lead-tag">Eric · Kerry · Indo</span></div>
+      </article>
+
+      <article class="card card-indo">
+        <div class="card-head"><h3>Auth Service</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Single auth source for all three surfaces. JWT issuance, refresh, role and permission. Must-have on day one.</p>
+        <div class="card-foot"><span class="lead-tag">Indo</span></div>
+      </article>
+
+      <article class="card card-platform">
+        <div class="card-head"><h3>Unified User DB</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>A single user model across Ztor and Bookyay. Critical path — Crowdfund pledges need one user per real person.</p>
+        <div class="card-foot"><span class="lead-tag">Platform</span></div>
+      </article>
+
+      <article class="card card-platform">
+        <div class="card-head"><h3>Event Bus — Kafka</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Async backbone for global transactions. Services publish; Audit and Waterfall subscribe. No direct cross-domain HTTP for state changes.</p>
+        <div class="card-foot"><span class="lead-tag">Platform</span></div>
+      </article>
+
+      <article class="card card-indo">
+        <div class="card-head"><h3>Audit Service</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Subscribes to every Kafka topic and writes an append-only event log. Zero deletes — full audit trail from day one.</p>
+        <div class="card-foot"><span class="lead-tag">Indo</span></div>
+      </article>
+
+      <article class="card card-indo">
+        <div class="card-head"><h3>Config Version Service</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Snapshots split, payout and royalty config at every revenue event. INSERT-only. Lets us replay payouts under the rules in force at pledge time.</p>
+        <div class="card-foot"><span class="lead-tag">Indo</span></div>
+      </article>
+
+      <article class="card card-indo">
+        <div class="card-head"><h3>Compliance Service</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>KYC and AML gate before any payout or distribution trigger. Can freeze a project; override requires CEO and Legal.</p>
+        <div class="card-foot"><span class="lead-tag">Indo</span></div>
+      </article>
+
+      <article class="card card-indo">
+        <div class="card-head"><h3>Revenue Waterfall</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Consumes revenue events from Kafka, runs the split logic against the locked config version, writes the ledger.</p>
+        <div class="card-foot"><span class="lead-tag">Indo</span></div>
+      </article>
+
+      <article class="card card-platform">
+        <div class="card-head"><h3>Redis Cache</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Session store, rate-limit counters, circuit-breaker state and hot-path caches.</p>
+        <div class="card-foot"><span class="lead-tag">Platform</span></div>
+      </article>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title-group">
+        <h2 class="section-title">Phase 1 Business Feature — Crowdfund</h2>
+        <p class="section-sub">The one user-visible product feature in Phase 1.</p>
+      </div>
+      <span class="section-count">2 components</span>
+    </div>
+
+    <div class="card-grid">
+      <article class="card card-kerry">
+        <div class="card-head"><h3>Crowdfunding Service</h3><span class="phase-badge badge-p1">Phase 1</span></div>
+        <p>End-to-end pledge flow: eligibility → participate → revenue event → ledger. Emits <code>crowdfunding.participated</code> to Kafka; downstream picks up.</p>
+        <div class="card-foot"><span class="lead-tag">Kerry</span></div>
+      </article>
+
+      <article class="card card-kerry">
+        <div class="card-head"><h3>Payment Integration</h3><span class="phase-badge badge-p1">Phase 1</span></div>
+        <p>Stripe stays for Crowdfund (decision locked). 2C2P feasibility for other flows is a separate track — see Open Questions.</p>
+        <div class="card-foot"><span class="lead-tag">Kerry</span></div>
+      </article>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title-group">
+        <h2 class="section-title">Out of Scope · Phase 2+</h2>
+        <p class="section-sub">Services that exist in the 2.0 architecture but are not in Phase 1 — they appear greyed-out in the diagram.</p>
+      </div>
+      <span class="section-count">9 areas</span>
+    </div>
+
+    <div class="card-grid">
+      <article class="card card-out">
+        <div class="card-head"><h3>Content &amp; IP Binding</h3><span class="phase-badge badge-p2">Phase 2+</span></div>
+        <p>Creator upload, content metadata, IP-record binding. No streaming content surface in Phase 1.</p>
+        <div class="card-foot"><span class="lead-tag">Eric — China (when scheduled)</span></div>
+      </article>
+
+      <article class="card card-out">
+        <div class="card-head"><h3>Revenue Event Service</h3><span class="phase-badge badge-p2">Phase 2+</span></div>
+        <p>Generic stream / ticket / merch revenue ingestion. Crowdfund emits directly to Kafka in Phase 1; the generic service ships when there are more revenue types.</p>
+        <div class="card-foot"><span class="lead-tag">Eric — China</span></div>
+      </article>
+
+      <article class="card card-out">
+        <div class="card-head"><h3>Tastemaker / Referral</h3><span class="phase-badge badge-p2">Phase 2+</span></div>
+        <p>Referral attribution and commission calculation. Deferred until there's revenue volume to attribute.</p>
+        <div class="card-foot"><span class="lead-tag">Eric — China</span></div>
+      </article>
+
+      <article class="card card-out">
+        <div class="card-head"><h3>Entitlement &amp; Access</h3><span class="phase-badge badge-p2">Phase 2+</span></div>
+        <p>Premium content access checks. Not needed until paid content ships.</p>
+        <div class="card-foot"><span class="lead-tag">Eric — China</span></div>
+      </article>
+
+      <article class="card card-out">
+        <div class="card-head"><h3>NFT / Mint</h3><span class="phase-badge badge-p2">Phase 2+</span></div>
+        <p>Base L2 mint on crowdfund participation. Deferred — pledges land in the ledger first; tokenization later.</p>
+        <div class="card-foot"><span class="lead-tag">Kerry</span></div>
+      </article>
+
+      <article class="card card-out">
+        <div class="card-head"><h3>Loyalty &amp; Points</h3><span class="phase-badge badge-p2">Phase 2+</span></div>
+        <p>Earn, tier and redeem. Not on the Crowdfund-MVP path.</p>
+        <div class="card-foot"><span class="lead-tag">Kerry</span></div>
+      </article>
+
+      <article class="card card-out">
+        <div class="card-head"><h3>IP Registry &amp; Marketplace</h3><span class="phase-badge badge-p2">Phase 2+</span></div>
+        <p>The IP record store is foundation-adjacent, but the Marketplace and rental UI are Phase 2+.</p>
+        <div class="card-foot"><span class="lead-tag">Indo</span></div>
+      </article>
+
+      <article class="card card-out">
+        <div class="card-head"><h3>E-Shop · Events · Auction</h3><span class="phase-badge badge-p2">Phase 2+</span></div>
+        <p>Commerce, ticketing with seating, and the auction module. All deferred. Events must precede Bingo sunset.</p>
+        <div class="card-foot"><span class="lead-tag">Kerry · Eric</span></div>
+      </article>
+
+      <article class="card card-out">
+        <div class="card-head"><h3>Back Office Unification</h3><span class="phase-badge badge-p2">Phase 2+</span></div>
+        <p>Three BOs run independently in Phase 1. The consolidated admin shell is a Phase 2+ Indo-team initiative.</p>
+        <div class="card-foot"><span class="lead-tag">Indo</span></div>
+      </article>
     </div>
   </div>
 
-  <div class="section-title">Layer 3 — Service Mesh &middot; Each Service Owns Its Own DB</div>
-  <div class="arch-diagram">
-    <div style="display:flex;gap:24px;flex-wrap:wrap;">
-      <!-- Eric's Services -->
-      <div style="flex:1;min-width:320px;">
-        <div class="layer-label">Application Services &middot; Stateful Business Logic</div>
+  <!-- ========== PANEL 2: ARCHITECTURE ========== -->
+  <div id="architecture" class="panel" role="tabpanel">
 
-        <div class="arch-box eric" style="margin-bottom:12px">
-          <div class="box-title">Content & IP Binding</div>
-          <div class="box-endpoints">POST /content/upload &middot; POST /content/bind-ip<br>GET /content/:id</div>
-          <div style="font-size:11px;color:var(--eric);font-weight:600;margin-top:6px;">sync: called by Fans app &middot; async: emits content.published</div>
-        </div>
-
-        <div class="arch-box eric" style="margin-bottom:12px">
-          <div class="box-title">Revenue Event Service</div>
-          <div class="box-endpoints">POST /events/stream &middot; POST /events/ticket<br>GET /events/:id &middot; GET /events/project/:projectId</div>
-          <div style="font-size:11px;color:var(--eric);font-weight:600;margin-top:6px;">sync: validates schema &middot; async: publishes revenue.event &rarr; Kafka</div>
-        </div>
-
-        <div class="arch-box eric" style="margin-bottom:12px">
-          <div class="box-title">Tastemaker / Referral</div>
-          <div class="box-endpoints">POST /tastemaker/attribution<br>GET /tastemaker/dashboard/:userId</div>
-          <div style="font-size:11px;color:var(--eric);font-weight:600;margin-top:6px;">async: listens to revenue.event &rarr; calculates commission</div>
-        </div>
-
-        <div class="arch-box eric" style="margin-bottom:12px">
-          <div class="box-title">Entitlement & Access</div>
-          <div class="box-endpoints">GET /entitlement/check/:userId/:contentId<br>POST /entitlement/grant &middot; POST /entitlement/revoke</div>
-          <div style="font-size:11px;color:var(--eric);font-weight:600;margin-top:6px;">sync: called on every content request &middot; low latency Redis cache</div>
-        </div>
-
-        <div class="arch-box interim" style="margin-bottom:12px;border-color:#f59e0b;border-style:solid;background:#fffbeb;">
-          <div class="box-title" style="color:#b45309;">Unified User DB <span style="font-size:10px;color:#ef4444;font-weight:700;">OWNERSHIP TBD</span></div>
-          <div class="box-detail">Merge Store + Bingo (Bookyay) user databases into single model. Kerry built Bookyay foundation; Eric owns both DBs in production.</div>
-          <div class="box-endpoints">POST /users/merge &middot; GET /users/:userId<br>GET /users/migrate/status &middot; POST /users/migrate/batch</div>
-          <div style="font-size:11px;color:#b45309;font-weight:600;margin-top:6px;">critical path: most Phase 1 features depend on this &middot; must not break either platform during migration</div>
-        </div>
-
-        <div class="arch-box kerry" style="margin-bottom:12px">
-          <div class="box-title">Auth / Identity <span style="font-size:10px;color:var(--newteam);font-weight:700;">KERRY &rarr; NEW TEAM M2</span></div>
-          <div class="box-endpoints">POST /auth/login &middot; POST /auth/refresh<br>GET /auth/user/:userId &middot; PATCH /auth/user/:userId/role<br>POST /auth/kyc/submit &middot; GET /auth/kyc/status/:userId</div>
-          <div style="font-size:11px;color:var(--kerry);font-weight:600;margin-top:6px;">sync: called by Gateway on every request &middot; Redis session store</div>
-        </div>
-
-        <div class="arch-box kerry" style="margin-bottom:12px">
-          <div class="box-title">Loyalty & Points</div>
-          <div class="box-endpoints">POST /loyalty/earn &middot; GET /loyalty/balance/:userId<br>GET /loyalty/tier/:userId &middot; POST /loyalty/redeem</div>
-          <div style="font-size:11px;color:var(--kerry);font-weight:600;margin-top:6px;">async: listens to revenue.event, content.published &rarr; awards points</div>
-        </div>
-
-        <div class="arch-box kerry" style="margin-bottom:12px">
-          <div class="box-title">Crowdfunding</div>
-          <div class="box-endpoints">GET /crowdfunding/eligibility/:userId<br>POST /crowdfunding/participate<br>GET /crowdfunding/project/:projectId</div>
-          <div style="font-size:11px;color:var(--kerry);font-weight:600;margin-top:6px;">sync: eligibility check before participate &middot; async: emits crowdfunding.participated</div>
-        </div>
-
-        <div class="arch-box kerry" style="margin-bottom:12px">
-          <div class="box-title">E-Shop / Commerce <span style="font-size:10px;color:#94a3b8;">Phase 2+</span></div>
-          <div class="box-endpoints">GET /eshop/products &middot; POST /eshop/purchase<br>GET /eshop/orders/:userId &middot; POST /eshop/inventory</div>
-          <div style="font-size:11px;color:var(--kerry);font-weight:600;margin-top:6px;">async: purchase &rarr; emits revenue.event (type: merch) &rarr; waterfall</div>
-        </div>
-
-        <div class="arch-box kerry" style="margin-bottom:12px">
-          <div class="box-title">NFT / Mint</div>
-          <div class="box-endpoints">POST /nft/mint &middot; GET /nft/:tokenId<br>GET /nft/user/:userId &middot; POST /nft/transfer</div>
-          <div style="font-size:11px;color:var(--kerry);font-weight:600;margin-top:6px;">async: listens to crowdfunding.participated &rarr; mints on Base L2</div>
-        </div>
-
-        <div class="arch-box interim" style="margin-bottom:12px">
-          <div class="box-title">IP Registry & Rental <span style="font-size:10px;color:var(--newteam);font-weight:700;">CO-BUILD &rarr; NEW TEAM M3</span></div>
-          <div class="box-endpoints">POST /ip/register &middot; GET /ip/marketplace<br>PATCH /ip/rental/:id/status<br>GET /ip/owner/dashboard/:ipId</div>
-          <div style="font-size:11px;color:var(--gray);font-weight:600;margin-top:6px;">async: rental.activated &rarr; royalty routing in waterfall &middot; sync: status checks</div>
-        </div>
+    <div class="section-header">
+      <div class="section-title-group">
+        <h2 class="section-title">2.0 Foundation · Layered View</h2>
+        <p class="section-sub">Reflects the dev team's V1.1.0 handoff. Each box is color-coded by owning team; Phase 2+ services are greyed.</p>
       </div>
+      <span class="section-count">7 layers</span>
+    </div>
 
-      <!-- New Team's Services -->
-      <div style="flex:1;min-width:320px;">
-        <div class="layer-label">Core Services &middot; New Team &middot; Financial + Compliance Integrity</div>
+    <div class="arch-shell">
+      <div class="arch-stack">
+        <div class="arch-spine" aria-hidden="true"></div>
 
-        <div class="arch-box newteam" style="margin-bottom:12px">
-          <div class="box-title">Revenue Waterfall</div>
-          <div class="box-detail">PostgreSQL (append-only)</div>
-          <div class="box-endpoints">GET /revenue/waterfall/:projectId<br>GET /revenue/ledger/:projectId<br>POST /distribution/trigger<br>GET /distribution/history/:projectId</div>
-          <div style="font-size:11px;color:var(--newteam);font-weight:600;margin-top:6px;">async: consumes revenue.event from Kafka &rarr; runs waterfall &rarr; writes ledger &middot; never calls app services back</div>
+        <!-- Layer 01 -->
+        <section class="arch-layer">
+          <div class="arch-layer-marker">01</div>
+          <div class="arch-layer-body">
+            <header class="arch-layer-header">
+              <div class="arch-layer-title-row">
+                <span class="arch-layer-num">CLIENT</span>
+                <h3 class="arch-layer-title">Client Layer</h3>
+              </div>
+              <p class="arch-layer-sub">3 surfaces · separate authentication contexts</p>
+            </header>
+            <div class="arch-row">
+              <div class="svc-box china">
+                <div class="svc-box-head"><span class="svc-name">Ztor Fans App</span><span class="svc-tag p1">P1</span></div>
+                <p class="svc-desc">Web · iOS · Android — user + guest</p>
+              </div>
+              <div class="svc-box kerry">
+                <div class="svc-box-head"><span class="svc-name">Ztor Creator Studio</span><span class="svc-tag p1">P1</span></div>
+                <p class="svc-desc">Web — creator + admin</p>
+              </div>
+              <div class="svc-box mixed">
+                <div class="svc-box-head"><span class="svc-name">Back Office</span><span class="svc-tag p2">P2+</span></div>
+                <p class="svc-desc">3 BOs continue independently · no change in Phase 1</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="arch-connector" aria-hidden="true">
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M10 0v18m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
 
-        <div class="arch-box newteam" style="margin-bottom:12px">
-          <div class="box-title">Compliance Engine</div>
-          <div class="box-detail">PostgreSQL</div>
-          <div class="box-endpoints">POST /compliance/check &middot; POST /compliance/freeze<br>GET /compliance/status/:projectId<br>POST /compliance/override (CEO + Legal only)</div>
-          <div style="font-size:11px;color:var(--newteam);font-weight:600;margin-top:6px;">sync: called before any distribution trigger &middot; async: listens to fraud events</div>
+        <!-- Layer 02 -->
+        <section class="arch-layer">
+          <div class="arch-layer-marker">02</div>
+          <div class="arch-layer-body">
+            <header class="arch-layer-header">
+              <div class="arch-layer-title-row">
+                <span class="arch-layer-num">GATEWAY</span>
+                <h3 class="arch-layer-title">Gateway Layer</h3>
+              </div>
+              <p class="arch-layer-sub">JWT validation · rate limit · routing · circuit breaker</p>
+            </header>
+            <div class="arch-row">
+              <div class="svc-box china">
+                <div class="svc-box-head"><span class="svc-name">Fans Gateway</span><span class="svc-tag p1">P1</span></div>
+                <span class="svc-port">:8001 · JWT + user/guest</span>
+              </div>
+              <div class="svc-box kerry">
+                <div class="svc-box-head"><span class="svc-name">Studio Gateway</span><span class="svc-tag p1">P1</span></div>
+                <span class="svc-port">:8002 · JWT + creator/admin</span>
+              </div>
+              <div class="svc-box indo">
+                <div class="svc-box-head"><span class="svc-name">BackOffice Gateway</span><span class="svc-tag p1">P1</span></div>
+                <span class="svc-port">:8003 · JWT + admin/auditor</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="arch-connector" aria-hidden="true">
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M10 0v18m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
 
-        <div class="arch-box newteam" style="margin-bottom:12px">
-          <div class="box-title">Audit & Export</div>
-          <div class="box-detail">Append-only event store</div>
-          <div class="box-endpoints">GET /audit/export/:projectId (JSON/CSV)<br>GET /audit/stream/:projectId<br>GET /audit/trail/:resourceId</div>
-          <div style="font-size:11px;color:var(--newteam);font-weight:600;margin-top:6px;">async: subscribes to ALL Kafka topics &rarr; writes immutable log &middot; zero deletes ever</div>
+        <!-- Layer 03 -->
+        <section class="arch-layer">
+          <div class="arch-layer-marker">03</div>
+          <div class="arch-layer-body">
+            <header class="arch-layer-header">
+              <div class="arch-layer-title-row">
+                <span class="arch-layer-num">DISCOVERY</span>
+                <h3 class="arch-layer-title">Service Discovery</h3>
+              </div>
+              <p class="arch-layer-sub">Replaces hard-coded service URLs</p>
+            </header>
+            <div class="arch-row">
+              <div class="svc-box platform">
+                <div class="svc-box-head"><span class="svc-name">Consul Cluster</span><span class="svc-tag p1">P1</span></div>
+                <span class="svc-port">3 nodes · :8500 · :8600</span>
+                <p class="svc-desc">Service registration, health checks, dynamic routing</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="arch-connector" aria-hidden="true">
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M10 0v18m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
 
-        <div class="arch-box newteam" style="margin-bottom:12px">
-          <div class="box-title">Config Version System</div>
-          <div class="box-detail">PostgreSQL (INSERT-only)</div>
-          <div class="box-endpoints">POST /config/version<br>GET /config/version/:projectId<br>GET /config/version/:configVersionId</div>
-          <div style="font-size:11px;color:var(--newteam);font-weight:600;margin-top:6px;">sync: called at revenue event creation &middot; locks config &middot; INSERT only — no UPDATE ever</div>
+        <!-- Layer 04 -->
+        <section class="arch-layer">
+          <div class="arch-layer-marker">04</div>
+          <div class="arch-layer-body">
+            <header class="arch-layer-header">
+              <div class="arch-layer-title-row">
+                <span class="arch-layer-num">BFF</span>
+                <h3 class="arch-layer-title">BFF Layer</h3>
+              </div>
+              <p class="arch-layer-sub">Backend-for-frontend · one per surface</p>
+            </header>
+            <div class="arch-row">
+              <div class="svc-box china">
+                <div class="svc-box-head"><span class="svc-name">Fans BFF</span><span class="svc-tag p1">P1</span></div>
+                <span class="svc-port">:8096</span>
+              </div>
+              <div class="svc-box kerry">
+                <div class="svc-box-head"><span class="svc-name">Studio BFF</span><span class="svc-tag p1">P1</span></div>
+                <span class="svc-port">:8097</span>
+              </div>
+              <div class="svc-box indo">
+                <div class="svc-box-head"><span class="svc-name">BackOffice BFF</span><span class="svc-tag p1">P1</span></div>
+                <span class="svc-port">:8098</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="arch-connector" aria-hidden="true">
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M10 0v18m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
+
+        <!-- Layer 05 -->
+        <section class="arch-layer">
+          <div class="arch-layer-marker">05</div>
+          <div class="arch-layer-body">
+            <header class="arch-layer-header">
+              <div class="arch-layer-title-row">
+                <span class="arch-layer-num">SERVICES</span>
+                <h3 class="arch-layer-title">Microservices Layer</h3>
+              </div>
+              <p class="arch-layer-sub">Each service owns its data · talks via Kafka or gateway-mediated HTTP</p>
+            </header>
+
+            <div class="svc-subgroup">
+              <div class="svc-subgroup-head">
+                <span class="svc-subgroup-label">Support Services</span>
+                <span class="svc-subgroup-rule"></span>
+              </div>
+              <div class="arch-row">
+                <div class="svc-box indo">
+                  <div class="svc-box-head"><span class="svc-name">Auth</span><span class="svc-tag p1">P1</span></div>
+                  <span class="svc-port">:8092</span>
+                  <p class="svc-desc">JWT issue / refresh · role &amp; permission</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-subgroup">
+              <div class="svc-subgroup-head">
+                <span class="svc-subgroup-label">Core Services · Financial + Compliance Integrity</span>
+                <span class="svc-subgroup-rule"></span>
+              </div>
+              <div class="arch-row">
+                <div class="svc-box indo">
+                  <div class="svc-box-head"><span class="svc-name">Waterfall</span><span class="svc-tag p1">P1</span></div>
+                  <span class="svc-port">:8080</span>
+                  <p class="svc-desc">Revenue split engine</p>
+                </div>
+                <div class="svc-box indo">
+                  <div class="svc-box-head"><span class="svc-name">Compliance</span><span class="svc-tag p1">P1</span></div>
+                  <span class="svc-port">:8081</span>
+                  <p class="svc-desc">KYC / AML · freeze gate</p>
+                </div>
+                <div class="svc-box indo">
+                  <div class="svc-box-head"><span class="svc-name">Audit</span><span class="svc-tag p1">P1</span></div>
+                  <span class="svc-port">:8089</span>
+                  <p class="svc-desc">Append-only event store</p>
+                </div>
+                <div class="svc-box indo">
+                  <div class="svc-box-head"><span class="svc-name">ConfigVersion</span><span class="svc-tag p1">P1</span></div>
+                  <span class="svc-port">:8090</span>
+                  <p class="svc-desc">Locks config at event creation</p>
+                </div>
+                <div class="svc-box out">
+                  <div class="svc-box-head"><span class="svc-name">IPRegistry</span><span class="svc-tag p2">P2+</span></div>
+                  <span class="svc-port">:8091</span>
+                  <p class="svc-desc">IP records · marketplace later</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-subgroup">
+              <div class="svc-subgroup-head">
+                <span class="svc-subgroup-label">Business Services</span>
+                <span class="svc-subgroup-rule"></span>
+              </div>
+              <div class="arch-row">
+                <div class="svc-box out">
+                  <div class="svc-box-head"><span class="svc-name">Content</span><span class="svc-tag p2">P2+</span></div>
+                  <span class="svc-port">:8082</span>
+                  <p class="svc-desc">Upload + IP binding</p>
+                </div>
+                <div class="svc-box out">
+                  <div class="svc-box-head"><span class="svc-name">RevenueEvent</span><span class="svc-tag p2">P2+</span></div>
+                  <span class="svc-port">:8083</span>
+                  <p class="svc-desc">Generic revenue ingest</p>
+                </div>
+                <div class="svc-box out">
+                  <div class="svc-box-head"><span class="svc-name">Tastemaker</span><span class="svc-tag p2">P2+</span></div>
+                  <span class="svc-port">:8084</span>
+                  <p class="svc-desc">Referral attribution</p>
+                </div>
+                <div class="svc-box out">
+                  <div class="svc-box-head"><span class="svc-name">Entitlement</span><span class="svc-tag p2">P2+</span></div>
+                  <span class="svc-port">:8085</span>
+                  <p class="svc-desc">Premium access checks</p>
+                </div>
+                <div class="svc-box kerry">
+                  <div class="svc-box-head"><span class="svc-name">Crowdfunding</span><span class="svc-tag p1">P1</span></div>
+                  <span class="svc-port">:8086</span>
+                  <p class="svc-desc">Pledge + payout flow</p>
+                </div>
+                <div class="svc-box out">
+                  <div class="svc-box-head"><span class="svc-name">NFT Mint</span><span class="svc-tag p2">P2+</span></div>
+                  <span class="svc-port">:8087</span>
+                  <p class="svc-desc">Base L2 mint on pledge</p>
+                </div>
+                <div class="svc-box out">
+                  <div class="svc-box-head"><span class="svc-name">Loyalty</span><span class="svc-tag p2">P2+</span></div>
+                  <span class="svc-port">:8088</span>
+                  <p class="svc-desc">Earn / tier / redeem</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="arch-connector" aria-hidden="true">
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M10 0v18m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+
+        <!-- Layer 06 -->
+        <section class="arch-layer">
+          <div class="arch-layer-marker">06</div>
+          <div class="arch-layer-body">
+            <header class="arch-layer-header">
+              <div class="arch-layer-title-row">
+                <span class="arch-layer-num">EVENT BUS</span>
+                <h3 class="arch-layer-title">Event Bus</h3>
+              </div>
+              <p class="arch-layer-sub">Async backbone · global transactional integrity</p>
+            </header>
+            <div class="arch-row">
+              <div class="svc-box platform">
+                <div class="svc-box-head"><span class="svc-name">Kafka</span><span class="svc-tag p1">P1</span></div>
+                <span class="svc-port">:9092</span>
+                <p class="svc-desc">Services publish · Audit subscribes to everything · Waterfall consumes revenue events</p>
+              </div>
+            </div>
+            <div class="event-row">
+              <div class="event-row-label">Phase 1 topics</div>
+              <div class="event-tags">
+                <span class="event-tag">crowdfunding.participated</span>
+                <span class="event-tag">revenue.event</span>
+                <span class="event-tag">waterfall.calculated</span>
+                <span class="event-tag">distribution.triggered</span>
+                <span class="event-tag">compliance.freeze.triggered</span>
+                <span class="event-tag">audit.event.written</span>
+                <span class="event-tag">payout.commission.calculated</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="arch-connector" aria-hidden="true">
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M10 0v18m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+
+        <!-- Layer 07 -->
+        <section class="arch-layer">
+          <div class="arch-layer-marker">07</div>
+          <div class="arch-layer-body">
+            <header class="arch-layer-header">
+              <div class="arch-layer-title-row">
+                <span class="arch-layer-num">DATA</span>
+                <h3 class="arch-layer-title">Data Layer</h3>
+              </div>
+              <p class="arch-layer-sub">Service-owned databases · no cross-service DB reads</p>
+            </header>
+            <div class="arch-row">
+              <div class="svc-box platform">
+                <div class="svc-box-head"><span class="svc-name">User DB</span><span class="svc-tag p1">P1</span></div>
+                <p class="svc-desc">Unified across Ztor + Bookyay</p>
+              </div>
+              <div class="svc-box indo">
+                <div class="svc-box-head"><span class="svc-name">Revenue Ledger</span><span class="svc-tag p1">P1</span></div>
+                <p class="svc-desc">Append-only · Waterfall</p>
+              </div>
+              <div class="svc-box indo">
+                <div class="svc-box-head"><span class="svc-name">Audit Store</span><span class="svc-tag p1">P1</span></div>
+                <p class="svc-desc">Immutable event log</p>
+              </div>
+              <div class="svc-box platform">
+                <div class="svc-box-head"><span class="svc-name">Redis</span><span class="svc-tag p1">P1</span></div>
+                <p class="svc-desc">Session · rate-limit · cache</p>
+              </div>
+              <div class="svc-box out">
+                <div class="svc-box-head"><span class="svc-name">Content DB</span><span class="svc-tag p2">P2+</span></div>
+                <p class="svc-desc">When Content service ships</p>
+              </div>
+              <div class="svc-box out">
+                <div class="svc-box-head"><span class="svc-name">Other Service DBs</span><span class="svc-tag p2">P2+</span></div>
+                <p class="svc-desc">One DB per Phase 2+ service</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title-group">
+        <h2 class="section-title">Architectural Rules</h2>
+        <p class="section-sub">Carried forward from the dev handoff. These are the invariants the foundation must uphold.</p>
+      </div>
+    </div>
+
+    <div class="rules-grid">
+      <div class="rule">No app calls a service directly — all traffic flows through a Gateway.</div>
+      <div class="rule">No service reads another service's DB — API contract only.</div>
+      <div class="rule">Every revenue event hits the Waterfall — no bypasses.</div>
+      <div class="rule">Compliance freeze: no override without CEO and Legal.</div>
+      <div class="rule">Core services are consumers only — they never call business services back.</div>
+      <div class="rule">Revenue ledger and Audit store: INSERT only, zero deletes ever.</div>
+      <div class="rule">Config Version locked at event creation — immutable forever.</div>
+      <div class="rule">Gateway auth is app-token only; user identity stays inside services.</div>
     </div>
   </div>
 
-  <div class="section-title">Event Bus &middot; Kafka / AWS SQS &middot; Async Backbone</div>
-  <div class="arch-diagram">
-    <div class="event-bus">
-      <div class="bus-title">Message Broker &middot; App services publish, core services consume, audit subscribes to everything</div>
-      <div class="event-tags">
-        <span class="event-tag">revenue.event</span>
-        <span class="event-tag">content.published</span>
-        <span class="event-tag">tastemaker.attributed</span>
-        <span class="event-tag">crowdfunding.participated</span>
-        <span class="event-tag">rental.activated</span>
-        <span class="event-tag">rental.revoked</span>
-        <span class="event-tag">waterfall.calculated</span>
-        <span class="event-tag">distribution.triggered</span>
-        <span class="event-tag">compliance.freeze.triggered</span>
-        <span class="event-tag">audit.event.written</span>
-        <span class="event-tag">nft.mint.requested</span>
-        <span class="event-tag">loyalty.earn.triggered</span>
-        <span class="event-tag">payout.commission.calculated</span>
+  <!-- ========== PANEL 3: OPEN QUESTIONS ========== -->
+  <div id="questions" class="panel" role="tabpanel">
+
+    <div class="section-header">
+      <div class="section-title-group">
+        <h2 class="section-title">Still Open as of May 18, 2026</h2>
+        <p class="section-sub">Decisions and runbooks that need to land before Phase 1 production launch.</p>
       </div>
+      <span class="section-count">7 open</span>
     </div>
-    <div style="text-align:center;font-size:11px;color:#94a3b8;letter-spacing:0.5px;margin-top:8px;">services publish / subscribe &middot; async decoupled &middot; no direct cross-domain HTTP</div>
+
+    <div class="question-card">
+      <h3><span class="question-num">01</span>Auth issuing service ownership</h3>
+      <p>The dev handoff specs <code>POST /oauth2/token</code> as "an independent auth service" but doesn't name an owner. Indo team is the default in this doc — needs confirmation. Also: where does the issuing service itself live (which gateway / which deploy)?</p>
+      <div class="options">
+        <span class="option-pill">Indo owns end-to-end</span>
+        <span class="option-pill">Co-build with China during transition</span>
+        <span class="option-pill">Third-party (Auth0 / Cognito)</span>
+      </div>
+      <div class="decision-owner">Decision · Jeff + Eric (Indo lead)</div>
+    </div>
+
+    <div class="question-card">
+      <h3><span class="question-num">02</span>V1.0 → V1.1.0 migration path</h3>
+      <p>The dev's gateway docs are versioned V1.1.0 — implying a V1.0 exists. Is there a live gateway in production today that needs cutover, or is Phase 1 greenfield on the new stack? Cutover risk needs a runbook before we lock the timeline.</p>
+      <div class="options">
+        <span class="option-pill">Greenfield — confirm with dev team</span>
+        <span class="option-pill">Cutover required — needs runbook</span>
+      </div>
+      <div class="decision-owner">Decision · Eric + dev team</div>
+    </div>
+
+    <div class="question-card">
+      <h3><span class="question-num">03</span>Crowdfund-only Kafka topics</h3>
+      <p>If Revenue Event service is Phase 2+, Crowdfunding emits revenue events directly. We need to confirm the topic contract (<code>crowdfunding.participated</code> vs a generic <code>revenue.event</code>) so Waterfall doesn't need rework when the generic service ships.</p>
+      <div class="options">
+        <span class="option-pill">Emit both — denormalized</span>
+        <span class="option-pill">Generic schema from day one</span>
+        <span class="option-pill">Crowdfund-specific, refactor later</span>
+      </div>
+      <div class="decision-owner">Decision · Kerry + Indo (Waterfall lead)</div>
+    </div>
+
+    <div class="question-card">
+      <h3><span class="question-num">04</span>Large file upload strategy (&gt;1GB)</h3>
+      <p>Carried over from April. Not blocking for Crowdfund-only Phase 1, but blocks Phase 2 Content. Worth resolving now so the Indo team can pre-position infra (S3 multipart, resumable, etc.).</p>
+      <div class="options">
+        <span class="option-pill">Desktop app with resume</span>
+        <span class="option-pill">Browser &lt;1GB / app &gt;1GB</span>
+        <span class="option-pill">Browser-only, defer to P2</span>
+      </div>
+      <div class="decision-owner">Decision · Eric (technical feasibility)</div>
+    </div>
+
+    <div class="question-card">
+      <h3><span class="question-num">05</span>Payment — 2C2P vs Stripe (non-crowdfund flows)</h3>
+      <p>Stripe stays for Crowdfund (locked). 2C2P evaluation continues for future flows — pure Phase 2+ concern, but the gateway and payment-service shape we build for Crowdfund should not paint us into a corner.</p>
+      <div class="options">
+        <span class="option-pill">Stripe-only abstraction P1</span>
+        <span class="option-pill">Provider-agnostic interface from day 1</span>
+      </div>
+      <div class="decision-owner">Decision · Jeff + Eric + Kerry · Sam confirms 2C2P</div>
+    </div>
+
+    <div class="question-card">
+      <h3><span class="question-num">06</span>Production capacity targets per gateway</h3>
+      <p>QPS limits in the dev docs (100 / 500 / 1000) are illustrative. We need real targets per gateway before sizing the Consul, Redis and Kafka clusters. Crowdfund launch volume is the binding input.</p>
+      <div class="options">
+        <span class="option-pill">Launch-day estimate from business</span>
+        <span class="option-pill">Stress test against staging</span>
+      </div>
+      <div class="decision-owner">Decision · Jeff (business) + Eric (technical)</div>
+    </div>
+
+    <div class="question-card">
+      <h3><span class="question-num">07</span>JWT key-rotation runbook</h3>
+      <p>Dev docs require JWKS and <code>kid</code> rotation but don't include the operational procedure. Must exist before production launch.</p>
+      <div class="options">
+        <span class="option-pill">Indo writes runbook before launch</span>
+        <span class="option-pill">Dev team provides</span>
+      </div>
+      <div class="decision-owner">Decision · Eric (Indo)</div>
+    </div>
   </div>
 
-  <div class="section-title">Data Layer &middot; Service-Owned Databases &middot; No Cross-Service DB Reads</div>
-  <div class="arch-diagram">
-    <div class="db-row" style="margin-bottom:12px;">
-      <div class="db-item eric">
-        <div class="db-name">Content DB</div>
-        <div class="db-tech">PostgreSQL</div>
-        <div class="db-owner">Eric</div>
-      </div>
-      <div class="db-item shared-db">
-        <div class="db-name">Session / Cache</div>
-        <div class="db-tech">Redis TTL</div>
-        <div class="db-owner">Eric + Kerry</div>
-      </div>
-      <div class="db-item" style="border-color:#f59e0b;">
-        <div class="db-name">Unified User DB</div>
-        <div class="db-tech">PostgreSQL (Store + Bookyay merge)</div>
-        <div class="db-owner" style="color:#ef4444;">Ownership TBD</div>
-      </div>
-      <div class="db-item kerry">
-        <div class="db-name">Auth / Session DB</div>
-        <div class="db-tech">PostgreSQL</div>
-        <div class="db-owner">Kerry &rarr; New Team</div>
-      </div>
-      <div class="db-item kerry">
-        <div class="db-name">Fan / Commerce DB</div>
-        <div class="db-tech">PostgreSQL</div>
-        <div class="db-owner">Kerry</div>
-      </div>
-      <div class="db-item newteam">
-        <div class="db-name">Revenue Ledger</div>
-        <div class="db-tech">PostgreSQL, append-only</div>
-        <div class="db-owner">New Team</div>
-      </div>
-    </div>
-    <div class="db-row">
-      <div class="db-item newteam">
-        <div class="db-name">Audit Event Store</div>
-        <div class="db-tech">Event store (no deletes)</div>
-        <div class="db-owner">New Team</div>
-      </div>
-      <div class="db-item newteam">
-        <div class="db-name">Config Version DB</div>
-        <div class="db-tech">PostgreSQL, INSERT-only</div>
-        <div class="db-owner">New Team</div>
-      </div>
-      <div class="db-item newteam">
-        <div class="db-name">IP Registry DB</div>
-        <div class="db-tech">PostgreSQL</div>
-        <div class="db-owner">New Team (M3)</div>
-      </div>
-      <div class="db-item shared-db">
-        <div class="db-name">Chain State</div>
-        <div class="db-tech">Base L2 + local index</div>
-        <div class="db-owner">New Team</div>
-      </div>
-    </div>
-    <div style="text-align:center;font-size:11px;color:#94a3b8;letter-spacing:0.5px;margin-top:12px;">each service reads/writes only to its own DB &middot; zero shared databases</div>
-  </div>
+  <footer class="footer">
+    <span>Architecture reflects dev handoff V1.1.0 · Apr 28–29, 2026</span>
+    <span>Phase 1 · Crowdfund + 2.0 Foundation</span>
+  </footer>
 
-  <div class="section-title">New Team Ownership Ramp</div>
-  <div class="ramp-timeline">
-    <div class="ramp-phase m1">
-      <div class="ramp-label">M1</div>
-      <div class="ramp-weeks">Weeks 1–4</div>
-      <div class="ramp-desc">Owns waterfall, compliance, audit, config version from day one</div>
-    </div>
-    <div class="ramp-phase m2">
-      <div class="ramp-label">M2</div>
-      <div class="ramp-weeks">Weeks 5–10</div>
-      <div class="ramp-desc">Takes API Gateway + Auth/Identity from Eric and Kerry</div>
-    </div>
-    <div class="ramp-phase m3">
-      <div class="ramp-label">M3</div>
-      <div class="ramp-weeks">Weeks 9–14</div>
-      <div class="ramp-desc">Owns IP Registry + Rental Marketplace fully</div>
-    </div>
-    <div class="ramp-phase m4">
-      <div class="ramp-label">M4+</div>
-      <div class="ramp-weeks">Weeks 13–24</div>
-      <div class="ramp-desc">Full back office ownership. Eric + Kerry own apps only.</div>
-    </div>
-  </div>
-  <div style="text-align:center;font-size:12px;color:#64748b;margin-bottom:24px;line-height:1.8;">
-    Eric + Kerry never lose ownership of their application layer.<br>
-    New team absorbs core infrastructure and back office progressively — no big-bang dependency.
-  </div>
-
-  <div class="section-title">Hard Architectural Rules</div>
-  <div class="arch-rules">
-    <p>&rarr; No app calls a service directly — all through Gateway</p>
-    <p>&rarr; No service reads another service's DB — API contract only</p>
-    <p>&rarr; Every revenue event hits the waterfall — no bypasses</p>
-    <p>&rarr; Compliance freeze: no override without CEO + Legal</p>
-    <p>&rarr; Core services are consumers only — never call app services back</p>
-    <p>&rarr; Revenue ledger and audit store: INSERT only, zero deletes ever</p>
-    <p>&rarr; Config Version CI locked at event creation — immutable</p>
-    <p>&rarr; mTLS between Gateway and all services — services not public-facing</p>
-  </div>
-</div>
-
-<div class="footnote">
-  Prepared from: 3/31 Core Meeting &middot; Meeting Extract &middot; Microservice Ownership Map &middot; Technical System Architecture<br>
-  <span style="color:#cbd5e1;">April 1, 2026</span>
 </div>
 
 <script>
-function showPanel(id) {
+function showPanel(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+  });
   document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
 }
 </script>
 </body>
