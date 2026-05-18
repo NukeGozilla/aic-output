@@ -991,7 +991,7 @@
         <h2 class="section-title">Phase 1 Foundation</h2>
         <p class="section-sub">The 2.0 platform skeleton. Everything below is required to ship Crowdfund on the new architecture — foundation is what makes future phases possible.</p>
       </div>
-      <span class="section-count">11 services</span>
+      <span class="section-count">13 services</span>
     </div>
 
     <div class="card-grid">
@@ -1013,16 +1013,28 @@
         <div class="card-foot"><span class="lead-tag">Eric · Kerry · Indo</span></div>
       </article>
 
-      <article class="card card-indo">
+      <article class="card card-kerry">
         <div class="card-head"><h3>Auth Service</h3><span class="phase-badge badge-foundation">Foundation</span></div>
         <p>Single auth source for all three surfaces. JWT issuance, refresh, role and permission. Must-have on day one.</p>
-        <div class="card-foot"><span class="lead-tag">Indo</span></div>
+        <div class="card-foot"><span class="lead-tag">Kerry</span></div>
       </article>
 
-      <article class="card card-platform">
+      <article class="card card-kerry">
         <div class="card-head"><h3>Unified User DB</h3><span class="phase-badge badge-foundation">Foundation</span></div>
         <p>A single user model across Ztor and Bookyay. Critical path — Crowdfund pledges need one user per real person.</p>
-        <div class="card-foot"><span class="lead-tag">Platform</span></div>
+        <div class="card-foot"><span class="lead-tag">Kerry</span></div>
+      </article>
+
+      <article class="card card-china">
+        <div class="card-head"><h3>Payment Service</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Payment abstraction across providers (Stripe today, 2C2P-ready). Handles pledges, captures, refunds. Shared service used by Crowdfunding and future commerce flows.</p>
+        <div class="card-foot"><span class="lead-tag">Eric — China</span></div>
+      </article>
+
+      <article class="card card-kerry">
+        <div class="card-head"><h3>Shipping Service</h3><span class="phase-badge badge-foundation">Foundation</span></div>
+        <p>Reward fulfillment — address capture, carrier integration, tracking. Foundation for crowdfund physical rewards and future e-shop logistics.</p>
+        <div class="card-foot"><span class="lead-tag">Kerry</span></div>
       </article>
 
       <article class="card card-platform">
@@ -1303,7 +1315,7 @@
                 <span class="svc-subgroup-rule"></span>
               </div>
               <div class="arch-row">
-                <div class="svc-box indo">
+                <div class="svc-box kerry">
                   <div class="svc-box-head"><span class="svc-name">Auth</span><span class="svc-tag p1">P1</span></div>
                   <span class="svc-port">:8092</span>
                   <p class="svc-desc">JWT issue / refresh · role &amp; permission</p>
@@ -1386,6 +1398,16 @@
                   <span class="svc-port">:8088</span>
                   <p class="svc-desc">Earn / tier / redeem</p>
                 </div>
+                <div class="svc-box china">
+                  <div class="svc-box-head"><span class="svc-name">Payment</span><span class="svc-tag p1">P1</span></div>
+                  <span class="svc-port">:8093</span>
+                  <p class="svc-desc">Stripe / 2C2P abstraction</p>
+                </div>
+                <div class="svc-box kerry">
+                  <div class="svc-box-head"><span class="svc-name">Shipping</span><span class="svc-tag p1">P1</span></div>
+                  <span class="svc-port">:8094</span>
+                  <p class="svc-desc">Address · carrier · tracking</p>
+                </div>
               </div>
             </div>
           </div>
@@ -1444,7 +1466,7 @@
               <p class="arch-layer-sub">Service-owned databases · no cross-service DB reads</p>
             </header>
             <div class="arch-row">
-              <div class="svc-box platform">
+              <div class="svc-box kerry">
                 <div class="svc-box-head"><span class="svc-name">User DB</span><span class="svc-tag p1">P1</span></div>
                 <p class="svc-desc">Unified across Ztor + Bookyay</p>
               </div>
