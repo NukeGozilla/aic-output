@@ -52,7 +52,7 @@
   .canvas-positioned {
     position: relative;
     width: 820px;
-    height: 600px;
+    height: 720px;
     margin: 0 auto;
   }
 
@@ -80,16 +80,18 @@
   .state.s-uns       { left: 50px;  top: 230px; }
   .state.s-funded    { left: 310px; top: 230px; }
   .state.s-cancel    { left: 570px; top: 230px; }
-  .state.s-inprod    { left: 310px; top: 430px; }
-  .state.s-released  { left: 570px; top: 430px; }
+  .state.s-succfund  { left: 310px; top: 410px; }
+  .state.s-inprod    { left: 310px; top: 590px; }
+  .state.s-released  { left: 570px; top: 590px; }
   .state .zh { font-size: 18px; font-weight: 700; color: #fff; }
   .state .en { font-size: 11px; color: #8888aa; margin-top: 2px; letter-spacing: 0.5px; }
   .state .meta { font-size: 11px; color: #999; margin-top: 8px; line-height: 1.4; }
 
   .state.live { border-color: #b58850; background: rgba(181,136,80,0.12); }
   .state.funded { border-color: #37b87a; background: rgba(55,184,122,0.12); }
+  .state.succfund { border-color: #37b87a; background: rgba(55,184,122,0.18); }
   .state.in-prod { border-color: #6e8aaf; background: rgba(110,138,175,0.12); }
-  .state.released { border-color: #37b87a; background: rgba(55,184,122,0.18); }
+  .state.released { border-color: #37b87a; background: rgba(55,184,122,0.22); }
   .state.unsuccessful { border-color: #e25555; background: rgba(226,85,85,0.12); opacity: 0.85; }
   .state.canceled { border-color: #e25555; background: rgba(226,85,85,0.12); opacity: 0.85; }
 
@@ -106,6 +108,21 @@
     padding: 3px 7px;
     border-radius: 999px;
     border: 1px solid #3a3a4a;
+  }
+
+  .state.new::before {
+    content: "NEW";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: #b58850;
+    color: #1a1a1a;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    border: 1px solid #d2a36f;
   }
 
   /* Transition arrows via SVG layered */
@@ -146,6 +163,16 @@
   td.from { color: #d0d0e8; font-weight: 600; }
   td.to { color: #6ee0a0; font-weight: 500; }
   td.trigger { color: #aaa; }
+  tr.new-row { background: rgba(181,136,80,0.06); }
+  tr.new-row td.from, tr.new-row td.to { position: relative; }
+  tr.new-row td.from::before {
+    content: "NEW";
+    display: inline-block;
+    background: #b58850; color: #1a1a1a;
+    font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    padding: 2px 6px; border-radius: 4px;
+    margin-right: 8px; vertical-align: middle;
+  }
   .pill {
     display: inline-block;
     background: rgba(181,136,80,0.15);
@@ -167,8 +194,8 @@
 <body>
 
 <div class="header">
-  <h1>Project State Machine <span class="badge">Simple v · BRD v5.2 (2026-05-08)</span></h1>
-  <p>6 user-visible states · allowed transitions · driven by Ops via the admin tool. <strong style="color:#37b87a">Q2 closed</strong> → amount-based funding with package-specific shares (only <code>isShareTier</code> tiers issue shares). <strong style="color:#37b87a">Q3 closed</strong> → production status surfaced via existing MilestoneTimeline.</p>
+  <h1>Project State Machine <span class="badge">Simple v · BRD v5.3 (2026-05-19)</span></h1>
+  <p><strong>7 user-visible states</strong> · allowed transitions · driven by Ops via the admin tool. <strong style="color:#d2a36f">v5.3 update</strong> — split funding outcome into two states per <a href="https://app.asana.com/1/1201357017636456/project/1209435607276598/task/1214919353655433" style="color:#d2a36f" target="_blank">Asana 1214919…5433</a>: <strong>目標達成 (Goal Achieved)</strong> = system detects pledged total ≥ goal, <strong>募資成功 (Successfully Funded)</strong> = ops confirms every payment cleared (post-retry).</p>
   <div class="nav">
     <a href="ztor-crowdfund-flowchart.html">Lifecycle</a>
     <a href="ztor-crowdfund-pledge-flow.html">Pledge happy path</a>
@@ -188,13 +215,14 @@
     <div class="item"><div class="swatch" style="background:#6e8aaf"></div>In-progress</div>
     <div class="item"><div class="swatch" style="background:#e25555"></div>Failure / canceled</div>
     <div class="item"><strong style="color:#888">TERMINAL</strong> = no further transitions allowed</div>
+    <div class="item"><strong style="color:#d2a36f">NEW</strong> = added in v5.3</div>
   </div>
 
   <div class="diagram">
     <div class="canvas-positioned">
 
       <!-- SVG overlay with all transition arrows + labels -->
-      <svg class="state-svg" viewBox="0 0 820 600" xmlns="http://www.w3.org/2000/svg">
+      <svg class="state-svg" viewBox="0 0 820 720" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#888aaa"/>
@@ -207,7 +235,7 @@
           </marker>
         </defs>
 
-        <!-- 1. Live → Funded (success path) -->
+        <!-- 1. Live → Goal Achieved (success path) -->
         <path d="M 410 120 L 410 230" stroke="#37b87a" stroke-width="2" fill="none" marker-end="url(#arr-success)"/>
         <text x="420" y="180" fill="#6ee0a0" font-size="11" font-weight="500">goal met</text>
 
@@ -219,21 +247,31 @@
         <path d="M 480 120 L 645 230" stroke="#e25555" stroke-width="2" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
         <text x="540" y="170" fill="#f0a0a0" font-size="11" font-weight="500" transform="rotate(30 575 175)">ops pulls</text>
 
-        <!-- 4. Funded → In Production -->
-        <path d="M 410 320 L 410 430" stroke="#888aaa" stroke-width="2" fill="none" marker-end="url(#arr)"/>
-        <text x="420" y="380" fill="#aaaadd" font-size="11" font-weight="500">funds disbursed</text>
+        <!-- 4. Goal Achieved → Successfully Funded (NEW success path) -->
+        <path d="M 410 340 L 410 410" stroke="#37b87a" stroke-width="2.5" fill="none" marker-end="url(#arr-success)"/>
+        <text x="420" y="378" fill="#6ee0a0" font-size="11" font-weight="600">payments cleared</text>
+        <text x="420" y="392" fill="#d2a36f" font-size="9" font-weight="700" letter-spacing="1">↳ post-retry</text>
 
-        <!-- 5. Funded → Canceled (edge) -->
+        <!-- 5. Goal Achieved → Canceled (collection failure during retry) -->
         <path d="M 510 268 L 570 268" stroke="#e25555" stroke-width="1.5" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
-        <text x="513" y="260" fill="#f0a0a0" font-size="10">creator default</text>
+        <text x="513" y="260" fill="#f0a0a0" font-size="10">collections fail</text>
 
-        <!-- 6. In Production → Released (success) -->
-        <path d="M 510 460 L 570 460" stroke="#37b87a" stroke-width="2" fill="none" marker-end="url(#arr-success)"/>
-        <text x="515" y="452" fill="#6ee0a0" font-size="10" font-weight="500">live on Ztor</text>
+        <!-- 6. Successfully Funded → In Production -->
+        <path d="M 410 510 L 410 590" stroke="#888aaa" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+        <text x="420" y="555" fill="#aaaadd" font-size="11" font-weight="500">funds disbursed</text>
 
-        <!-- 7. In Production → Canceled (edge — bent path right then up) -->
-        <path d="M 510 480 L 540 480 L 540 290 L 570 290" stroke="#e25555" stroke-width="1.5" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
-        <text x="546" y="385" fill="#f0a0a0" font-size="10">delivery fail</text>
+        <!-- 7. Successfully Funded → Canceled (creator default before production) — left channel -->
+        <path d="M 510 460 L 540 460 L 540 290 L 570 290" stroke="#e25555" stroke-width="1.5" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
+        <text x="546" y="402" fill="#f0a0a0" font-size="10">creator</text>
+        <text x="546" y="415" fill="#f0a0a0" font-size="10">default</text>
+
+        <!-- 8. In Production → Released (success) -->
+        <path d="M 510 620 L 570 620" stroke="#37b87a" stroke-width="2" fill="none" marker-end="url(#arr-success)"/>
+        <text x="515" y="612" fill="#6ee0a0" font-size="10" font-weight="500">live on Ztor</text>
+
+        <!-- 9. In Production → Canceled (delivery fail) — far-right channel to avoid #6 label -->
+        <path d="M 510 670 L 790 670 L 790 250 L 770 250" stroke="#e25555" stroke-width="1.5" fill="none" marker-end="url(#arr-fail)" stroke-dasharray="4 3"/>
+        <text x="600" y="662" fill="#f0a0a0" font-size="10">delivery fail</text>
       </svg>
 
       <!-- State boxes (positioned absolutely) -->
@@ -251,14 +289,20 @@
 
       <div class="state funded s-funded">
         <div class="zh">目標達成</div>
-        <div class="en">FUNDED</div>
-        <div class="meta">Stripe batch capture<br>Disbursement queued</div>
+        <div class="en">GOAL ACHIEVED</div>
+        <div class="meta">Pledged ≥ goal<br>Batch capture · retry window</div>
       </div>
 
       <div class="state canceled terminal s-cancel">
         <div class="zh">已取消</div>
         <div class="en">CANCELED</div>
         <div class="meta">Pulled by ops<br>Finance refunds via Stripe</div>
+      </div>
+
+      <div class="state succfund new s-succfund">
+        <div class="zh">募資成功</div>
+        <div class="en">SUCCESSFULLY FUNDED</div>
+        <div class="meta">All payments collected<br>Funds ready for payout</div>
       </div>
 
       <div class="state in-prod s-inprod">
@@ -291,8 +335,8 @@
       <tbody>
         <tr>
           <td class="from">募資中 (Live)</td>
-          <td class="to">目標達成 (Funded)</td>
-          <td class="trigger">Goal met at funding period end · batch capture fires</td>
+          <td class="to">目標達成 (Goal Achieved)</td>
+          <td class="trigger">Pledged total ≥ goal at funding period end · batch capture fires</td>
           <td><span class="pill system">SYSTEM</span></td>
         </tr>
         <tr>
@@ -307,16 +351,28 @@
           <td class="trigger">Ops/creator pulls campaign mid-flight</td>
           <td><span class="pill">OPS</span></td>
         </tr>
+        <tr class="new-row">
+          <td class="from">目標達成 (Goal Achieved)</td>
+          <td class="to">募資成功 (Successfully Funded)</td>
+          <td class="trigger">All backer charges cleared (retry sequence exited cleanly) · ops confirms funds in hand</td>
+          <td><span class="pill">OPS</span></td>
+        </tr>
         <tr>
-          <td class="from">目標達成 (Funded)</td>
+          <td class="from">目標達成 (Goal Achieved)</td>
+          <td class="to">已取消 (Canceled)</td>
+          <td class="trigger">Retry exhausted with material payment gap · ops cancels and refunds backers who already paid</td>
+          <td><span class="pill">OPS</span></td>
+        </tr>
+        <tr>
+          <td class="from">募資成功 (Successfully Funded)</td>
           <td class="to">製作中 (In Production)</td>
           <td class="trigger">Funds disbursed to creator</td>
           <td><span class="pill">OPS</span></td>
         </tr>
         <tr>
-          <td class="from">目標達成 (Funded)</td>
+          <td class="from">募資成功 (Successfully Funded)</td>
           <td class="to">已取消 (Canceled)</td>
-          <td class="trigger">Edge case · creator default before production starts · ops manually refunds</td>
+          <td class="trigger">Edge case · creator default before production starts · ops refunds via Stripe</td>
           <td><span class="pill">OPS</span></td>
         </tr>
         <tr>
@@ -353,6 +409,15 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <div style="margin-top:24px;background:#1f1a2e;border:1px solid #b58850;border-radius:8px;padding:16px 20px;font-size:12px;color:#e0d4b8;line-height:1.6">
+    <strong style="color:#d2a36f">v5.3 update (2026-05-19)</strong> — Funding outcome split into two states per Asana <a href="https://app.asana.com/1/1201357017636456/project/1209435607276598/task/1214919353655433" style="color:#d2a36f" target="_blank">1214919…5433</a> (section <code>1.17 Crowdfunding - Simple version (May 31st)</code>).<br>
+    <br>
+    · <strong style="color:#37b87a">目標達成 (Goal Achieved)</strong> — <em>system</em> trigger. Pledged total met goal at Day 30; batch capture begins; retry sequence may run (see <a href="ztor-crowdfund-payment-retry.html" style="color:#b58850">payment retry</a>).<br>
+    · <strong style="color:#37b87a">募資成功 (Successfully Funded)</strong> — <em>ops</em> trigger. <strong>NEW.</strong> All backer payments collected (retry concluded); funds in hand, ready for disbursement.<br>
+    <br>
+    <strong>Why split:</strong> Today's diagram jumped from FUNDED → IN PRODUCTION in one hop, papering over the 7–14+ day retry window. Splitting gives ops a clean handoff state once collections are confirmed and unblocks the disbursement step from any in-flight retry uncertainty.
   </div>
 
   <div style="margin-top:24px;background:#1a1a2e;border:1px dashed #3a3a5a;border-radius:8px;padding:16px 20px;font-size:12px;color:#aaaadd;line-height:1.6">
