@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crowdfund BRD v1 — Unified Music + Movies (2026-05-24)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ════════════════════════════════════════════════════════════
+     IBM Carbon Design System — dark theme tokens
+     ════════════════════════════════════════════════════════════ */
+  :root {
+    --cds-background: #161616;
+    --cds-layer-01: #262626;
+    --cds-layer-02: #393939;
+    --cds-layer-03: #525252;
+    --cds-border-subtle: #393939;
+    --cds-border-strong: #6f6f6f;
+    --cds-text-primary: #f4f4f4;
+    --cds-text-secondary: #c6c6c6;
+    --cds-text-helper: #a8a8a8;
+    --cds-text-placeholder: #6f6f6f;
+    --cds-text-on-color: #ffffff;
+    --cds-blue-50: #4589ff;
+    --cds-blue-60: #0f62fe;
+    --cds-blue-70: #0043ce;
+    --cds-green-50: #24a148;
+    --cds-green-60: #198038;
+    --cds-red-50: #fa4d56;
+    --cds-yellow-30: #f1c21b;
+    --cds-purple-60: #8a3ffc;
+    --cds-purple-50: #a56eff;
+    --cds-teal-50: #009d9a;
+    --cds-cyan-50: #1192e8;
+    --cds-magenta-50: #ee5396;
+    --cds-orange-40: #ff832b;
+    --cds-cool-gray-50: #8d8d8d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cds-background); color: var(--cds-text-primary);
+    font-size: 14px; line-height: 1.5; letter-spacing: 0.16px;
+  }
+  code, .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  a { color: var(--cds-blue-50); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ─── UI Shell ─── */
+  .ui-shell {
+    background: var(--cds-layer-01);
+    border-bottom: 1px solid var(--cds-border-subtle);
+    padding: 16px 32px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .ui-shell-inner { max-width: 1280px; margin: 0 auto; }
+  .ui-shell h1 {
+    font-size: 24px; font-weight: 300; color: var(--cds-text-primary);
+    letter-spacing: 0; line-height: 1.25;
+  }
+  .ui-shell h1 .tag {
+    display: inline-block; background: var(--cds-blue-70); color: var(--cds-text-on-color);
+    font-size: 11px; font-weight: 500; padding: 2px 8px;
+    border-radius: 12px; margin-left: 10px; vertical-align: middle;
+    letter-spacing: 0.32px;
+  }
+  .ui-shell .subtitle {
+    font-size: 13.5px; color: var(--cds-text-secondary); margin-top: 4px;
+  }
+  .ui-shell .subtitle .dot { color: var(--cds-text-placeholder); margin: 0 8px; }
+  .ui-shell .subtitle .music { color: var(--cds-purple-50); }
+  .ui-shell .subtitle .movies { color: var(--cds-yellow-30); }
+  .breadcrumb {
+    display: flex; gap: 0; align-items: center; margin-top: 12px;
+    font-size: 12px; flex-wrap: wrap;
+  }
+  .breadcrumb a {
+    color: var(--cds-text-secondary); text-decoration: none;
+    padding: 6px 12px; border-bottom: 2px solid transparent;
+    transition: all 0.11s;
+  }
+  .breadcrumb a:hover { color: var(--cds-text-primary); background: var(--cds-layer-02); }
+  .breadcrumb a.current {
+    color: var(--cds-text-primary); border-bottom-color: var(--cds-blue-50);
+    font-weight: 500;
+  }
+  .breadcrumb a.ext { color: var(--cds-cyan-50); }
+  .breadcrumb a.ext::after { content: " ↗"; opacity: 0.7; }
+
+  /* ─── Layout ─── */
+  .canvas { max-width: 1280px; margin: 0 auto; padding: 32px; }
+  .section { margin-bottom: 48px; scroll-margin-top: 120px; }
+
+  /* Typography scale */
+  .productive-heading-04 {
+    font-size: 28px; font-weight: 300; line-height: 1.25; letter-spacing: 0;
+    color: var(--cds-text-primary); margin-bottom: 6px;
+  }
+  .productive-heading-02 {
+    font-size: 16px; font-weight: 600; line-height: 1.375;
+    color: var(--cds-text-primary); margin: 0 0 12px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .productive-heading-02::before { content: ""; width: 4px; height: 18px; background: var(--cds-blue-50); }
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--cds-text-helper); letter-spacing: 0.4px; margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .body-long-01 {
+    font-size: 14px; line-height: 1.43; color: var(--cds-text-secondary);
+    max-width: 880px; margin-bottom: 20px;
+  }
+  .body-long-01 strong { color: var(--cds-text-primary); font-weight: 600; }
+  .body-long-01 code { background: var(--cds-layer-01); padding: 1px 6px; font-size: 13px; color: var(--cds-text-primary); }
+  .helper-text {
+    font-size: 12px; color: var(--cds-text-helper); margin-bottom: 16px;
+    letter-spacing: 0.32px;
+  }
+
+  /* ─── Notification (TL;DR) ─── */
+  .notification {
+    background: var(--cds-layer-01);
+    border-left: 3px solid var(--cds-blue-50);
+    padding: 16px;
+    margin-bottom: 32px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .notification .icon { color: var(--cds-blue-50); font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .notification .body { font-size: 14px; color: var(--cds-text-primary); line-height: 1.5; }
+  .notification .body .lbl {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--cds-blue-50); letter-spacing: 0.4px; text-transform: uppercase;
+    display: block; margin-bottom: 4px;
+  }
+
+  /* ─── Diagram cross-link tiles ─── */
+  .diag-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--cds-border-subtle);
+    border: 1px solid var(--cds-border-subtle);
+  }
+  .diag-card {
+    background: var(--cds-layer-01); padding: 20px 22px;
+    text-decoration: none; color: var(--cds-text-primary);
+    transition: background 0.11s; border-top: 3px solid var(--cds-blue-50);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .diag-card:hover { background: var(--cds-layer-02); text-decoration: none; }
+  .diag-card:nth-child(1) { border-top-color: var(--cds-cyan-50); }
+  .diag-card:nth-child(2) { border-top-color: var(--cds-purple-60); }
+  .diag-card:nth-child(3) { border-top-color: var(--cds-yellow-30); }
+  .diag-card .name { font-size: 16px; font-weight: 600; color: var(--cds-text-primary); line-height: 1.25; }
+  .diag-card .desc { font-size: 13px; color: var(--cds-text-secondary); line-height: 1.5; }
+  .diag-card .open-link { color: var(--cds-blue-50); font-size: 12.5px; font-weight: 500; margin-top: auto; }
+
+  /* ─── Data table ─── */
+  .cds-data-table {
+    background: var(--cds-layer-01);
+    border: 1px solid var(--cds-border-subtle);
+    width: 100%; border-collapse: collapse;
+    margin-bottom: 8px;
+  }
+  .cds-data-table thead { background: var(--cds-layer-02); }
+  .cds-data-table th {
+    text-align: left; padding: 12px 14px;
+    font-size: 12px; font-weight: 600; color: var(--cds-text-primary);
+    letter-spacing: 0.16px; border-bottom: 1px solid var(--cds-border-subtle);
+    text-transform: uppercase; letter-spacing: 0.32px;
+  }
+  .cds-data-table td {
+    padding: 11px 14px; font-size: 13.5px; color: var(--cds-text-primary);
+    border-bottom: 1px solid var(--cds-border-subtle); line-height: 1.45;
+    vertical-align: top;
+  }
+  .cds-data-table tr:last-child td { border-bottom: none; }
+  .cds-data-table tr:hover td { background: var(--cds-layer-02); }
+  .cds-data-table .cell-mono {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;
+    color: var(--cds-blue-50); font-weight: 500; white-space: nowrap;
+  }
+  .cds-data-table th.col-id { width: 70px; }
+  .cds-data-table th.col-pri { width: 80px; }
+  .cds-data-table th.col-scope { width: 80px; }
+  .cds-data-table th.col-phase { width: 60px; }
+  .cds-data-table th.col-origin { width: 90px; }
+  .cds-data-table strong { color: var(--cds-text-primary); font-weight: 600; }
+  .cds-data-table .cell-desc { color: var(--cds-text-secondary); }
+  .cds-data-table .cell-desc strong { color: var(--cds-text-primary); }
+
+  /* ─── Tag pattern ─── */
+  .tag-pill {
+    display: inline-block; font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px; font-weight: 400; padding: 2px 8px;
+    border-radius: 12px; letter-spacing: 0.32px; line-height: 1.36;
+    white-space: nowrap;
+  }
+  .pri-must { background: rgba(250,77,86,0.15); color: var(--cds-red-50); }
+  .pri-should { background: rgba(241,194,27,0.15); color: var(--cds-yellow-30); }
+  .scope-shared { background: rgba(15,98,254,0.15); color: var(--cds-blue-50); }
+  .scope-music { background: rgba(165,110,255,0.18); color: var(--cds-purple-50); }
+  .scope-movies { background: rgba(241,194,27,0.15); color: var(--cds-yellow-30); }
+  .scope-split { background: rgba(255,131,43,0.18); color: var(--cds-orange-40); }
+  .phase-chip {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    padding: 1px 6px; background: var(--cds-layer-03);
+    color: var(--cds-text-primary); font-weight: 500;
+  }
+  .origin-new { background: rgba(36,161,72,0.18); color: var(--cds-green-50); }
+  .origin-changed { background: rgba(255,131,43,0.18); color: var(--cds-orange-40); }
+  .origin-carried { background: rgba(141,141,141,0.2); color: var(--cds-text-helper); }
+
+  /* ─── Diff table ─── */
+  .diff-grid {
+    display: grid; grid-template-columns: 150px 1fr 1fr 0.7fr;
+    background: var(--cds-border-subtle); border: 1px solid var(--cds-border-subtle);
+    gap: 1px;
+  }
+  .diff-row { display: contents; }
+  .diff-row > div { background: var(--cds-layer-01); padding: 11px 14px; font-size: 13px; line-height: 1.5; }
+  .diff-row.h > div { background: var(--cds-layer-02); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.32px; color: var(--cds-text-primary); padding: 12px 14px; }
+  .diff-row > div:first-child { color: var(--cds-text-primary); font-weight: 600; }
+  .diff-row > div:nth-child(2) { color: var(--cds-text-secondary); }
+  .diff-row > div:nth-child(3) { color: var(--cds-text-primary); }
+  .diff-row > div:nth-child(4) { color: var(--cds-blue-50); font-style: italic; }
+
+  /* ─── Do/Don't/Edge ─── */
+  .ddedge { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--cds-border-subtle); border: 1px solid var(--cds-border-subtle); }
+  .ddedge .col { background: var(--cds-layer-01); padding: 18px 20px; border-top: 3px solid; }
+  .ddedge .col.do { border-top-color: var(--cds-green-50); }
+  .ddedge .col.dont { border-top-color: var(--cds-red-50); }
+  .ddedge .col.edge { border-top-color: var(--cds-yellow-30); }
+  .ddedge h4 { font-size: 12px; font-weight: 600; letter-spacing: 0.32px; text-transform: uppercase; margin-bottom: 10px; }
+  .ddedge .col.do h4 { color: var(--cds-green-50); }
+  .ddedge .col.dont h4 { color: var(--cds-red-50); }
+  .ddedge .col.edge h4 { color: var(--cds-yellow-30); }
+  .ddedge li { font-size: 13px; padding: 5px 0 5px 18px; position: relative; list-style: none; line-height: 1.5; color: var(--cds-text-secondary); }
+  .ddedge .col.do li::before { content: "✓"; position: absolute; left: 0; color: var(--cds-green-50); font-weight: 700; }
+  .ddedge .col.dont li::before { content: "✗"; position: absolute; left: 0; color: var(--cds-red-50); font-weight: 700; }
+  .ddedge .col.edge li::before { content: "▲"; position: absolute; left: 0; color: var(--cds-yellow-30); font-size: 10px; top: 7px; }
+
+  /* ─── Phases ─── */
+  .phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--cds-border-subtle); border: 1px solid var(--cds-border-subtle); }
+  .phase { background: var(--cds-layer-01); padding: 18px 20px; border-top: 3px solid var(--cds-blue-50); }
+  .phase:nth-child(1) { border-top-color: var(--cds-cyan-50); }
+  .phase:nth-child(2) { border-top-color: var(--cds-purple-60); }
+  .phase:nth-child(3) { border-top-color: var(--cds-green-50); }
+  .phase .ph-id { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--cds-text-helper); font-weight: 500; letter-spacing: 0.4px; text-transform: uppercase; }
+  .phase h4 { font-size: 15px; font-weight: 600; color: var(--cds-text-primary); margin: 2px 0 6px 0; line-height: 1.25; }
+  .phase .goal { font-size: 13px; color: var(--cds-text-secondary); margin-bottom: 12px; line-height: 1.5; }
+  .phase .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .phase .chip { font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: var(--cds-layer-02); padding: 1px 6px; color: var(--cds-text-primary); }
+
+  /* ─── Decisions + Open Qs ─── */
+  .decopen { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .dec-block, .q-block { display: flex; flex-direction: column; gap: 8px; }
+  .dec-block .block-h, .q-block .block-h {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.32px;
+    text-transform: uppercase; padding-bottom: 8px; margin-bottom: 4px;
+    border-bottom: 1px solid var(--cds-border-subtle);
+  }
+  .dec-block .block-h { color: var(--cds-green-50); }
+  .q-block .block-h { color: var(--cds-yellow-30); }
+  .dec, .q {
+    background: var(--cds-layer-01); padding: 12px 14px 12px 40px;
+    position: relative; font-size: 13px; line-height: 1.5;
+    border-left: 2px solid;
+  }
+  .dec { border-left-color: var(--cds-green-50); }
+  .q { border-left-color: var(--cds-yellow-30); }
+  .q.blocking { border-left-color: var(--cds-red-50); }
+  .dec .n, .q .n {
+    position: absolute; left: 12px; top: 13px;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+  }
+  .dec .n { background: var(--cds-green-50); color: var(--cds-background); }
+  .q .n { background: var(--cds-yellow-30); color: var(--cds-background); font-family: 'IBM Plex Mono', monospace; font-size: 9px; }
+  .q.blocking .n { background: var(--cds-red-50); color: var(--cds-text-on-color); }
+  .dec strong, .q strong { color: var(--cds-text-primary); font-weight: 600; }
+  .dec .det, .q .det { color: var(--cds-text-secondary); font-size: 12.5px; margin-top: 2px; }
+  .q .own { font-size: 11px; color: var(--cds-blue-50); margin-top: 4px; font-family: 'IBM Plex Mono', monospace; }
+  .q .blk {
+    background: rgba(250,77,86,0.18); color: var(--cds-red-50);
+    padding: 1px 6px; font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.4px; margin-left: 6px; text-transform: uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ─── Footer ─── */
+  .footer {
+    margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--cds-border-subtle);
+    font-size: 12px; color: var(--cds-text-helper); display: flex;
+    justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  }
+
+  /* ─── User Groups + Stories ─── */
+  .ug-table {
+    background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle);
+    width: 100%; border-collapse: collapse;
+  }
+  .ug-table th, .ug-table td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--cds-border-subtle); font-size: 13.5px; vertical-align: top; }
+  .ug-table thead { background: var(--cds-layer-02); }
+  .ug-table th { font-size: 12px; font-weight: 600; letter-spacing: 0.32px; text-transform: uppercase; color: var(--cds-text-primary); }
+  .ug-table tr:last-child td { border-bottom: none; }
+  .ug-table tr:hover td { background: var(--cds-layer-02); }
+  .ug-table td:nth-child(2), .ug-table td:nth-child(4) { color: var(--cds-text-secondary); }
+  .role-pill {
+    font-size: 11px; padding: 2px 8px; border-radius: 12px;
+    font-family: 'IBM Plex Sans', sans-serif; font-weight: 500;
+    display: inline-block; letter-spacing: 0.32px;
+  }
+  .role-creator { background: rgba(15,98,254,0.15); color: var(--cds-blue-50); }
+  .role-fan { background: rgba(17,146,232,0.15); color: var(--cds-cyan-50); }
+  .role-anon { background: rgba(141,141,141,0.2); color: var(--cds-text-helper); }
+  .role-ops { background: rgba(165,110,255,0.18); color: var(--cds-purple-50); }
+  .role-fin { background: rgba(0,157,154,0.18); color: var(--cds-teal-50); }
+  .role-sys { background: rgba(141,141,141,0.18); color: var(--cds-cool-gray-50); }
+
+  details {
+    background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle);
+    padding: 12px 16px; margin-top: 12px;
+  }
+  details > summary { cursor: pointer; font-size: 13px; font-weight: 500; color: var(--cds-blue-50); list-style: none; }
+  details > summary::after { content: "+ expand"; float: right; color: var(--cds-text-helper); font-weight: 400; font-size: 11.5px; font-family: 'IBM Plex Mono', monospace; }
+  details[open] > summary::after { content: "− collapse"; }
+  details[open] > summary { margin-bottom: 10px; border-bottom: 1px solid var(--cds-border-subtle); padding-bottom: 8px; }
+
+  @media (max-width: 920px) {
+    .ui-shell { padding: 16px 20px; }
+    .canvas { padding: 24px 20px; }
+    .diag-grid { grid-template-columns: 1fr; }
+    .ddedge { grid-template-columns: 1fr; }
+    .phases { grid-template-columns: 1fr; }
+    .decopen { grid-template-columns: 1fr; }
+    .diff-grid { grid-template-columns: 1fr; }
+    .diff-row > div { padding: 10px 12px; }
+    .ug-table, .cds-data-table { font-size: 12.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="ui-shell">
+  <div class="ui-shell-inner">
+    <h1>Crowdfund BRD v1 — Unified Music + Movies <span class="tag">CANONICAL</span></h1>
+    <div class="subtitle">
+      2026-05-24 · Draft v1
+      <span class="dot">·</span>
+      49 BRs + 2 contracts · 3 phases · 10 open Qs
+      <span class="dot">·</span>
+      <span class="music">Music = Beamco</span> · <span class="movies">Movies = Ztor</span>
+    </div>
+    <nav class="breadcrumb">
+      <a href="#diagrams">Diagrams</a>
+      <a href="#groups">Groups</a>
+      <a href="#brs">BRs</a>
+      <a href="#diff">vs Phase 1</a>
+      <a href="#dde">Do/Don't</a>
+      <a href="#phases">Phases</a>
+      <a href="#decopen">Decisions &amp; Open Qs</a>
+      <a class="ext" href="crowdfund-brd-v1-lifecycle.html">Lifecycle</a>
+      <a class="ext" href="crowdfund-brd-v1-state-machine.html">State machine</a>
+      <a class="ext" href="crowdfund-brd-v1-payment-retry.html">Payment retry</a>
+    </nav>
+  </div>
+</header>
+
+<main class="canvas">
+
+  <div class="notification">
+    <span class="icon">●</span>
+    <div class="body">
+      <span class="lbl">TL;DR</span>
+      One canonical BRD covering Phase 1 + 2 for both Beamco (Music) and Ztor (Movies). Currency = SGD/USD, LP = $1→28, recovery = 3+7+waitlist+threshold, reward = shares + plan items monetized via royalty cash. New BRD is canonical; Phase 1 + Ztor v6 are deltas off this doc. BR numbering mirrors the biz team's source spreadsheet (BR-1 → BR-49 + 2 unnumbered contracts).
+    </div>
+  </div>
+
+  <!-- Diagrams cross-link -->
+  <section class="section" id="diagrams">
+    <div class="section-tag">VISUAL REFERENCES</div>
+    <h2 class="productive-heading-02">Detailed diagrams — open in new pages</h2>
+    <div class="diag-grid">
+      <a class="diag-card" href="crowdfund-brd-v1-lifecycle.html">
+        <span class="name">Lifecycle</span>
+        <span class="desc">Setup → Active → Funded → Successful → Released. 4-phase strip + end-to-end flow + backer-POV timeline.</span>
+        <span class="open-link">Open page →</span>
+      </a>
+      <a class="diag-card" href="crowdfund-brd-v1-state-machine.html">
+        <span class="name">State machine</span>
+        <span class="desc">8 states · 13 valid transitions · state definitions · auto-vs-manual control matrix.</span>
+        <span class="open-link">Open page →</span>
+      </a>
+      <a class="diag-card" href="crowdfund-brd-v1-payment-retry.html">
+        <span class="name">Payment retry &amp; cancellation</span>
+        <span class="desc">3-day silent retry → 7-day URL → day-10 waitlist swap → threshold check → cancellation flow.</span>
+        <span class="open-link">Open page →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- User groups -->
+  <section class="section" id="groups">
+    <div class="section-tag">§2 — USER GROUPS + STORIES</div>
+    <h2 class="productive-heading-02">Who is affected</h2>
+    <table class="ug-table">
+      <thead><tr><th style="width:140px;">Group</th><th>Role</th><th style="width:110px;">Access</th><th>Key need</th></tr></thead>
+      <tbody>
+        <tr><td><span class="role-pill role-creator">Creator</span></td><td>Artist / filmmaker; configures + receives payout</td><td>View-only</td><td>Raise capital + know their cut</td></tr>
+        <tr><td><span class="role-pill role-fan">Fan / Backer</span></td><td>Pledges, holds shares, receives royalties</td><td>Browse + pledge</td><td>Back creators, share upside</td></tr>
+        <tr><td><span class="role-pill role-fan">Ineligible</span></td><td>Logged-in, no LP on this creator</td><td>Browse only</td><td>Understand how to qualify</td></tr>
+        <tr><td><span class="role-pill role-anon">Anonymous</span></td><td>Not logged in</td><td>Browse only</td><td>Discover</td></tr>
+        <tr><td><span class="role-pill role-ops">Ops Admin</span></td><td>Configures, moderates, drives states</td><td>Full admin</td><td>Operate without dev tickets</td></tr>
+        <tr><td><span class="role-pill role-fin">Finance</span></td><td>Bank transfers + royalty ingestion</td><td>Wallet + payout</td><td>Reconcile + pay out</td></tr>
+        <tr><td><span class="role-pill role-sys">System</span></td><td>Webhooks, cron, ingest</td><td>n/a</td><td>Reliable automation</td></tr>
+      </tbody>
+    </table>
+
+    <details>
+      <summary>User stories (US-01 → US-07)</summary>
+      <table class="ug-table" style="border:none;background:transparent;">
+        <tbody>
+          <tr><td style="width:80px;font-family:'IBM Plex Mono',monospace;color:var(--cds-blue-50);font-weight:500;">US-01</td><td>Creator wants campaign with goal, plans, shares, milestones → raise capital before project exists</td></tr>
+          <tr><td style="font-family:'IBM Plex Mono',monospace;color:var(--cds-blue-50);font-weight:500;">US-02</td><td>Fan wants to back projects + hold a stake → share in creator's revenue when work ships</td></tr>
+          <tr><td style="font-family:'IBM Plex Mono',monospace;color:var(--cds-blue-50);font-weight:500;">US-03</td><td>Ineligible Browser wants to see how to qualify → unlock pledging quickly</td></tr>
+          <tr><td style="font-family:'IBM Plex Mono',monospace;color:var(--cds-blue-50);font-weight:500;">US-04</td><td>Anonymous Visitor wants to browse freely → decide whether to sign up</td></tr>
+          <tr><td style="font-family:'IBM Plex Mono',monospace;color:var(--cds-blue-50);font-weight:500;">US-05</td><td>Ops wants to configure + drive lifecycle + handle failures → operate without engineering</td></tr>
+          <tr><td style="font-family:'IBM Plex Mono',monospace;color:var(--cds-blue-50);font-weight:500;">US-06</td><td>Finance wants itemized payouts + royalty data → pay the right amount on time</td></tr>
+          <tr><td style="font-family:'IBM Plex Mono',monospace;color:var(--cds-blue-50);font-weight:500;">US-07</td><td>System wants automation for charge, retry, waitlist, threshold → no ops intervention</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </section>
+
+  <!-- BRs -->
+  <section class="section" id="brs">
+    <div class="section-tag">§5 — BUSINESS REQUIREMENTS</div>
+    <h2 class="productive-heading-02">BR-1 → BR-49 + 2 contracts · matches biz spreadsheet</h2>
+    <p class="body-long-01">
+      Numbers mirror the source <a href="https://docs.google.com/spreadsheets/d/1kKxOrNJ54ynOT-VChpDyc1NSEpPWxSlo4OCmrAmFCeQ/edit?gid=497901104">Google Sheet</a>. Scope: <span class="tag-pill scope-shared">Shared</span> = same on both · <span class="tag-pill scope-music">Music</span> = Beamco-only · <span class="tag-pill scope-movies">Movies</span> = Ztor-only · <span class="tag-pill scope-split">Split</span> = different logic per side. Origin: <span class="tag-pill origin-new">NEW</span> = net-new vs Phase 1 BRD · <span class="tag-pill origin-changed">CHANGED</span> = existed but materially different · <span class="tag-pill origin-carried">CARRIED</span> = same as Phase 1.
+    </p>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Setup — backend (BR-1 → BR-10)</h3>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-phase">Phase</th><th class="col-origin">Origin</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-1</td><td class="cell-desc"><strong>Fundraising target cap.</strong> Max $5M per campaign. Admin enforces manually — no platform validation in MVP.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-2</td><td class="cell-desc"><strong>Backer cap.</strong> No limit on number of backers per campaign.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-3</td><td class="cell-desc"><strong>Campaign duration cap.</strong> Max 30 days. Manually enforced; no platform validation in MVP.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-4</td><td class="cell-desc"><strong>Waitlist (frontend).</strong> Once all shares sold, waitlist opens. Waitlisters lock payment + package + email for manual recovery flow.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-5</td><td class="cell-desc"><strong>Campaign description.</strong> Single rich-text box, high char limit. No separate "project story" field.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-6</td><td class="cell-desc"><strong>Milestones.</strong> Movies: mandatory, ≤ 5, month+year, status updates optional. Music: not required for MVP.</td><td><span class="tag-pill pri-must">Must (Mv)</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-7</td><td class="cell-desc"><strong>Fundraising packages.</strong> Max 3 per campaign. Music: all w/ shares + bundling required. Movies: ≥ 1 w/ shares, bundling optional.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+        <tr><td class="cell-mono">BR-8</td><td class="cell-desc"><strong>Cover image.</strong> Portrait + landscape supported. High quality required.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-9</td><td class="cell-desc"><strong>Multimedia uploads.</strong> Multi-file (video, audio, images). Shown in separate section from cover.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+        <tr><td class="cell-mono">BR-10</td><td class="cell-desc"><strong>Social media links (setup).</strong> Movies: admin hyperlinks IG / YouTube / TikTok / custom URL. Music: not needed — storefront already has it.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Setup — shares &amp; currency (BR-11 → BR-20)</h3>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-phase">Phase</th><th class="col-origin">Origin</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-11</td><td class="cell-desc"><strong>Social media links (display).</strong> Movies-only: fan can click linked accounts and jump to platform.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-12</td><td class="cell-desc"><strong>Total royalty shares %.</strong> Music only — input total royalty shares offered as percentage.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+        <tr><td class="cell-mono">BR-13</td><td class="cell-desc"><strong>Total number of royalty shares.</strong> Music only — input total royalty share count.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-14</td><td class="cell-desc"><strong>Revenue shares offered %.</strong> Movies only — expressed as %.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+        <tr><td class="cell-mono">BR-15</td><td class="cell-desc"><strong>Number of shares available.</strong> Movies only — count of shares.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-16</td><td class="cell-desc"><strong>Currency selection.</strong> SGD or USD as settlement currency. Music: locked once selected. Movies: editable (BR-O4).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+        <tr><td class="cell-mono">BR-17</td><td class="cell-desc"><strong>Currency display (storefront).</strong> Creator's chosen currency primary · fan's local currency (IP-based) in smaller text as reference.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-18</td><td class="cell-desc"><strong>Membership card (Music only).</strong> Not required for MVP — will be needed later for Ztor 3-in-1.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-19</td><td class="cell-desc"><strong>Fund allocation.</strong> Keep current UAT version in MVP.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-20</td><td class="cell-desc"><strong>Loyalty points.</strong> $1 spent = 28 LP · Join community = 1 LP · Per-creator balance · LOCKED RATE. Music shows balance on creator dashboard; Movies keeps simple in MVP.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Drafts &amp; lifecycle (BR-21 → BR-27)</h3>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-phase">Phase</th><th class="col-origin">Origin</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-21</td><td class="cell-desc"><strong>Save as draft.</strong> Save button on every page. Close-tab prompts "Save as draft?".</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-22</td><td class="cell-desc"><strong>Publish campaign.</strong> Music: Publish Now only. Movies: Publish Now + Schedule Publish Date.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+        <tr><td class="cell-mono">BR-23</td><td class="cell-desc"><strong>Disable edit after publish.</strong> All fields locked once published.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-24</td><td class="cell-desc"><strong>Delete campaign (draft only).</strong> Delete enabled in draft; disabled after publish.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-25</td><td class="cell-desc"><strong>Cancel published campaign.</strong> Once published, only cancellable. Listing stays with Cancelled status; no new pledges; refund all backers.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-26</td><td class="cell-desc"><strong>Campaign statuses.</strong> Draft / Active / Cancelled / Funded / Successful / Unsuccessful + In Progress / Released. See <a href="crowdfund-brd-v1-state-machine.html">state machine</a>.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+        <tr><td class="cell-mono">BR-27</td><td class="cell-desc"><strong>Updates / Comments.</strong> Music: Updates section, creator posts only. Movies: Comments — creator + any fan can post.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Post-end — payment &amp; recovery (BR-28 → BR-35)</h3>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-phase">Phase</th><th class="col-origin">Origin</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-28</td><td class="cell-desc"><strong>Batch charge backers at campaign end.</strong> On end date, if goal met, system batch-charges every backer's locked-in card.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-29</td><td class="cell-desc"><strong>Auto-retry (Stripe smart retry).</strong> If decline, system silently retries 3 days (day 1, 2, 3) in background.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-30</td><td class="cell-desc"><strong>Manual recovery email.</strong> After auto-retry fails, system emails backer with URL to update payment. 7-day window.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-31</td><td class="cell-desc"><strong>Waitlist replacement.</strong> If still failing on day 10, drop original + pull next waitlister + run SAME 3+7 cycle.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-32</td><td class="cell-desc"><strong>Failure threshold check.</strong> After all recovery exhausted, check failure %. Above threshold → cancel + refund all. Below → first 80% payout (BR-O1).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-33</td><td class="cell-desc"><strong>Payout from Stripe to creator wallet.</strong> Two-tranche payout. Depends on Stripe Connect (BR-O2).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-34</td><td class="cell-desc"><strong>Withdraw funds from wallet.</strong> After $ on wallet, creator clicks Withdraw.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-35</td><td class="cell-desc"><strong>Submit final product URL.</strong> Triggers remainder 20% payout. Music: Spotify URL. Movies: Ztor OTT URL.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Royalties &amp; wallets (BR-36 → BR-46)</h3>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-phase">Phase</th><th class="col-origin">Origin</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-36</td><td class="cell-desc"><strong>Royalties reporting.</strong> Music: Flow A (label, weekly) or B (contributor, BR-O3). Movies: instant from Ztor OTT.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-37</td><td class="cell-desc"><strong>Withdraw royalties (creator).</strong> Withdraw once ≥ USD 50.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-38</td><td class="cell-desc"><strong>Withdraw royalties (fan).</strong> Anytime ≥ USD 50. Biz updates quarterly per fan. Music flagged "Product KIV / danger zone".</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-39</td><td class="cell-desc"><strong>Campaign dashboard.</strong> View of campaigns (draft/published/cancelled). Movies shows Name · Status · Raised/Target · Fanvestors · Days remaining · Result.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-40</td><td class="cell-desc"><strong>Overview tab.</strong> Progress · roadmap · payment breakdown · royalty splits · product URL upload. Music: Spotify. Movies: Ztor OTT.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-41</td><td class="cell-desc"><strong>Payout breakdown.</strong> Funds raised · successfully charged · unsuccessfully charged · Stripe 4% · platform fee 5% · final · 80% · 20%.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-42</td><td class="cell-desc"><strong>Order history tab.</strong> Backer name · package · price · items · fulfillment status · % royalties · payment status.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-43</td><td class="cell-desc"><strong>Export order history (CSV).</strong> Filter date range and export.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-44</td><td class="cell-desc"><strong>Search backer / order.</strong> Search in Order tab. Nice-to-have.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-45</td><td class="cell-desc"><strong>Creator Wallet.</strong> Balance + tx history + withdraw. Movies adds 15% tastemaker referral fee row.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-46</td><td class="cell-desc"><strong>Export transaction history (CSV).</strong> Filter date range and export.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Fan-side &amp; contracts (BR-47 → BR-C2)</h3>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-phase">Phase</th><th class="col-origin">Origin</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-47</td><td class="cell-desc"><strong>Backer email at checkout.</strong> Request email during checkout for failure-recovery contact.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-48</td><td class="cell-desc"><strong>Fan's order details page.</strong> Fans see purchased package + payment status (not yet charged / charged / failed) in order history.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-changed">CHANGED</span></td></tr>
+        <tr><td class="cell-mono">BR-49</td><td class="cell-desc"><strong>Fan Wallet.</strong> Date · Description (Earning vs Withdrawal) · $ · Withdraw button. Music: royalties. Movies: PPV minus tastemaker fee.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-split">Split</span></td><td><span class="phase-chip">PH-03</span></td><td><span class="tag-pill origin-new">NEW</span></td></tr>
+        <tr><td class="cell-mono">BR-C1</td><td class="cell-desc"><strong>Creator-Fan contract.</strong> Once payment successfully charged, creator can download per-backer PDF with campaign details. Different from platform T&amp;C.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-02</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+        <tr><td class="cell-mono">BR-C2</td><td class="cell-desc"><strong>Fan-Creator contract.</strong> Backer accepts contract + shares email at checkout. On payment success after end date: email e-contract to backer; downloadable from order history.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="phase-chip">PH-01</span></td><td><span class="tag-pill origin-carried">CARRIED</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Differences from Phase 1 -->
+  <section class="section" id="diff">
+    <div class="section-tag">§6 — DIFFERENCES FROM PHASE 1 BRD</div>
+    <h2 class="productive-heading-02">What changed vs the original (2026-03-22)</h2>
+    <p class="body-long-01">The original Phase 1 BRD scoped collection out to Phase 2 and used a share-count goal model. This unified BRD pulls Phase 2 in, flips funding to amount-based, and rewrites eligibility. Carryovers below.</p>
+
+    <div class="diff-grid">
+      <div class="diff-row h"><div>Area</div><div>Phase 1 BRD (was)</div><div>This BRD (now)</div><div>Why</div></div>
+      <div class="diff-row"><div>Payment collection</div><div>Stripe Future Payment Setup only — no charge in Phase 1</div><div>Batch-charge on Funded (BR-28) · 3+7+waitlist+threshold (BR-29 → 32)</div><div>Phase 2 rolled in</div></div>
+      <div class="diff-row"><div>Eligibility model</div><div>Follow X consecutive days → earn Y LP → permanent flag (FR-22)</div><div>$1 = 28 LP · join = 1 LP · ≥1 LP eligible (BR-20)</div><div>Instant-on-action; matches BR-236</div></div>
+      <div class="diff-row"><div>Funding model</div><div>Share-count driven · raised = reserved × per-share value</div><div>Amount-based · $5M cap (BR-1) · failure threshold by % (BR-32)</div><div>Aligns with Ztor</div></div>
+      <div class="diff-row"><div>Status machine</div><div>5 states · auto-only · no Funded/Successful split</div><div>8 states (BR-26) · manual Cancelled + Funded/Successful split</div><div>Recovery needs new states</div></div>
+      <div class="diff-row"><div>Currency</div><div>Per-project, locked at publish · set not enumerated</div><div>SGD or USD only (BR-16)</div><div>Region pivot</div></div>
+      <div class="diff-row"><div>Backer reward</div><div>Reserved → assigned shares + plan items</div><div>Shares + plan items + cash royalty via bridge (BR-36)</div><div>Streaming/OTT monetizes shares</div></div>
+      <div class="diff-row"><div>Waitlist</div><div>Not defined</div><div>Locks payment + email when sold out · pulled in on recovery fail (BR-4 / BR-31)</div><div>Protects funded goal</div></div>
+      <div class="diff-row"><div>Failure handling</div><div>Per-fan retry rules deferred to Phase 2</div><div>3-day retry · 7-day URL · day-10 swap · threshold (BR-29 → 32)</div><div>Closes Phase 2 loop</div></div>
+      <div class="diff-row"><div>Creator payout</div><div>Out of scope · Phase 2 design</div><div>Two-tranche 80% / 20% (BR-33 / BR-35)</div><div>Aligns release to delivery</div></div>
+      <div class="diff-row"><div>Creator wallet</div><div>Out of scope</div><div>Balance + tx history + withdraw · Movies adds tastemaker (BR-45)</div><div>Self-serve payout</div></div>
+      <div class="diff-row"><div>Royalty reporting</div><div>Not in Phase 1</div><div>Music Flow A/B · Movies instant OTT (BR-36 / BR-38)</div><div>Monetization moat</div></div>
+      <div class="diff-row"><div>Admin contract templates</div><div>Versioned + EN/zh-TW i18n (FR-56)</div><div>Per-backer PDF only (BR-C1/C2) · no template versioning</div><div>Gap — flag to re-add</div></div>
+      <div class="diff-row"><div>Equity-like-shares legal</div><div>Flagged for MY/TW/SG/US review</div><div>Re-flagged (BR-O6) · SGD/USD pivot raises exposure</div><div>Currency pivot worsens surface</div></div>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:32px 0 10px 0;letter-spacing:0.16px;">Phase 1 rules that DID carry forward unchanged</h3>
+    <table class="cds-data-table">
+      <thead><tr><th style="width:120px;">Phase 1 ID</th><th>Rule (still in effect)</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">FR-13</td><td class="cell-desc"><strong>Notify-Users mandatory</strong> on milestone date change · system blocks save without it (implicit in BR-6)</td></tr>
+        <tr><td class="cell-mono">FR-19/20</td><td class="cell-desc"><strong>Milestone overdue</strong> auto-display + block Milestone Completed until Milestone Delayed posted</td></tr>
+        <tr><td class="cell-mono">FR-36</td><td class="cell-desc"><strong>One active plan per fan</strong> per campaign · upgrade overwrites previous</td></tr>
+        <tr><td class="cell-mono">FR-38/39</td><td class="cell-desc"><strong>Plan upgrade (higher only)</strong> · downgrade NOT permitted · cancellation NOT permitted</td></tr>
+        <tr><td class="cell-mono">FR-49/50</td><td class="cell-desc"><strong>Fan contract</strong> with dynamic values + "I agree" gate · downloadable PDF (now BR-C1 / BR-C2)</td></tr>
+        <tr><td class="cell-mono">FR-23/24</td><td class="cell-desc"><strong>Eligibility flag permanent</strong> even if LP later removed (invariant, BR-20 · loophole at BR-O5)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Do/Don't/Edge -->
+  <section class="section" id="dde">
+    <div class="section-tag">§7 — GUARDRAILS</div>
+    <h2 class="productive-heading-02">Do · Don't · Edge cases</h2>
+    <div class="ddedge">
+      <div class="col do">
+        <h4>✓ DO</h4>
+        <ul>
+          <li>Lead with fiat pricing in creator currency (SGD or USD)</li>
+          <li>Log every state transition with operator + timestamp</li>
+          <li>Default eligibility CTA: "加入社群即可贊助"</li>
+          <li>Show share allocation transparently in plan cards</li>
+          <li>Tell creators: payout up to 30 days from close</li>
+          <li>Mandate Notify-Users on milestone date change</li>
+          <li>Treat shares-to-cash as the unified reward model</li>
+        </ul>
+      </div>
+      <div class="col dont">
+        <h4>✗ DON'T</h4>
+        <ul>
+          <li>Price shares individually — they come from plans</li>
+          <li>Reintroduce 追蹤 / follow verbs</li>
+          <li>Gate eligibility on Popcorn balance</li>
+          <li>Allow fan-side cancel during funding</li>
+          <li>Build in-admin refund UI (Stripe back-office only)</li>
+          <li>Allow downgrade or self-cancel of a pledge</li>
+          <li>Allow multiple active pledges per fan per campaign</li>
+        </ul>
+      </div>
+      <div class="col edge">
+        <h4>▲ EDGE CASES</h4>
+        <ul>
+          <li>LP service down → treat as ineligible; soft retry</li>
+          <li>User unjoins after pledging → pledge valid, LP persists</li>
+          <li>Webhook delay &gt; 1h → admin surfaces stale-pending</li>
+          <li>Cross-region decimals → primary currency wins</li>
+          <li>Last-spot race → first-write-wins · loser → waitlist</li>
+          <li>No Stripe Connect → manual Finance bank transfer</li>
+          <li>Music flow change mid-campaign → freeze source</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Phases -->
+  <section class="section" id="phases">
+    <div class="section-tag">§9 — PHASE BREAKDOWN</div>
+    <h2 class="productive-heading-02">Three phases of delivery</h2>
+    <div class="phases">
+      <div class="phase">
+        <span class="ph-id">PH-01</span>
+        <h4>Backer can pledge end-to-end</h4>
+        <p class="goal">Setup + browse + pledge with Stripe Future Payment. No money moves.</p>
+        <div class="chips">
+          <span class="chip">BR-1</span><span class="chip">2</span><span class="chip">3</span><span class="chip">5</span><span class="chip">7</span><span class="chip">8</span><span class="chip">9</span><span class="chip">10</span><span class="chip">11</span><span class="chip">12</span><span class="chip">13</span><span class="chip">14</span><span class="chip">15</span><span class="chip">16</span><span class="chip">17</span><span class="chip">19</span><span class="chip">20</span><span class="chip">21</span><span class="chip">22</span><span class="chip">23</span><span class="chip">24</span><span class="chip">26</span><span class="chip">47</span><span class="chip">48</span><span class="chip">C2</span>
+        </div>
+      </div>
+      <div class="phase">
+        <span class="ph-id">PH-02</span>
+        <h4>Lifecycle + recovery + ops control</h4>
+        <p class="goal">Charge → recovery → waitlist → threshold → 80% payout. Manual cancellation flow.</p>
+        <div class="chips">
+          <span class="chip">BR-4</span><span class="chip">6</span><span class="chip">25</span><span class="chip">27</span><span class="chip">28</span><span class="chip">29</span><span class="chip">30</span><span class="chip">31</span><span class="chip">32</span><span class="chip">33</span><span class="chip">35</span><span class="chip">C1</span>
+        </div>
+      </div>
+      <div class="phase">
+        <span class="ph-id">PH-03</span>
+        <h4>Wallets + royalty + reporting</h4>
+        <p class="goal">Shares-to-cash via Spotify (Music) / Ztor OTT (Movies). Withdraw flows. Backend dashboards.</p>
+        <div class="chips">
+          <span class="chip">BR-18</span><span class="chip">34</span><span class="chip">36</span><span class="chip">37</span><span class="chip">38</span><span class="chip">39</span><span class="chip">40</span><span class="chip">41</span><span class="chip">42</span><span class="chip">43</span><span class="chip">44</span><span class="chip">45</span><span class="chip">46</span><span class="chip">49</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Decisions + Open Questions -->
+  <section class="section" id="decopen">
+    <div class="section-tag">§10 — DECISIONS &amp; OPEN QUESTIONS</div>
+    <h2 class="productive-heading-02">What's locked · what biz/ops still owes us</h2>
+    <p class="body-long-01">8 decisions locked during 2026-05-24 review drive every BR above. The 10 open questions on the right block specific BRs or production launch.</p>
+
+    <div class="decopen">
+      <div class="dec-block">
+        <div class="block-h">✓ LOCKED DECISIONS · 2026-05-24</div>
+        <div class="dec"><span class="n">1</span><strong>Canonical BRD = Phase 1 + 2.</strong><div class="det">Phase 1 BRD &amp; Ztor v6 are now deltas off this doc</div></div>
+        <div class="dec"><span class="n">2</span><strong>Currency = SGD or USD.</strong><div class="det">Same set for both Music + Movies</div></div>
+        <div class="dec"><span class="n">3</span><strong>LP rate locked.</strong><div class="det">$1 = 28 LP · join = 1 LP · ≥1 LP eligible · no admin override</div></div>
+        <div class="dec"><span class="n">4</span><strong>Recovery = 3 + 7 + waitlist + threshold.</strong><div class="det">Supersedes Ztor v6's 7+7 model</div></div>
+        <div class="dec"><span class="n">5</span><strong>Reward = shares + plan items.</strong><div class="det">Shares monetize via cash royalty as music/OTT revenue arrives</div></div>
+        <div class="dec"><span class="n">6</span><strong>Carry forward FR-13 milestone notify.</strong><div class="det">Date change → mandatory "Notify Users" update; blocks save</div></div>
+        <div class="dec"><span class="n">7</span><strong>4 questions stay open.</strong><div class="det">Threshold value · Stripe Connect · Music flow · edit semantics</div></div>
+        <div class="dec"><span class="n">8</span><strong>This BRD is canonical.</strong><div class="det">Tech leads decompose FR/TR from here going forward</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="block-h">▲ OPEN QUESTIONS FOR BIZ / OPS</div>
+        <div class="q blocking"><span class="n">O1</span><strong>BR-32 threshold value.</strong> % or $? Movies-side min pullout (e.g. 85%)?<span class="blk">PH-02</span><div class="own">Owner: biz + Agnes</div></div>
+        <div class="q blocking"><span class="n">O2</span><strong>Stripe Connect yes/no?</strong> If no, manual Finance bank transfer is MVP path.<span class="blk">PH-02</span><div class="own">Owner: L</div></div>
+        <div class="q"><span class="n">O3</span><strong>Music royalty:</strong> Flow A (label, weekly) or Flow B (contributor pull)?<div class="own">Owner: Sam · overdue 2026-05-23</div></div>
+        <div class="q"><span class="n">O4</span><strong>BR-16 Movies currency "editable":</strong> what is editable (currency? amount? both?)?<div class="own">Owner: biz</div></div>
+        <div class="q"><span class="n">O5</span><strong>LP loophole:</strong> join → 1 LP → unjoin keeps eligibility. Phase 2 mitigation?<div class="own">Owner: Al · non-blocking</div></div>
+        <div class="q blocking"><span class="n">O6</span><strong>Equity-like shares regulatory review</strong> in SG/US post-currency pivot.<span class="blk">production</span><div class="own">Owner: Legal</div></div>
+        <div class="q"><span class="n">O7</span><strong>BR-35 — 20% auto-triggered</strong> on URL upload, or admin review first?<div class="own">Owner: biz</div></div>
+        <div class="q"><span class="n">O8</span><strong>BR-39 Music dashboard scope</strong> — "TBD by 2026-05-19" status?<div class="own">Owner: biz</div></div>
+        <div class="q"><span class="n">O9</span><strong>BR-41 payout breakdown</strong> — which numbers automated vs manual?<div class="own">Owner: dev</div></div>
+        <div class="q"><span class="n">O10</span><strong>Ztor v6 redeem code</strong> — survives, or replaced by cash royalty (BR-36/38)?<div class="own">Owner: Agnes</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <span>Crowdfund BRD v1 — Unified Music + Movies · 2026-05-24</span>
+    <span class="mono">49 BRs + 2 contracts · 3 phases · 10 open Qs · Canonical</span>
+  </div>
+</main>
+
+</body>
+</html>

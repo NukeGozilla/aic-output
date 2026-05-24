@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crowdfund BRD v1 — Lifecycle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --cds-background: #161616;
+    --cds-layer-01: #262626;
+    --cds-layer-02: #393939;
+    --cds-layer-03: #525252;
+    --cds-border-subtle: #393939;
+    --cds-border-strong: #6f6f6f;
+    --cds-text-primary: #f4f4f4;
+    --cds-text-secondary: #c6c6c6;
+    --cds-text-helper: #a8a8a8;
+    --cds-text-placeholder: #6f6f6f;
+    --cds-blue-50: #4589ff;
+    --cds-blue-60: #0f62fe;
+    --cds-blue-70: #0043ce;
+    --cds-green-50: #24a148;
+    --cds-green-60: #198038;
+    --cds-red-50: #fa4d56;
+    --cds-yellow-30: #f1c21b;
+    --cds-purple-60: #8a3ffc;
+    --cds-purple-50: #a56eff;
+    --cds-teal-50: #009d9a;
+    --cds-cyan-50: #1192e8;
+    --cds-magenta-50: #ee5396;
+    --cds-cool-gray-50: #8d8d8d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+    background: var(--cds-background); color: var(--cds-text-primary);
+    min-height: 100vh; font-size: 14px; line-height: 1.5; letter-spacing: 0.16px;
+  }
+  code, .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+
+  /* UI Shell */
+  .ui-shell { background: var(--cds-layer-01); border-bottom: 1px solid var(--cds-border-subtle); padding: 16px 32px; }
+  .ui-shell-inner { max-width: 1280px; margin: 0 auto; }
+  .ui-shell h1 { font-size: 28px; font-weight: 300; color: var(--cds-text-primary); letter-spacing: 0; line-height: 1.25; }
+  .ui-shell h1 .tag { display: inline-block; background: var(--cds-blue-70); color: #fff; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 12px; margin-left: 10px; vertical-align: middle; letter-spacing: 0.32px; }
+  .ui-shell .subtitle { font-size: 14px; color: var(--cds-text-secondary); margin-top: 4px; }
+  .breadcrumb { display: flex; gap: 0; align-items: center; margin-top: 12px; font-size: 12px; }
+  .breadcrumb a { color: var(--cds-text-secondary); text-decoration: none; padding: 6px 12px; border-bottom: 2px solid transparent; transition: all 0.11s; }
+  .breadcrumb a:hover { color: var(--cds-text-primary); background: var(--cds-layer-02); }
+  .breadcrumb a.current { color: var(--cds-text-primary); border-bottom-color: var(--cds-blue-50); font-weight: 500; }
+
+  /* Notification */
+  .notification {
+    background: var(--cds-layer-01);
+    border-left: 3px solid var(--cds-green-50);
+    padding: 16px;
+    margin: 24px 32px 0; max-width: 1216px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .notification .icon { color: var(--cds-green-50); font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .notification .body { font-size: 14px; color: var(--cds-text-primary); line-height: 1.45; }
+  .notification .body strong { font-weight: 600; }
+  .notification .body code { background: var(--cds-layer-02); padding: 1px 6px; font-size: 12.5px; }
+
+  /* Layout */
+  .canvas { padding: 32px; max-width: 1280px; margin: 0 auto; }
+  .body-long-01 { font-size: 14px; line-height: 1.43; color: var(--cds-text-secondary); max-width: 880px; margin-bottom: 32px; }
+  .body-long-01 strong { color: var(--cds-text-primary); font-weight: 600; }
+  .body-long-01 code { background: var(--cds-layer-01); padding: 1px 6px; font-size: 13px; color: var(--cds-text-primary); }
+  .body-long-01 .music { color: var(--cds-purple-50); font-weight: 500; }
+  .body-long-01 .movies { color: var(--cds-yellow-30); font-weight: 500; }
+
+  .productive-heading-02 {
+    font-size: 16px; font-weight: 600; line-height: 1.375; letter-spacing: 0;
+    color: var(--cds-text-primary); margin: 32px 0 12px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .productive-heading-02::before { content: ""; width: 4px; height: 18px; background: var(--cds-blue-50); }
+  .helper-text { font-size: 12px; color: var(--cds-text-helper); margin-bottom: 16px; letter-spacing: 0.32px; }
+
+  /* Phase strip — Carbon Tiles */
+  .phase-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--cds-border-subtle); border: 1px solid var(--cds-border-subtle); margin-bottom: 32px; }
+  .phase-tile {
+    background: var(--cds-layer-01);
+    padding: 16px 18px;
+    border-top: 3px solid var(--cds-blue-50);
+    position: relative;
+  }
+  .phase-tile:nth-child(1) { border-top-color: var(--cds-cool-gray-50); }
+  .phase-tile:nth-child(2) { border-top-color: var(--cds-cyan-50); }
+  .phase-tile:nth-child(3) { border-top-color: var(--cds-purple-60); }
+  .phase-tile:nth-child(4) { border-top-color: var(--cds-green-50); }
+  .phase-tile .ord {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--cds-text-helper); margin-bottom: 4px; letter-spacing: 0.4px;
+  }
+  .phase-tile h3 { font-size: 16px; color: var(--cds-text-primary); margin-bottom: 8px; font-weight: 600; line-height: 1.25; }
+  .phase-tile p { font-size: 13px; color: var(--cds-text-secondary); line-height: 1.5; }
+  .phase-tile .who {
+    font-size: 11px; color: var(--cds-text-helper); margin-top: 10px;
+    font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.4px; text-transform: uppercase;
+  }
+
+  /* Chart container */
+  .chart {
+    background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle);
+    padding: 32px 24px; margin: 0 0 32px;
+    overflow-x: auto;
+  }
+  .chart svg { display: block; margin: 0 auto; max-width: 100%; }
+
+  /* Timeline */
+  .timeline { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle); padding: 24px 28px; margin-bottom: 28px; }
+  .timeline h3 { font-size: 16px; color: var(--cds-text-primary); margin-bottom: 16px; font-weight: 600; display: flex; gap: 8px; align-items: center; }
+  .tl-row { display: grid; grid-template-columns: 160px 1fr; gap: 18px; padding: 12px 0; border-top: 1px solid var(--cds-border-subtle); font-size: 14px; color: var(--cds-text-secondary); line-height: 1.5; }
+  .tl-row:first-child { border-top: none; padding-top: 0; }
+  .tl-when { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--cds-blue-50); font-weight: 500; letter-spacing: 0.32px; text-transform: uppercase; }
+  .tl-what strong { color: var(--cds-text-primary); font-weight: 600; }
+  .tl-what code { background: var(--cds-layer-02); padding: 1px 5px; font-size: 12.5px; }
+
+  /* Split tiles */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--cds-border-subtle); border: 1px solid var(--cds-border-subtle); margin-top: 24px; }
+  .split .col { background: var(--cds-layer-01); padding: 16px 20px; border-top: 3px solid; }
+  .split .col h4 { font-size: 15px; font-weight: 600; margin-bottom: 8px; line-height: 1.25; }
+  .split .col p { font-size: 13px; color: var(--cds-text-secondary); line-height: 1.55; }
+  .split .music { border-top-color: var(--cds-purple-50); }
+  .split .music h4 { color: var(--cds-purple-50); }
+  .split .movies { border-top-color: var(--cds-yellow-30); }
+  .split .movies h4 { color: var(--cds-yellow-30); }
+
+  @media (max-width: 900px) {
+    .ui-shell { padding: 16px 20px; }
+    .notification { margin: 16px 20px 0; }
+    .canvas { padding: 24px 20px; }
+    .phase-strip { grid-template-columns: 1fr; }
+    .split { grid-template-columns: 1fr; }
+    .tl-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ui-shell">
+  <div class="ui-shell-inner">
+    <h1>Crowdfund Lifecycle <span class="tag">BRD v1</span></h1>
+    <div class="subtitle">End-to-end journey of a campaign: Setup → Active → Funded → Successful → Released</div>
+    <nav class="breadcrumb">
+      <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
+      <a href="crowdfund-brd-v1-lifecycle.html" class="current">Lifecycle</a>
+      <a href="crowdfund-brd-v1-state-machine.html">State machine</a>
+      <a href="crowdfund-brd-v1-payment-retry.html">Payment retry &amp; cancellation</a>
+    </nav>
+  </div>
+</div>
+
+<div class="notification">
+  <span class="icon">●</span>
+  <div class="body">
+    <strong>All-or-nothing, two-tranche payout.</strong> Card is collected at pledge but NOT charged. On end date, if goal met → batch-charge → recovery loop → 80% payout. On product URL submission → final 20% payout. Royalty income flows after Released.
+  </div>
+</div>
+
+<div class="canvas">
+
+  <p class="body-long-01">
+    A unified lifecycle for both <span class="music">Music (Beamco)</span> and <span class="movies">Movies (Ztor)</span> campaigns. The shape is the same; product-specific differences (currency, share denomination, royalty source) only matter at the data layer. Lifecycle = 4 phases: <code>Setup</code> → <code>Live</code> → <code>Collection</code> → <code>Payout &amp; Release</code>.
+  </p>
+
+  <div class="phase-strip">
+    <div class="phase-tile">
+      <div class="ord">PHASE 01</div>
+      <h3>Setup</h3>
+      <p>Configure goal, plans, shares, milestones, contracts. Validate at publish.</p>
+      <div class="who">Creator · Ops Admin</div>
+    </div>
+    <div class="phase-tile">
+      <div class="ord">PHASE 02</div>
+      <h3>Live</h3>
+      <p>Browse, eligibility check (≥ 1 LP), select plan, pledge with Stripe Future Payment (no charge).</p>
+      <div class="who">Fan · System</div>
+    </div>
+    <div class="phase-tile">
+      <div class="ord">PHASE 03</div>
+      <h3>Collection</h3>
+      <p>On end date: goal-met check → batch charge → 3+7+waitlist recovery → threshold check.</p>
+      <div class="who">System · Ops Admin</div>
+    </div>
+    <div class="phase-tile">
+      <div class="ord">PHASE 04</div>
+      <h3>Payout &amp; Release</h3>
+      <p>80% to wallet on Successful → product URL submission → 20% release → ongoing royalty cash.</p>
+      <div class="who">Creator · System · Finance</div>
+    </div>
+  </div>
+
+  <h2 class="productive-heading-02">End-to-end lifecycle</h2>
+  <p class="helper-text">READ TOP-TO-BOTTOM · DECISIONS ARE DIAMONDS · TERMINAL STATES ARE GREEN (RELEASE) OR RED (FAIL)</p>
+
+  <div class="chart">
+    <pre class="mermaid">
+flowchart TD
+    A[Creator configures campaign] --> A2[Ops publishes<br/>Now or Scheduled]
+    A2 --> B[Active · campaign live]
+    B --> P[Fan pledges<br/>Stripe Future Payment · no charge]
+    P --> B
+    B --> E{End date reached?}
+    E -->|Goal not met| U[Unsuccessful · terminal<br/>Zero charges · no refund needed]
+    E -->|Goal met| F[Funded · batch charge cards]
+    F --> R[Recovery loop · 3d retry + 7d email + waitlist swap]
+    R --> T{Failure % > threshold?}
+    T -->|Above| C[Cancelled · refund all · terminal]
+    T -->|Below| S[Successful · release 80% to wallet]
+    S --> IP[In Progress · creator produces work]
+    IP --> URL[Creator uploads product URL<br/>Spotify · Music / Ztor OTT · Movies]
+    URL --> RL[Released · 20% release · ongoing royalty]
+    RL --> RY[Royalty cash flows to creator + fan wallets]
+
+    classDef ok fill:#0e3e23,stroke:#24a148,color:#a7f0ba
+    classDef bad fill:#3d0e10,stroke:#fa4d56,color:#ffd7d9
+    classDef neutral fill:#262626,stroke:#a8a8a8,color:#f4f4f4
+    classDef live fill:#0c2540,stroke:#1192e8,color:#bae6ff
+    classDef recovery fill:#2a0f3d,stroke:#8a3ffc,color:#d4bbff
+    class A,A2,IP,URL neutral
+    class B,P live
+    class F,R recovery
+    class S,RL,RY ok
+    class U,C bad
+    </pre>
+  </div>
+
+  <div class="timeline">
+    <h3>Worst-case timeline · backer POV</h3>
+    <div class="tl-row">
+      <div class="tl-when">Day 0 → 30</div>
+      <div class="tl-what"><strong>Campaign live.</strong> Backer pledges, card recorded, no charge. Maximum 30-day fundraising window.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">Day 30</div>
+      <div class="tl-what"><strong>Campaign closes.</strong> If goal met → batch-charge. Otherwise → Unsuccessful, nothing happens.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">Day 30 → 40</div>
+      <div class="tl-what"><strong>Recovery on declines.</strong> 3-day silent retry + 7-day email URL. If still failing on day 10 → drop + pull waitlister + restart cycle.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">Day 40 → 50</div>
+      <div class="tl-what"><strong>Waitlister recovery (worst case).</strong> Another 3+7 cycle if the original substitute also declines.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">Day 50</div>
+      <div class="tl-what"><strong>Threshold check.</strong> If failure% &gt; threshold → cancel + refund all. Else → status = <code>Successful</code> + first tranche (80%) released.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">Day 50 → 60</div>
+      <div class="tl-what"><strong>"Up to 30 days" buffer.</strong> Communicate this to creators — actual worst case is 20 days; 10-day safety buffer.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">Weeks → months</div>
+      <div class="tl-what"><strong>Creator delivers</strong> → uploads <code>Spotify</code> (Music) or <code>Ztor OTT</code> (Movies) URL → status = <code>Released</code> → 20% tranche releases.</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-when">Ongoing</div>
+      <div class="tl-what"><strong>Royalty cash flows.</strong> Shares-to-cash bridge converts share holdings into withdrawable cash in fan + creator wallets (≥ USD 50 to withdraw).</div>
+    </div>
+  </div>
+
+  <h2 class="productive-heading-02">Music vs Movies — where the lifecycle differs</h2>
+  <p class="helper-text">SAME LIFECYCLE SHAPE · DIFFERENCES ARE DATA POINTS + ROYALTY SOURCE</p>
+
+  <div class="split">
+    <div class="col music">
+      <h4>♪ Music (Beamco)</h4>
+      <p>Setup uses royalty shares % + count. Publish = Now only. Engagement = creator-only Updates feed. Product URL = Spotify link. Royalty = Flow A (Beamco-as-label, manual weekly) OR Flow B (contributor on distributor) — TBD.</p>
+    </div>
+    <div class="col movies">
+      <h4>▶ Movies (Ztor)</h4>
+      <p>Setup uses revenue shares % + count. Publish = Now + Schedule. Engagement = open Comments (with admin soft-delete). Product URL = Ztor OTT link. Royalty = instant from Ztor OTT pipeline. Creator wallet adds tastemaker referral fee row.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true, theme: 'base',
+    themeVariables: {
+      darkMode: true,
+      background: '#262626',
+      primaryColor: '#393939', primaryTextColor: '#f4f4f4', primaryBorderColor: '#6f6f6f',
+      lineColor: '#a8a8a8', secondaryColor: '#393939', tertiaryColor: '#262626',
+      mainBkg: '#393939', secondBkg: '#393939', nodeBorder: '#6f6f6f',
+      clusterBkg: '#262626', clusterBorder: '#393939',
+      defaultLinkColor: '#a8a8a8',
+      fontFamily: '"IBM Plex Sans", -apple-system, sans-serif',
+      fontSize: '14px'
+    },
+    flowchart: { curve: 'basis', padding: 22, nodeSpacing: 44, rankSpacing: 60 }
+  });
+</script>
+
+</body>
+</html>

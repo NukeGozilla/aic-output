@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crowdfund BRD v1 — State Machine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ════════════════════════════════════════════════════════════
+     IBM Carbon Design System — dark theme tokens
+     ════════════════════════════════════════════════════════════ */
+  :root {
+    /* Backgrounds */
+    --cds-background: #161616;          /* gray 100 */
+    --cds-layer-01: #262626;            /* gray 90 */
+    --cds-layer-02: #393939;            /* gray 80 */
+    --cds-layer-03: #525252;            /* gray 70 */
+    --cds-field-01: #262626;
+    --cds-field-02: #393939;
+
+    /* Borders */
+    --cds-border-subtle: #393939;
+    --cds-border-strong: #6f6f6f;       /* gray 60 */
+    --cds-border-inverse: #f4f4f4;
+
+    /* Text */
+    --cds-text-primary: #f4f4f4;        /* gray 10 */
+    --cds-text-secondary: #c6c6c6;      /* gray 30 */
+    --cds-text-placeholder: #6f6f6f;
+    --cds-text-on-color: #ffffff;
+    --cds-text-helper: #a8a8a8;         /* gray 40 */
+
+    /* Interactive — Carbon Blue */
+    --cds-blue-60: #0f62fe;
+    --cds-blue-50: #4589ff;
+    --cds-blue-70: #0043ce;
+
+    /* Status colors */
+    --cds-green-50: #24a148;            /* success */
+    --cds-green-60: #198038;
+    --cds-red-50: #fa4d56;              /* danger */
+    --cds-red-60: #da1e28;
+    --cds-yellow-30: #f1c21b;           /* warning */
+    --cds-purple-60: #8a3ffc;
+    --cds-purple-50: #a56eff;
+    --cds-teal-50: #009d9a;
+    --cds-cyan-50: #1192e8;
+    --cds-magenta-50: #ee5396;
+    --cds-cool-gray-50: #8d8d8d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--cds-background); color: var(--cds-text-primary);
+    min-height: 100vh; font-size: 14px; line-height: 1.5;
+    font-weight: 400; letter-spacing: 0.16px;
+  }
+  .mono, code { font-family: 'IBM Plex Mono', ui-monospace, "SF Mono", monospace; }
+
+  /* ─── UI Shell header ─── */
+  .ui-shell {
+    background: var(--cds-layer-01);
+    border-bottom: 1px solid var(--cds-border-subtle);
+    padding: 16px 32px;
+  }
+  .ui-shell-inner { max-width: 1280px; margin: 0 auto; }
+  .ui-shell h1 {
+    font-size: 28px; font-weight: 300; color: var(--cds-text-primary);
+    letter-spacing: 0; line-height: 1.25;
+  }
+  .ui-shell h1 .tag {
+    display: inline-block; background: var(--cds-blue-70); color: var(--cds-text-on-color);
+    font-size: 11px; font-weight: 500; padding: 2px 8px;
+    border-radius: 12px; margin-left: 10px; vertical-align: middle;
+    letter-spacing: 0.32px; font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .ui-shell .subtitle {
+    font-size: 14px; color: var(--cds-text-secondary); margin-top: 4px;
+    font-weight: 400;
+  }
+  .breadcrumb {
+    display: flex; gap: 0; align-items: center; margin-top: 12px;
+    font-size: 12px;
+  }
+  .breadcrumb a {
+    color: var(--cds-text-secondary); text-decoration: none;
+    padding: 6px 12px; border: 1px solid transparent;
+    border-bottom: 2px solid transparent; transition: all 0.11s;
+  }
+  .breadcrumb a:hover { color: var(--cds-text-primary); background: var(--cds-layer-02); }
+  .breadcrumb a.current {
+    color: var(--cds-text-primary); border-bottom-color: var(--cds-blue-50);
+    font-weight: 500;
+  }
+
+  /* ─── Notification (Carbon notification pattern) ─── */
+  .notification {
+    background: var(--cds-layer-01);
+    border-left: 3px solid var(--cds-green-50);
+    padding: 16px 16px 16px 16px;
+    margin: 24px 32px 0;
+    max-width: 1216px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .notification .icon { color: var(--cds-green-50); font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .notification .body { font-size: 14px; color: var(--cds-text-primary); line-height: 1.45; }
+  .notification .body strong { color: var(--cds-text-primary); font-weight: 600; }
+  .notification .body code { background: var(--cds-layer-02); padding: 1px 6px; font-size: 12.5px; color: var(--cds-text-primary); }
+
+  /* ─── Page layout ─── */
+  .canvas { padding: 32px; max-width: 1280px; margin: 0 auto; }
+  .productive-heading-04 {
+    font-size: 28px; font-weight: 300; line-height: 1.25; letter-spacing: 0;
+    color: var(--cds-text-primary); margin-bottom: 8px;
+  }
+  .productive-heading-02 {
+    font-size: 16px; font-weight: 600; line-height: 1.375; letter-spacing: 0;
+    color: var(--cds-text-primary); margin: 32px 0 12px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .productive-heading-02::before {
+    content: ""; width: 4px; height: 18px; background: var(--cds-blue-50);
+  }
+  .body-long-01 {
+    font-size: 14px; line-height: 1.43; color: var(--cds-text-secondary);
+    max-width: 880px; margin-bottom: 24px;
+  }
+  .body-long-01 strong { color: var(--cds-text-primary); font-weight: 600; }
+  .body-long-01 code { background: var(--cds-layer-01); padding: 1px 6px; font-size: 13px; color: var(--cds-text-primary); }
+  .helper-text {
+    font-size: 12px; color: var(--cds-text-helper); margin-bottom: 16px;
+    letter-spacing: 0.32px;
+  }
+
+  /* ─── Carbon tag legend ─── */
+  .legend-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+  .cds-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--cds-layer-01);
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 12px; font-weight: 400;
+    color: var(--cds-text-primary);
+    line-height: 1.33;
+    letter-spacing: 0.32px;
+  }
+  .cds-tag .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .cds-tag .line { width: 16px; height: 2px; flex-shrink: 0; }
+
+  /* ─── Diagram canvas ─── */
+  .diagram {
+    background: var(--cds-layer-01);
+    border: 1px solid var(--cds-border-subtle);
+    padding: 32px 24px;
+    margin-bottom: 32px;
+    overflow-x: auto;
+  }
+  .canvas-positioned {
+    position: relative; width: 1100px; height: 780px; margin: 0 auto;
+  }
+  .state-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 1;
+  }
+
+  /* ─── State boxes — Carbon Tile pattern ─── */
+  .state {
+    position: absolute; z-index: 2;
+    background: var(--cds-layer-02);
+    border-left: 3px solid;
+    padding: 12px 16px;
+    width: 180px;
+    box-sizing: border-box;
+    transition: background 0.11s;
+  }
+  .state .name {
+    font-size: 16px; font-weight: 600; color: var(--cds-text-primary);
+    line-height: 1.25; letter-spacing: 0;
+  }
+  .state .desc {
+    font-size: 12px; color: var(--cds-text-secondary); margin-top: 6px;
+    line-height: 1.34; letter-spacing: 0.32px;
+  }
+  .state .badge-row { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+  .state .state-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; padding: 1px 6px; border-radius: 8px;
+    background: var(--cds-layer-03); color: var(--cds-text-primary);
+    letter-spacing: 0.32px; font-weight: 500;
+  }
+  .state .state-tag.terminal { background: var(--cds-red-60); color: var(--cds-text-on-color); }
+  .state .state-tag.terminal-ok { background: var(--cds-green-60); color: var(--cds-text-on-color); }
+
+  /* Carbon color category per state */
+  .s-draft        { left: 460px; top: 30px;  border-left-color: var(--cds-cool-gray-50); }
+  .s-active       { left: 460px; top: 150px; border-left-color: var(--cds-cyan-50); }
+  .s-funded       { left: 460px; top: 270px; border-left-color: var(--cds-purple-60); }
+  .s-successful   { left: 460px; top: 410px; border-left-color: var(--cds-green-50); }
+  .s-inprogress   { left: 460px; top: 530px; border-left-color: var(--cds-teal-50); }
+  .s-released     { left: 760px; top: 660px; border-left-color: var(--cds-green-50); background: rgba(36,161,72,0.16); }
+  .s-unsuccessful { left: 110px; top: 270px; border-left-color: var(--cds-cool-gray-50); background: rgba(141,141,141,0.08); }
+  .s-cancelled    { left: 810px; top: 270px; border-left-color: var(--cds-red-50); background: rgba(250,77,86,0.10); }
+
+  /* Start dot — Carbon style */
+  .start-dot {
+    position: absolute; left: 545px; top: 5px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--cds-text-primary); z-index: 3;
+    box-shadow: 0 0 0 3px var(--cds-layer-01);
+  }
+
+  /* SVG label backgrounds */
+  .lbl-bg { fill: var(--cds-layer-01); stroke: none; }
+
+  /* ─── State definition cards (Carbon Tile) ─── */
+  .states { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-bottom: 36px; background: var(--cds-border-subtle); border: 1px solid var(--cds-border-subtle); }
+  .state-card {
+    background: var(--cds-layer-01);
+    padding: 16px 20px;
+    border-left: 3px solid var(--cds-blue-50);
+  }
+  .state-card h3 { font-size: 15px; color: var(--cds-text-primary); margin-bottom: 4px; font-weight: 600; line-height: 1.25; }
+  .state-card p { font-size: 13px; color: var(--cds-text-secondary); line-height: 1.5; }
+  .state-card .meta {
+    font-size: 11px; color: var(--cds-text-helper); margin-top: 8px;
+    text-transform: uppercase; letter-spacing: 0.4px; font-family: 'IBM Plex Mono', monospace;
+  }
+  .state-card.draft       { border-left-color: var(--cds-cool-gray-50); }
+  .state-card.live        { border-left-color: var(--cds-cyan-50); }
+  .state-card.charging    { border-left-color: var(--cds-purple-60); }
+  .state-card.success     { border-left-color: var(--cds-green-50); }
+  .state-card.production  { border-left-color: var(--cds-teal-50); }
+  .state-card.terminal-fail { border-left-color: var(--cds-red-50); }
+  .state-card.terminal-fail .meta { color: var(--cds-red-50); }
+  .state-card.terminal-ok { border-left-color: var(--cds-green-60); }
+  .state-card.terminal-ok .meta { color: var(--cds-green-50); }
+
+  /* ─── Data table (Carbon table pattern) ─── */
+  .cds-data-table {
+    background: var(--cds-layer-01);
+    border: 1px solid var(--cds-border-subtle);
+    width: 100%; border-collapse: collapse;
+    margin-bottom: 24px;
+  }
+  .cds-data-table thead {
+    background: var(--cds-layer-02);
+  }
+  .cds-data-table th {
+    text-align: left; padding: 12px 16px;
+    font-size: 12px; font-weight: 600; color: var(--cds-text-primary);
+    letter-spacing: 0.16px; text-transform: none;
+    border-bottom: 1px solid var(--cds-border-subtle);
+  }
+  .cds-data-table td {
+    padding: 12px 16px; font-size: 13.5px; color: var(--cds-text-primary);
+    border-bottom: 1px solid var(--cds-border-subtle); line-height: 1.43;
+  }
+  .cds-data-table tr:last-child td { border-bottom: none; }
+  .cds-data-table tr:hover td { background: var(--cds-layer-02); }
+  .cds-data-table .cell-mono { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--cds-blue-50); font-weight: 500; }
+  .cds-data-table .cell-trig { color: var(--cds-text-secondary); }
+  .cell-tag {
+    display: inline-block; font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px; font-weight: 400; padding: 2px 8px;
+    border-radius: 12px; letter-spacing: 0.32px;
+  }
+  .cell-tag.auto { background: rgba(15,98,254,0.15); color: var(--cds-blue-50); }
+  .cell-tag.manual { background: rgba(241,194,27,0.15); color: var(--cds-yellow-30); }
+  .cell-tag.terminal { background: rgba(141,141,141,0.18); color: var(--cds-text-helper); }
+
+  @media (max-width: 1180px) {
+    .canvas-positioned { transform: scale(0.92); transform-origin: top left; }
+  }
+  @media (max-width: 900px) {
+    .ui-shell { padding: 16px 20px; }
+    .notification { margin: 16px 20px 0; }
+    .canvas { padding: 24px 20px; }
+    .diagram { padding: 12px; }
+    .canvas-positioned { transform: scale(0.5); transform-origin: top left; margin-bottom: -400px; }
+    .states { grid-template-columns: 1fr; }
+    .cds-data-table th, .cds-data-table td { padding: 10px 12px; font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Carbon UI Shell -->
+<div class="ui-shell">
+  <div class="ui-shell-inner">
+    <h1>Crowdfund State Machine <span class="tag">BRD v1</span></h1>
+    <div class="subtitle">8 campaign states · 13 allowed transitions · auto-vs-manual control matrix</div>
+    <nav class="breadcrumb">
+      <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
+      <a href="crowdfund-brd-v1-lifecycle.html">Lifecycle</a>
+      <a href="crowdfund-brd-v1-state-machine.html" class="current">State machine</a>
+      <a href="crowdfund-brd-v1-payment-retry.html">Payment retry &amp; cancellation</a>
+    </nav>
+  </div>
+</div>
+
+<!-- Carbon notification -->
+<div class="notification">
+  <span class="icon">●</span>
+  <div class="body">
+    <strong>Funded vs Successful</strong> — these are <em>different</em> states. <code>Funded</code> = target hit at end date (charges not yet cleared). <code>Successful</code> = all charges actually cleared after recovery. This split is new vs Phase 1 / Ztor v6.
+  </div>
+</div>
+
+<div class="canvas">
+
+  <p class="body-long-01">
+    8 states · 13 valid transitions · mix of system-driven (date or threshold) and ops-driven (cancel, URL submission). <strong>Every transition writes to the activity log</strong> with operator + timestamp. Invalid transitions are rejected at API and admin UI (BR-26).
+  </p>
+
+  <!-- Diagram -->
+  <h2 class="productive-heading-02">State diagram</h2>
+  <p class="helper-text">BOXES = STATES · ARROWS = ALLOWED TRANSITIONS · LABELS = TRIGGER · TERMINAL STATES HAVE NO OUTGOING TRANSITIONS</p>
+
+  <!-- Carbon tag legend -->
+  <div class="legend-row">
+    <span class="cds-tag"><span class="dot" style="background:#8d8d8d"></span>Pre-publish</span>
+    <span class="cds-tag"><span class="dot" style="background:#1192e8"></span>Live · funding</span>
+    <span class="cds-tag"><span class="dot" style="background:#8a3ffc"></span>Charging</span>
+    <span class="cds-tag"><span class="dot" style="background:#24a148"></span>Success path</span>
+    <span class="cds-tag"><span class="dot" style="background:#009d9a"></span>Production</span>
+    <span class="cds-tag"><span class="dot" style="background:#fa4d56"></span>Cancelled</span>
+    <span class="cds-tag"><span class="line" style="background:#24a148"></span>System · auto</span>
+    <span class="cds-tag"><span class="line" style="background:#fa4d56"></span>Failure transition</span>
+    <span class="cds-tag"><span class="line" style="background:#f1c21b"></span>Manual · ops</span>
+  </div>
+
+  <div class="diagram">
+    <div class="canvas-positioned">
+
+      <!-- ARROWS (SVG overlay) — Carbon-themed colors -->
+      <svg class="state-svg" viewBox="0 0 1100 780" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr-neutral" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#a8a8a8"/>
+          </marker>
+          <marker id="arr-auto" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#24a148"/>
+          </marker>
+          <marker id="arr-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#fa4d56"/>
+          </marker>
+          <marker id="arr-manual" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f1c21b"/>
+          </marker>
+        </defs>
+
+        <!-- 0. Start dot → Draft -->
+        <path d="M 552 22 L 552 30" stroke="#a8a8a8" stroke-width="2" fill="none" marker-end="url(#arr-neutral)"/>
+
+        <!-- 1. Draft → Active -->
+        <path d="M 552 92 L 552 150" stroke="#f1c21b" stroke-width="2.5" fill="none" marker-end="url(#arr-manual)"/>
+        <rect class="lbl-bg" x="562" y="102" width="180" height="38" rx="0"/>
+        <text x="572" y="118" fill="#f1c21b" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops publishes</text>
+        <text x="572" y="134" fill="#a8a8a8" font-size="11" font-family="IBM Plex Sans">(Now or scheduled)</text>
+
+        <!-- 2. Active → Funded -->
+        <path d="M 552 212 L 552 270" stroke="#24a148" stroke-width="2.5" fill="none" marker-end="url(#arr-auto)"/>
+        <rect class="lbl-bg" x="562" y="226" width="220" height="22" rx="0"/>
+        <text x="572" y="242" fill="#24a148" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · goal met at end date</text>
+
+        <!-- 3. Active → Unsuccessful -->
+        <path d="M 460 195 L 290 285" stroke="#a8a8a8" stroke-width="2" fill="none" marker-end="url(#arr-neutral)"/>
+        <rect class="lbl-bg" x="290" y="215" width="220" height="22" rx="0"/>
+        <text x="300" y="231" fill="#a8a8a8" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · goal not met</text>
+
+        <!-- 4. Active → Cancelled -->
+        <path d="M 640 195 L 810 285" stroke="#f1c21b" stroke-width="2" fill="none" marker-end="url(#arr-manual)"/>
+        <rect class="lbl-bg" x="660" y="215" width="160" height="22" rx="0"/>
+        <text x="670" y="231" fill="#f1c21b" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops cancels manually</text>
+
+        <!-- 5. Funded → Successful -->
+        <path d="M 552 334 L 552 410" stroke="#24a148" stroke-width="2.5" fill="none" marker-end="url(#arr-auto)"/>
+        <rect class="lbl-bg" x="562" y="350" width="240" height="38" rx="0"/>
+        <text x="572" y="366" fill="#24a148" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · all charges clear</text>
+        <text x="572" y="382" fill="#a8a8a8" font-size="11" font-family="IBM Plex Sans">after recovery loop</text>
+
+        <!-- 6. Funded → Cancelled (threshold breach) -->
+        <path d="M 640 297 L 810 297" stroke="#fa4d56" stroke-width="2" fill="none" marker-end="url(#arr-fail)"/>
+        <rect class="lbl-bg" x="650" y="275" width="160" height="20" rx="0"/>
+        <text x="660" y="290" fill="#fa4d56" font-size="13" font-weight="500" font-family="IBM Plex Sans">failure% &gt; threshold</text>
+
+        <!-- 7. Successful → InProgress -->
+        <path d="M 552 472 L 552 530" stroke="#24a148" stroke-width="2.5" fill="none" marker-end="url(#arr-auto)"/>
+        <rect class="lbl-bg" x="562" y="484" width="220" height="38" rx="0"/>
+        <text x="572" y="500" fill="#24a148" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · 80% released</text>
+        <text x="572" y="516" fill="#a8a8a8" font-size="11" font-family="IBM Plex Sans">to creator wallet</text>
+
+        <!-- 8. InProgress → Released -->
+        <path d="M 640 575 L 760 690" stroke="#f1c21b" stroke-width="2.5" fill="none" marker-end="url(#arr-manual)"/>
+        <rect class="lbl-bg" x="660" y="608" width="240" height="38" rx="0"/>
+        <text x="670" y="624" fill="#f1c21b" font-size="13" font-weight="500" font-family="IBM Plex Sans">creator submits product URL</text>
+        <text x="670" y="640" fill="#a8a8a8" font-size="11" font-family="IBM Plex Sans">Spotify · Music / Ztor OTT · Movies</text>
+
+        <!-- 9. InProgress → Cancelled (curve right-up) -->
+        <path d="M 640 545 Q 880 480 900 332" stroke="#f1c21b" stroke-width="2" fill="none" marker-end="url(#arr-manual)"/>
+        <rect class="lbl-bg" x="790" y="430" width="240" height="22" rx="0"/>
+        <text x="800" y="446" fill="#f1c21b" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops cancels (creator default)</text>
+
+        <!-- 10. Draft → deleted (leftward dashed) -->
+        <path d="M 460 60 L 380 60" stroke="#a8a8a8" stroke-width="1.8" fill="none" marker-end="url(#arr-neutral)" stroke-dasharray="4,3"/>
+        <rect class="lbl-bg" x="220" y="42" width="160" height="38" rx="0"/>
+        <text x="230" y="58" fill="#a8a8a8" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops deletes draft</text>
+        <text x="230" y="74" fill="#6f6f6f" font-size="11" font-family="IBM Plex Sans">(Draft state only)</text>
+
+      </svg>
+
+      <!-- Start dot -->
+      <div class="start-dot"></div>
+
+      <!-- STATE BOXES — Carbon Tiles -->
+      <div class="state s-draft">
+        <div class="name">Draft</div>
+        <div class="desc">Editable · all fields</div>
+        <div class="badge-row"><span class="state-tag">PRE-PUBLISH</span></div>
+      </div>
+      <div class="state s-active">
+        <div class="name">Active</div>
+        <div class="desc">Edit-locked · pledges open</div>
+        <div class="badge-row"><span class="state-tag">LIVE</span></div>
+      </div>
+      <div class="state s-funded">
+        <div class="name">Funded</div>
+        <div class="desc">Charge cycle running</div>
+        <div class="badge-row"><span class="state-tag">TRANSITIONAL</span></div>
+      </div>
+      <div class="state s-successful">
+        <div class="name">Successful</div>
+        <div class="desc">Charges cleared · 80% paid</div>
+        <div class="badge-row"><span class="state-tag">PAYOUT</span></div>
+      </div>
+      <div class="state s-inprogress">
+        <div class="name">In Progress</div>
+        <div class="desc">Creator producing work</div>
+        <div class="badge-row"><span class="state-tag">PRODUCTION</span></div>
+      </div>
+      <div class="state s-released">
+        <div class="name">Released</div>
+        <div class="desc">Royalty stream live</div>
+        <div class="badge-row"><span class="state-tag terminal-ok">TERMINAL</span></div>
+      </div>
+      <div class="state s-unsuccessful">
+        <div class="name">Unsuccessful</div>
+        <div class="desc">Goal not met · zero charges</div>
+        <div class="badge-row"><span class="state-tag terminal">TERMINAL</span></div>
+      </div>
+      <div class="state s-cancelled">
+        <div class="name">Cancelled</div>
+        <div class="desc">Refund all backers</div>
+        <div class="badge-row"><span class="state-tag terminal">TERMINAL</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- State definitions -->
+  <h2 class="productive-heading-02">State definitions</h2>
+  <p class="helper-text">WHAT EACH STATE MEANS AND HOW THE CAMPAIGN BEHAVES WHILE IT'S IN THAT STATE</p>
+
+  <div class="states">
+    <div class="state-card draft">
+      <h3>Draft</h3>
+      <p>Campaign being configured. All fields editable. Not visible to fans. Can be deleted.</p>
+      <div class="meta">Pre-publish · Internal only</div>
+    </div>
+    <div class="state-card live">
+      <h3>Active</h3>
+      <p>Campaign published and live. Fields locked. Fans browse + pledge (card collected, no charge). Edit lock per BR-23.</p>
+      <div class="meta">Live · pledges open</div>
+    </div>
+    <div class="state-card charging">
+      <h3>Funded</h3>
+      <p>End date reached, goal met. System triggers batch-charge of all pledged cards. Enters recovery loop on declines.</p>
+      <div class="meta">Transitional · charging</div>
+    </div>
+    <div class="state-card terminal-fail">
+      <h3>Unsuccessful</h3>
+      <p>End date reached, goal NOT met. Zero charges fired. No refunds needed (nothing was taken). Terminal.</p>
+      <div class="meta">Terminal · stop</div>
+    </div>
+    <div class="state-card success">
+      <h3>Successful</h3>
+      <p>Recovery loop complete; failure% below threshold. First payout tranche (80% minus fees) released to creator wallet.</p>
+      <div class="meta">Money moved · first tranche</div>
+    </div>
+    <div class="state-card production">
+      <h3>In Progress</h3>
+      <p>Creator producing work. Status updates allowed. Awaiting final product URL submission to trigger Released.</p>
+      <div class="meta">Production window</div>
+    </div>
+    <div class="state-card terminal-ok">
+      <h3>Released</h3>
+      <p>Product URL submitted (Spotify / Ztor OTT). Second payout tranche (20%) released. Royalty cash starts flowing.</p>
+      <div class="meta">Terminal · royalty active</div>
+    </div>
+    <div class="state-card terminal-fail">
+      <h3>Cancelled</h3>
+      <p>Reached from Active, Funded, or In Progress. All backers refunded (via Stripe back-office, manual). Listing retained with Cancelled status. Terminal.</p>
+      <div class="meta">Terminal · refund-all</div>
+    </div>
+  </div>
+
+  <!-- Transition table -->
+  <h2 class="productive-heading-02">All valid transitions</h2>
+  <p class="helper-text">IF A TRANSITION ISN'T IN THIS TABLE, THE SYSTEM REJECTS IT</p>
+
+  <table class="cds-data-table">
+    <thead>
+      <tr><th>From</th><th>To</th><th>Trigger</th><th>Control</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="cell-mono">Draft</td><td class="cell-mono">Active</td><td class="cell-trig">Ops clicks Publish (Now, or scheduled datetime reached)</td><td><span class="cell-tag manual">Manual</span></td></tr>
+      <tr><td class="cell-mono">Draft</td><td class="cell-mono">— (deleted)</td><td class="cell-trig">Ops deletes draft (only allowed in Draft)</td><td><span class="cell-tag manual">Manual</span></td></tr>
+      <tr><td class="cell-mono">Active</td><td class="cell-mono">Funded</td><td class="cell-trig">End date reached AND goal met</td><td><span class="cell-tag auto">Auto</span></td></tr>
+      <tr><td class="cell-mono">Active</td><td class="cell-mono">Unsuccessful</td><td class="cell-trig">End date reached AND goal NOT met</td><td><span class="cell-tag auto">Auto</span></td></tr>
+      <tr><td class="cell-mono">Active</td><td class="cell-mono">Cancelled</td><td class="cell-trig">Ops clicks Cancel (compliance, creator default, etc.)</td><td><span class="cell-tag manual">Manual</span></td></tr>
+      <tr><td class="cell-mono">Funded</td><td class="cell-mono">Successful</td><td class="cell-trig">Recovery exhausted AND failure% ≤ threshold</td><td><span class="cell-tag auto">Auto</span></td></tr>
+      <tr><td class="cell-mono">Funded</td><td class="cell-mono">Cancelled</td><td class="cell-trig">Recovery exhausted AND failure% &gt; threshold (auto-cancel + refund all)</td><td><span class="cell-tag auto">Auto</span></td></tr>
+      <tr><td class="cell-mono">Successful</td><td class="cell-mono">In Progress</td><td class="cell-trig">System releases 80% tranche → status flip</td><td><span class="cell-tag auto">Auto</span></td></tr>
+      <tr><td class="cell-mono">In Progress</td><td class="cell-mono">Released</td><td class="cell-trig">Creator submits final product URL (Spotify · Music / Ztor OTT · Movies)</td><td><span class="cell-tag manual">Manual</span></td></tr>
+      <tr><td class="cell-mono">In Progress</td><td class="cell-mono">Cancelled</td><td class="cell-trig">Ops cancels (creator default / production failure / legal)</td><td><span class="cell-tag manual">Manual</span></td></tr>
+      <tr><td class="cell-mono">Released</td><td class="cell-mono">—</td><td class="cell-trig">Terminal · ongoing royalty stream (no further state changes)</td><td><span class="cell-tag terminal">Terminal</span></td></tr>
+      <tr><td class="cell-mono">Cancelled</td><td class="cell-mono">—</td><td class="cell-trig">Terminal · refunds processed by ops in Stripe back-office</td><td><span class="cell-tag terminal">Terminal</span></td></tr>
+      <tr><td class="cell-mono">Unsuccessful</td><td class="cell-mono">—</td><td class="cell-trig">Terminal · no charges fired</td><td><span class="cell-tag terminal">Terminal</span></td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+</body>
+</html>

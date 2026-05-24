@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crowdfund BRD v1 — Payment Retry &amp; Cancellation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --cds-background: #161616;
+    --cds-layer-01: #262626;
+    --cds-layer-02: #393939;
+    --cds-layer-03: #525252;
+    --cds-border-subtle: #393939;
+    --cds-border-strong: #6f6f6f;
+    --cds-text-primary: #f4f4f4;
+    --cds-text-secondary: #c6c6c6;
+    --cds-text-helper: #a8a8a8;
+    --cds-text-placeholder: #6f6f6f;
+    --cds-blue-50: #4589ff;
+    --cds-blue-60: #0f62fe;
+    --cds-blue-70: #0043ce;
+    --cds-green-50: #24a148;
+    --cds-green-60: #198038;
+    --cds-red-50: #fa4d56;
+    --cds-yellow-30: #f1c21b;
+    --cds-purple-60: #8a3ffc;
+    --cds-purple-50: #a56eff;
+    --cds-teal-50: #009d9a;
+    --cds-cyan-50: #1192e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+    background: var(--cds-background); color: var(--cds-text-primary);
+    min-height: 100vh; font-size: 14px; line-height: 1.5; letter-spacing: 0.16px;
+  }
+  code, .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+
+  /* UI Shell */
+  .ui-shell { background: var(--cds-layer-01); border-bottom: 1px solid var(--cds-border-subtle); padding: 16px 32px; }
+  .ui-shell-inner { max-width: 1280px; margin: 0 auto; }
+  .ui-shell h1 { font-size: 28px; font-weight: 300; color: var(--cds-text-primary); letter-spacing: 0; line-height: 1.25; }
+  .ui-shell h1 .tag { display: inline-block; background: var(--cds-blue-70); color: #fff; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 12px; margin-left: 10px; vertical-align: middle; letter-spacing: 0.32px; }
+  .ui-shell .subtitle { font-size: 14px; color: var(--cds-text-secondary); margin-top: 4px; }
+  .breadcrumb { display: flex; gap: 0; align-items: center; margin-top: 12px; font-size: 12px; }
+  .breadcrumb a { color: var(--cds-text-secondary); text-decoration: none; padding: 6px 12px; border-bottom: 2px solid transparent; transition: all 0.11s; }
+  .breadcrumb a:hover { color: var(--cds-text-primary); background: var(--cds-layer-02); }
+  .breadcrumb a.current { color: var(--cds-text-primary); border-bottom-color: var(--cds-blue-50); font-weight: 500; }
+
+  /* Notification */
+  .notification {
+    background: var(--cds-layer-01);
+    border-left: 3px solid var(--cds-yellow-30);
+    padding: 16px;
+    margin: 24px 32px 0; max-width: 1216px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .notification .icon { color: var(--cds-yellow-30); font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .notification .body { font-size: 14px; color: var(--cds-text-primary); line-height: 1.45; }
+  .notification .body strong { font-weight: 600; }
+  .notification .body code { background: var(--cds-layer-02); padding: 1px 6px; font-size: 12.5px; }
+
+  /* Layout */
+  .canvas { padding: 32px; max-width: 1280px; margin: 0 auto; }
+  .body-long-01 { font-size: 14px; line-height: 1.43; color: var(--cds-text-secondary); max-width: 880px; margin-bottom: 32px; }
+  .body-long-01 strong { color: var(--cds-text-primary); font-weight: 600; }
+  .body-long-01 code { background: var(--cds-layer-01); padding: 1px 6px; font-size: 13px; color: var(--cds-text-primary); }
+
+  .productive-heading-02 {
+    font-size: 16px; font-weight: 600; line-height: 1.375; letter-spacing: 0;
+    color: var(--cds-text-primary); margin: 32px 0 12px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .productive-heading-02::before { content: ""; width: 4px; height: 18px; background: var(--cds-blue-50); }
+  .helper-text { font-size: 12px; color: var(--cds-text-helper); margin-bottom: 16px; letter-spacing: 0.32px; }
+
+  .chart { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle); padding: 32px 24px; margin: 0 0 32px; overflow-x: auto; }
+  .chart svg { display: block; margin: 0 auto; max-width: 100%; }
+
+  /* Checkpoint tiles */
+  .checkpoints { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--cds-border-subtle); border: 1px solid var(--cds-border-subtle); margin-bottom: 32px; }
+  .checkpoint {
+    background: var(--cds-layer-01);
+    padding: 16px 18px;
+    border-top: 3px solid;
+  }
+  .checkpoint .pill {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 3px 8px; border-radius: 12px; margin-bottom: 10px;
+    letter-spacing: 0.32px;
+  }
+  .checkpoint h3 { font-size: 15px; color: var(--cds-text-primary); margin-bottom: 8px; font-weight: 600; line-height: 1.25; }
+  .checkpoint p { font-size: 13px; color: var(--cds-text-secondary); line-height: 1.5; }
+  .checkpoint.auto { border-top-color: var(--cds-blue-50); }
+  .checkpoint.auto .pill { background: rgba(15,98,254,0.18); color: var(--cds-blue-50); }
+  .checkpoint.manual { border-top-color: var(--cds-yellow-30); }
+  .checkpoint.manual .pill { background: rgba(241,194,27,0.18); color: var(--cds-yellow-30); }
+  .checkpoint.swap { border-top-color: var(--cds-purple-50); }
+  .checkpoint.swap .pill { background: rgba(165,110,255,0.18); color: var(--cds-purple-50); }
+  .checkpoint.threshold { border-top-color: var(--cds-red-50); }
+  .checkpoint.threshold .pill { background: rgba(250,77,86,0.18); color: var(--cds-red-50); }
+
+  /* Timeline */
+  .timeline { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle); padding: 24px 28px; margin-bottom: 28px; }
+  .timeline h3 { font-size: 16px; color: var(--cds-text-primary); margin-bottom: 16px; font-weight: 600; }
+  .tl-row { display: grid; grid-template-columns: 140px 1fr; gap: 18px; padding: 12px 0; border-top: 1px solid var(--cds-border-subtle); font-size: 14px; color: var(--cds-text-secondary); line-height: 1.5; }
+  .tl-row:first-child { border-top: none; padding-top: 0; }
+  .tl-when { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--cds-blue-50); font-weight: 500; letter-spacing: 0.32px; text-transform: uppercase; }
+  .tl-what strong { color: var(--cds-text-primary); font-weight: 600; }
+  .tl-what code { background: var(--cds-layer-02); padding: 1px 5px; font-size: 12.5px; }
+
+  /* Cancellation triggers */
+  .triggers { background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle); padding: 20px 24px; margin-bottom: 28px; }
+  .trigger-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .trigger-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 12px 14px; background: var(--cds-layer-02);
+    font-size: 13px; color: var(--cds-text-secondary); line-height: 1.5;
+    border-left: 2px solid var(--cds-yellow-30);
+  }
+  .trigger-item .ico { color: var(--cds-yellow-30); flex-shrink: 0; }
+  .trigger-item strong { color: var(--cds-text-primary); font-weight: 600; }
+
+  /* Carbon inline notification */
+  .scope-note {
+    background: var(--cds-layer-01); border-left: 3px solid var(--cds-blue-50);
+    padding: 14px 18px; margin-top: 24px;
+    font-size: 13.5px; color: var(--cds-text-primary); line-height: 1.55;
+  }
+  .scope-note strong { color: var(--cds-blue-50); font-weight: 600; }
+  .scope-note code { background: var(--cds-layer-02); padding: 1px 6px; font-size: 12px; }
+
+  @media (max-width: 900px) {
+    .ui-shell { padding: 16px 20px; }
+    .notification { margin: 16px 20px 0; }
+    .canvas { padding: 24px 20px; }
+    .checkpoints { grid-template-columns: 1fr; }
+    .trigger-grid { grid-template-columns: 1fr; }
+    .tl-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ui-shell">
+  <div class="ui-shell-inner">
+    <h1>Payment Retry &amp; Cancellation <span class="tag">BRD v1</span></h1>
+    <div class="subtitle">After batch-charge: 4 recovery checkpoints, then Successful payout or Cancel+refund-all</div>
+    <nav class="breadcrumb">
+      <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
+      <a href="crowdfund-brd-v1-lifecycle.html">Lifecycle</a>
+      <a href="crowdfund-brd-v1-state-machine.html">State machine</a>
+      <a href="crowdfund-brd-v1-payment-retry.html" class="current">Payment retry &amp; cancellation</a>
+    </nav>
+  </div>
+</div>
+
+<div class="notification">
+  <span class="icon">●</span>
+  <div class="body">
+    <strong>Four checkpoints, two outcomes.</strong> Decline → 3-day silent retry → 7-day email URL → day-10 waitlist swap (restart 3+7) → failure-threshold check. If failure% is below threshold → Successful + 80% payout. If above → Cancelled + refund-all-backers.
+  </div>
+</div>
+
+<div class="canvas">
+
+  <p class="body-long-01">
+    The recovery flow protects the campaign goal when individual cards decline. Instead of just dropping each failed pledge, we run a structured cycle and only cancel the whole campaign if aggregate failures exceed the threshold (BR-O1 — value still pending biz). Worst-case backer cycle = <code>3 + 7 + 3 + 7 = 20 days</code>. Communicate <strong>"up to 30 days from close"</strong> to creators (10-day buffer).
+  </p>
+
+  <h2 class="productive-heading-02">Per-pledge recovery cycle</h2>
+  <p class="helper-text">FOR EACH PLEDGE THAT DECLINES ON BATCH-CHARGE · SUCCESS PATH CLOSES PLEDGE · FAILURE ESCALATES</p>
+
+  <div class="chart">
+    <pre class="mermaid">
+flowchart TD
+    A[Funded · batch-charge all pledged cards] --> B{Card cleared?}
+    B -->|Yes| OK[Pledge complete<br/>roll up into goal-met total]
+    B -->|No · decline| R1[① 3-day silent retry<br/>Stripe smart-retry · backer not notified]
+    R1 --> Q1{Recovered?}
+    Q1 -->|Yes| OK
+    Q1 -->|No| R2[② Recovery email + 7-day URL<br/>Backer updates card in-session]
+    R2 --> Q2{Recovered?}
+    Q2 -->|Yes| OK
+    Q2 -->|No, day 10| R3[③ Drop pledge · pull next waitlister<br/>Lock-in payment + email]
+    R3 --> R4[Restart 3+7 cycle on waitlister]
+    R4 --> Q3{Recovered?}
+    Q3 -->|Yes| OK
+    Q3 -->|No| LOST[Pledge counted as lost]
+    LOST --> AGG[④ Aggregate failure% check after all pledges processed]
+    AGG --> T{Failure% > threshold?}
+    T -->|Below · BR-O1| S[Successful · release 80%]
+    T -->|Above · BR-O1| C[Cancelled · refund all backers<br/>via Stripe back-office]
+
+    classDef ok fill:#0e3e23,stroke:#24a148,color:#a7f0ba
+    classDef bad fill:#3d0e10,stroke:#fa4d56,color:#ffd7d9
+    classDef neutral fill:#262626,stroke:#a8a8a8,color:#f4f4f4
+    classDef auto fill:#0c2540,stroke:#4589ff,color:#bae6ff
+    classDef manual fill:#3d2900,stroke:#f1c21b,color:#fddc69
+    classDef swap fill:#2a0f3d,stroke:#a56eff,color:#d4bbff
+    class A,B,Q1,Q2,Q3,T,AGG neutral
+    class R1 auto
+    class R2 manual
+    class R3,R4 swap
+    class OK,S ok
+    class LOST,C bad
+    </pre>
+  </div>
+
+  <h2 class="productive-heading-02">Four recovery checkpoints</h2>
+  <p class="helper-text">EACH GIVES THE DECLINING PLEDGE ANOTHER CHANCE BEFORE ESCALATING TO THE NEXT</p>
+
+  <div class="checkpoints">
+    <div class="checkpoint auto">
+      <span class="pill">① · 3 DAYS</span>
+      <h3>Silent auto-retry</h3>
+      <p>System retries the charge in background. Backer not notified. Most temporary declines (network blip, insufficient funds) clear in this window.</p>
+    </div>
+    <div class="checkpoint manual">
+      <span class="pill">② · 7 DAYS</span>
+      <h3>Manual recovery email</h3>
+      <p>Backer receives email with a secure URL to update card. URL expires after 7 days. Backer pays on-the-spot in one session.</p>
+    </div>
+    <div class="checkpoint swap">
+      <span class="pill">③ · DAY 10</span>
+      <h3>Waitlist replacement</h3>
+      <p>If both windows expire, drop the original pledge and pull the next waitlister into the spot. Restart the 3+7 cycle on the waitlister.</p>
+    </div>
+    <div class="checkpoint threshold">
+      <span class="pill">④ · AFTER ALL PLEDGES</span>
+      <h3>Threshold check</h3>
+      <p>After every pledge has been processed, aggregate failure %. If &gt; threshold → campaign Cancelled, all backers refunded. Else → Successful.</p>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <h3>Worst-case per-pledge timeline</h3>
+    <div class="tl-row"><div class="tl-when">Day 0</div><div class="tl-what"><strong>Campaign closes (Funded).</strong> System fires batch-charge. Most pledges clear cleanly.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 0 → 3</div><div class="tl-what"><strong>① 3-day silent retry</strong> for declines. Stripe smart-retry attempts: <code>day 1, day 2, day 3</code>. Backer doesn't know anything is happening.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 3</div><div class="tl-what"><strong>Recovery email sent</strong> to backers still failing. Email contains 7-day expiring URL to update card.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 3 → 10</div><div class="tl-what"><strong>② 7-day manual recovery.</strong> Backer can enter a new card and retry within the window. URL expires day 10.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 10</div><div class="tl-what"><strong>③ Waitlist swap.</strong> If still failing, drop the original backer. Pull next waitlister, lock their payment + email, restart the cycle on them.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 10 → 20</div><div class="tl-what"><strong>Waitlister recovery (3+7).</strong> Second cycle. If the waitlister also fails, that pledge is counted as lost.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 20</div><div class="tl-what"><strong>④ Threshold check.</strong> After every pledge resolved (cleared or lost): if aggregate failure% &gt; threshold → Cancelled + refund-all. Else → Successful + 80% release.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 30 (SLA)</div><div class="tl-what"><strong>Communicated SLA.</strong> Creators are told payout takes up to 30 days from campaign close (10-day buffer over the 20-day actual worst case).</div></div>
+  </div>
+
+  <h2 class="productive-heading-02">Project cancellation</h2>
+  <p class="helper-text">CANCELLATION = AUTO-TRIGGERED BY THRESHOLD CHECK · OR MANUAL BY OPS DURING ACTIVE / IN PROGRESS</p>
+
+  <div class="triggers">
+    <div class="trigger-grid">
+      <div class="trigger-item"><span class="ico">▲</span><div><strong>Auto · Failure threshold exceeded.</strong> Set by checkpoint ④. Threshold value pending biz (BR-O1).</div></div>
+      <div class="trigger-item"><span class="ico">▲</span><div><strong>Manual · Creator default.</strong> Withdrawal, breach of artist contract, or non-delivery.</div></div>
+      <div class="trigger-item"><span class="ico">▲</span><div><strong>Manual · Production failure.</strong> Cannot deliver the planned content; ops calls it during In Progress.</div></div>
+      <div class="trigger-item"><span class="ico">▲</span><div><strong>Manual · Compliance / legal.</strong> Content, IP, or regulatory issue forces cancellation.</div></div>
+    </div>
+  </div>
+
+  <h2 class="productive-heading-02">After Cancel is triggered</h2>
+
+  <div class="chart">
+    <pre class="mermaid">
+flowchart TD
+    Trigger[Cancel triggered<br/>auto or manual] --> Flip[① System flips status → Cancelled<br/>terminal · activity log entry]
+    Flip --> Lock[Listing retained on storefront<br/>marked 'Cancelled' · no new pledges]
+    Flip --> Email[② Cancellation email auto-fires<br/>to every backer on the project]
+    Flip --> Refund[③ Ops processes refunds in Stripe back-office<br/>manual batch · no admin UI]
+    Email --> Done[Backers informed]
+    Refund --> Refunded[Backers refunded]
+    Done --> Closed[Campaign closed]
+    Refunded --> Closed
+
+    classDef ok fill:#0e3e23,stroke:#24a148,color:#a7f0ba
+    classDef neutral fill:#262626,stroke:#a8a8a8,color:#f4f4f4
+    classDef action fill:#3d0e10,stroke:#fa4d56,color:#ffd7d9
+    classDef notify fill:#0c2540,stroke:#4589ff,color:#bae6ff
+    classDef refund fill:#3d2900,stroke:#f1c21b,color:#fddc69
+    class Trigger,Flip,Lock neutral
+    class Email notify
+    class Refund refund
+    class Done,Refunded,Closed ok
+    </pre>
+  </div>
+
+  <div class="scope-note">
+    <strong>Refunds are NOT in-product.</strong> The new BRD intentionally has no admin refund UI. All refunds run through <code>Stripe back-office</code> as a manual batch operation. The system's only job is to flip status + fire the cancellation email + freeze the listing.
+  </div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true, theme: 'base',
+    themeVariables: {
+      darkMode: true,
+      background: '#262626',
+      primaryColor: '#393939', primaryTextColor: '#f4f4f4', primaryBorderColor: '#6f6f6f',
+      lineColor: '#a8a8a8', secondaryColor: '#393939', tertiaryColor: '#262626',
+      mainBkg: '#393939', secondBkg: '#393939', nodeBorder: '#6f6f6f',
+      clusterBkg: '#262626', clusterBorder: '#393939',
+      defaultLinkColor: '#a8a8a8',
+      fontFamily: '"IBM Plex Sans", -apple-system, sans-serif',
+      fontSize: '14px'
+    },
+    flowchart: { curve: 'basis', padding: 22, nodeSpacing: 44, rankSpacing: 60 }
+  });
+</script>
+
+</body>
+</html>

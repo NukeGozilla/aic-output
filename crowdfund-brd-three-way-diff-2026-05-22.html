@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crowdfund BRD — Three-Way Diff (2026-05-22)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111118;
+    --surface2: #161620;
+    --border: #2a2a3a;
+    --border2: #3a3a4d;
+    --text: #e8e8ee;
+    --text-dim: #9999aa;
+    --text-faint: #6e6e80;
+    --gold: #b58850;
+    --gold-light: #d2a36f;
+    --music: #b97cd6;     /* purple = Music / Beamco */
+    --music-bg: rgba(185, 124, 214, 0.08);
+    --music-border: rgba(185, 124, 214, 0.25);
+    --movies: #d2a36f;    /* gold = Movies / Ztor */
+    --movies-bg: rgba(210, 163, 111, 0.08);
+    --movies-border: rgba(210, 163, 111, 0.25);
+    --new: #5dc4c4;       /* teal = New BRD */
+    --new-bg: rgba(93, 196, 196, 0.08);
+    --new-border: rgba(93, 196, 196, 0.25);
+    --phase1: #8896d0;    /* slate-blue = Phase 1 */
+    --phase1-bg: rgba(136, 150, 208, 0.08);
+    --phase1-border: rgba(136, 150, 208, 0.25);
+    --red: #e87878;
+    --red-bg: rgba(232, 120, 120, 0.08);
+    --amber: #e8b878;
+    --amber-bg: rgba(232, 184, 120, 0.08);
+    --green: #78d098;
+    --green-bg: rgba(120, 208, 152, 0.08);
+  }
+  html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.55; font-size: 14px;
+  }
+  code, .mono { font-family: 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace; font-size: 12.5px; }
+
+  /* ───── Header ───── */
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 28px 48px 0 48px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .header-inner { max-width: 1400px; margin: 0 auto; }
+  .header h1 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .header .sub { font-size: 12.5px; color: #9caacb; margin-bottom: 14px; }
+  .header .sub .dot { color: #4a5a8a; margin: 0 8px; }
+  .legend {
+    display: flex; gap: 6px; flex-wrap: wrap; padding-bottom: 14px;
+  }
+  .legend .src {
+    font-size: 11px; padding: 4px 10px; border-radius: 999px;
+    border: 1px solid; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .src-phase1 { color: var(--phase1); border-color: var(--phase1-border); background: var(--phase1-bg); }
+  .src-ztor   { color: var(--movies); border-color: var(--movies-border); background: var(--movies-bg); }
+  .src-new    { color: var(--new); border-color: var(--new-border); background: var(--new-bg); }
+  .src-music  { color: var(--music); border-color: var(--music-border); background: var(--music-bg); }
+
+  .nav {
+    display: flex; gap: 4px; flex-wrap: wrap; padding-bottom: 14px;
+    border-top: 1px solid rgba(255,255,255,0.04); padding-top: 14px;
+  }
+  .nav a {
+    font-size: 11.5px; color: #aaaadd; text-decoration: none;
+    padding: 6px 11px; border-radius: 6px; transition: background 0.12s;
+  }
+  .nav a:hover { background: rgba(255,255,255,0.05); color: #fff; }
+
+  /* ───── Layout ───── */
+  .canvas { max-width: 1400px; margin: 0 auto; padding: 40px 48px 80px 48px; }
+
+  .section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .section h2 { font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+  .section .lede { color: var(--text-dim); margin-bottom: 24px; max-width: 920px; }
+
+  /* ───── TL;DR cards ───── */
+  .tldr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .tldr {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px 18px 16px 18px; border-left: 3px solid var(--border2);
+    position: relative;
+  }
+  .tldr.red { border-left-color: var(--red); }
+  .tldr.amber { border-left-color: var(--amber); }
+  .tldr.green { border-left-color: var(--green); }
+  .tldr .num {
+    position: absolute; top: 12px; right: 14px; font-family: 'SF Mono', monospace;
+    font-size: 10.5px; color: var(--text-faint);
+  }
+  .tldr h3 { font-size: 14.5px; font-weight: 600; color: #fff; margin-bottom: 8px; padding-right: 30px; }
+  .tldr p { color: var(--text-dim); font-size: 13px; }
+
+  /* ───── Conflict cards ───── */
+  .conflict {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 14px; overflow: hidden;
+  }
+  .conflict.red { border-left: 3px solid var(--red); }
+  .conflict.amber { border-left: 3px solid var(--amber); }
+  .conflict.green { border-left: 3px solid var(--green); }
+
+  .conflict-head {
+    padding: 14px 18px 12px 18px; display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .conflict-head .id {
+    font-family: 'SF Mono', monospace; font-size: 11px; color: var(--text-faint);
+    background: rgba(255,255,255,0.04); padding: 2px 8px; border-radius: 4px;
+  }
+  .conflict-head .title { font-weight: 600; color: #fff; font-size: 14px; flex: 1; }
+  .severity {
+    font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .severity.red { color: var(--red); background: var(--red-bg); border: 1px solid var(--red); }
+  .severity.amber { color: var(--amber); background: var(--amber-bg); border: 1px solid var(--amber); }
+  .severity.green { color: var(--green); background: var(--green-bg); border: 1px solid var(--green); }
+
+  .conflict-body { display: grid; grid-template-columns: 1fr 1fr; }
+  .conflict-body .side {
+    padding: 14px 18px; font-size: 13px; line-height: 1.6;
+  }
+  .conflict-body .side:first-child { border-right: 1px solid var(--border); }
+  .side-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+  }
+  .side-label .pill {
+    font-size: 9.5px; padding: 2px 7px; border-radius: 999px;
+  }
+  .side.phase1 .pill { background: var(--phase1-bg); color: var(--phase1); border: 1px solid var(--phase1-border); }
+  .side.ztor .pill { background: var(--movies-bg); color: var(--movies); border: 1px solid var(--movies-border); }
+  .side.new .pill { background: var(--new-bg); color: var(--new); border: 1px solid var(--new-border); }
+  .side.music .pill { background: var(--music-bg); color: var(--music); border: 1px solid var(--music-border); }
+  .side.movies .pill { background: var(--movies-bg); color: var(--movies); border: 1px solid var(--movies-border); }
+  .side-content { color: var(--text); }
+  .side-content .label { color: var(--text-faint); font-size: 11.5px; }
+
+  /* ───── Music vs Movies split table ───── */
+  .split-table {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    overflow: hidden; margin-bottom: 18px;
+  }
+  .split-row {
+    display: grid; grid-template-columns: 110px 200px 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .split-row:last-child { border-bottom: none; }
+  .split-row.header {
+    background: var(--surface2); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim);
+  }
+  .split-row > div { padding: 12px 16px; border-right: 1px solid var(--border); }
+  .split-row > div:last-child { border-right: none; }
+  .split-row .id-cell { font-family: 'SF Mono', monospace; font-size: 11.5px; color: var(--gold-light); display: flex; align-items: center; }
+  .split-row .topic-cell { color: #fff; font-weight: 500; font-size: 13px; }
+  .split-row .music-cell { background: var(--music-bg); font-size: 12.5px; color: var(--text); line-height: 1.55; }
+  .split-row .movies-cell { background: var(--movies-bg); font-size: 12.5px; color: var(--text); line-height: 1.55; }
+  .split-row .music-cell em, .split-row .movies-cell em { color: var(--text-faint); font-style: normal; }
+  .na { color: var(--text-faint); font-style: italic; }
+
+  /* ───── Lists / chips ───── */
+  .chip-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 6px; margin-top: 8px;
+  }
+  .chip {
+    font-family: 'SF Mono', monospace; font-size: 11px;
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: 5px 8px; border-radius: 5px; text-align: center; color: var(--text-dim);
+  }
+
+  ul.tight { list-style: none; padding: 0; }
+  ul.tight li {
+    padding: 8px 12px 8px 28px; margin-bottom: 4px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    position: relative; font-size: 13px;
+  }
+  ul.tight li::before {
+    content: '›'; position: absolute; left: 12px; top: 7px; color: var(--gold); font-weight: 700;
+  }
+  ul.tight li code { background: rgba(255,255,255,0.05); padding: 1px 6px; border-radius: 3px; color: var(--gold-light); }
+
+  /* ───── Cross-cutting visual ───── */
+  .compare-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .compare-col {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .compare-col h4 { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; margin-bottom: 10px; }
+  .compare-col.phase1 { border-top: 3px solid var(--phase1); }
+  .compare-col.phase1 h4 { color: var(--phase1); }
+  .compare-col.ztor { border-top: 3px solid var(--movies); }
+  .compare-col.ztor h4 { color: var(--movies); }
+  .compare-col.new { border-top: 3px solid var(--new); }
+  .compare-col.new h4 { color: var(--new); }
+  .compare-col p { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; }
+  .compare-col .stat { color: var(--text); font-weight: 600; }
+
+  /* ───── Open questions ───── */
+  .q-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 10px;
+  }
+  .q-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .q-card.blocking { border-left: 3px solid var(--red); }
+  .q-card .q-id {
+    font-family: 'SF Mono', monospace; font-size: 11px; color: var(--gold-light);
+    background: rgba(181,136,80,0.08); padding: 3px 8px; border-radius: 4px; flex-shrink: 0;
+  }
+  .q-card .q-body { font-size: 12.5px; color: var(--text-dim); }
+  .q-card .q-body strong { color: var(--text); font-weight: 600; }
+  .q-card .q-owner {
+    font-size: 11px; color: var(--gold-light); margin-top: 6px;
+  }
+
+  /* ───── Next steps ───── */
+  .step {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px 14px 56px; position: relative; margin-bottom: 8px;
+  }
+  .step-num {
+    position: absolute; left: 14px; top: 12px;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold) 0%, #966c3a 100%);
+    color: #1a1a1a; font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step strong { color: #fff; }
+  .step p { color: var(--text-dim); font-size: 13px; margin-top: 3px; }
+
+  /* ───── Footer ───── */
+  .footer {
+    margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border);
+    font-size: 11.5px; color: var(--text-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .footer .mono { color: var(--text-faint); }
+
+  /* ───── Responsive ───── */
+  @media (max-width: 900px) {
+    .header { padding: 20px 24px 0 24px; }
+    .canvas { padding: 28px 24px 60px 24px; }
+    .conflict-body { grid-template-columns: 1fr; }
+    .conflict-body .side:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+    .compare-cols { grid-template-columns: 1fr; }
+    .split-row { grid-template-columns: 1fr; }
+    .split-row > div { border-right: none; border-bottom: 1px solid var(--border); }
+    .split-row.header { display: none; }
+    .split-row .id-cell::before { content: 'BR · '; color: var(--text-faint); }
+    .split-row .music-cell::before { content: 'Music (Beamco): '; color: var(--music); font-weight: 700; }
+    .split-row .movies-cell::before { content: 'Movies (Ztor): '; color: var(--movies); font-weight: 700; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <h1>Crowdfund BRD — Three-Way Diff</h1>
+    <div class="sub">
+      2026-05-22
+      <span class="dot">·</span>
+      Music = Beamco · Movies = Ztor
+      <span class="dot">·</span>
+      49 new BRs vs 56 Phase 1 FRs vs 24 Ztor v6 BRs
+    </div>
+    <div class="legend">
+      <span class="src src-new">⬢ New BRD (biz team)</span>
+      <span class="src src-phase1">⬢ Phase 1 BRD (current Beamco)</span>
+      <span class="src src-ztor">⬢ Ztor v6 BRD (current Movies)</span>
+      <span class="src src-music">⬢ Music = Beamco</span>
+      <span class="src src-ztor">⬢ Movies = Ztor</span>
+    </div>
+    <nav class="nav">
+      <a href="#tldr">TL;DR</a>
+      <a href="#splits">Music vs Movies splits</a>
+      <a href="#phase1-vs-new">Phase 1 vs New (Music)</a>
+      <a href="#ztor-vs-new">Ztor v6 vs New (Movies)</a>
+      <a href="#cross">Cross-cutting issues</a>
+      <a href="#questions">Open questions</a>
+      <a href="#next">Next steps</a>
+    </nav>
+  </div>
+</header>
+
+<main class="canvas">
+
+  <!-- ───── TL;DR ───── -->
+  <section class="section" id="tldr">
+    <div class="section-title">Top of the pile</div>
+    <h2>TL;DR — five things to decide first</h2>
+    <p class="lede">The new biz BRD is essentially <strong>Phase 1 + the Phase 2 that was deferred + Stage-3 payout/royalty mechanics</strong>. Five decisions unblock the rest.</p>
+    <div class="tldr-grid">
+      <div class="tldr red">
+        <span class="num">01</span>
+        <h3>Phase 2 collection rolled into the spec</h3>
+        <p>Phase 1 deliberately deferred charging. The new BRD's BR-28 → BR-32 (batch charge + smart retry + manual recovery + waitlist + threshold cancel) is all net-new vs Phase 1 — and a different shape than Ztor v6.</p>
+      </div>
+      <div class="tldr red">
+        <span class="num">02</span>
+        <h3>Eligibility model rewritten</h3>
+        <p>Phase 1: follow X consecutive days → earn Y LP → permanent flag. New BRD: $1 = 28 LP, join = 1 LP, instant eligibility. Matches the late-April Beamco rework (BR-236).</p>
+      </div>
+      <div class="tldr red">
+        <span class="num">03</span>
+        <h3>Funding model flips for Beamco</h3>
+        <p>Phase 1 was share-count driven (min required shares, raised = reserved × per-share value). New BRD is amount-based ($5M cap, threshold by %). Ztor v6 is already amount-based — only Beamco needs the data-model migration.</p>
+      </div>
+      <div class="tldr amber">
+        <span class="num">04</span>
+        <h3>Three different status machines</h3>
+        <p>Phase 1 has 5 auto-only states. Ztor v6 has 6 mixed-control. New BRD has 8–9 with a new <strong>Funded vs Successful</strong> split (target hit vs all charges cleared). Pick one taxonomy before build.</p>
+      </div>
+      <div class="tldr red">
+        <span class="num">05</span>
+        <h3>Backer reward model diverges</h3>
+        <p>Phase 1 = shares + plan items. Ztor v6 = redeem code → 30-day free viewing. New BRD = cash royalties (≥ USD 50, quarterly). Conceptually different products — pick per content type.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── §0 Music vs Movies splits ───── -->
+  <section class="section" id="splits">
+    <div class="section-title">§0 — Intentional product splits</div>
+    <h2>Music (Beamco) vs Movies (Ztor) — where the new BRD deliberately differs</h2>
+    <p class="lede">
+      The new BRD has two logic columns. <span style="color:var(--music)">Music</span> targets Beamco, <span style="color:var(--movies)">Movies</span> targets Ztor — divergence is expected. The 15 rows below are flagged <code>Different</code> in the source sheet. These are <strong>product decisions worth confirming in their own right.</strong>
+    </p>
+
+    <h3 style="font-size:14px;color:var(--text);margin:18px 0 10px 0;">Shape-of-product splits (the big ones)</h3>
+    <div class="split-table">
+      <div class="split-row header">
+        <div>BR ID</div><div>Topic</div>
+        <div style="color:var(--music)">♪ Music (Beamco)</div>
+        <div style="color:var(--movies)">▶ Movies (Ztor)</div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-12 / 13</div>
+        <div class="topic-cell">Share denomination — music fields</div>
+        <div class="music-cell">Total <strong>royalty shares %</strong> + total number of royalty shares</div>
+        <div class="movies-cell"><span class="na">N/A — movies-only fields below</span></div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-14 / 15</div>
+        <div class="topic-cell">Share denomination — movie fields</div>
+        <div class="music-cell"><span class="na">N/A</span></div>
+        <div class="movies-cell"><strong>Revenue shares %</strong> + number of shares available</div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-18</div>
+        <div class="topic-cell">Membership card</div>
+        <div class="music-cell">Not required for MVP — will be needed later for Ztor 3-in-1</div>
+        <div class="movies-cell"><span class="na">N/A</span></div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-20</div>
+        <div class="topic-cell">Loyalty Points visibility</div>
+        <div class="music-cell">$1 = 28 LP; join = 1 LP. Fans see <strong>creator-specific LP balance</strong> on creator dashboard. Cannot see other creators' LP.</div>
+        <div class="movies-cell">"Current simple flow is fine. More sophisticated build later." <em>LP stays internal-only for now.</em></div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-27</div>
+        <div class="topic-cell">Engagement on project page</div>
+        <div class="music-cell"><strong>Updates</strong> section — creator posts only, fans <em>cannot</em> comment</div>
+        <div class="movies-cell"><strong>Comments</strong> section — creator + any fan (not just backers) can post</div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-36</div>
+        <div class="topic-cell">Royalty reporting source</div>
+        <div class="music-cell"><strong>Flow A</strong> (Beamco = label, manual weekly update) OR <strong>Flow B</strong> (Beamco = contributor on distributor) — Flow B pending Sam's example (2026-05-23)</div>
+        <div class="movies-cell">Royalty amount instant, extracted from <strong>Ztor OTT platform</strong></div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-38</div>
+        <div class="topic-cell">Fan-side royalty withdrawal</div>
+        <div class="music-cell">Withdraw any time ≥ USD 50. Biz updates quarterly per fan. <em>⚠ Sheet notes "Product KIV / danger zone"</em></div>
+        <div class="movies-cell">Withdraw any time ≥ USD 50. Biz updates quarterly per fan.</div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-40</div>
+        <div class="topic-cell">Overview tab content</div>
+        <div class="music-cell">Progress + roadmap + payment breakdown + royalty splits + <strong>Spotify link</strong> upload</div>
+        <div class="movies-cell">Same as Music — but uploads a <strong>Ztor OTT link</strong></div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-45</div>
+        <div class="topic-cell">Creator wallet</div>
+        <div class="music-cell">Balance + tx history + withdraw</div>
+        <div class="movies-cell">Same as Music <strong>+ tastemaker referral fee row</strong> (15% of PPV, deducted from PPV earnings)</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;color:var(--text);margin:24px 0 10px 0;">Smaller / cosmetic splits</h3>
+    <div class="split-table">
+      <div class="split-row header">
+        <div>BR ID</div><div>Topic</div>
+        <div style="color:var(--music)">♪ Music (Beamco)</div>
+        <div style="color:var(--movies)">▶ Movies (Ztor)</div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-6</div>
+        <div class="topic-cell">Milestones</div>
+        <div class="music-cell">Not required for MVP. Mirror Ztor's if cheap to add.</div>
+        <div class="movies-cell"><strong>Mandatory.</strong> Default ON. Month + year only. Up to 5 milestones. Status updates optional.</div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-7</div>
+        <div class="topic-cell">Fundraising packages</div>
+        <div class="music-cell">All packages must include shares; bundling required</div>
+        <div class="movies-cell">At least 1 package must include shares (others can be share-less); bundling supported but optional</div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-10</div>
+        <div class="topic-cell">Social media links — setup</div>
+        <div class="music-cell">Not needed — creator storefront already has it</div>
+        <div class="movies-cell">Admin links IG → YouTube → TikTok → custom URL beside icons</div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-11</div>
+        <div class="topic-cell">Social media links — display</div>
+        <div class="music-cell"><span class="na">N/A</span></div>
+        <div class="movies-cell">Fans click linked accounts, jump to platform</div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-16</div>
+        <div class="topic-cell">Currency selection lock</div>
+        <div class="music-cell">SGD or USD. <strong>Locked once selected.</strong></div>
+        <div class="movies-cell">SGD or USD. <strong>Editable.</strong> <em>⚠ Sheet asks "What is editable?"</em></div>
+      </div>
+      <div class="split-row">
+        <div class="id-cell">BR-22</div>
+        <div class="topic-cell">Publish mechanism</div>
+        <div class="music-cell"><strong>Publish Now</strong> only</div>
+        <div class="movies-cell">Publish Now <em>+</em> <strong>Schedule Publish Date</strong></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;color:var(--text);margin:24px 0 10px 0;">Shared rows (Music = Movies)</h3>
+    <p style="color:var(--text-dim);font-size:13px;margin-bottom:10px;">
+      For reference — any divergence between Music &amp; Movies on these rows during build would be <strong>unintentional drift</strong>, not a product decision.
+    </p>
+    <div class="chip-grid">
+      <span class="chip">BR-1</span><span class="chip">BR-2</span><span class="chip">BR-3</span>
+      <span class="chip">BR-4</span><span class="chip">BR-5</span><span class="chip">BR-8</span>
+      <span class="chip">BR-9</span><span class="chip">BR-17</span><span class="chip">BR-19</span>
+      <span class="chip">BR-21</span><span class="chip">BR-23</span><span class="chip">BR-24</span>
+      <span class="chip">BR-25</span><span class="chip">BR-28</span><span class="chip">BR-29</span>
+      <span class="chip">BR-30</span><span class="chip">BR-31</span><span class="chip">BR-33</span>
+      <span class="chip">BR-34</span><span class="chip">BR-35</span><span class="chip">BR-47</span>
+      <span class="chip">BR-48</span>
+    </div>
+  </section>
+
+  <!-- ───── Phase 1 vs New (Music) ───── -->
+  <section class="section" id="phase1-vs-new">
+    <div class="section-title">§A — Beamco direction</div>
+    <h2>Phase 1 BRD vs New BRD (Music column)</h2>
+    <p class="lede">
+      Where the proposed Music spec breaks with the Phase 1 BRD that's currently approved for Beamco.
+    </p>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-01</span>
+        <span class="title">Payment collection</span>
+        <span class="severity red">Phase-boundary</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side phase1">
+          <div class="side-label"><span class="pill">Phase 1 BRD</span> Setup-only</div>
+          <div class="side-content">
+            <span class="label">FR-32:</span> Stripe Future Payment <strong>Setup</strong> only — captures payment method, <strong>does NOT charge</strong> in Phase 1. Charge is Phase 2 (Out of Scope #1).
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Full collection rolled in</div>
+          <div class="side-content">
+            <span class="label">BR-28 → BR-32:</span> Batch-charge on <code>funded</code>. Smart retry (3 days). Manual recovery email (7 days). Waitlist replacement on day 10. Failure-threshold cancel-all.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-02</span>
+        <span class="title">Eligibility model</span>
+        <span class="severity red">Already-shipped change</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side phase1">
+          <div class="side-label"><span class="pill">Phase 1 BRD</span> Time + threshold gate</div>
+          <div class="side-content">
+            <span class="label">FR-22:</span> Follow artist <strong>X consecutive days</strong> → earn <strong>Y loyalty points</strong> → permanently unlock per-artist eligibility. X and Y admin-configurable.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Instant-on-action</div>
+          <div class="side-content">
+            <span class="label">BR-20:</span> $1 spent = 28 LP · Join community = 1 LP · Eligibility = ≥ 1 LP. No X-day wait, no Y threshold. <em>Matches the late-April BR-236 rework already approved.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-03</span>
+        <span class="title">Funding model</span>
+        <span class="severity red">Data-model flip</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side phase1">
+          <div class="side-label"><span class="pill">Phase 1 BRD</span> Share-count driven</div>
+          <div class="side-content">
+            <span class="label">FR-02 / 37:</span> Total shares + minimum required shares = success threshold. Raised = reserved shares × implied per-share value. Goal expressed in shares.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Amount-based</div>
+          <div class="side-content">
+            <span class="label">BR-1 / 7 / 23 / 32:</span> Goal expressed as fund amount in creator currency. $5M cap. Failure threshold by % of $. Shares = per-plan attribute (BR-12/13).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-04</span>
+        <span class="title">Status state machine</span>
+        <span class="severity red">Auto-only → manual + new states</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side phase1">
+          <div class="side-label"><span class="pill">Phase 1 BRD</span> 5 states, auto-only</div>
+          <div class="side-content">
+            <span class="label">FR-08:</span> Draft → Upcoming → InProgress → Completed | Failed. All transitions date-driven or threshold-driven. <strong>Artists cannot manually change status.</strong>
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> 8–9 states, mixed control</div>
+          <div class="side-content">
+            <span class="label">BR-25 / 26:</span> Draft / Active / Cancelled / Funded / Successful / Unsuccessful (+ In Progress / Released / Unreleased post-payout). Adds <strong>manual cancel</strong> + new <strong>Funded vs Successful</strong> split (Funded = target hit at end date · Successful = all charges cleared after recovery).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict amber">
+      <div class="conflict-head">
+        <span class="id">Δ-05</span>
+        <span class="title">Plan cancellation &amp; upgrade</span>
+        <span class="severity amber">Feature in flight</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side phase1">
+          <div class="side-label"><span class="pill">Phase 1 BRD</span> Upgrade allowed, no downgrade</div>
+          <div class="side-content">
+            <span class="label">FR-38 / 39:</span> Upgrade to higher tier OK. <strong>Downgrade NOT permitted. Cancellation NOT permitted.</strong> One active plan per fan per project.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Silent on backer upgrade</div>
+          <div class="side-content">
+            BR-22 → BR-25 cover admin-side edit lock + manual cancel-with-refund. <strong>No mention of backer-side upgrade/downgrade flow.</strong> Either carry the Phase 1 logic forward, or document the regression.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict amber">
+      <div class="conflict-head">
+        <span class="id">Δ-06</span>
+        <span class="title">Pledges per fan per project</span>
+        <span class="severity amber">Pick one</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side phase1">
+          <div class="side-label"><span class="pill">Phase 1 BRD</span> One active plan</div>
+          <div class="side-content">
+            <span class="label">FR-36:</span> One active plan per fan per project. Upgrading overwrites the previous selection.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Not addressed</div>
+          <div class="side-content">
+            New BRD doesn't restate. Ztor v6 BR-21 explicitly <strong>allows multiple pledges per backer</strong>. Beamco may inherit Ztor's rule by default — confirm intent.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict amber">
+      <div class="conflict-head">
+        <span class="id">Δ-07</span>
+        <span class="title">Milestone update governance</span>
+        <span class="severity amber">Strong rule, drops</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side phase1">
+          <div class="side-label"><span class="pill">Phase 1 BRD</span> Strict governance</div>
+          <div class="side-content">
+            <span class="label">FR-13 / 19 / 20:</span> Roadmap date change → mandatory "Notify Users" update (cannot save without). Overdue auto-display. Cannot post Milestone Completed if overdue — must post Milestone Delayed first.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Music defers, Movies thins</div>
+          <div class="side-content">
+            <span class="label">BR-6:</span> Music = milestones not required for MVP. Movies = mandatory but loosely specified (5 max, month+year, optional status updates). The governance rules disappear.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict amber">
+      <div class="conflict-head">
+        <span class="id">Δ-08</span>
+        <span class="title">Admin configurability</span>
+        <span class="severity amber">Loses flexibility</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side phase1">
+          <div class="side-label"><span class="pill">Phase 1 BRD</span> Admin-managed</div>
+          <div class="side-content">
+            <span class="label">FR-55 / 56:</span> Admin sets X (days) + Y (points) for eligibility. Admin manages contract templates with EN + zh-TW localisation + versioning.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Hard-coded</div>
+          <div class="side-content">
+            LP rate fixed at 28-per-$1; no admin config section. No template versioning or i18n. Per-backer contract PDF mentioned but no template authoring flow.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ───── Ztor v6 vs New (Movies) ───── -->
+  <section class="section" id="ztor-vs-new">
+    <div class="section-title">§B — Ztor direction</div>
+    <h2>Ztor v6 BRD vs New BRD (Movies column)</h2>
+    <p class="lede">
+      Where the proposed Movies spec breaks with Ztor's locked v6.
+    </p>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-09</span>
+        <span class="title">Settlement currency</span>
+        <span class="severity red">Blocking</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side ztor">
+          <div class="side-label"><span class="pill">Ztor v6</span> HKD / TWD</div>
+          <div class="side-content">
+            Must-Know #4 — HKD or TWD only. Locked decision.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> SGD / USD</div>
+          <div class="side-content">
+            BR-16 — SGD or USD only. Implies a regional pivot. Drives Stripe config + creator contracts.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-10</span>
+        <span class="title">Payment retry shape</span>
+        <span class="severity red">Different state machine</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side ztor">
+          <div class="side-label"><span class="pill">Ztor v6</span> 7+7 → forfeit individual</div>
+          <div class="side-content">
+            7-day smart retry → 7-day manual recovery → individual pledge <code>forfeited</code>. No waitlist, no campaign-level cancel.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> 3+7 → waitlist → threshold</div>
+          <div class="side-content">
+            3-day smart retry → 7-day manual recovery → drop pledge + pull next waitlister → repeat → failure-threshold check → cancel-all-with-refund if exceeded.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-11</span>
+        <span class="title">Share allocation</span>
+        <span class="severity red">Schema-level</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side ztor">
+          <div class="side-label"><span class="pill">Ztor v6</span> Per-tier</div>
+          <div class="side-content">
+            BR-23 — only <code>isShareTier: true</code> tiers issue shares. Non-share tiers count toward goal but issue 0 shares.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Project-level</div>
+          <div class="side-content">
+            BR-14/15 — Movies = single Revenue shares % + Number of shares available at project level. Less granular than Ztor's per-tier model.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-12</span>
+        <span class="title">Backer reward on success</span>
+        <span class="severity red">Different product</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side ztor">
+          <div class="side-label"><span class="pill">Ztor v6</span> Redeem code → free viewing</div>
+          <div class="side-content">
+            BR-18 — Unique one-time code per pledge. 30-day activate / 48-hour watch window. No cash.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Cash royalty share</div>
+          <div class="side-content">
+            BR-38 — Fans withdraw cash royalties from wallet, ≥ USD 50. Biz updates quarterly. <strong>No redeem code mentioned.</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-13</span>
+        <span class="title">Loyalty Points visibility</span>
+        <span class="severity red">UX clash</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side ztor">
+          <div class="side-label"><span class="pill">Ztor v6</span> Internal-only</div>
+          <div class="side-content">
+            Must-Know #2 — LP locked at 1, internal mechanic only, <strong>not editable, not displayed on the frontend.</strong>
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> User-facing &amp; monetary</div>
+          <div class="side-content">
+            BR-20 — $1 = 28 LP. Fans see per-creator LP balance on creator dashboard. (Movies side says "current simple flow fine for now" but BR-20 itself defines the rate.)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict red">
+      <div class="conflict-head">
+        <span class="id">Δ-14</span>
+        <span class="title">Creator payout</span>
+        <span class="severity red">Scope expansion</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side ztor">
+          <div class="side-label"><span class="pill">Ztor v6</span> Out of scope (Stage 3)</div>
+          <div class="side-content">
+            "Stripe Payout for creators · Automated revenue / P&amp;L reports · Creator self-serve portal" all listed as Out of Scope, Stage 3.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> In scope</div>
+          <div class="side-content">
+            BR-33 — Two-tranche payout (80% on funded / 20% on final product URL submission · BR-35). BR-34 + BR-45 — creator wallet + withdraw. Pending Stripe Connect decision.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflict amber">
+      <div class="conflict-head">
+        <span class="id">Δ-15</span>
+        <span class="title">Refund trigger</span>
+        <span class="severity amber">Path differs</span>
+      </div>
+      <div class="conflict-body">
+        <div class="side ztor">
+          <div class="side-label"><span class="pill">Ztor v6</span> Creator-default only</div>
+          <div class="side-content">
+            BR-09 — Manual via Stripe back-office. No admin UI. Only for creator default cases.
+          </div>
+        </div>
+        <div class="side new">
+          <div class="side-label"><span class="pill">New BRD</span> Threshold-triggered refund-all</div>
+          <div class="side-content">
+            BR-32 — If failure % exceeds threshold after recovery, cancel campaign and refund all backers. (Threshold value still TBD.)
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ───── Cross-cutting ───── -->
+  <section class="section" id="cross">
+    <div class="section-title">§C — Cross-cutting</div>
+    <h2>Three different mental models, side by side</h2>
+    <p class="lede">Where the same concept gets three different shapes across the three docs.</p>
+
+    <h3 style="font-size:14px;color:var(--text);margin:18px 0 8px 0;">Project status machine</h3>
+    <div class="compare-cols">
+      <div class="compare-col phase1">
+        <h4>Phase 1 BRD</h4>
+        <p><span class="stat">5 states</span> · all auto<br>
+        Draft → Upcoming → InProgress → Completed / Failed.<br><br>
+        Transitions date + threshold driven. <strong>No manual override.</strong></p>
+      </div>
+      <div class="compare-col ztor">
+        <h4>Ztor v6</h4>
+        <p><span class="stat">6 states</span> · mixed control<br>
+        live → funded / unsuccessful / canceled; funded → in_production → released.<br><br>
+        Ops controls most transitions.</p>
+      </div>
+      <div class="compare-col new">
+        <h4>New BRD</h4>
+        <p><span class="stat">8–9 states</span> · mixed control<br>
+        Draft / Active / Cancelled / Funded / Successful / Unsuccessful + In Progress / Released / Unreleased.<br><br>
+        <strong>New Funded vs Successful split</strong> (target hit vs all charges cleared).</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;color:var(--text);margin:30px 0 8px 0;">Eligibility / LP model</h3>
+    <div class="compare-cols">
+      <div class="compare-col phase1">
+        <h4>Phase 1 BRD</h4>
+        <p>Follow artist X consecutive days → earn Y LP → <strong>permanent per-artist eligibility flag.</strong> X+Y admin-configurable. Eligibility persists even if LP later removed.</p>
+      </div>
+      <div class="compare-col ztor">
+        <h4>Ztor v6</h4>
+        <p>1 LP per joined creator, <strong>locked at 1, internal-only, never displayed.</strong> Eligibility = ≥ 1 LP on that creator.</p>
+      </div>
+      <div class="compare-col new">
+        <h4>New BRD</h4>
+        <p>$1 = 28 LP · Join = 1 LP · Eligibility = ≥ 1 LP · <strong>Fans see per-creator LP balance.</strong> (Music side gets the visible balance; Movies stays simple for now.)</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;color:var(--text);margin:30px 0 8px 0;">Currency</h3>
+    <div class="compare-cols">
+      <div class="compare-col phase1">
+        <h4>Phase 1 BRD</h4>
+        <p>Per-project, locked at publish (FR-11). Allowed set not enumerated. FX settlement model = Phase 2 (OOS).</p>
+      </div>
+      <div class="compare-col ztor">
+        <h4>Ztor v6</h4>
+        <p><span class="stat">HKD or TWD</span> only. Locked Must-Know #4. Other-region viewers see FX preview marked 參考價格.</p>
+      </div>
+      <div class="compare-col new">
+        <h4>New BRD</h4>
+        <p><span class="stat">SGD or USD</span> only (BR-16). Music = locked after selection. Movies = editable (TBD what that means).</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:14px;color:var(--text);margin:30px 0 8px 0;">Share denomination</h3>
+    <div class="compare-cols">
+      <div class="compare-col phase1">
+        <h4>Phase 1 BRD</h4>
+        <p>Total shares + minimum required shares (success threshold). Plans carry share_count. <strong>Goal expressed in shares.</strong></p>
+      </div>
+      <div class="compare-col ztor">
+        <h4>Ztor v6</h4>
+        <p>Goal in creator currency. Only <code>isShareTier: true</code> tiers issue shares. Project-level <code>equityOfferedPct</code>.</p>
+      </div>
+      <div class="compare-col new">
+        <h4>New BRD</h4>
+        <p>Goal in creator currency ($5M cap). Music = royalty shares % + count (project-level). Movies = revenue shares % + count (project-level).</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ───── Phase 1 keeps / drops ───── -->
+  <section class="section">
+    <div class="section-title">§D — Don't lose these</div>
+    <h2>Phase 1 governance rules the new BRD silently drops</h2>
+    <p class="lede">Strong rules in Phase 1 that aren't restated in the new BRD. Worth keeping unless explicitly cut.</p>
+    <ul class="tight">
+      <li><code>FR-13</code> Mandatory "Notify Users" update when a roadmap milestone date changes — cannot save the date change without posting it</li>
+      <li><code>FR-19 / 20</code> Milestone overdue auto-display + blocking Milestone Completed until artist posts a Milestone Delayed update first</li>
+      <li><code>FR-08</code> Status transitions auto-only — artists cannot manually change project status (new BRD's manual cancel partially reverses this)</li>
+      <li><code>FR-23 / 24</code> Eligibility flag is permanent even if investment-earned LP is later removed — invariant the new BRD doesn't restate</li>
+      <li><code>FR-38</code> Plan upgrade flow (higher tiers only) — backer-side feature in current Beamco, not addressed in new BRD</li>
+      <li><code>FR-56</code> Admin contract template versioning + EN/zh-TW localisation — drops</li>
+      <li><strong>"Equity-like shares" regulatory flag</strong> — Phase 1's Confidence Note flagged this for legal review in MY/TW/SG/US. New BRD's SGD/USD pivot makes US/SG exposure higher, not lower.</li>
+    </ul>
+  </section>
+
+  <!-- ───── Open Questions ───── -->
+  <section class="section" id="questions">
+    <div class="section-title">§E — Still open</div>
+    <h2>Open questions in the new BRD (biz team owes us answers)</h2>
+    <p class="lede">Pulled from the "Questions for biz team" / "Questions for dev team" columns of the sheet itself.</p>
+    <div class="q-grid">
+      <div class="q-card blocking">
+        <span class="q-id">BR-32</span>
+        <div class="q-body">
+          <strong>Failure threshold value not set.</strong> % of $ or absolute? Plus Movies-side: minimum pull-out threshold (e.g. 85%)?
+          <div class="q-owner">Owner — biz team (blocker)</div>
+        </div>
+      </div>
+      <div class="q-card blocking">
+        <span class="q-id">BR-33</span>
+        <div class="q-body">
+          <strong>Stripe Connect: yes or no?</strong> If no, how do funds split from our account to creator wallets?
+          <div class="q-owner">Owner — L</div>
+        </div>
+      </div>
+      <div class="q-card blocking">
+        <span class="q-id">BR-16</span>
+        <div class="q-body">
+          Music = locked after selection. Movies = editable. <strong>"What does editable mean?"</strong>
+          <div class="q-owner">Owner — biz to clarify</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="q-id">BR-35</span>
+        <div class="q-body">
+          Is the 20% payout auto-triggered on product URL upload, or does admin review the URL first?
+          <div class="q-owner">Owner — biz</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="q-id">BR-36</span>
+        <div class="q-body">
+          Music side — Flow A or Flow B for royalty extraction? Royalty split between creator + many backers is operationally complex.
+          <div class="q-owner">Owner — Sam (by 2026-05-23)</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="q-id">BR-39</span>
+        <div class="q-body">
+          Music campaign dashboard <strong>"TBD by 2026-05-19."</strong> Status?
+          <div class="q-owner">Owner — biz</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="q-id">BR-30</span>
+        <div class="q-body">
+          New payment URL generation method + can it be configured to expire in 7 days? Email copy + branding for recovery email.
+          <div class="q-owner">Owner — dev + design</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="q-id">BR-31</span>
+        <div class="q-body">
+          Can the system automatically calculate whether waitlist pledges substitute failed payments?
+          <div class="q-owner">Owner — dev</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="q-id">BR-41</span>
+        <div class="q-body">
+          Of the payout breakdown numbers (raised / charged / failed / fees / final / 80% / 20%), which are automated and which are manual?
+          <div class="q-owner">Owner — dev</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="q-id">BR-38</span>
+        <div class="q-body">
+          Music side flagged <strong>"Product KIV / danger zone"</strong> — is fan-side royalty withdrawal still going to Music?
+          <div class="q-owner">Owner — biz</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="q-id">BR-19</span>
+        <div class="q-body">
+          Fund allocation — keep current UAT version in MVP?
+          <div class="q-owner">Owner — Sam Padbidri</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="q-id">BR-47</span>
+        <div class="q-body">
+          Does backer receive an email if payment succeeds?
+          <div class="q-owner">Owner — biz</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── Next steps ───── -->
+  <section class="section" id="next">
+    <div class="section-title">§F — Action</div>
+    <h2>Recommended next steps</h2>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <strong>Decide which side of the Phase 1 / Phase 2 split the new BRD targets.</strong>
+      <p>If it ships as a single release, plan accordingly. If staged, mark which BRs are Phase 1 vs Phase 2.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <strong>Confirm the currency pivot (HKD/TWD → SGD/USD).</strong>
+      <p>This is the single most-blocking decision. Loop in Susan + Agnes.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <strong>Lock the LP rate.</strong>
+      <p>New BRD = 28-per-$1 + 1-on-join (matches BR-236 already approved late April). Confirm this is what's in Beamco production today.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <strong>Reconcile the payment-recovery state machine.</strong>
+      <p>The 3+7+waitlist+threshold flow needs a fresh diagram. Ztor's current state machine at <code>aic-output/ztor-crowdfund-state-machine.html</code> now drifts from the new BRD.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <strong>Pick the backer reward model per content type.</strong>
+      <p>Redeem-code-for-viewing (Ztor v6) OR cash-royalty-share (new BRD) OR both. Phase 1 sat in between — fans got "shares + plan items," neither cash nor viewing rights.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <strong>Carry forward Phase 1's strong governance rules.</strong>
+      <p>Milestone delay → mandatory notification (FR-13), overdue-blocks-completion (FR-20), admin template versioning + i18n (FR-56), status transitions auto-only (FR-08). Don't lose these in the rewrite.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <strong>Close the blocking biz-team questions (§E).</strong>
+      <p>BR-32 threshold value · BR-33 Stripe Connect · BR-16 currency edit semantics · BR-36 Music royalty flow.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">8</div>
+      <strong>Treat the new BRD as canonical going forward.</strong>
+      <p>Re-issue Phase 1 + Ztor v6 as deltas off it. Cheaper than keeping three versions in sync.</p>
+    </div>
+  </section>
+
+  <div class="footer">
+    <span>Crowdfund BRD Three-Way Diff · prepared by Claude · 2026-05-22</span>
+    <span class="mono">Music = Beamco · Movies = Ztor · 49 BRs vs 56 FRs vs 24 BRs</span>
+  </div>
+</main>
+
+</body>
+</html>
