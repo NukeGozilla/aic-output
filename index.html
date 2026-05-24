@@ -18,15 +18,45 @@
     .file-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; flex-shrink: 0; }
     .beamco .file-icon { background: #1e3a5f; color: #60a5fa; }
     .ztor .file-icon { background: #3b1f4e; color: #c084fc; }
+    .unified .file-icon { background: #3d2900; color: #f1c21b; }
+    .unified { border-color: #3d2900; }
+    .unified:hover { border-color: #f1c21b; }
     .other .file-icon { background: #1f3d2e; color: #6ee7b7; }
     .file-name { font-size: 0.95rem; font-weight: 500; }
     .file-desc { font-size: 0.8rem; color: #666; margin-top: 2px; }
+    .canonical-badge { display: inline-block; background: rgba(241,194,27,0.18); color: #f1c21b; border: 1px solid #f1c21b; font-size: 0.65rem; font-weight: 600; padding: 1px 7px; border-radius: 10px; margin-left: 0.5rem; letter-spacing: 0.04em; vertical-align: middle; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>AIC Output</h1>
     <p class="subtitle">Shared output files for team review</p>
+
+    <div class="section">
+      <div class="section-label">Crowdfund BRD v1 — Unified Music + Movies <span class="canonical-badge">CANONICAL · 2026-05-24</span></div>
+      <div class="file-list">
+        <a class="file unified" href="crowdfund-brd-v1-2026-05-24.html">
+          <div class="file-icon">BRD</div>
+          <div><div class="file-name">Main BRD — Unified Music + Movies</div><div class="file-desc">51 BRs (BR-1 → BR-49 + BR-C1/C2) · 8 locked decisions · 10 open Qs · IBM Carbon theme</div></div>
+        </a>
+        <a class="file unified" href="crowdfund-brd-v1-lifecycle.html">
+          <div class="file-icon">LF</div>
+          <div><div class="file-name">Lifecycle</div><div class="file-desc">Setup → Active → Funded → Successful → Released · 4-phase strip + Mermaid flow + backer-POV timeline</div></div>
+        </a>
+        <a class="file unified" href="crowdfund-brd-v1-state-machine.html">
+          <div class="file-icon">SM</div>
+          <div><div class="file-name">State Machine</div><div class="file-desc">8 states · 13 valid transitions · positioned HTML + SVG arrows · auto-vs-manual matrix</div></div>
+        </a>
+        <a class="file unified" href="crowdfund-brd-v1-payment-retry.html">
+          <div class="file-icon">PR</div>
+          <div><div class="file-name">Payment Retry & Cancellation</div><div class="file-desc">3-day silent retry → 7-day URL → day-10 waitlist swap → threshold check → cancellation flow</div></div>
+        </a>
+        <a class="file unified" href="crowdfund-brd-three-way-diff-2026-05-22.html">
+          <div class="file-icon">DIF</div>
+          <div><div class="file-name">3-Way Diff (history) — Biz spreadsheet vs Phase 1 vs Ztor v6</div><div class="file-desc">Pre-decision comparison doc that drove the v1 consolidation · 2026-05-22</div></div>
+        </a>
+      </div>
+    </div>
 
     <div class="section">
       <div class="section-label">Beamco</div>
