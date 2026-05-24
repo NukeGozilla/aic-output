@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crowdfund BRD v1 — State Machine</title>
+<title>New Beamco Crowdfund — State Machine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,42 +12,34 @@
      IBM Carbon Design System — dark theme tokens
      ════════════════════════════════════════════════════════════ */
   :root {
-    /* Backgrounds */
-    --cds-background: #161616;          /* gray 100 */
-    --cds-layer-01: #262626;            /* gray 90 */
-    --cds-layer-02: #393939;            /* gray 80 */
-    --cds-layer-03: #525252;            /* gray 70 */
-    --cds-field-01: #262626;
-    --cds-field-02: #393939;
-
-    /* Borders */
-    --cds-border-subtle: #393939;
-    --cds-border-strong: #6f6f6f;       /* gray 60 */
-    --cds-border-inverse: #f4f4f4;
-
-    /* Text */
-    --cds-text-primary: #f4f4f4;        /* gray 10 */
-    --cds-text-secondary: #c6c6c6;      /* gray 30 */
-    --cds-text-placeholder: #6f6f6f;
+    /* Carbon Design System — light theme (Gray-10 base) */
+    --cds-background: #ffffff;
+    --cds-layer-01: #f4f4f4;
+    --cds-layer-02: #ffffff;
+    --cds-layer-03: #e0e0e0;
+    --cds-field-01: #f4f4f4;
+    --cds-field-02: #ffffff;
+    --cds-border-subtle: #e0e0e0;
+    --cds-border-strong: #8d8d8d;
+    --cds-border-inverse: #161616;
+    --cds-text-primary: #161616;
+    --cds-text-secondary: #525252;
+    --cds-text-placeholder: #a8a8a8;
     --cds-text-on-color: #ffffff;
-    --cds-text-helper: #a8a8a8;         /* gray 40 */
-
-    /* Interactive — Carbon Blue */
-    --cds-blue-60: #0f62fe;
-    --cds-blue-50: #4589ff;
-    --cds-blue-70: #0043ce;
-
-    /* Status colors */
-    --cds-green-50: #24a148;            /* success */
-    --cds-green-60: #198038;
-    --cds-red-50: #fa4d56;              /* danger */
-    --cds-red-60: #da1e28;
-    --cds-yellow-30: #f1c21b;           /* warning */
-    --cds-purple-60: #8a3ffc;
-    --cds-purple-50: #a56eff;
-    --cds-teal-50: #009d9a;
-    --cds-cyan-50: #1192e8;
-    --cds-magenta-50: #ee5396;
+    --cds-text-helper: #6f6f6f;
+    --cds-blue-60: #002d9c;
+    --cds-blue-50: #0f62fe;
+    --cds-blue-70: #001141;
+    --cds-green-50: #198038;
+    --cds-green-60: #0e6027;
+    --cds-red-50: #da1e28;
+    --cds-red-60: #a2191f;
+    --cds-yellow-30: #d9a900;
+    --cds-purple-60: #6929c4;
+    --cds-purple-50: #8a3ffc;
+    --cds-teal-50: #007d79;
+    --cds-cyan-50: #0072c3;
+    --cds-magenta-50: #d02670;
     --cds-cool-gray-50: #8d8d8d;
   }
 
@@ -290,7 +282,7 @@
 <!-- Carbon UI Shell -->
 <div class="ui-shell">
   <div class="ui-shell-inner">
-    <h1>Crowdfund State Machine <span class="tag">BRD v1</span></h1>
+    <h1>New Beamco Crowdfund — State Machine <span class="tag">BRD v1</span></h1>
     <div class="subtitle">8 campaign states · 13 allowed transitions · auto-vs-manual control matrix</div>
     <nav class="breadcrumb">
       <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
@@ -305,7 +297,7 @@
 <div class="notification">
   <span class="icon">●</span>
   <div class="body">
-    <strong>Funded vs Successful</strong> — these are <em>different</em> states. <code>Funded</code> = target hit at end date (charges not yet cleared). <code>Successful</code> = all charges actually cleared after recovery. This split is new vs Phase 1 / Ztor v6.
+    <strong>Funded vs Successful</strong> — these are <em>different</em> states. <code>Funded</code> = target hit at end date (charges not yet cleared). <code>Successful</code> = all charges actually cleared after recovery. This split is new vs the 2026-03-22 Phase 1 BRD.
   </div>
 </div>
 
@@ -322,14 +314,14 @@
   <!-- Carbon tag legend -->
   <div class="legend-row">
     <span class="cds-tag"><span class="dot" style="background:#8d8d8d"></span>Pre-publish</span>
-    <span class="cds-tag"><span class="dot" style="background:#1192e8"></span>Live · funding</span>
-    <span class="cds-tag"><span class="dot" style="background:#8a3ffc"></span>Charging</span>
-    <span class="cds-tag"><span class="dot" style="background:#24a148"></span>Success path</span>
-    <span class="cds-tag"><span class="dot" style="background:#009d9a"></span>Production</span>
-    <span class="cds-tag"><span class="dot" style="background:#fa4d56"></span>Cancelled</span>
-    <span class="cds-tag"><span class="line" style="background:#24a148"></span>System · auto</span>
-    <span class="cds-tag"><span class="line" style="background:#fa4d56"></span>Failure transition</span>
-    <span class="cds-tag"><span class="line" style="background:#f1c21b"></span>Manual · ops</span>
+    <span class="cds-tag"><span class="dot" style="background:#0072c3"></span>Live · funding</span>
+    <span class="cds-tag"><span class="dot" style="background:#6929c4"></span>Charging</span>
+    <span class="cds-tag"><span class="dot" style="background:#198038"></span>Success path</span>
+    <span class="cds-tag"><span class="dot" style="background:#007d79"></span>Production</span>
+    <span class="cds-tag"><span class="dot" style="background:#da1e28"></span>Cancelled</span>
+    <span class="cds-tag"><span class="line" style="background:#198038"></span>System · auto</span>
+    <span class="cds-tag"><span class="line" style="background:#da1e28"></span>Failure transition</span>
+    <span class="cds-tag"><span class="line" style="background:#d9a900"></span>Manual · ops</span>
   </div>
 
   <div class="diagram">
@@ -339,76 +331,76 @@
       <svg class="state-svg" viewBox="0 0 1100 780" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="arr-neutral" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#a8a8a8"/>
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#525252"/>
           </marker>
           <marker id="arr-auto" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#24a148"/>
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#198038"/>
           </marker>
           <marker id="arr-fail" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#fa4d56"/>
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#da1e28"/>
           </marker>
           <marker id="arr-manual" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f1c21b"/>
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#d9a900"/>
           </marker>
         </defs>
 
         <!-- 0. Start dot → Draft -->
-        <path d="M 552 22 L 552 30" stroke="#a8a8a8" stroke-width="2" fill="none" marker-end="url(#arr-neutral)"/>
+        <path d="M 552 22 L 552 30" stroke="#525252" stroke-width="2" fill="none" marker-end="url(#arr-neutral)"/>
 
         <!-- 1. Draft → Active -->
-        <path d="M 552 92 L 552 150" stroke="#f1c21b" stroke-width="2.5" fill="none" marker-end="url(#arr-manual)"/>
+        <path d="M 552 92 L 552 150" stroke="#d9a900" stroke-width="2.5" fill="none" marker-end="url(#arr-manual)"/>
         <rect class="lbl-bg" x="562" y="102" width="180" height="38" rx="0"/>
-        <text x="572" y="118" fill="#f1c21b" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops publishes</text>
-        <text x="572" y="134" fill="#a8a8a8" font-size="11" font-family="IBM Plex Sans">(Now or scheduled)</text>
+        <text x="572" y="118" fill="#d9a900" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops publishes</text>
+        <text x="572" y="134" fill="#525252" font-size="11" font-family="IBM Plex Sans">(Now or scheduled)</text>
 
         <!-- 2. Active → Funded -->
-        <path d="M 552 212 L 552 270" stroke="#24a148" stroke-width="2.5" fill="none" marker-end="url(#arr-auto)"/>
+        <path d="M 552 212 L 552 270" stroke="#198038" stroke-width="2.5" fill="none" marker-end="url(#arr-auto)"/>
         <rect class="lbl-bg" x="562" y="226" width="220" height="22" rx="0"/>
-        <text x="572" y="242" fill="#24a148" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · goal met at end date</text>
+        <text x="572" y="242" fill="#198038" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · goal met at end date</text>
 
         <!-- 3. Active → Unsuccessful -->
-        <path d="M 460 195 L 290 285" stroke="#a8a8a8" stroke-width="2" fill="none" marker-end="url(#arr-neutral)"/>
+        <path d="M 460 195 L 290 285" stroke="#525252" stroke-width="2" fill="none" marker-end="url(#arr-neutral)"/>
         <rect class="lbl-bg" x="290" y="215" width="220" height="22" rx="0"/>
-        <text x="300" y="231" fill="#a8a8a8" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · goal not met</text>
+        <text x="300" y="231" fill="#525252" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · goal not met</text>
 
         <!-- 4. Active → Cancelled -->
-        <path d="M 640 195 L 810 285" stroke="#f1c21b" stroke-width="2" fill="none" marker-end="url(#arr-manual)"/>
+        <path d="M 640 195 L 810 285" stroke="#d9a900" stroke-width="2" fill="none" marker-end="url(#arr-manual)"/>
         <rect class="lbl-bg" x="660" y="215" width="160" height="22" rx="0"/>
-        <text x="670" y="231" fill="#f1c21b" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops cancels manually</text>
+        <text x="670" y="231" fill="#d9a900" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops cancels manually</text>
 
         <!-- 5. Funded → Successful -->
-        <path d="M 552 334 L 552 410" stroke="#24a148" stroke-width="2.5" fill="none" marker-end="url(#arr-auto)"/>
+        <path d="M 552 334 L 552 410" stroke="#198038" stroke-width="2.5" fill="none" marker-end="url(#arr-auto)"/>
         <rect class="lbl-bg" x="562" y="350" width="240" height="38" rx="0"/>
-        <text x="572" y="366" fill="#24a148" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · all charges clear</text>
-        <text x="572" y="382" fill="#a8a8a8" font-size="11" font-family="IBM Plex Sans">after recovery loop</text>
+        <text x="572" y="366" fill="#198038" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · all charges clear</text>
+        <text x="572" y="382" fill="#525252" font-size="11" font-family="IBM Plex Sans">after recovery loop</text>
 
         <!-- 6. Funded → Cancelled (threshold breach) -->
-        <path d="M 640 297 L 810 297" stroke="#fa4d56" stroke-width="2" fill="none" marker-end="url(#arr-fail)"/>
+        <path d="M 640 297 L 810 297" stroke="#da1e28" stroke-width="2" fill="none" marker-end="url(#arr-fail)"/>
         <rect class="lbl-bg" x="650" y="275" width="160" height="20" rx="0"/>
-        <text x="660" y="290" fill="#fa4d56" font-size="13" font-weight="500" font-family="IBM Plex Sans">failure% &gt; threshold</text>
+        <text x="660" y="290" fill="#da1e28" font-size="13" font-weight="500" font-family="IBM Plex Sans">failure% &gt; threshold</text>
 
         <!-- 7. Successful → InProgress -->
-        <path d="M 552 472 L 552 530" stroke="#24a148" stroke-width="2.5" fill="none" marker-end="url(#arr-auto)"/>
+        <path d="M 552 472 L 552 530" stroke="#198038" stroke-width="2.5" fill="none" marker-end="url(#arr-auto)"/>
         <rect class="lbl-bg" x="562" y="484" width="220" height="38" rx="0"/>
-        <text x="572" y="500" fill="#24a148" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · 80% released</text>
-        <text x="572" y="516" fill="#a8a8a8" font-size="11" font-family="IBM Plex Sans">to creator wallet</text>
+        <text x="572" y="500" fill="#198038" font-size="13" font-weight="500" font-family="IBM Plex Sans">system · 80% released</text>
+        <text x="572" y="516" fill="#525252" font-size="11" font-family="IBM Plex Sans">to creator wallet</text>
 
         <!-- 8. InProgress → Released -->
-        <path d="M 640 575 L 760 690" stroke="#f1c21b" stroke-width="2.5" fill="none" marker-end="url(#arr-manual)"/>
+        <path d="M 640 575 L 760 690" stroke="#d9a900" stroke-width="2.5" fill="none" marker-end="url(#arr-manual)"/>
         <rect class="lbl-bg" x="660" y="608" width="240" height="38" rx="0"/>
-        <text x="670" y="624" fill="#f1c21b" font-size="13" font-weight="500" font-family="IBM Plex Sans">creator submits product URL</text>
-        <text x="670" y="640" fill="#a8a8a8" font-size="11" font-family="IBM Plex Sans">Spotify · Music / Ztor OTT · Movies</text>
+        <text x="670" y="624" fill="#d9a900" font-size="13" font-weight="500" font-family="IBM Plex Sans">creator submits product URL</text>
+        <text x="670" y="640" fill="#525252" font-size="11" font-family="IBM Plex Sans">Spotify URL</text>
 
         <!-- 9. InProgress → Cancelled (curve right-up) -->
-        <path d="M 640 545 Q 880 480 900 332" stroke="#f1c21b" stroke-width="2" fill="none" marker-end="url(#arr-manual)"/>
+        <path d="M 640 545 Q 880 480 900 332" stroke="#d9a900" stroke-width="2" fill="none" marker-end="url(#arr-manual)"/>
         <rect class="lbl-bg" x="790" y="430" width="240" height="22" rx="0"/>
-        <text x="800" y="446" fill="#f1c21b" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops cancels (creator default)</text>
+        <text x="800" y="446" fill="#d9a900" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops cancels (creator default)</text>
 
         <!-- 10. Draft → deleted (leftward dashed) -->
-        <path d="M 460 60 L 380 60" stroke="#a8a8a8" stroke-width="1.8" fill="none" marker-end="url(#arr-neutral)" stroke-dasharray="4,3"/>
+        <path d="M 460 60 L 380 60" stroke="#525252" stroke-width="1.8" fill="none" marker-end="url(#arr-neutral)" stroke-dasharray="4,3"/>
         <rect class="lbl-bg" x="220" y="42" width="160" height="38" rx="0"/>
-        <text x="230" y="58" fill="#a8a8a8" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops deletes draft</text>
-        <text x="230" y="74" fill="#6f6f6f" font-size="11" font-family="IBM Plex Sans">(Draft state only)</text>
+        <text x="230" y="58" fill="#525252" font-size="13" font-weight="500" font-family="IBM Plex Sans">ops deletes draft</text>
+        <text x="230" y="74" fill="#525252" font-size="11" font-family="IBM Plex Sans">(Draft state only)</text>
 
       </svg>
 
@@ -497,7 +489,7 @@
     </div>
     <div class="state-card terminal-ok">
       <h3>Released</h3>
-      <p>Product URL submitted (Spotify / Ztor OTT). Second payout tranche (20%) released. Royalty cash starts flowing.</p>
+      <p>Spotify URL submitted by creator. Second payout tranche (20%) released. Royalty cash starts flowing.</p>
       <div class="meta">Terminal · royalty active</div>
     </div>
     <div class="state-card terminal-fail">
@@ -516,7 +508,7 @@
       <tr><th>From</th><th>To</th><th>Trigger</th><th>Control</th></tr>
     </thead>
     <tbody>
-      <tr><td class="cell-mono">Draft</td><td class="cell-mono">Active</td><td class="cell-trig">Ops clicks Publish (Now, or scheduled datetime reached)</td><td><span class="cell-tag manual">Manual</span></td></tr>
+      <tr><td class="cell-mono">Draft</td><td class="cell-mono">Active</td><td class="cell-trig">Ops clicks Publish Now (no scheduled publishing in MVP)</td><td><span class="cell-tag manual">Manual</span></td></tr>
       <tr><td class="cell-mono">Draft</td><td class="cell-mono">— (deleted)</td><td class="cell-trig">Ops deletes draft (only allowed in Draft)</td><td><span class="cell-tag manual">Manual</span></td></tr>
       <tr><td class="cell-mono">Active</td><td class="cell-mono">Funded</td><td class="cell-trig">End date reached AND goal met</td><td><span class="cell-tag auto">Auto</span></td></tr>
       <tr><td class="cell-mono">Active</td><td class="cell-mono">Unsuccessful</td><td class="cell-trig">End date reached AND goal NOT met</td><td><span class="cell-tag auto">Auto</span></td></tr>
@@ -524,7 +516,7 @@
       <tr><td class="cell-mono">Funded</td><td class="cell-mono">Successful</td><td class="cell-trig">Recovery exhausted AND failure% ≤ threshold</td><td><span class="cell-tag auto">Auto</span></td></tr>
       <tr><td class="cell-mono">Funded</td><td class="cell-mono">Cancelled</td><td class="cell-trig">Recovery exhausted AND failure% &gt; threshold (auto-cancel + refund all)</td><td><span class="cell-tag auto">Auto</span></td></tr>
       <tr><td class="cell-mono">Successful</td><td class="cell-mono">In Progress</td><td class="cell-trig">System releases 80% tranche → status flip</td><td><span class="cell-tag auto">Auto</span></td></tr>
-      <tr><td class="cell-mono">In Progress</td><td class="cell-mono">Released</td><td class="cell-trig">Creator submits final product URL (Spotify · Music / Ztor OTT · Movies)</td><td><span class="cell-tag manual">Manual</span></td></tr>
+      <tr><td class="cell-mono">In Progress</td><td class="cell-mono">Released</td><td class="cell-trig">Creator submits final Spotify URL</td><td><span class="cell-tag manual">Manual</span></td></tr>
       <tr><td class="cell-mono">In Progress</td><td class="cell-mono">Cancelled</td><td class="cell-trig">Ops cancels (creator default / production failure / legal)</td><td><span class="cell-tag manual">Manual</span></td></tr>
       <tr><td class="cell-mono">Released</td><td class="cell-mono">—</td><td class="cell-trig">Terminal · ongoing royalty stream (no further state changes)</td><td><span class="cell-tag terminal">Terminal</span></td></tr>
       <tr><td class="cell-mono">Cancelled</td><td class="cell-mono">—</td><td class="cell-trig">Terminal · refunds processed by ops in Stripe back-office</td><td><span class="cell-tag terminal">Terminal</span></td></tr>

@@ -3,35 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crowdfund BRD v1 — Lifecycle</title>
+<title>New Beamco Crowdfund — Lifecycle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <style>
   :root {
-    --cds-background: #161616;
-    --cds-layer-01: #262626;
-    --cds-layer-02: #393939;
-    --cds-layer-03: #525252;
-    --cds-border-subtle: #393939;
-    --cds-border-strong: #6f6f6f;
-    --cds-text-primary: #f4f4f4;
-    --cds-text-secondary: #c6c6c6;
-    --cds-text-helper: #a8a8a8;
-    --cds-text-placeholder: #6f6f6f;
-    --cds-blue-50: #4589ff;
-    --cds-blue-60: #0f62fe;
-    --cds-blue-70: #0043ce;
-    --cds-green-50: #24a148;
-    --cds-green-60: #198038;
-    --cds-red-50: #fa4d56;
-    --cds-yellow-30: #f1c21b;
-    --cds-purple-60: #8a3ffc;
-    --cds-purple-50: #a56eff;
-    --cds-teal-50: #009d9a;
-    --cds-cyan-50: #1192e8;
-    --cds-magenta-50: #ee5396;
+    --cds-background: #ffffff;
+    --cds-layer-01: #f4f4f4;
+    --cds-layer-02: #ffffff;
+    --cds-layer-03: #e0e0e0;
+    --cds-border-subtle: #e0e0e0;
+    --cds-border-strong: #8d8d8d;
+    --cds-text-primary: #161616;
+    --cds-text-secondary: #525252;
+    --cds-text-helper: #6f6f6f;
+    --cds-text-placeholder: #a8a8a8;
+    --cds-blue-50: #0f62fe;
+    --cds-blue-60: #002d9c;
+    --cds-blue-70: #001141;
+    --cds-green-50: #198038;
+    --cds-green-60: #0e6027;
+    --cds-red-50: #da1e28;
+    --cds-yellow-30: #d9a900;
+    --cds-purple-60: #6929c4;
+    --cds-purple-50: #8a3ffc;
+    --cds-teal-50: #007d79;
+    --cds-cyan-50: #0072c3;
+    --cds-magenta-50: #d02670;
     --cds-cool-gray-50: #8d8d8d;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -146,7 +146,7 @@
 
 <div class="ui-shell">
   <div class="ui-shell-inner">
-    <h1>Crowdfund Lifecycle <span class="tag">BRD v1</span></h1>
+    <h1>New Beamco Crowdfund — Lifecycle <span class="tag">BRD v1</span></h1>
     <div class="subtitle">End-to-end journey of a campaign: Setup → Active → Funded → Successful → Released</div>
     <nav class="breadcrumb">
       <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
@@ -167,7 +167,7 @@
 <div class="canvas">
 
   <p class="body-long-01">
-    A unified lifecycle for both <span class="music">Music (Beamco)</span> and <span class="movies">Movies (Ztor)</span> campaigns. The shape is the same; product-specific differences (currency, share denomination, royalty source) only matter at the data layer. Lifecycle = 4 phases: <code>Setup</code> → <code>Live</code> → <code>Collection</code> → <code>Payout &amp; Release</code>.
+    End-to-end campaign lifecycle for the Beamco (Music) Crowdfund. Lifecycle = 4 phases: <code>Setup</code> → <code>Live</code> → <code>Collection</code> → <code>Payout &amp; Release</code>. These are the campaign's <em>state phases</em>, not delivery phases.
   </p>
 
   <div class="phase-strip">
@@ -215,15 +215,15 @@ flowchart TD
     T -->|Above| C[Cancelled · refund all · terminal]
     T -->|Below| S[Successful · release 80% to wallet]
     S --> IP[In Progress · creator produces work]
-    IP --> URL[Creator uploads product URL<br/>Spotify · Music / Ztor OTT · Movies]
+    IP --> URL[Creator uploads Spotify URL]
     URL --> RL[Released · 20% release · ongoing royalty]
     RL --> RY[Royalty cash flows to creator + fan wallets]
 
-    classDef ok fill:#0e3e23,stroke:#24a148,color:#a7f0ba
-    classDef bad fill:#3d0e10,stroke:#fa4d56,color:#ffd7d9
-    classDef neutral fill:#262626,stroke:#a8a8a8,color:#f4f4f4
-    classDef live fill:#0c2540,stroke:#1192e8,color:#bae6ff
-    classDef recovery fill:#2a0f3d,stroke:#8a3ffc,color:#d4bbff
+    classDef ok fill:#defbe6,stroke:#198038,color:#044317
+    classDef bad fill:#ffd7d9,stroke:#da1e28,color:#750e13
+    classDef neutral fill:#f4f4f4,stroke:#525252,color:#161616
+    classDef live fill:#d0e2ff,stroke:#0f62fe,color:#001d6c
+    classDef recovery fill:#f6f2ff,stroke:#6929c4,color:#31135e
     class A,A2,IP,URL neutral
     class B,P live
     class F,R recovery
@@ -260,7 +260,7 @@ flowchart TD
     </div>
     <div class="tl-row">
       <div class="tl-when">Weeks → months</div>
-      <div class="tl-what"><strong>Creator delivers</strong> → uploads <code>Spotify</code> (Music) or <code>Ztor OTT</code> (Movies) URL → status = <code>Released</code> → 20% tranche releases.</div>
+      <div class="tl-what"><strong>Creator delivers</strong> → uploads <code>Spotify</code> URL → status = <code>Released</code> → 20% tranche releases.</div>
     </div>
     <div class="tl-row">
       <div class="tl-when">Ongoing</div>
@@ -268,17 +268,17 @@ flowchart TD
     </div>
   </div>
 
-  <h2 class="productive-heading-02">Music vs Movies — where the lifecycle differs</h2>
-  <p class="helper-text">SAME LIFECYCLE SHAPE · DIFFERENCES ARE DATA POINTS + ROYALTY SOURCE</p>
+  <h2 class="productive-heading-02">Beamco-specific lifecycle notes</h2>
+  <p class="helper-text">DIFFERENCES VS A GENERIC CROWDFUNDING LIFECYCLE</p>
 
   <div class="split">
     <div class="col music">
-      <h4>♪ Music (Beamco)</h4>
-      <p>Setup uses royalty shares % + count. Publish = Now only. Engagement = creator-only Updates feed. Product URL = Spotify link. Royalty = Flow A (Beamco-as-label, manual weekly) OR Flow B (contributor on distributor) — TBD.</p>
+      <h4>♪ Setup</h4>
+      <p>Royalty shares % + count. Publish = Now only (no scheduled publish). Engagement = creator-only Updates feed. Product URL = Spotify link.</p>
     </div>
-    <div class="col movies">
-      <h4>▶ Movies (Ztor)</h4>
-      <p>Setup uses revenue shares % + count. Publish = Now + Schedule. Engagement = open Comments (with admin soft-delete). Product URL = Ztor OTT link. Royalty = instant from Ztor OTT pipeline. Creator wallet adds tastemaker referral fee row.</p>
+    <div class="col music">
+      <h4>♪ Monetization</h4>
+      <p>Royalty source = Music distributor — Flow A (Beamco-as-label, manual weekly extract) OR Flow B (contributor on distributor, distributor pull). Flow choice still open — see <a href="crowdfund-brd-v1-2026-05-24.html#oq-3">O3</a>.</p>
     </div>
   </div>
 
@@ -288,13 +288,13 @@ flowchart TD
   mermaid.initialize({
     startOnLoad: true, theme: 'base',
     themeVariables: {
-      darkMode: true,
-      background: '#262626',
-      primaryColor: '#393939', primaryTextColor: '#f4f4f4', primaryBorderColor: '#6f6f6f',
-      lineColor: '#a8a8a8', secondaryColor: '#393939', tertiaryColor: '#262626',
-      mainBkg: '#393939', secondBkg: '#393939', nodeBorder: '#6f6f6f',
-      clusterBkg: '#262626', clusterBorder: '#393939',
-      defaultLinkColor: '#a8a8a8',
+      darkMode: false,
+      background: '#ffffff',
+      primaryColor: '#f4f4f4', primaryTextColor: '#161616', primaryBorderColor: '#8d8d8d',
+      lineColor: '#525252', secondaryColor: '#f4f4f4', tertiaryColor: '#ffffff',
+      mainBkg: '#f4f4f4', secondBkg: '#ffffff', nodeBorder: '#8d8d8d',
+      clusterBkg: '#f4f4f4', clusterBorder: '#e0e0e0',
+      defaultLinkColor: '#525252',
       fontFamily: '"IBM Plex Sans", -apple-system, sans-serif',
       fontSize: '14px'
     },
