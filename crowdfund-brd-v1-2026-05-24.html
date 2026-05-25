@@ -90,6 +90,8 @@
   }
   .breadcrumb a.ext { color: var(--cds-cyan-50); }
   .breadcrumb a.ext::after { content: " ↗"; opacity: 0.7; }
+  .breadcrumb a.proto { color: var(--cds-magenta-50); font-weight: 500; }
+  .breadcrumb-divider { color: var(--cds-text-placeholder); padding: 0 6px; font-size: 12px; }
 
   /* ─── Layout ─── */
   .canvas { max-width: 1280px; margin: 0 auto; padding: 32px; }
@@ -448,6 +450,10 @@
       <a class="ext" href="crowdfund-brd-v1-lifecycle.html">Lifecycle</a>
       <a class="ext" href="crowdfund-brd-v1-state-machine.html">State machine</a>
       <a class="ext" href="crowdfund-brd-v1-payment-retry.html">Payment retry</a>
+      <span class="breadcrumb-divider" aria-hidden="true">·</span>
+      <a class="ext proto" href="https://beamco-cf-fans-proto.vercel.app" target="_blank" rel="noopener noreferrer">Fans proto</a>
+      <a class="ext proto" href="https://beamco-cf-admin-proto.vercel.app" target="_blank" rel="noopener noreferrer">Admin proto</a>
+      <a class="ext proto" href="https://beamco-cf-creator-proto.vercel.app" target="_blank" rel="noopener noreferrer">Creator proto</a>
     </nav>
   </div>
 </header>
