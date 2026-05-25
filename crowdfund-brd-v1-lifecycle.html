@@ -147,7 +147,7 @@
 <div class="ui-shell">
   <div class="ui-shell-inner">
     <h1>New Beamco Crowdfund — Lifecycle <span class="tag">BRD v1</span></h1>
-    <div class="subtitle">End-to-end journey of a campaign: Setup → Active → Funded → Successful → Released</div>
+    <div class="subtitle">Setup → Active → Goal Achieved → Successful → Released · updated 2026-05-25 (Funded → Goal Achieved · ops manual review · ops submits URL)</div>
     <nav class="breadcrumb">
       <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
       <a href="crowdfund-brd-v1-lifecycle.html" class="current">Lifecycle</a>
@@ -209,15 +209,16 @@ flowchart TD
     P --> B
     B --> E{End date reached?}
     E -->|Goal not met| U[Unsuccessful · terminal<br/>Zero charges · no refund needed]
-    E -->|Goal met| F[Funded · batch charge cards]
+    E -->|Goal met| F[Goal Achieved · batch charge cards]
     F --> R[Recovery loop · 3d retry + 7d email + waitlist swap]
-    R --> T{Failure % > threshold?}
-    T -->|Above| C[Cancelled · refund all · terminal]
-    T -->|Below| S[Successful · release 80% to wallet]
+    R --> T[Ops reviews via BR-32 dashboard<br/>successful · failed · waitlist amounts]
+    T --> TD{Ops decision}
+    TD -->|Cancel + refund| C[Cancelled · ops triggers refund-all · terminal]
+    TD -->|Proceed| S[Successful · ops releases 80% to wallet]
     S --> IP[In Progress · creator produces work]
-    IP --> URL[Creator uploads Spotify URL]
-    URL --> RL[Released · 20% release · ongoing royalty]
-    RL --> RY[Royalty cash flows to creator + fan wallets]
+    IP --> URL[Ops uploads Spotify URL<br/>BR-35 walkthrough update]
+    URL --> RL[Released · 20% release]
+    RL --> RY[Post-MVP · royalty reporting deferred]
 
     classDef ok fill:#defbe6,stroke:#198038,color:#044317
     classDef bad fill:#ffd7d9,stroke:#da1e28,color:#750e13
@@ -252,7 +253,7 @@ flowchart TD
     </div>
     <div class="tl-row">
       <div class="tl-when">Day 50</div>
-      <div class="tl-what"><strong>Threshold check.</strong> If failure% &gt; threshold → cancel + refund all. Else → status = <code>Successful</code> + first tranche (80%) released.</div>
+      <div class="tl-what"><strong>Ops manual review (BR-32).</strong> Ops dashboard shows successful · failed · waitlist amounts. Ops decides: proceed → status = <code>Successful</code> + first tranche (80%) released, or cancel → refund-all via Stripe back-office.</div>
     </div>
     <div class="tl-row">
       <div class="tl-when">Day 50 → 60</div>
@@ -260,11 +261,11 @@ flowchart TD
     </div>
     <div class="tl-row">
       <div class="tl-when">Weeks → months</div>
-      <div class="tl-what"><strong>Creator delivers</strong> → uploads <code>Spotify</code> URL → status = <code>Released</code> → 20% tranche releases.</div>
+      <div class="tl-what"><strong>Creator delivers</strong> → <strong>ops uploads</strong> the <code>Spotify</code> URL on creator's behalf (BR-35 is now an ops action per 2026-05-24 walkthrough) → status = <code>Released</code> → 20% tranche releases.</div>
     </div>
     <div class="tl-row">
-      <div class="tl-when">Ongoing</div>
-      <div class="tl-what"><strong>Royalty cash flows.</strong> Shares-to-cash bridge converts share holdings into withdrawable cash in fan + creator wallets (≥ USD 50 to withdraw).</div>
+      <div class="tl-when">Post-MVP</div>
+      <div class="tl-what"><strong>Royalty reporting deferred</strong> (BR-36) — royalty revenue won't arrive until 2+ months after launch. Royalty withdraw (BR-37/38) deferred with it. Fan wallet (BR-49) deferred to mid-July.</div>
     </div>
   </div>
 
