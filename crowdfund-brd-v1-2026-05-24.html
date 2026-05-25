@@ -249,20 +249,31 @@
   .q {
     background: var(--cds-layer-01); padding: 12px 14px 12px 40px;
     position: relative; font-size: 13px; line-height: 1.5;
-    border-left: 2px solid var(--cds-yellow-30);
+    border-left: 3px solid var(--cds-yellow-30);
   }
-  .q.blocking { border-left-color: var(--cds-red-50); }
-  .q.closed { border-left-color: var(--cds-green-50); opacity: 0.72; }
-  .q.closed .n { background: var(--cds-green-50); color: var(--cds-text-on-color); }
+  /* 3-color semantic scheme · added 2026-05-25 */
+  .q.assumed { border-left-color: var(--cds-green-50); background: rgba(25,128,56,0.06); }
+  .q.pending { border-left-color: var(--cds-yellow-30); background: rgba(217,169,0,0.06); }
+  .q.future  { border-left-color: var(--cds-blue-50); background: rgba(15,98,254,0.05); opacity: 0.85; }
   .q .n {
     position: absolute; left: 12px; top: 13px;
     width: 20px; height: 20px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 9px; font-weight: 600;
-    background: var(--cds-yellow-30); color: var(--cds-background);
+    color: var(--cds-text-on-color);
     font-family: 'IBM Plex Mono', monospace;
   }
-  .q.blocking .n { background: var(--cds-red-50); color: var(--cds-text-on-color); }
+  .q.assumed .n { background: var(--cds-green-50); }
+  .q.pending .n { background: var(--cds-yellow-30); color: var(--cds-background); }
+  .q.future  .n { background: var(--cds-blue-50); }
+  .q .q-cat {
+    display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; padding: 1px 6px; border-radius: 3px;
+    margin-right: 8px; vertical-align: middle; font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .q.assumed .q-cat { background: rgba(25,128,56,0.18); color: var(--cds-green-50); border: 1px solid var(--cds-green-50); }
+  .q.pending .q-cat { background: rgba(217,169,0,0.22); color: var(--cds-yellow-30); border: 1px solid var(--cds-yellow-30); }
+  .q.future  .q-cat { background: rgba(15,98,254,0.15); color: var(--cds-blue-50); border: 1px solid var(--cds-blue-50); }
   .q strong { color: var(--cds-text-primary); font-weight: 600; }
   .q .det { color: var(--cds-text-secondary); font-size: 12.5px; margin-top: 2px; }
   .q .own { font-size: 11px; color: var(--cds-blue-50); margin-top: 4px; font-family: 'IBM Plex Mono', monospace; }
@@ -279,6 +290,23 @@
     padding: 1px 6px; font-size: 9.5px; font-weight: 600;
     letter-spacing: 0.4px; margin-left: 6px; text-transform: uppercase;
     font-family: 'IBM Plex Mono', monospace;
+  }
+  /* Inline row badges for updated/deferred BRs · added 2026-05-25 */
+  .upd-badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 1px 6px; border-radius: 3px; margin-right: 8px;
+    background: rgba(105,41,196,0.14); color: var(--cds-purple-60);
+    border: 1px solid var(--cds-purple-60);
+    font-family: 'IBM Plex Sans', sans-serif; vertical-align: middle;
+  }
+  .def-badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 1px 6px; border-radius: 3px; margin-right: 8px;
+    background: rgba(15,98,254,0.12); color: var(--cds-blue-50);
+    border: 1px solid var(--cds-blue-50);
+    font-family: 'IBM Plex Sans', sans-serif; vertical-align: middle;
   }
 
   /* ─── Footer ─── */
@@ -330,6 +358,75 @@
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
     html { scroll-behavior: auto; }
   }
+
+  /* ─── Tab strip ─── */
+  .tab-strip {
+    display: flex; gap: 0; align-items: stretch;
+    border-bottom: 1px solid var(--cds-border-subtle);
+    margin-bottom: 24px;
+  }
+  .tab-strip .tab {
+    padding: 12px 20px; font-size: 14px; font-weight: 500;
+    color: var(--cds-text-secondary); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px; transition: all 0.11s;
+    text-decoration: none; background: transparent;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .tab-strip .tab:hover { color: var(--cds-text-primary); background: var(--cds-layer-01); }
+  .tab-strip .tab.active {
+    color: var(--cds-text-primary); border-bottom-color: var(--cds-blue-50);
+    background: var(--cds-layer-02); font-weight: 600;
+  }
+  .tab-panel { display: block; }
+  body.view-build .tab-panel#view-spreadsheet { display: none; }
+  body:not(.view-build) .tab-panel#view-build { display: none; }
+
+  /* ─── Build view ─── */
+  .build-banner {
+    background: linear-gradient(135deg, rgba(15,98,254,0.06), rgba(105,41,196,0.04));
+    border-left: 3px solid var(--cds-blue-50);
+    padding: 16px 20px; margin-bottom: 28px;
+  }
+  .build-banner h2 { font-size: 20px; font-weight: 600; color: var(--cds-text-primary); margin-bottom: 6px; }
+  .build-banner p { font-size: 13.5px; color: var(--cds-text-secondary); margin-bottom: 4px; }
+  .build-stats {
+    display: flex; gap: 24px; margin-top: 12px; flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .build-stats .stat { display: inline-flex; align-items: center; gap: 6px; }
+  .build-stats .stat strong { font-size: 18px; font-weight: 600; }
+  .build-stats .stat.tb strong { color: var(--cds-green-50); }
+  .build-stats .stat.tm strong { color: var(--cds-orange-40); }
+  .build-stats .stat.def strong { color: var(--cds-blue-50); }
+
+  .audience-section { margin-bottom: 40px; }
+  .audience-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; margin-bottom: 12px;
+    background: var(--cds-layer-01); border-left: 4px solid;
+  }
+  .audience-head .a-icon { font-size: 24px; }
+  .audience-head .a-name { font-size: 18px; font-weight: 600; color: var(--cds-text-primary); }
+  .audience-head .a-count {
+    margin-left: auto; font-size: 12px; color: var(--cds-text-helper);
+    font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.3px;
+  }
+  .audience-section.fans .audience-head { border-left-color: var(--cds-cyan-50); }
+  .audience-section.creator .audience-head { border-left-color: var(--cds-purple-60); }
+  .audience-section.admin .audience-head { border-left-color: var(--cds-yellow-30); }
+  .audience-deferred {
+    margin-top: 14px; background: var(--cds-layer-01);
+    border-left: 2px solid var(--cds-blue-50);
+    padding: 10px 14px; font-size: 12.5px; color: var(--cds-text-secondary);
+  }
+  .audience-deferred strong { color: var(--cds-blue-50); font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase; }
+  .audience-deferred .chip-list { margin-top: 4px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .audience-deferred .chip-list span {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    background: var(--cds-layer-02); padding: 1px 6px; border-radius: 3px;
+    color: var(--cds-text-secondary); border: 1px solid var(--cds-border-subtle);
+  }
 </style>
 </head>
 <body>
@@ -356,6 +453,15 @@
 </header>
 
 <main class="canvas">
+
+  <!-- Tab strip -->
+  <div class="tab-strip" role="tablist">
+    <a href="#view-spreadsheet" class="tab active" data-tab="view-spreadsheet" role="tab">📋 Spreadsheet view</a>
+    <a href="#view-build" class="tab" data-tab="view-build" role="tab">🔨 Build view</a>
+  </div>
+
+  <!-- ════════════════════ SPREADSHEET VIEW (default) ════════════════════ -->
+  <div id="view-spreadsheet" class="tab-panel">
 
   <div class="notification">
     <span class="icon">●</span>
@@ -429,11 +535,11 @@
       Numbers carry over from the source <a href="https://docs.google.com/spreadsheets/d/1kKxOrNJ54ynOT-VChpDyc1NSEpPWxSlo4OCmrAmFCeQ/edit?gid=497901104">Google Sheet</a>. Movies-only rows are dimmed and tagged <span class="tag-pill origin-movies">MOVIES-ONLY</span> — they live in a separate Ztor BRD and are out of scope here, kept for audit traceability. Scope: <span class="tag-pill scope-shared">Shared</span> = applies to all roles · <span class="tag-pill scope-music">Music</span> = Music-specific (royalty / distributor logic) · <span class="tag-pill scope-movies">Movies</span> = Movies-only (out of scope). Status (vs production today): <span class="tag-pill origin-new">TO BUILD</span> = doesn't exist, full new build · <span class="tag-pill origin-changed">TO MODIFY</span> = exists, needs material change · <span class="tag-pill origin-carried">AS-IS</span> = exists and works as-is.
     </p>
 
-    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Setup — backend (BR-1 → BR-10)</h3>
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Setup — backend (BR-1 → BR-9)</h3>
     <table class="cds-data-table">
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-origin">Status</th><th class="col-remark">Remark</th></tr></thead>
       <tbody>
-        <tr><td class="cell-mono">BR-1</td><td class="cell-desc"><strong>Fundraising target cap.</strong> Max $5M per campaign. Admin enforces manually — no platform validation in MVP.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Config already built — just raise the existing cap (SGD 20,000 today) to $5M. Manual enforcement.</td></tr>
+        <tr><td class="cell-mono">BR-1</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Fundraising target cap.</strong> Max $5M per campaign. Admin enforces manually — no platform validation in MVP.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Config already built — just raise the existing cap (SGD 20,000 today) to $5M. Manual enforcement.</td></tr>
         <tr><td class="cell-mono">BR-2</td><td class="cell-desc"><strong>Backer cap.</strong> No limit on number of backers per campaign.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Existing system already supports this.</td></tr>
         <tr><td class="cell-mono">BR-3</td><td class="cell-desc"><strong>Campaign duration cap.</strong> Max 30 days. Manually enforced; no platform validation in MVP.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Existing system already supports this.</td></tr>
         <tr><td class="cell-mono">BR-4</td><td class="cell-desc"><strong>Waitlist (frontend).</strong> Once all shares sold, waitlist opens. Waitlisters lock payment + package + email for manual recovery flow.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New feature — does not exist today.</td></tr>
@@ -442,20 +548,16 @@
         <tr><td class="cell-mono">BR-7</td><td class="cell-desc"><strong>Fundraising packages.</strong> Max 3 per campaign. All packages must include royalty shares; package bundling (multiple items per package) is required.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Feature already exists.</td></tr>
         <tr><td class="cell-mono">BR-8</td><td class="cell-desc"><strong>Cover image.</strong> Portrait + landscape supported. High quality required.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Feature already exists.</td></tr>
         <tr><td class="cell-mono">BR-9</td><td class="cell-desc"><strong>Multimedia uploads.</strong> Multi-file (video, audio, images). Shown in separate section from cover.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Feature already exists.</td></tr>
-        <tr class="row-movies"><td class="cell-mono">BR-10</td><td class="cell-desc"><strong>Social media links (setup).</strong> Movies: admin hyperlinks IG / YouTube / TikTok / custom URL. Music: not needed — storefront already has it.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="tag-pill origin-movies">MOVIES-ONLY</span></td><td class="cell-remark">Out of scope for Beamco — see separate Ztor BRD.</td></tr>
       </tbody>
     </table>
 
-    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Setup — shares &amp; currency (BR-11 → BR-20)</h3>
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-primary);margin:24px 0 10px 0;letter-spacing:0.16px;">▸ Setup — shares &amp; currency (BR-12 → BR-20)</h3>
     <table class="cds-data-table">
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-origin">Status</th><th class="col-remark">Remark</th></tr></thead>
       <tbody>
-        <tr class="row-movies"><td class="cell-mono">BR-11</td><td class="cell-desc"><strong>Social media links (display).</strong> Movies-only: fan can click linked accounts and jump to platform.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="tag-pill origin-movies">MOVIES-ONLY</span></td><td class="cell-remark">Out of scope for Beamco — see separate Ztor BRD.</td></tr>
         <tr><td class="cell-mono">BR-12</td><td class="cell-desc"><strong>Total royalty shares %.</strong> Input total royalty shares offered as percentage of future Music revenue.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Feature already exists.</td></tr>
         <tr><td class="cell-mono">BR-13</td><td class="cell-desc"><strong>Total number of royalty shares.</strong> Input total royalty share count (number of share units issued).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Feature already exists.</td></tr>
-        <tr class="row-movies"><td class="cell-mono">BR-14</td><td class="cell-desc"><strong>Revenue shares offered %.</strong> Movies only — expressed as %.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="tag-pill origin-movies">MOVIES-ONLY</span></td><td class="cell-remark">Out of scope for Beamco — see separate Ztor BRD.</td></tr>
-        <tr class="row-movies"><td class="cell-mono">BR-15</td><td class="cell-desc"><strong>Number of shares available.</strong> Movies only — count of shares.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="tag-pill origin-movies">MOVIES-ONLY</span></td><td class="cell-remark">Out of scope for Beamco — see separate Ztor BRD.</td></tr>
-        <tr><td class="cell-mono">BR-16</td><td class="cell-desc"><strong>Currency selection.</strong> SGD or USD as settlement currency. Locked once campaign is published.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Needs modification. See <a class="oq-link" href="#oq-12">O12</a> for picker + TWD-creator settlement question.</td></tr>
+        <tr><td class="cell-mono">BR-16</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Currency selection — split.</strong> <strong>Creator settlement:</strong> SGD or USD only (locked at publish). <strong>Fan pledging:</strong> any platform-supported currency (MYR / SGD / TWD / USD). FX conversion happens at charge time from fan's pledge currency → creator's settlement currency.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark"><strong>Creator side</strong> = restrict picker to SGD/USD only. <strong>Fan side</strong> = keep all 4 platform currencies. FX conversion model is the open question — see <a class="oq-link" href="#oq-12">O12</a>.</td></tr>
         <tr><td class="cell-mono">BR-17</td><td class="cell-desc"><strong>Currency display (storefront).</strong> Creator's chosen currency primary · fan's local currency (IP-based) in smaller text as reference.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Assuming local-currency display is limited to platform-supported currencies (MYR, TWD) — not arbitrary IP-derived currencies.</td></tr>
         <tr><td class="cell-mono">BR-18</td><td class="cell-desc"><strong>Membership card.</strong> Not required for MVP — defer to roadmap.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Already exists.</td></tr>
         <tr><td class="cell-mono">BR-19</td><td class="cell-desc"><strong>Fund allocation.</strong> Keep current UAT version in MVP.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Already exists.</td></tr>
@@ -472,8 +574,8 @@
         <tr><td class="cell-mono">BR-23</td><td class="cell-desc"><strong>Disable edit after publish.</strong> All fields locked once published.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Management feature is only accessible by admin.</td></tr>
         <tr><td class="cell-mono">BR-24</td><td class="cell-desc"><strong>Delete campaign (draft only).</strong> Delete enabled in draft; disabled after publish.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Already exists.</td></tr>
         <tr><td class="cell-mono">BR-25</td><td class="cell-desc"><strong>Cancel published campaign.</strong> Once published, only cancellable. Listing stays with Cancelled status; no new pledges; refund all backers.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Needs modification.</td></tr>
-        <tr><td class="cell-mono">BR-26</td><td class="cell-desc"><strong>Campaign statuses.</strong> Draft / Active / Cancelled / <strong>Goal Achieved</strong> / Successful / Unsuccessful + In Progress / Released. See <a href="crowdfund-brd-v1-state-machine.html">state machine</a>.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark"><strong>Rename "Funded" → "Goal Achieved"</strong> (payment not yet collected at this point). <strong>Only Goal Achieved + Unsuccessful auto-flip</strong>; every other transition is a manual ops action. Combine campaign + project status into a single column. Mirror Store implementation. <em>Walkthrough 2026-05-24.</em></td></tr>
-        <tr><td class="cell-mono">BR-27</td><td class="cell-desc"><strong>Updates (was "Project Story").</strong> Creator-posts-only Updates section on the campaign page · no fan commenting in MVP · renamed to match Kickstarter convention. <strong>Duplicate the feature into the creator dashboard</strong> so Report-only creators (per BR-N1) can post Updates without full campaign-management access.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Underlying feature exists on the campaign page. <strong>New work: duplicate it into the creator dashboard</strong> so Report-only role can use it. <em>Walkthrough 2026-05-24.</em></td></tr>
+        <tr><td class="cell-mono">BR-26</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Campaign statuses.</strong> Draft / Active / Cancelled / <strong>Goal Achieved</strong> / Successful / Unsuccessful + In Progress / Released. See <a href="crowdfund-brd-v1-state-machine.html">state machine</a>.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark"><strong>Rename "Funded" → "Goal Achieved"</strong> (payment not yet collected at this point). <strong>Only Goal Achieved + Unsuccessful auto-flip</strong>; every other transition is a manual ops action. Combine campaign + project status into a single column. Mirror Store implementation. <em>Walkthrough 2026-05-24.</em></td></tr>
+        <tr><td class="cell-mono">BR-27</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Updates (was "Project Story").</strong> Creator-posts-only Updates section on the campaign page · no fan commenting in MVP · renamed to match Kickstarter convention. <strong>Duplicate the feature into the creator dashboard</strong> so Report-only creators (per BR-N1) can post Updates without full campaign-management access.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Underlying feature exists on the campaign page. <strong>New work: duplicate it into the creator dashboard</strong> so Report-only role can use it. <em>Walkthrough 2026-05-24.</em></td></tr>
       </tbody>
     </table>
 
@@ -485,10 +587,10 @@
         <tr><td class="cell-mono">BR-29</td><td class="cell-desc"><strong>Auto-retry (Stripe smart retry).</strong> If decline, system silently retries 3 days (day 1, 2, 3) in background.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New build.</td></tr>
         <tr><td class="cell-mono">BR-30</td><td class="cell-desc"><strong>Manual recovery email.</strong> After auto-retry fails, system emails backer with URL to update payment. 7-day window.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New build.</td></tr>
         <tr><td class="cell-mono">BR-31</td><td class="cell-desc"><strong>Waitlist replacement.</strong> If still failing on day 10, drop original + pull next waitlister + run SAME 3+7 cycle.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New build.</td></tr>
-        <tr><td class="cell-mono">BR-32</td><td class="cell-desc"><strong>Failure threshold check — MANUAL ops review</strong>, not automated. After all recovery exhausted, ops dashboard shows: successful charges · failed charges · waitlist pledge amounts. <strong>Ops decides</strong> whether to proceed to Successful + 80% payout, or cancel + refund-all. (<a class="oq-link" href="#oq-1">O1</a>)</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New build. <strong>Flipped from automated threshold → manual ops review</strong> in 2026-05-24 walkthrough. Waitlist coverage calc still TBD (Jesse).</td></tr>
-        <tr><td class="cell-mono">BR-33</td><td class="cell-desc"><strong>Payout from Stripe to creator wallet.</strong> Two-tranche payout. Depends on Stripe Connect (<a class="oq-link" href="#oq-2">O2</a>).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Stripe Connect would require onboarding each creator's Stripe account — heavy. <strong>Suggest manual Finance bank transfer for MVP</strong> and revisit Connect later. Feeds <a class="oq-link" href="#oq-2">O2</a>.</td></tr>
+        <tr><td class="cell-mono">BR-32</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Failure threshold check — MANUAL ops review</strong>, not automated. After all recovery exhausted, ops dashboard shows: successful charges · failed charges · waitlist pledge amounts. <strong>Ops decides</strong> whether to proceed to Successful + 80% payout, or cancel + refund-all. (<a class="oq-link" href="#oq-1">O1</a>)</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New build. <strong>Flipped from automated threshold → manual ops review</strong> in 2026-05-24 walkthrough. Waitlist coverage calc still TBD (Jesse).</td></tr>
+        <tr><td class="cell-mono">BR-33</td><td class="cell-desc"><span class="def-badge">⏸ Deferred 2026-05-25</span><strong>Payout from Stripe to creator wallet — DEFERRED.</strong> Two-tranche payout via Stripe Connect deferred to post-MVP. MVP uses manual Finance bank transfer (creator wallet shows the credited balance; Finance triggers off-platform).</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to post-MVP</strong> per 2026-05-25 review. MVP path = manual Finance bank transfer (no Stripe Connect onboarding for creators). Resolves O2 — Connect revisited later.</td></tr>
         <tr><td class="cell-mono">BR-34</td><td class="cell-desc"><strong>Withdraw funds from wallet.</strong> After $ on wallet, creator clicks Withdraw.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Creator withdraw already exists.</td></tr>
-        <tr><td class="cell-mono">BR-35</td><td class="cell-desc"><strong>Submit final product URL (Spotify) — OPS action.</strong> Ops submits the Spotify release URL on the creator's behalf after track ships. Triggers the remainder 20% payout.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New build — Spotify URL submission UI (back office) + 20% payout trigger. <strong>Flipped from creator action → ops action</strong> in 2026-05-24 walkthrough.</td></tr>
+        <tr><td class="cell-mono">BR-35</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Submit final product URL (Spotify) — OPS action.</strong> Ops submits the Spotify release URL on the creator's behalf after track ships. Triggers the remainder 20% payout.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New build — Spotify URL submission UI (back office) + 20% payout trigger. <strong>Flipped from creator action → ops action</strong> in 2026-05-24 walkthrough.</td></tr>
       </tbody>
     </table>
 
@@ -496,12 +598,12 @@
     <table class="cds-data-table">
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-origin">Status</th><th class="col-remark">Remark</th></tr></thead>
       <tbody>
-        <tr><td class="cell-mono">BR-36</td><td class="cell-desc"><strong>Royalties reporting — DEFERRED to post-MVP.</strong> Royalty revenue won't arrive until 2+ months after launch. Flow A (Beamco-as-label, manual weekly) is the MVP path; Flow B deferred (<a class="oq-link" href="#oq-3">O3</a>). Continue building the requirement; ship in a later release.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to post-MVP</strong> per 2026-05-24 walkthrough. Spec work continues; build follows in next release. Sam still owes example reports.</td></tr>
-        <tr><td class="cell-mono">BR-37</td><td class="cell-desc"><strong>Withdraw royalties (creator) — DEFERRED</strong> with BR-36. Withdraw once ≥ USD 50, when royalty reporting ships in a later release.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to post-MVP</strong> with BR-36 per 2026-05-24 walkthrough. Royalty revenue arrives 2+ months post-launch.</td></tr>
-        <tr><td class="cell-mono">BR-38</td><td class="cell-desc"><strong>Withdraw royalties (fan) — DEFERRED</strong> with BR-36 + BR-49.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to post-MVP</strong> with BR-36 + BR-49 fan wallet (mid-July).</td></tr>
+        <tr><td class="cell-mono">BR-36</td><td class="cell-desc"><span class="def-badge">⏸ Deferred 2026-05-25</span><strong>Royalties reporting — DEFERRED to post-MVP.</strong> Royalty revenue won't arrive until 2+ months after launch. Flow A (Beamco-as-label, manual weekly) is the MVP path; Flow B deferred (<a class="oq-link" href="#oq-3">O3</a>). Continue building the requirement; ship in a later release.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to post-MVP</strong> per 2026-05-24 walkthrough. Spec work continues; build follows in next release. Sam still owes example reports.</td></tr>
+        <tr><td class="cell-mono">BR-37</td><td class="cell-desc"><span class="def-badge">⏸ Deferred 2026-05-25</span><strong>Withdraw royalties (creator) — DEFERRED</strong> with BR-36. Withdraw once ≥ USD 50, when royalty reporting ships in a later release.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to post-MVP</strong> with BR-36 per 2026-05-24 walkthrough. Royalty revenue arrives 2+ months post-launch.</td></tr>
+        <tr><td class="cell-mono">BR-38</td><td class="cell-desc"><span class="def-badge">⏸ Deferred 2026-05-25</span><strong>Withdraw royalties (fan) — DEFERRED</strong> with BR-36 + BR-49.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to post-MVP</strong> with BR-36 + BR-49 fan wallet (mid-July).</td></tr>
         <tr><td class="cell-mono">BR-39</td><td class="cell-desc"><strong>Campaign dashboard.</strong> View of campaigns (draft / published / cancelled). Columns scope still TBD — see <a class="oq-link" href="#oq-8">O8</a>.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>Suggest bundling into the BR-36 Creator Reporting build</strong> — single reporting module for the creator portal.</td></tr>
         <tr><td class="cell-mono">BR-40</td><td class="cell-desc"><strong>Overview tab.</strong> Progress · roadmap · payment breakdown · royalty splits · Spotify URL upload field.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>Suggest bundling into the BR-36 Creator Reporting build</strong> — part of the same module.</td></tr>
-        <tr><td class="cell-mono">BR-41</td><td class="cell-desc"><strong>Payout breakdown + new fee field.</strong> Add a new <code>Crowdfund project platform fee</code> field in the back-office fee schema (sibling to existing Physical 10% · Virtual 10% · Activity 5% product fee ratios) = <strong>5%</strong>. <strong>Change Payment fee ratio: 3.4% → 4%</strong> (Susan confirmed; Sam had suggested 5% — Susan's 4% wins). Breakdown lines: raised · successfully charged · unsuccessfully charged · payment fee 4% · crowdfund platform fee 5% · final · 80% · 20%.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>New crowdfund platform fee field</strong> added to back-office fee schema (5%). Payment fee 3.4% → 4%. Open Q: is the 4% change platform-wide or crowdfund-only? See <a class="oq-link" href="#oq-12">O12</a>. <strong>Manual processing for MVP</strong> — Finance computes off-platform, UI displays final numbers.</td></tr>
+        <tr><td class="cell-mono">BR-41</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Payout breakdown + new fee field.</strong> Add a new <code>Crowdfund project platform fee</code> field in the back-office fee schema (sibling to existing Physical 10% · Virtual 10% · Activity 5% product fee ratios) = <strong>5%</strong>. <strong>Change Payment fee ratio: 3.4% → 4%</strong> (Susan confirmed; Sam had suggested 5% — Susan's 4% wins). Breakdown lines: raised · successfully charged · unsuccessfully charged · payment fee 4% · crowdfund platform fee 5% · final · 80% · 20%.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>New crowdfund platform fee field</strong> added to back-office fee schema (5%). Payment fee 3.4% → 4%. Open Q: is the 4% change platform-wide or crowdfund-only? See <a class="oq-link" href="#oq-12">O12</a>. <strong>Manual processing for MVP</strong> — Finance computes off-platform, UI displays final numbers.</td></tr>
         <tr><td class="cell-mono">BR-42</td><td class="cell-desc"><strong>Order history tab.</strong> Backer name · package · price · items · fulfillment status · % royalties · payment status.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>Part of the BR-36 Creator Reporting build.</strong></td></tr>
         <tr><td class="cell-mono">BR-43</td><td class="cell-desc"><strong>Export order history (CSV).</strong> Filter date range and export.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>Part of the BR-36 Creator Reporting build.</strong></td></tr>
         <tr><td class="cell-mono">BR-44</td><td class="cell-desc"><strong>Search backer / order.</strong> Search in Order tab. Nice-to-have.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>Part of the BR-36 Creator Reporting build.</strong></td></tr>
@@ -515,8 +617,8 @@
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-origin">Status</th><th class="col-remark">Remark</th></tr></thead>
       <tbody>
         <tr><td class="cell-mono">BR-47</td><td class="cell-desc"><strong>Backer email at checkout.</strong> Request email during checkout for failure-recovery contact.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Already exists.</td></tr>
-        <tr><td class="cell-mono">BR-48</td><td class="cell-desc"><strong>Fan's order details page (for crowdfund) — TO BUILD.</strong> Crowdfund order detail page doesn't exist on the fans site today. Shows purchased package + payment status (not yet charged / charged / failed) + download link to fan-creator contract (BR-C1).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>Reclassified TO BUILD</strong> in 2026-05-24 walkthrough. Crowdfund-specific order detail page needs to be built on the fans site.</td></tr>
-        <tr><td class="cell-mono">BR-49</td><td class="cell-desc"><strong>Fan Wallet — DEFERRED to mid-July.</strong> $50 minimum withdraw threshold unlikely to be hit during the MVP window. Out of June 30 release.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to mid-July</strong> per 2026-05-24 walkthrough. Pairs with BR-38 fan-royalty withdraw deferral.</td></tr>
+        <tr><td class="cell-mono">BR-48</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Fan's order details page (for crowdfund) — TO BUILD.</strong> Crowdfund order detail page doesn't exist on the fans site today. Shows purchased package + payment status (not yet charged / charged / failed) + download link to fan-creator contract (BR-C1).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>Reclassified TO BUILD</strong> in 2026-05-24 walkthrough. Crowdfund-specific order detail page needs to be built on the fans site.</td></tr>
+        <tr><td class="cell-mono">BR-49</td><td class="cell-desc"><span class="def-badge">⏸ Deferred 2026-05-25</span><strong>Fan Wallet — DEFERRED to mid-July.</strong> $50 minimum withdraw threshold unlikely to be hit during the MVP window. Out of June 30 release.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to mid-July</strong> per 2026-05-24 walkthrough. Pairs with BR-38 fan-royalty withdraw deferral.</td></tr>
         <tr><td class="cell-mono">BR-C1</td><td class="cell-desc"><strong>Fan-Creator contract (same as BR-C2) — backer-side download.</strong> Once payment is successfully charged, the contract becomes available for download from the backer's order detail page (BR-48). Same contract content as BR-C2, just a different surface.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark"><strong>Same contract as BR-C2</strong>; C1 is the backer-download surface (depends on BR-48). Final legal copy pending Sam.</td></tr>
         <tr><td class="cell-mono">BR-C2</td><td class="cell-desc"><strong>Fan-Creator contract (same as BR-C1) — checkout-side display.</strong> Backer accepts contract + shares email at checkout. On payment success after end date: e-contract emailed to backer.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark"><strong>Same contract as BR-C1</strong>; C2 is the checkout-accept surface. Final legal copy pending Sam.</td></tr>
       </tbody>
@@ -539,6 +641,18 @@
         </tbody>
       </table>
     </div>
+
+    <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-helper);margin:32px 0 6px 0;letter-spacing:0.16px;">▸ Movies-only — out of scope (audit only)</h3>
+    <p class="body-long-01" style="margin-bottom:10px;font-size:12.5px;color:var(--cds-text-helper);">Kept for biz-spreadsheet traceability. These rows live in a separate Ztor BRD; <strong>not in scope for Beamco MVP</strong>.</p>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-origin">Status</th><th class="col-remark">Remark</th></tr></thead>
+      <tbody>
+        <tr class="row-movies"><td class="cell-mono">BR-10</td><td class="cell-desc"><strong>Social media links (setup).</strong> Movies: admin hyperlinks IG / YouTube / TikTok / custom URL. Music: not needed — storefront already has it.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="tag-pill origin-movies">MOVIES-ONLY</span></td><td class="cell-remark">Out of scope for Beamco — see separate Ztor BRD.</td></tr>
+        <tr class="row-movies"><td class="cell-mono">BR-11</td><td class="cell-desc"><strong>Social media links (display).</strong> Movies-only: fan can click linked accounts and jump to platform.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="tag-pill origin-movies">MOVIES-ONLY</span></td><td class="cell-remark">Out of scope for Beamco — see separate Ztor BRD.</td></tr>
+        <tr class="row-movies"><td class="cell-mono">BR-14</td><td class="cell-desc"><strong>Revenue shares offered %.</strong> Movies only — expressed as %.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="tag-pill origin-movies">MOVIES-ONLY</span></td><td class="cell-remark">Out of scope for Beamco — see separate Ztor BRD.</td></tr>
+        <tr class="row-movies"><td class="cell-mono">BR-15</td><td class="cell-desc"><strong>Number of shares available.</strong> Movies only — count of shares.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-movies">Movies</span></td><td><span class="tag-pill origin-movies">MOVIES-ONLY</span></td><td class="cell-remark">Out of scope for Beamco — see separate Ztor BRD.</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <!-- Inherited rules from Phase 1 -->
@@ -564,25 +678,150 @@
   <section class="section" id="decopen">
     <div class="section-tag">§4 — OPEN QUESTIONS</div>
     <h2 class="productive-heading-02">What biz / ops / legal still owe us</h2>
-    <p class="body-long-01">Updated 2026-05-25 after BRD walkthrough. <strong>13 open + 3 closed</strong> (O7, O11, O13 resolved in walkthrough). 4 blocking: O1 waitlist coverage · O2 Stripe Connect · O6 legal review · O12 currency settlement. Where we have a leaning, the <strong>Suggested approach</strong> is called out — these are PM proposals, not yet locked.</p>
+    <p class="body-long-01">Updated 2026-05-25 after BRD walkthrough. Color coding:
+      <span class="tag-pill" style="background:rgba(25,128,56,0.18);color:var(--cds-green-50);border:1px solid var(--cds-green-50);">✓ ASSUMED</span>
+      = resolved with a PM assumption (biz thumbs-up still recommended) ·
+      <span class="tag-pill" style="background:rgba(217,169,0,0.22);color:var(--cds-yellow-30);border:1px solid var(--cds-yellow-30);">🟡 PENDING</span>
+      = genuinely unresolved, someone owes us ·
+      <span class="tag-pill" style="background:rgba(15,98,254,0.15);color:var(--cds-blue-50);border:1px solid var(--cds-blue-50);">⏸ FUTURE</span>
+      = parked, will revisit in a later release.
+    </p>
 
     <div class="q-block q-block--single">
-      <div class="q blocking" id="oq-1"><span class="n">O1</span><strong>BR-32 waitlist coverage calculation</strong> (reframed 2026-05-24 from "threshold value" — review is now manual ops). Ops dashboard shows successful · failed · waitlist amounts; what's the math for "does waitlist cover the failed payments?"<div class="suggest"><strong>Resolved earlier scope:</strong> failure threshold is a <em>manual ops decision</em>, not an automated rule. Still need the dashboard calculation spec.</div><span class="blk">blocks payment</span><div class="own">Owner: Jesse + Agnes</div></div>
-      <div class="q blocking" id="oq-2"><span class="n">O2</span><strong>Stripe Connect yes/no?</strong> If no, manual Finance bank transfer is MVP path.<div class="suggest"><strong>Suggested approach:</strong> defer Stripe Connect to a later phase; use manual Finance bank transfer for MVP.</div><span class="blk">blocks payment</span><div class="own">Owner: L</div></div>
-      <div class="q" id="oq-3"><span class="n">O3</span><strong>Music royalty:</strong> Flow A (label, weekly) baseline; <strong>Flow B deferred</strong> (along with BR-36 itself). Continue spec work; ship in a later release. Sam still owes example reports for data structure.<div class="own">Owner: Sam · overdue 2026-05-23</div></div>
-      <div class="q" id="oq-5"><span class="n">O5</span><strong>LP loophole:</strong> join → 1 LP → unjoin keeps eligibility. Phase 2 mitigation?<div class="suggest"><strong>Suggested approach:</strong> defer mitigation to Phase 2 — accept the loophole for MVP.</div><div class="own">Owner: Al · non-blocking</div></div>
-      <div class="q blocking" id="oq-6"><span class="n">O6</span><strong>Equity-like shares regulatory review</strong> in SG/US post-currency pivot.<span class="blk">production</span><div class="own">Owner: Legal</div></div>
-      <div class="q closed" id="oq-7"><span class="n">O7</span><strong>BR-35 — 20% auto-triggered</strong> on URL upload, or admin review first? <strong>✓ CLOSED 2026-05-24:</strong> ops submits the URL and triggers the 20% payout — no auto-trigger. Captured in BR-35 desc.<div class="own">Owner: biz (closed)</div></div>
-      <div class="q" id="oq-8"><span class="n">O8</span><strong>BR-39 dashboard column scope</strong> — "TBD by 2026-05-19" status; which fields appear in the creator dashboard list view?<div class="own">Owner: biz</div></div>
-      <div class="q" id="oq-9"><span class="n">O9</span><strong>BR-41 payout breakdown</strong> — which numbers automated vs manual?<div class="suggest"><strong>Suggested approach:</strong> manual for MVP — Finance computes off-platform, UI just displays the final numbers.</div><div class="own">Owner: dev</div></div>
-      <div class="q closed" id="oq-11"><span class="n">O11</span><strong>Fan wallet &amp; withdraw UI doesn't exist on fans site today.</strong> <strong>✓ RESOLVED 2026-05-24:</strong> BR-49 + BR-38 deferred to mid-July (royalty revenue arrives 2+ months post-launch; $50 threshold unlikely hit in MVP window).<div class="own">Owner: L + dev (resolved)</div></div>
-      <div class="q blocking" id="oq-12"><span class="n">O12</span><strong>BR-16 currency picker.</strong> If creator picks SGD/USD at creation, how do we settle with creators whose home currency is neither (e.g., TWD)?<span class="blk">blocks campaign creation</span><div class="own">Owner: biz + Finance</div></div>
-      <div class="q closed" id="oq-13"><span class="n">O13</span><strong>BR-37 royalty withdraw — same flow as BR-34?</strong> <strong>✓ DEFERRED 2026-05-24:</strong> BR-37 royalty withdraw deferred with BR-36 to post-MVP; revisit when royalty reporting ships.<div class="own">Owner: dev + biz (deferred)</div></div>
-      <div class="q" id="oq-14"><span class="n">O14</span><strong>Sign-up closure scope</strong> (new · 2026-05-24). Beamco artist self-sign-up — close for crowdfund only, or all features (merch + events too)?<div class="own">Owner: Jesse + Sam + Susan</div></div>
-      <div class="q" id="oq-15"><span class="n">O15</span><strong>BR-41 payment fee 3.4% → 4%</strong> (new · 2026-05-24). Is the change platform-wide (all products) or crowdfund-only?<div class="own">Owner: biz</div></div>
-      <div class="q" id="oq-16"><span class="n">O16</span><strong>Fan-creator contract content</strong> (new · 2026-05-24). BR-C1 / BR-C2 are the same contract (different surfaces). Final legal copy still pending.<div class="own">Owner: Sam</div></div>
+      <div class="q assumed" id="oq-1"><span class="n">O1</span><span class="q-cat">✓ Assumed</span><strong>BR-32 waitlist coverage calculation</strong> (reframed 2026-05-24 from "threshold value" — review is now manual ops).<div class="suggest"><strong>Assumption (2026-05-25):</strong> No formula required in code. Ops dashboard surfaces 3 raw numbers — successful charges · failed charges · waitlist pledged amount — and ops eyeballs whether waitlist covers the gap. If waitlist pledged ≥ failed amount → ops proceeds to Successful; otherwise ops considers cancel + refund-all. Pure human judgment, no automated threshold logic.</div><div class="own">Owner: Jesse + Agnes</div></div>
+      <div class="q assumed" id="oq-2"><span class="n">O2</span><span class="q-cat">✓ Assumed</span><strong>Stripe Connect yes/no?</strong> <strong>Closed 2026-05-25:</strong> Stripe Connect (BR-33) deferred to post-MVP. MVP path = manual Finance bank transfer.<div class="own">Owner: L</div></div>
+      <div class="q future" id="oq-3"><span class="n">O3</span><span class="q-cat">⏸ Future</span><strong>Music royalty:</strong> Flow A (label, weekly) baseline; <strong>Flow B deferred</strong> (along with BR-36 itself). Continue spec work; ship in a later release. Sam still owes example reports for data structure.<div class="own">Owner: Sam · overdue 2026-05-23</div></div>
+      <div class="q assumed" id="oq-5"><span class="n">O5</span><span class="q-cat">✓ Assumed</span><strong>LP loophole:</strong> join → 1 LP → unjoin keeps eligibility. Phase 2 mitigation?<div class="suggest"><strong>Suggested approach:</strong> defer mitigation to Phase 2 — accept the loophole for MVP.</div><div class="own">Owner: Al · non-blocking</div></div>
+      <div class="q pending" id="oq-6"><span class="n">O6</span><span class="q-cat">🟡 Pending</span><strong>Equity-like shares regulatory review</strong> in SG/US post-currency pivot.<span class="blk">blocks production</span><div class="own">Owner: Legal</div></div>
+      <div class="q assumed" id="oq-7"><span class="n">O7</span><span class="q-cat">✓ Assumed</span><strong>BR-35 — 20% auto-triggered</strong> on URL upload, or admin review first? <strong>Closed 2026-05-24:</strong> ops submits the URL and triggers the 20% payout — no auto-trigger. Captured in BR-35 desc.<div class="own">Owner: biz</div></div>
+      <div class="q pending" id="oq-8"><span class="n">O8</span><span class="q-cat">🟡 Pending</span><strong>BR-39 dashboard column scope</strong> — "TBD by 2026-05-19" status; which fields appear in the creator dashboard list view?<div class="own">Owner: biz</div></div>
+      <div class="q assumed" id="oq-9"><span class="n">O9</span><span class="q-cat">✓ Assumed</span><strong>BR-41 payout breakdown</strong> — which numbers automated vs manual?<div class="suggest"><strong>Suggested approach:</strong> manual for MVP — Finance computes off-platform, UI just displays the final numbers.</div><div class="own">Owner: dev</div></div>
+      <div class="q future" id="oq-11"><span class="n">O11</span><span class="q-cat">⏸ Future</span><strong>Fan wallet &amp; withdraw UI doesn't exist on fans site today.</strong> Resolved 2026-05-24: BR-49 + BR-38 deferred to mid-July (royalty revenue arrives 2+ months post-launch; $50 threshold unlikely hit in MVP window).<div class="own">Owner: L + dev</div></div>
+      <div class="q pending" id="oq-12"><span class="n">O12</span><span class="q-cat">🟡 Pending</span><strong>BR-16 fan→creator FX conversion model</strong> (reframed 2026-05-25). Creator settles in SGD/USD; fan may pledge in MYR / SGD / TWD / USD. <strong>When does the FX lock?</strong> At pledge time (fan-friendly, creator carries FX risk) or at charge time (creator-friendly, fan sees a different debit amount). Affects pledge confirmation copy + receipt + payout breakdown.<span class="blk">blocks campaign creation</span><div class="own">Owner: biz + Finance</div></div>
+      <div class="q future" id="oq-13"><span class="n">O13</span><span class="q-cat">⏸ Future</span><strong>BR-37 royalty withdraw — same flow as BR-34?</strong> Deferred 2026-05-24: BR-37 royalty withdraw deferred with BR-36 to post-MVP; revisit when royalty reporting ships.<div class="own">Owner: dev + biz</div></div>
+      <div class="q pending" id="oq-14"><span class="n">O14</span><span class="q-cat">🟡 Pending</span><strong>Sign-up closure scope + ops vs creator management model</strong> (new · 2026-05-24). Two architectural options under review with dev team — see <a href="creator-permission-vs-bo-module-comparison.html">comparison doc</a>: (a) permission tiers on creator portal (1→many account refactor), or (b) duplicate crowdfund management to back office (creator portal stays 1:1, hide management, expose reporting).<div class="own">Owner: Jesse + Sam + Susan + Dev team</div></div>
+      <div class="q pending" id="oq-15"><span class="n">O15</span><span class="q-cat">🟡 Pending</span><strong>BR-41 payment fee 3.4% → 4%</strong> (new · 2026-05-24). Is the change platform-wide (all products) or crowdfund-only?<div class="own">Owner: biz</div></div>
+      <div class="q pending" id="oq-16"><span class="n">O16</span><span class="q-cat">🟡 Pending</span><strong>Fan-creator contract content</strong> (new · 2026-05-24). BR-C1 / BR-C2 are the same contract (different surfaces). Final legal copy still pending.<div class="own">Owner: Sam</div></div>
     </div>
   </section>
+
+  </div><!-- /#view-spreadsheet -->
+
+  <!-- ════════════════════ BUILD VIEW ════════════════════ -->
+  <div id="view-build" class="tab-panel">
+
+  <div class="build-banner">
+    <h2>🔨 Build view — design &amp; development scope</h2>
+    <p>Filtered view of the BRD for the dev + design team. <strong>Only TO BUILD and TO MODIFY items</strong>, grouped by audience. AS-IS rows (existing features that work as-needed) are hidden. Deferred items collapse to a chip list at the bottom of each section.</p>
+    <div class="build-stats">
+      <span class="stat tb"><strong>13</strong> <span style="color:var(--cds-green-50);font-weight:600;">TO BUILD</span></span>
+      <span class="stat tm"><strong>5</strong> <span style="color:var(--cds-orange-40);font-weight:600;">TO MODIFY</span></span>
+      <span class="stat def"><strong>5</strong> <span style="color:var(--cds-blue-50);font-weight:600;">DEFERRED</span> (post-MVP)</span>
+    </div>
+  </div>
+
+  <!-- ──────── Fans audience ──────── -->
+  <section class="audience-section fans">
+    <div class="audience-head">
+      <span class="a-icon">👥</span>
+      <span class="a-name">Fans · fans-facing storefront</span>
+      <span class="a-count">3 to build · 1 to modify</span>
+    </div>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-origin">Status</th><th class="col-remark">What design / dev needs</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-4</td><td class="cell-desc"><strong>Waitlist (frontend).</strong> Once all shares sold, waitlist opens. Waitlister UI locks payment method + package + email.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: "Join waitlist" state on package selector + waitlist confirmation screen. Dev: persistent waitlist record with locked payment ref.</td></tr>
+        <tr><td class="cell-mono">BR-16</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Currency picker (fan side).</strong> Fan can pledge in any platform-supported currency (MYR / SGD / TWD / USD). FX conversion at charge time → creator's settlement currency.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Design: clarify pledge currency vs creator settlement currency in the pledge confirmation copy. Dev: store both currencies on the pledge record; FX timing per O12.</td></tr>
+        <tr><td class="cell-mono">BR-17</td><td class="cell-desc"><strong>Currency display (storefront).</strong> Creator's chosen currency primary · fan's local currency (IP-based) in smaller text as reference.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: typography + position of secondary local-currency reference. Limited to 4 platform currencies.</td></tr>
+        <tr><td class="cell-mono">BR-48</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Order detail page (crowdfund).</strong> Doesn't exist on fans site today. Shows purchased package + payment status + contract download link (BR-C1).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: full new page in the fan's order history area. Dev: route + data fetch for crowdfund-type orders + PDF download.</td></tr>
+      </tbody>
+    </table>
+    <div class="audience-deferred">
+      <strong>⏸ Deferred — post-MVP:</strong>
+      <div class="chip-list">
+        <span>BR-38 fan royalty withdraw</span>
+        <span>BR-49 fan wallet</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────── Creator audience ──────── -->
+  <section class="audience-section creator">
+    <div class="audience-head">
+      <span class="a-icon">🎤</span>
+      <span class="a-name">Creator · creator portal (web + dashboard)</span>
+      <span class="a-count">6 to build · 1 to modify</span>
+    </div>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-origin">Status</th><th class="col-remark">What design / dev needs</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-27</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Updates section (was "Project Story") — duplicate to dashboard.</strong> Underlying campaign-page Updates feature already exists; duplicate the editor into the creator dashboard so Report-only creators (BR-N1) can post.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Design: Updates surface inside the creator dashboard (with role-gated visibility). Dev: reuse the existing Updates data layer; new entry point.</td></tr>
+        <tr><td class="cell-mono">BR-34</td><td class="cell-desc"><strong>Withdraw funds from wallet.</strong> Creator clicks Withdraw after $ shows up. Available to both Full + Report roles.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: withdraw confirmation modal + status states. Dev: triggers manual Finance bank-transfer queue (no Stripe Connect for MVP).</td></tr>
+        <tr><td class="cell-mono">BR-39</td><td class="cell-desc"><strong>Campaign dashboard.</strong> Lists creator's campaigns (draft / published / cancelled) with columns: name · status · raised/target · fanvestors · days remaining · result.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: list view; mobile-friendly. Bundle into BR-36 Creator Reporting module.</td></tr>
+        <tr><td class="cell-mono">BR-40</td><td class="cell-desc"><strong>Campaign Overview tab.</strong> Per-campaign view with progress · roadmap · payment breakdown · royalty splits · Spotify URL field.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: multi-section dashboard layout. Note: Spotify URL field is <em>display-only</em> for creator; ops submits per BR-35.</td></tr>
+        <tr><td class="cell-mono">BR-42</td><td class="cell-desc"><strong>Order history tab.</strong> Per-campaign backer list: name · package · price · items · fulfillment status · % royalties · payment status.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: filterable table. Part of Creator Reporting module.</td></tr>
+        <tr><td class="cell-mono">BR-43</td><td class="cell-desc"><strong>Export order history (CSV).</strong> Filter date range + export button.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: server-side CSV generation + download.</td></tr>
+        <tr><td class="cell-mono">BR-44</td><td class="cell-desc"><strong>Search backer / order.</strong> Search field in Order tab.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Nice-to-have; could deprioritize if CSV export ships first.</td></tr>
+        <tr><td class="cell-mono">BR-45</td><td class="cell-desc"><strong>Creator Wallet.</strong> Total balance + tx history (date · item · type · description · $) + Withdraw button.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: wallet page in creator portal. Both Full + Report roles see this.</td></tr>
+        <tr><td class="cell-mono">BR-46</td><td class="cell-desc"><strong>Export transaction history (CSV).</strong> Filter date range + export.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Pairs with BR-45 wallet.</td></tr>
+      </tbody>
+    </table>
+    <div class="audience-deferred">
+      <strong>⏸ Deferred — post-MVP:</strong>
+      <div class="chip-list">
+        <span>BR-36 royalty reporting</span>
+        <span>BR-37 creator royalty withdraw</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────── Admin audience ──────── -->
+  <section class="audience-section admin">
+    <div class="audience-head">
+      <span class="a-icon">⚙️</span>
+      <span class="a-name">Admin · back office (Ops + Finance)</span>
+      <span class="a-count">4 to build · 3 to modify</span>
+    </div>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-origin">Status</th><th class="col-remark">What design / dev needs</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-1</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Fundraising target cap = $5M.</strong> Raise the existing cap (SGD 20,000 today) to $5M.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Dev: bump existing config; no new UI needed.</td></tr>
+        <tr><td class="cell-mono">BR-16</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Currency picker (creator side).</strong> Restrict picker to SGD/USD only at campaign creation. Locked at publish.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Dev: prune dropdown options for crowdfund campaigns; merch/events keep all 4 currencies.</td></tr>
+        <tr><td class="cell-mono">BR-25</td><td class="cell-desc"><strong>Cancel published campaign (manual).</strong> Ops can cancel any published campaign; status → Cancelled, refund all backers via Stripe back-office.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: confirm-cancel modal + reason field. Dev: status flip + listing retention + manual refund queue trigger.</td></tr>
+        <tr><td class="cell-mono">BR-26</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Campaign status machine + ops controls.</strong> Rename Funded → Goal Achieved. Only Active→Goal Achieved + Active→Unsuccessful auto-flip; rest manual. Single status column. Mirror Store.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Dev: schema + state transition rules. Admin UI: manual transition buttons in the campaign detail view.</td></tr>
+        <tr><td class="cell-mono">BR-32</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Failure threshold review dashboard.</strong> After recovery, ops dashboard shows successful · failed · waitlist amounts. Ops decides proceed vs cancel.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: per-campaign post-end review page. Dev: dashboard data aggregation. Waitlist coverage math TBD (O1).</td></tr>
+        <tr><td class="cell-mono">BR-35</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Submit final product URL (ops action).</strong> Ops submits Spotify URL in back office → triggers 20% payout release.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: URL input + confirm modal in back office. Dev: validation + payout trigger.</td></tr>
+        <tr><td class="cell-mono">BR-41</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-25</span><strong>Payout breakdown + new fee field.</strong> Add Crowdfund project platform fee = 5% to back-office fee schema. Change payment fee 3.4% → 4%.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: fee config section in back office (sibling to existing product fees). Dev: schema field + payout calc. Open Q on payment-fee scope (O15).</td></tr>
+        <tr><td class="cell-mono">BR-N1</td><td class="cell-desc"><strong>Creator account · Report-only permission.</strong> New permission tier. Dropdown in creator-account-creation form: Full / Report. Sign-up disabled on creator portal.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: role dropdown + creator creation form. Dev: schema + role enforcement on portal nav. Disable public sign-up route.</td></tr>
+      </tbody>
+    </table>
+    <div class="audience-deferred">
+      <strong>⏸ Deferred — post-MVP:</strong>
+      <div class="chip-list">
+        <span>BR-33 Stripe Connect payout</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────── System / background ──────── -->
+  <section class="audience-section admin">
+    <div class="audience-head">
+      <span class="a-icon">🤖</span>
+      <span class="a-name">System · background jobs (no UI)</span>
+      <span class="a-count">3 to build</span>
+    </div>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-origin">Status</th><th class="col-remark">What dev needs</th></tr></thead>
+      <tbody>
+        <tr><td class="cell-mono">BR-28</td><td class="cell-desc"><strong>Batch charge backers on Goal Achieved.</strong> On end date, if goal met, system batch-charges every locked-in card via Stripe.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: cron job triggered by status transition. Stripe charges in batch.</td></tr>
+        <tr><td class="cell-mono">BR-29</td><td class="cell-desc"><strong>Auto-retry (Stripe smart retry).</strong> 3-day silent retry on decline; days 1, 2, 3 in background.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: Stripe smart-retries configuration + result tracking on pledge record.</td></tr>
+        <tr><td class="cell-mono">BR-30</td><td class="cell-desc"><strong>Manual recovery email + URL.</strong> After auto-retry fails, system emails backer with secure 7-day URL to update payment.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: email template + tokenized URL endpoint. Design: email copy + on-site recovery page.</td></tr>
+        <tr><td class="cell-mono">BR-31</td><td class="cell-desc"><strong>Waitlist replacement (day 10).</strong> If still failing on day 10, drop original + pull next waitlister + run 3+7 cycle on them.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: cron + waitlist queue logic + restart of recovery cycle.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  </div><!-- /#view-build -->
 
   <div class="footer">
     <span>New Beamco Crowdfund BRD v1 · 2026-05-24</span>
@@ -591,6 +830,22 @@
 </main>
 
 <script>
+  // ── Tab switching (Spreadsheet ↔ Build) ──
+  function setTab(tabId) {
+    document.body.classList.toggle('view-build', tabId === 'view-build');
+    document.querySelectorAll('.tab-strip .tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === tabId);
+    });
+    try { history.replaceState(null, '', '#' + tabId); } catch (_) {}
+    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  }
+  document.querySelectorAll('.tab-strip .tab').forEach(t => {
+    t.addEventListener('click', e => { e.preventDefault(); setTab(t.dataset.tab); });
+  });
+  // honor URL hash on load
+  if (window.location.hash === '#view-build') setTab('view-build');
+
+  // ── Open-question hash flash (existing) ──
   function flashTarget() {
     const hash = window.location.hash;
     if (!hash.startsWith('#oq-')) return;
