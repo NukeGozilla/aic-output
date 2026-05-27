@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Range-target form wireframe · Beamco Crowdfund BRD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cds-bg: #f4f4f4;
+  --cds-bg-card: #ffffff;
+  --cds-bg-field: #fafafa;
+  --cds-bg-field-dark: #161616;
+  --cds-text-primary: #161616;
+  --cds-text-secondary: #525252;
+  --cds-text-helper: #6f6f6f;
+  --cds-text-placeholder: #a8a8a8;
+  --cds-border: #e0e0e0;
+  --cds-border-strong: #c6c6c6;
+  --cds-pink: #d4567e;
+  --cds-pink-soft: #fde0e9;
+  --cds-pink-text: #870e3f;
+  --cds-green: #198038;
+  --cds-green-soft: #defbe6;
+  --cds-amber: #d9a900;
+  --cds-amber-soft: #fcf4d6;
+  --cds-blue: #0f62fe;
+  --cds-blue-soft: #d0e2ff;
+  --cds-red: #da1e28;
+  --cds-red-soft: #fff1f1;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--cds-bg);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  color: var(--cds-text-primary);
+  line-height: 1.5;
+  font-size: 14px;
+}
+.shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 32px 80px;
+}
+.breadcrumb { font-size: 12px; color: var(--cds-text-helper); margin-bottom: 24px; }
+.breadcrumb a { color: var(--cds-blue); text-decoration: none; margin-right: 16px; }
+.breadcrumb a:hover { text-decoration: underline; }
+h1 {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 36px;
+  letter-spacing: -0.5px;
+  margin: 0 0 6px 0;
+}
+.subtitle { font-size: 14px; color: var(--cds-text-helper); margin-bottom: 8px; }
+.tag {
+  display: inline-block;
+  background: var(--cds-pink-soft);
+  color: var(--cds-pink-text);
+  padding: 2px 10px;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.32px;
+  text-transform: uppercase;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 40px 0 12px 0;
+  color: var(--cds-text-primary);
+}
+h2 .label {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  margin-right: 10px;
+  vertical-align: middle;
+  border-radius: 0;
+}
+.lbl-before { background: var(--cds-bg-field); color: var(--cds-text-secondary); border: 1px solid var(--cds-border-strong); }
+.lbl-after  { background: var(--cds-pink-soft); color: var(--cds-pink-text); border: 1px solid var(--cds-pink); }
+.lbl-rules  { background: var(--cds-amber-soft); color: #8a6800; border: 1px solid var(--cds-amber); }
+.lbl-impl   { background: var(--cds-green-soft); color: #146c2e; border: 1px solid var(--cds-green); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+/* Mock form panel (dark, to match the actual admin proto screenshot) */
+.form-panel {
+  background: #1f1f1f;
+  color: #f7f9fa;
+  border: 1px solid #393939;
+  padding: 28px;
+  position: relative;
+}
+.form-panel h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 24px;
+  margin: 0 0 4px 0;
+  font-weight: 600;
+  color: #ffffff;
+}
+.form-panel .panel-sub {
+  color: #a8a8a8;
+  font-size: 13px;
+  margin-bottom: 28px;
+}
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 22px;
+  align-items: start;
+}
+.field-label { padding-top: 6px; }
+.field-label .name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #ffffff;
+}
+.field-label .name .req { color: var(--cds-pink); margin-left: 4px; }
+.field-label .help {
+  font-size: 12px;
+  color: #a8a8a8;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+.field-input {
+  background: #161616;
+  color: #ffffff;
+  border: 1px solid #525252;
+  padding: 10px 14px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.field-input.placeholder { color: #525252; }
+.field-input-pair {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
+}
+.field-input-pair .sep {
+  color: #6f6f6f;
+  font-size: 12px;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.removed {
+  background: var(--cds-red-soft);
+  border: 1px dashed var(--cds-red);
+  padding: 16px;
+  margin-bottom: 22px;
+  border-radius: 0;
+}
+.removed .strike {
+  text-decoration: line-through;
+  color: var(--cds-red);
+  font-weight: 600;
+  font-size: 14px;
+}
+.removed .reason {
+  font-size: 12px;
+  color: #6f1414;
+  margin-top: 6px;
+  text-decoration: none;
+}
+.new-field {
+  background: rgba(212, 86, 126, 0.12);
+  border: 1px solid var(--cds-pink);
+  padding: 0;
+}
+.new-field-banner {
+  background: var(--cds-pink);
+  color: #ffffff;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 4px 14px;
+  font-weight: 600;
+}
+.new-field .inner {
+  padding: 22px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* Validation error inline */
+.validation-error {
+  background: rgba(218, 30, 40, 0.12);
+  border-left: 4px solid var(--cds-red);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #ff8389;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.validation-ok {
+  background: rgba(25, 128, 56, 0.12);
+  border-left: 4px solid var(--cds-green);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #6fdc8c;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Example side panel */
+.example-panel {
+  background: var(--cds-bg-card);
+  border: 1px solid var(--cds-border);
+  padding: 24px;
+}
+.example-panel h4 {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.32px;
+  margin: 0 0 14px 0;
+  color: var(--cds-text-helper);
+}
+.example-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--cds-border);
+  align-items: baseline;
+}
+.example-row:last-of-type { border-bottom: none; }
+.example-row .k { font-size: 12px; color: var(--cds-text-helper); }
+.example-row .v {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cds-text-primary);
+}
+.example-row .v.pink { color: var(--cds-pink-text); }
+.example-row .v.green { color: var(--cds-green); }
+.example-row .v.muted { color: var(--cds-text-helper); }
+.computed {
+  background: var(--cds-pink-soft);
+  margin: 16px -24px -24px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--cds-pink);
+  font-size: 12px;
+  color: var(--cds-pink-text);
+}
+.computed strong { display: block; font-size: 11px; letter-spacing: 0.32px; text-transform: uppercase; margin-bottom: 8px; }
+.computed .calc { font-family: 'IBM Plex Mono', monospace; line-height: 1.8; }
+
+/* Rules section */
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 16px;
+}
+.rule-card {
+  background: var(--cds-bg-card);
+  border: 1px solid var(--cds-border);
+  padding: 20px;
+}
+.rule-card .rule-id {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cds-pink-text);
+  background: var(--cds-pink-soft);
+  padding: 3px 8px;
+  margin-bottom: 8px;
+}
+.rule-card .rule-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+.rule-card .rule-desc { font-size: 13px; color: var(--cds-text-secondary); line-height: 1.6; }
+.rule-card code {
+  background: var(--cds-bg-field);
+  color: var(--cds-pink-text);
+  padding: 1px 6px;
+  border-radius: 0;
+  font-size: 12px;
+}
+
+/* Implementation note */
+.impl-note {
+  background: var(--cds-green-soft);
+  border-left: 4px solid var(--cds-green);
+  padding: 16px 20px;
+  margin-top: 30px;
+}
+.impl-note h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0 0 8px 0;
+  color: #146c2e;
+}
+.impl-note p { margin: 4px 0; font-size: 13px; color: #146c2e; }
+.impl-note code { background: rgba(0,0,0,0.08); padding: 1px 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+
+/* Annotation arrows */
+.annot {
+  position: relative;
+  margin-top: -8px;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  background: rgba(255, 196, 51, 0.2);
+  border-left: 3px solid var(--cds-amber);
+  font-size: 11px;
+  color: #8a6800;
+  font-style: italic;
+}
+
+footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid var(--cds-border);
+  font-size: 12px;
+  color: var(--cds-text-helper);
+  font-family: 'IBM Plex Mono', monospace;
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <nav class="breadcrumb">
+    <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
+    <a href="crowdfund-brd-v1-state-machine.html">State machine</a>
+    <a href="crowdfund-brd-v1-lifecycle.html">Lifecycle</a>
+  </nav>
+
+  <h1>Range-Target Form — Wireframe<span class="tag">BR-N2 · BR-N5</span></h1>
+  <p class="subtitle">Before/after for the admin <strong>Campaign Create → Target Selling Price &amp; Quantity</strong> step. Per range-threshold model decisions, 2026-05-27.</p>
+
+  <!-- BEFORE / AFTER side by side -->
+  <div class="grid-2" style="margin-top: 32px;">
+
+    <!-- BEFORE -->
+    <div>
+      <h2><span class="label lbl-before">Before</span> Today's UAT (single goal + min-shares)</h2>
+      <div class="form-panel">
+        <h3>Target Selling Price &amp; Quantity</h3>
+        <p class="panel-sub">Set the product price and quantity; both affect fan purchase intent and fundraising performance.</p>
+
+        <div class="field-row">
+          <div class="field-label">
+            <div class="name">Funding Target <span class="req">*</span></div>
+            <div class="help">Set the total amount you want to raise (max TWD 491,686.77 / SGD 20,000).</div>
+          </div>
+          <div class="field-input">20,000</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">
+            <div class="name">Royalties Offered (%) <span class="req">*</span></div>
+            <div class="help">Share of royalty revenue going to your fans. Minimum 10%.</div>
+          </div>
+          <div class="field-input">50</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">
+            <div class="name">Number of Royalty Shares <span class="req">*</span></div>
+            <div class="help">How many royalty shares to sell. Price per share calculated automatically.</div>
+          </div>
+          <div class="field-input">1,000</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">
+            <div class="name">Minimum Royalty Shares <span class="req">*</span></div>
+            <div class="help">Set the minimum number of royalty shares that must be sold by end date for the campaign to be successful. If not reached, all funds returned.</div>
+          </div>
+          <div class="field-input">900</div>
+        </div>
+      </div>
+
+      <div class="annot">↑ The minimum-shares field is the only way today's UI expresses a success threshold. It's a roundabout — really we just want a minimum dollar amount.</div>
+    </div>
+
+    <!-- AFTER -->
+    <div>
+      <h2><span class="label lbl-after">After</span> Range-threshold model (BR-N2)</h2>
+      <div class="form-panel">
+        <h3>Target Selling Price &amp; Quantity</h3>
+        <p class="panel-sub">Set a goal range. The minimum is what makes the campaign "successful"; the maximum is the hard cap shown to fans.</p>
+
+        <div class="new-field">
+          <div class="new-field-banner">🆕 BR-N2 · Goal Range</div>
+          <div class="inner">
+            <div class="field-label">
+              <div class="name">Funding Target Range <span class="req">*</span></div>
+              <div class="help">Set a minimum (success line) and a maximum (display goal + hard cap). Typical buffer is 10–20%.</div>
+            </div>
+            <div>
+              <div class="field-input-pair">
+                <div class="field-input">18,000</div>
+                <span class="sep">to</span>
+                <div class="field-input">20,000</div>
+              </div>
+              <div class="validation-ok">✓ Buffer is $2,000 (10% of max)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">
+            <div class="name">Royalties Offered (%) <span class="req">*</span></div>
+            <div class="help">Share of royalty revenue going to your fans. Minimum 10%.</div>
+          </div>
+          <div class="field-input">50</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-label">
+            <div class="name">Number of Royalty Shares <span class="req">*</span></div>
+            <div class="help">How many royalty shares to sell. Price per share = max ÷ this count.</div>
+          </div>
+          <div class="field-input">1,000</div>
+        </div>
+
+        <div class="removed">
+          <div class="strike">Minimum Royalty Shares — removed</div>
+          <div class="reason">Replaced by the Minimum row above. The minimum threshold is now expressed directly in dollars, not in shares. Implicit min-shares = totalShares × (minGoal ÷ maxGoal) = 900.</div>
+        </div>
+      </div>
+
+      <div class="annot">↑ Same numeric outcome ($18K floor, $20K ceiling), now expressed directly in the unit fans actually see.</div>
+    </div>
+  </div>
+
+  <!-- Live computed example -->
+  <h2><span class="label lbl-impl">Worked example</span> Same numbers, both models</h2>
+
+  <div class="grid-2" style="margin-top: 16px;">
+    <div class="example-panel">
+      <h4>Inputs (creator types)</h4>
+      <div class="example-row"><span class="k">Min Goal</span><span class="v pink">USD 18,000</span></div>
+      <div class="example-row"><span class="k">Max Goal</span><span class="v pink">USD 20,000</span></div>
+      <div class="example-row"><span class="k">Royalties Offered</span><span class="v">50%</span></div>
+      <div class="example-row"><span class="k">Total Royalty Shares</span><span class="v">1,000</span></div>
+      <div class="example-row"><span class="k">Smallest Tier Price</span><span class="v">USD 20 <span class="muted">(1 share)</span></span></div>
+    </div>
+    <div class="example-panel">
+      <h4>System-derived (read-only)</h4>
+      <div class="example-row"><span class="k">Price per share</span><span class="v green">max ÷ shares = USD 20</span></div>
+      <div class="example-row"><span class="k">Implicit min-shares</span><span class="v muted">900 of 1,000</span></div>
+      <div class="example-row"><span class="k">Buffer (max − min)</span><span class="v pink">USD 2,000</span></div>
+      <div class="example-row"><span class="k">BR-N5 cap (50% of buffer)</span><span class="v pink">USD 1,000</span></div>
+      <div class="example-row"><span class="k">Smallest tier validation</span><span class="v green">✓ $20 ≤ $1,000</span></div>
+      <div class="computed">
+        <strong>Storefront copy fans see</strong>
+        <div class="calc">"$18,000 needed · $20,000 stretch goal"<br>Progress bar fills toward $20K. A notch at the $18K mark labels "Success line".<br><br>If raised ≥ $18,000 → status flips to <strong>Goal Achieved</strong> (pre-end-date possible, per BR-N3).<br>If raised = $20,000 → hard cap, batch capture fires immediately (BR-28).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All 5 new BRs at a glance -->
+  <h2><span class="label lbl-rules">New BRs at a glance</span> What this wireframe implements</h2>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <span class="rule-id">BR-N2</span>
+      <div class="rule-title">Campaign goal as min/max range</div>
+      <div class="rule-desc">Replace single <code>goalUsd</code> with <code>minGoalUsd</code> + <code>maxGoalUsd</code>. Locked at publish. Min = success threshold, max = displayed/hard cap.</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-id">BR-N3</span>
+      <div class="rule-title">Pre-end-date Goal Achieved + hard cap</div>
+      <div class="rule-desc">Auto-flip to Goal Achieved when <code>raised ≥ minGoalUsd</code>. Hard cap at <code>maxGoalUsd</code> → batch capture fires (BR-28).</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-id">BR-N4</span>
+      <div class="rule-title">FIFO waitlist refill (amount-agnostic)</div>
+      <div class="rule-desc">When captures fail, pull next waitlister in FIFO. Buffer absorbs amount mismatch. Skip waitlisters whose pledge would push <code>collected &gt; maxGoalUsd</code>.</div>
+    </div>
+    <div class="rule-card">
+      <span class="rule-id">BR-N5</span>
+      <div class="rule-title">Smallest tier ≤ 50% of buffer</div>
+      <div class="rule-desc">At least one viable "filler" tier must exist for refill. Formula: smallest tier price ≤ <code>(max − min) × 0.5</code>. Single-tier campaigns: rule applies to that one tier.</div>
+    </div>
+  </div>
+
+  <!-- Implementation note -->
+  <div class="impl-note">
+    <h4>Implementation note for dev</h4>
+    <p><code>pricePerShare</code> stays a derived field, but the source changes: <code>pricePerShare = maxGoalUsd / totalShares</code>.</p>
+    <p>The old <code>minShares</code> field is no longer entered by the creator — it becomes a derived debug-only number: <code>implicitMinShares = totalShares × (minGoalUsd / maxGoalUsd)</code>. Keep in admin debug view for audit, drop from public surfaces.</p>
+    <p>All references to "Funding Target" in stored copy / emails / contracts (BR-C1 / BR-C2) need a sweep — replace with "Goal range" or "Minimum goal" depending on context.</p>
+  </div>
+
+  <footer>
+    <span>BR-N2 · BR-N5 wireframe · Beamco Crowdfund MVP · Updated 2026-05-27 · <a href="crowdfund-brd-v1-2026-05-24.html" style="color: var(--cds-blue);">Back to BRD</a></span>
+  </footer>
+
+</div>
+</body>
+</html>
