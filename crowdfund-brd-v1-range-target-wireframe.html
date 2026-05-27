@@ -12,11 +12,9 @@
   --cds-bg: #f4f4f4;
   --cds-bg-card: #ffffff;
   --cds-bg-field: #fafafa;
-  --cds-bg-field-dark: #161616;
   --cds-text-primary: #161616;
   --cds-text-secondary: #525252;
   --cds-text-helper: #6f6f6f;
-  --cds-text-placeholder: #a8a8a8;
   --cds-border: #e0e0e0;
   --cds-border-strong: #c6c6c6;
   --cds-pink: #d4567e;
@@ -37,21 +35,17 @@ body {
   background: var(--cds-bg);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   color: var(--cds-text-primary);
-  line-height: 1.5;
+  line-height: 1.55;
   font-size: 14px;
 }
-.shell {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 32px 32px 80px;
-}
+.shell { max-width: 1400px; margin: 0 auto; padding: 32px 32px 80px; }
 .breadcrumb { font-size: 12px; color: var(--cds-text-helper); margin-bottom: 24px; }
 .breadcrumb a { color: var(--cds-blue); text-decoration: none; margin-right: 16px; }
 .breadcrumb a:hover { text-decoration: underline; }
 h1 {
   font-family: 'Cinzel', serif;
   font-weight: 700;
-  font-size: 36px;
+  font-size: 34px;
   letter-spacing: -0.5px;
   margin: 0 0 6px 0;
 }
@@ -61,7 +55,6 @@ h1 {
   background: var(--cds-pink-soft);
   color: var(--cds-pink-text);
   padding: 2px 10px;
-  border-radius: 0;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.32px;
@@ -70,9 +63,9 @@ h1 {
   vertical-align: middle;
 }
 h2 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
-  margin: 40px 0 12px 0;
+  margin: 36px 0 12px 0;
   color: var(--cds-text-primary);
 }
 h2 .label {
@@ -83,97 +76,174 @@ h2 .label {
   padding: 2px 8px;
   margin-right: 10px;
   vertical-align: middle;
-  border-radius: 0;
 }
-.lbl-before { background: var(--cds-bg-field); color: var(--cds-text-secondary); border: 1px solid var(--cds-border-strong); }
+.lbl-before { background: #e0e0e0; color: var(--cds-text-secondary); border: 1px solid var(--cds-border-strong); }
 .lbl-after  { background: var(--cds-pink-soft); color: var(--cds-pink-text); border: 1px solid var(--cds-pink); }
 .lbl-rules  { background: var(--cds-amber-soft); color: #8a6800; border: 1px solid var(--cds-amber); }
 .lbl-impl   { background: var(--cds-green-soft); color: #146c2e; border: 1px solid var(--cds-green); }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 
-/* Mock form panel (dark, to match the actual admin proto screenshot) */
+/* Point-form bullet lists */
+ul.bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+ul.bullets li {
+  position: relative;
+  padding: 4px 0 4px 18px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+ul.bullets li::before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  color: var(--cds-pink);
+  font-weight: 700;
+}
+ul.bullets li code {
+  background: var(--cds-bg-field);
+  color: var(--cds-pink-text);
+  padding: 1px 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+}
+ul.bullets li strong { color: var(--cds-text-primary); }
+
+/* Problem statement */
+.problem-block {
+  background: var(--cds-amber-soft);
+  border: 1px solid var(--cds-amber);
+  border-left-width: 6px;
+  padding: 24px 28px;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+.problem-block .label-pill {
+  display: inline-block;
+  background: var(--cds-amber);
+  color: #4a3a00;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.problem-block h2 { margin: 0 0 6px 0 !important; font-size: 20px !important; color: #4a3a00 !important; }
+.problem-block .lead {
+  font-size: 13px;
+  color: #4a3a00;
+  margin: 0 0 18px 0;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.scenario-card {
+  background: var(--cds-bg-card);
+  border: 1px solid var(--cds-border);
+  padding: 18px 20px;
+}
+.scenario-card .scn-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  margin-bottom: 10px;
+}
+.scenario-card.broken .scn-tag { background: var(--cds-red-soft); color: var(--cds-red); border: 1px solid var(--cds-red); }
+.scenario-card.solved .scn-tag { background: var(--cds-green-soft); color: var(--cds-green); border: 1px solid var(--cds-green); }
+.scenario-card h3 { margin: 0 0 10px 0; font-size: 15px; font-weight: 600; }
+.scenario-card ul.bullets li { padding: 3px 0 3px 18px; font-size: 13px; line-height: 1.5; }
+.scenario-card.broken ul.bullets li::before { color: var(--cds-red); content: "✗"; font-size: 12px; }
+.scenario-card.solved ul.bullets li::before { color: var(--cds-green); content: "✓"; font-size: 13px; }
+.scenario-card .outcome {
+  margin-top: 12px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.scenario-card.broken .outcome { background: var(--cds-red-soft); color: var(--cds-red); border-left: 4px solid var(--cds-red); }
+.scenario-card.solved .outcome { background: var(--cds-green-soft); color: #146c2e; border-left: 4px solid var(--cds-green); }
+
+.takeaway {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid #d5ad13;
+  font-size: 13px;
+  color: #4a3a00;
+}
+.takeaway ul.bullets li { color: #4a3a00; font-size: 13px; padding: 3px 0 3px 18px; }
+.takeaway ul.bullets li::before { color: #d5ad13; }
+
+/* Form panel (dark, mirrors admin proto) */
 .form-panel {
   background: #1f1f1f;
   color: #f7f9fa;
   border: 1px solid #393939;
-  padding: 28px;
-  position: relative;
+  padding: 24px;
 }
 .form-panel h3 {
   font-family: 'Cinzel', serif;
-  font-size: 24px;
+  font-size: 22px;
   margin: 0 0 4px 0;
   font-weight: 600;
   color: #ffffff;
 }
-.form-panel .panel-sub {
-  color: #a8a8a8;
-  font-size: 13px;
-  margin-bottom: 28px;
-}
+.form-panel .panel-sub { color: #a8a8a8; font-size: 12px; margin-bottom: 22px; }
 .field-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 22px;
+  gap: 14px;
+  margin-bottom: 18px;
   align-items: start;
 }
-.field-label { padding-top: 6px; }
-.field-label .name {
-  font-weight: 600;
-  font-size: 14px;
-  color: #ffffff;
-}
+.field-label { padding-top: 5px; }
+.field-label .name { font-weight: 600; font-size: 14px; color: #ffffff; }
 .field-label .name .req { color: var(--cds-pink); margin-left: 4px; }
-.field-label .help {
-  font-size: 12px;
-  color: #a8a8a8;
-  line-height: 1.4;
-  margin-top: 4px;
-}
+.field-label ul.bullets li { font-size: 11.5px; color: #a8a8a8; padding: 2px 0 2px 14px; line-height: 1.45; }
+.field-label ul.bullets li::before { color: #a8a8a8; font-size: 11px; left: 2px; }
 .field-input {
   background: #161616;
   color: #ffffff;
   border: 1px solid #525252;
   padding: 10px 14px;
-  height: 40px;
+  height: 38px;
   display: flex;
   align-items: center;
   font-size: 14px;
   font-family: 'IBM Plex Mono', monospace;
 }
-.field-input.placeholder { color: #525252; }
 .field-input-pair {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   gap: 8px;
   align-items: center;
 }
-.field-input-pair .sep {
-  color: #6f6f6f;
-  font-size: 12px;
-  font-family: 'IBM Plex Sans', sans-serif;
-}
+.field-input-pair .sep { color: #6f6f6f; font-size: 12px; }
 .removed {
   background: var(--cds-red-soft);
   border: 1px dashed var(--cds-red);
-  padding: 16px;
-  margin-bottom: 22px;
-  border-radius: 0;
+  padding: 12px 14px;
+  margin-bottom: 18px;
 }
 .removed .strike {
   text-decoration: line-through;
   color: var(--cds-red);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
 }
-.removed .reason {
-  font-size: 12px;
-  color: #6f1414;
-  margin-top: 6px;
-  text-decoration: none;
-}
+.removed ul.bullets li { font-size: 12px; color: #6f1414; padding: 2px 0 2px 14px; }
+.removed ul.bullets li::before { color: var(--cds-red); }
 .new-field {
   background: rgba(212, 86, 126, 0.12);
   border: 1px solid var(--cds-pink);
@@ -189,92 +259,71 @@ h2 .label {
   font-weight: 600;
 }
 .new-field .inner {
-  padding: 22px 16px;
+  padding: 18px 14px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 14px;
   align-items: start;
-}
-
-/* Validation error inline */
-.validation-error {
-  background: rgba(218, 30, 40, 0.12);
-  border-left: 4px solid var(--cds-red);
-  padding: 10px 14px;
-  font-size: 12px;
-  color: #ff8389;
-  margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 .validation-ok {
   background: rgba(25, 128, 56, 0.12);
   border-left: 4px solid var(--cds-green);
-  padding: 10px 14px;
-  font-size: 12px;
+  padding: 8px 12px;
+  font-size: 11.5px;
   color: #6fdc8c;
   margin-top: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
-/* Example side panel */
+/* Numeric example table */
 .example-panel {
   background: var(--cds-bg-card);
   border: 1px solid var(--cds-border);
-  padding: 24px;
+  padding: 20px;
 }
 .example-panel h4 {
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.32px;
-  margin: 0 0 14px 0;
+  margin: 0 0 12px 0;
   color: var(--cds-text-helper);
 }
-.example-row {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 14px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--cds-border);
-  align-items: baseline;
-}
-.example-row:last-of-type { border-bottom: none; }
-.example-row .k { font-size: 12px; color: var(--cds-text-helper); }
-.example-row .v {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--cds-text-primary);
-}
-.example-row .v.pink { color: var(--cds-pink-text); }
-.example-row .v.green { color: var(--cds-green); }
-.example-row .v.muted { color: var(--cds-text-helper); }
-.computed {
+.example-panel table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.example-panel td { padding: 7px 0; border-bottom: 1px solid var(--cds-border); vertical-align: top; }
+.example-panel td:first-child { color: var(--cds-text-helper); width: 200px; font-size: 12px; }
+.example-panel td:last-child { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+.example-panel td.pink { color: var(--cds-pink-text); }
+.example-panel td.green { color: var(--cds-green); }
+.example-panel td.muted { color: var(--cds-text-helper); }
+.example-panel tr:last-child td { border-bottom: none; }
+
+.fan-copy {
   background: var(--cds-pink-soft);
-  margin: 16px -24px -24px;
-  padding: 16px 24px;
+  margin: 14px -20px -20px;
+  padding: 14px 20px;
   border-top: 1px solid var(--cds-pink);
   font-size: 12px;
   color: var(--cds-pink-text);
 }
-.computed strong { display: block; font-size: 11px; letter-spacing: 0.32px; text-transform: uppercase; margin-bottom: 8px; }
-.computed .calc { font-family: 'IBM Plex Mono', monospace; line-height: 1.8; }
+.fan-copy strong {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.32px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
 
-/* Rules section */
+/* Rule cards */
 .rules-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  margin-top: 16px;
+  gap: 16px;
+  margin-top: 12px;
 }
 .rule-card {
   background: var(--cds-bg-card);
   border: 1px solid var(--cds-border);
-  padding: 20px;
+  padding: 16px 18px;
 }
 .rule-card .rule-id {
   display: inline-block;
@@ -283,164 +332,54 @@ h2 .label {
   font-weight: 600;
   color: var(--cds-pink-text);
   background: var(--cds-pink-soft);
-  padding: 3px 8px;
-  margin-bottom: 8px;
+  padding: 2px 8px;
+  margin-bottom: 6px;
 }
-.rule-card .rule-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
-.rule-card .rule-desc { font-size: 13px; color: var(--cds-text-secondary); line-height: 1.6; }
+.rule-card .rule-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.rule-card ul.bullets li { font-size: 13px; color: var(--cds-text-secondary); padding: 2px 0 2px 16px; }
 .rule-card code {
   background: var(--cds-bg-field);
   color: var(--cds-pink-text);
-  padding: 1px 6px;
-  border-radius: 0;
-  font-size: 12px;
+  padding: 1px 5px;
+  font-size: 11.5px;
 }
 
-/* Implementation note */
+/* Dev note */
 .impl-note {
   background: var(--cds-green-soft);
   border-left: 4px solid var(--cds-green);
-  padding: 16px 20px;
-  margin-top: 30px;
+  padding: 14px 18px;
+  margin-top: 26px;
 }
 .impl-note h4 {
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.4px;
   margin: 0 0 8px 0;
   color: #146c2e;
 }
-.impl-note p { margin: 4px 0; font-size: 13px; color: #146c2e; }
-.impl-note code { background: rgba(0,0,0,0.08); padding: 1px 6px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+.impl-note ul.bullets li { font-size: 13px; color: #146c2e; padding: 3px 0 3px 18px; }
+.impl-note ul.bullets li::before { color: var(--cds-green); }
+.impl-note code { background: rgba(0,0,0,0.08); padding: 1px 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; }
 
-/* Annotation arrows */
 .annot {
-  position: relative;
-  margin-top: -8px;
-  margin-bottom: 14px;
-  padding: 8px 12px;
-  background: rgba(255, 196, 51, 0.2);
+  margin-top: -6px;
+  margin-bottom: 12px;
+  padding: 6px 12px;
+  background: rgba(255, 196, 51, 0.18);
   border-left: 3px solid var(--cds-amber);
-  font-size: 11px;
+  font-size: 11.5px;
   color: #8a6800;
-  font-style: italic;
 }
 
 footer {
-  margin-top: 60px;
-  padding-top: 24px;
+  margin-top: 50px;
+  padding-top: 20px;
   border-top: 1px solid var(--cds-border);
   font-size: 12px;
   color: var(--cds-text-helper);
   font-family: 'IBM Plex Mono', monospace;
 }
-
-/* Problem statement section */
-.problem-block {
-  background: var(--cds-amber-soft);
-  border: 1px solid var(--cds-amber);
-  border-left-width: 6px;
-  padding: 28px 32px;
-  margin-top: 28px;
-  margin-bottom: 12px;
-}
-.problem-block .label-pill {
-  display: inline-block;
-  background: var(--cds-amber);
-  color: #4a3a00;
-  padding: 3px 10px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.problem-block h2 {
-  margin: 0 0 8px 0 !important;
-  font-size: 22px !important;
-  color: #4a3a00 !important;
-}
-.problem-block .lead {
-  font-size: 14px;
-  color: #4a3a00;
-  margin: 0 0 22px 0;
-  line-height: 1.6;
-  max-width: 900px;
-}
-.scenario-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 18px;
-}
-.scenario-card {
-  background: var(--cds-bg-card);
-  border: 1px solid var(--cds-border);
-  padding: 20px;
-  position: relative;
-}
-.scenario-card .scn-tag {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  margin-bottom: 12px;
-}
-.scenario-card.broken .scn-tag { background: var(--cds-red-soft); color: var(--cds-red); border: 1px solid var(--cds-red); }
-.scenario-card.solved .scn-tag { background: var(--cds-green-soft); color: var(--cds-green); border: 1px solid var(--cds-green); }
-.scenario-card h3 { margin: 0 0 14px 0; font-size: 16px; font-weight: 600; }
-.scenario-step {
-  display: grid;
-  grid-template-columns: 24px 1fr;
-  gap: 10px;
-  padding: 6px 0;
-  font-size: 13px;
-  color: var(--cds-text-secondary);
-  line-height: 1.5;
-}
-.scenario-step .dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 9px;
-  background: var(--cds-bg-field);
-  color: var(--cds-text-helper);
-  font-size: 11px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2px;
-}
-.scenario-step.bad .dot { background: var(--cds-red); color: #fff; }
-.scenario-step.good .dot { background: var(--cds-green); color: #fff; }
-.scenario-step code {
-  background: var(--cds-bg-field);
-  color: var(--cds-pink-text);
-  padding: 1px 5px;
-  font-size: 11px;
-  font-family: 'IBM Plex Mono', monospace;
-}
-.scenario-card .outcome {
-  margin-top: 14px;
-  padding: 10px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 0;
-}
-.scenario-card.broken .outcome { background: var(--cds-red-soft); color: var(--cds-red); border-left: 4px solid var(--cds-red); }
-.scenario-card.solved .outcome { background: var(--cds-green-soft); color: #146c2e; border-left: 4px solid var(--cds-green); }
-.takeaway {
-  margin-top: 20px;
-  padding: 14px 18px;
-  background: rgba(255,255,255,0.55);
-  border: 1px solid #d5ad13;
-  font-size: 13px;
-  color: #4a3a00;
-  line-height: 1.6;
-}
-.takeaway strong { color: #2a2100; }
 </style>
 </head>
 <body>
@@ -453,84 +392,71 @@ footer {
   </nav>
 
   <h1>Range-Target Form — Wireframe<span class="tag">BR-N2 · BR-N5</span></h1>
-  <p class="subtitle">Before/after for the admin <strong>Campaign Create → Target Selling Price &amp; Quantity</strong> step. Per range-threshold model decisions, 2026-05-27.</p>
+  <p class="subtitle">Admin Campaign Create → <strong>Target Selling Price &amp; Quantity</strong>. Range-threshold model, 2026-05-27.</p>
 
   <!-- PROBLEM STATEMENT -->
   <section class="problem-block">
-    <span class="label-pill">⚠ The problem we're solving</span>
-    <h2>Why a single fixed target breaks the waitlist refill</h2>
-    <p class="lead">
-      Today's UAT has one number: <strong>Funding Target = $20,000</strong>. The campaign is "successful" only if exactly that amount is collected.
-      The trouble starts during recovery — when some captures fail and we try to swap in waitlisters to make up the difference, the waitlisters' tier choices rarely add up to exactly the gap. Result: we either fall short of the target (failed campaign) or overshoot it (we collected more than we said we'd raise). Neither is acceptable today, which is why BR-31 has been trying to require <em>amount-matching</em> on waitlister replacement — a rule that's painful to enforce in practice and produces awkward queue states.
-    </p>
+    <span class="label-pill">⚠ Why we're changing it</span>
+    <h2>Fixed target makes waitlist refill impossible to balance</h2>
+    <p class="lead">A single number for "Funding Target" means the campaign succeeds only at exactly that amount. When captures fail and we backfill from waitlist, the math rarely lands clean.</p>
 
     <div class="scenario-grid">
-      <!-- BROKEN scenario -->
+      <!-- BROKEN -->
       <div class="scenario-card broken">
-        <span class="scn-tag">✗ Today · Fixed $20,000 target</span>
+        <span class="scn-tag">Today · Fixed $20,000 target</span>
         <h3>1,000 backers × $20 = $20,000</h3>
-        <div class="scenario-step bad">
-          <span class="dot">1</span>
-          <div>End date hits, batch capture runs. <strong>50 captures fail</strong> (cards expired, insufficient funds, 3DS timeouts). <code>collected = $19,000</code>.</div>
-        </div>
-        <div class="scenario-step bad">
-          <span class="dot">2</span>
-          <div>Pull 50 waitlisters in FIFO to backfill. But the waitlist is a mix of tiers — some pledged <code>$20</code>, some <code>$50</code>, some <code>$200</code>.</div>
-        </div>
-        <div class="scenario-step bad">
-          <span class="dot">3</span>
-          <div><strong>If we pull the next 50 FIFO and they total $1,400:</strong> <code>collected = $20,400</code> — over target, we now owe $400 we never said we'd collect.</div>
-        </div>
-        <div class="scenario-step bad">
-          <span class="dot">4</span>
-          <div><strong>If we hand-pick 50 that total exactly $1,000:</strong> ops becomes a manual amount-matching puzzle. Doesn't scale, breaks FIFO, fans complain about queue jumping.</div>
-        </div>
-        <div class="outcome">Stuck: hit target exactly OR break FIFO fairness OR overshoot.</div>
+        <ul class="bullets">
+          <li>End date: <strong>50 captures fail</strong> → <code>collected = $19,000</code></li>
+          <li>Need to backfill $1,000 from waitlist</li>
+          <li>Waitlisters pledged mixed tiers ($20 / $50 / $200) — no clean way to total exactly $1,000</li>
+          <li><strong>Pull next 50 FIFO:</strong> totals $1,400 → overshoot to $20,400</li>
+          <li><strong>Hand-pick 50 = $1,000:</strong> ops becomes a manual matching puzzle, breaks FIFO fairness</li>
+        </ul>
+        <div class="outcome">Stuck: hit exactly · break FIFO · or overshoot.</div>
       </div>
 
-      <!-- SOLVED scenario -->
+      <!-- SOLVED -->
       <div class="scenario-card solved">
-        <span class="scn-tag">✓ Range model · $18,000–$20,000</span>
-        <h3>Same 1,000 backers × $20, success defined as ≥ $18K</h3>
-        <div class="scenario-step good">
-          <span class="dot">1</span>
-          <div>End date hits, batch capture runs. <strong>50 captures fail</strong> identically. <code>collected = $19,000</code>. We're already past the $18K success line.</div>
-        </div>
-        <div class="scenario-step good">
-          <span class="dot">2</span>
-          <div>Pull waitlisters in pure FIFO — no amount-matching needed. Each new capture adds to <code>collected</code>.</div>
-        </div>
-        <div class="scenario-step good">
-          <span class="dot">3</span>
-          <div>Buffer = <code>max − min = $2,000</code>. As long as <code>collected ≤ $20,000</code>, any total inside the band is a valid finish.</div>
-        </div>
-        <div class="scenario-step good">
-          <span class="dot">4</span>
-          <div><strong>Skip-overshoot guard (BR-N4):</strong> if the next waitlister's pledge would push <code>collected &gt; $20,000</code>, skip them and try the next in queue.</div>
-        </div>
-        <div class="outcome">Lands anywhere in $18K–$20K = Successful. No amount-match, FIFO preserved, no overshoot.</div>
+        <span class="scn-tag">Range $18,000–$20,000 · success line at $18K</span>
+        <h3>Same 1,000 backers × $20</h3>
+        <ul class="bullets">
+          <li>End date: same 50 fail → <code>collected = $19,000</code></li>
+          <li>$19K already past the $18K success line — campaign already qualifies</li>
+          <li>Pull waitlisters pure FIFO — no amount-matching, no skip logic</li>
+          <li>Final lands anywhere ≥ $18K → <strong>Successful</strong></li>
+          <li>Pledging stays open through end-date — no early-capture, no hard close</li>
+        </ul>
+        <div class="outcome">Tolerance window absorbs variance · FIFO stays fair.</div>
       </div>
     </div>
 
     <div class="takeaway">
-      <strong>Takeaway:</strong> the <code>(max − min)</code> band is a <em>tolerance window</em> for the recovery phase. It converts an impossible exact-match problem into a simple FIFO walk with one bounds check. BR-31 simplifies. BR-32 becomes mechanical. And the BR-N5 smallest-tier cap ensures at least one tier always fits in the remaining headroom.
+      <ul class="bullets">
+        <li><strong>(max − min) buffer</strong> is the tolerance window for recovery</li>
+        <li>BR-31 simplifies — no amount-matching</li>
+        <li>BR-32 becomes mechanical — <code>collected ≥ minGoalUsd</code> = Successful</li>
+        <li>BR-N5 caps smallest tier ≤ 50% of buffer so refill always has a workable tier</li>
+      </ul>
     </div>
   </section>
 
-  <!-- BEFORE / AFTER side by side -->
-  <div class="grid-2" style="margin-top: 32px;">
+  <!-- BEFORE / AFTER -->
+  <div class="grid-2" style="margin-top: 28px;">
 
     <!-- BEFORE -->
     <div>
-      <h2><span class="label lbl-before">Before</span> Today's UAT (single goal + min-shares)</h2>
+      <h2><span class="label lbl-before">Before</span> Today's UAT</h2>
       <div class="form-panel">
         <h3>Target Selling Price &amp; Quantity</h3>
-        <p class="panel-sub">Set the product price and quantity; both affect fan purchase intent and fundraising performance.</p>
+        <p class="panel-sub">Set product price + quantity.</p>
 
         <div class="field-row">
           <div class="field-label">
             <div class="name">Funding Target <span class="req">*</span></div>
-            <div class="help">Set the total amount you want to raise (max TWD 491,686.77 / SGD 20,000).</div>
+            <ul class="bullets">
+              <li>Single $ target</li>
+              <li>Max TWD 491,686 / SGD 20,000</li>
+            </ul>
           </div>
           <div class="field-input">20,000</div>
         </div>
@@ -538,7 +464,7 @@ footer {
         <div class="field-row">
           <div class="field-label">
             <div class="name">Royalties Offered (%) <span class="req">*</span></div>
-            <div class="help">Share of royalty revenue going to your fans. Minimum 10%.</div>
+            <ul class="bullets"><li>Min 10%</li></ul>
           </div>
           <div class="field-input">50</div>
         </div>
@@ -546,7 +472,7 @@ footer {
         <div class="field-row">
           <div class="field-label">
             <div class="name">Number of Royalty Shares <span class="req">*</span></div>
-            <div class="help">How many royalty shares to sell. Price per share calculated automatically.</div>
+            <ul class="bullets"><li>Price/share = target ÷ shares (auto)</li></ul>
           </div>
           <div class="field-input">1,000</div>
         </div>
@@ -554,28 +480,35 @@ footer {
         <div class="field-row">
           <div class="field-label">
             <div class="name">Minimum Royalty Shares <span class="req">*</span></div>
-            <div class="help">Set the minimum number of royalty shares that must be sold by end date for the campaign to be successful. If not reached, all funds returned.</div>
+            <ul class="bullets">
+              <li>Min shares needed for success</li>
+              <li>If not reached → refund all</li>
+            </ul>
           </div>
           <div class="field-input">900</div>
         </div>
       </div>
 
-      <div class="annot">↑ The minimum-shares field is the only way today's UI expresses a success threshold. It's a roundabout — really we just want a minimum dollar amount.</div>
+      <div class="annot">Min-shares is the only way the UI expresses a threshold today. Indirect.</div>
     </div>
 
     <!-- AFTER -->
     <div>
-      <h2><span class="label lbl-after">After</span> Range-threshold model (BR-N2)</h2>
+      <h2><span class="label lbl-after">After</span> Range model (BR-N2)</h2>
       <div class="form-panel">
         <h3>Target Selling Price &amp; Quantity</h3>
-        <p class="panel-sub">Set a goal range. The minimum is what makes the campaign "successful"; the maximum is the hard cap shown to fans.</p>
+        <p class="panel-sub">Set a goal range (min = success · max = stretch goal).</p>
 
         <div class="new-field">
           <div class="new-field-banner">🆕 BR-N2 · Goal Range</div>
           <div class="inner">
             <div class="field-label">
               <div class="name">Funding Target Range <span class="req">*</span></div>
-              <div class="help">Set a minimum (success line) and a maximum (display goal + hard cap). Typical buffer is 10–20%.</div>
+              <ul class="bullets">
+                <li>Min = success line</li>
+                <li>Max = displayed stretch goal</li>
+                <li>Typical buffer 10–20%</li>
+              </ul>
             </div>
             <div>
               <div class="field-input-pair">
@@ -583,7 +516,7 @@ footer {
                 <span class="sep">to</span>
                 <div class="field-input">20,000</div>
               </div>
-              <div class="validation-ok">✓ Buffer is $2,000 (10% of max)</div>
+              <div class="validation-ok">✓ Buffer $2,000 (10% of max)</div>
             </div>
           </div>
         </div>
@@ -591,7 +524,7 @@ footer {
         <div class="field-row">
           <div class="field-label">
             <div class="name">Royalties Offered (%) <span class="req">*</span></div>
-            <div class="help">Share of royalty revenue going to your fans. Minimum 10%.</div>
+            <ul class="bullets"><li>Unchanged</li></ul>
           </div>
           <div class="field-input">50</div>
         </div>
@@ -599,79 +532,110 @@ footer {
         <div class="field-row">
           <div class="field-label">
             <div class="name">Number of Royalty Shares <span class="req">*</span></div>
-            <div class="help">How many royalty shares to sell. Price per share = max ÷ this count.</div>
+            <ul class="bullets"><li>Price/share = max ÷ shares</li></ul>
           </div>
           <div class="field-input">1,000</div>
         </div>
 
         <div class="removed">
           <div class="strike">Minimum Royalty Shares — removed</div>
-          <div class="reason">Replaced by the Minimum row above. The minimum threshold is now expressed directly in dollars, not in shares. Implicit min-shares = totalShares × (minGoal ÷ maxGoal) = 900.</div>
+          <ul class="bullets">
+            <li>Replaced by Min Goal $ above</li>
+            <li>Implicit min-shares = shares × (min ÷ max) = 900</li>
+          </ul>
         </div>
       </div>
 
-      <div class="annot">↑ Same numeric outcome ($18K floor, $20K ceiling), now expressed directly in the unit fans actually see.</div>
+      <div class="annot">Same numeric outcome ($18K floor, $20K ceiling), now in the unit fans see.</div>
     </div>
   </div>
 
-  <!-- Live computed example -->
+  <!-- WORKED EXAMPLE -->
   <h2><span class="label lbl-impl">Worked example</span> Same numbers, both models</h2>
 
-  <div class="grid-2" style="margin-top: 16px;">
+  <div class="grid-2" style="margin-top: 12px;">
     <div class="example-panel">
       <h4>Inputs (creator types)</h4>
-      <div class="example-row"><span class="k">Min Goal</span><span class="v pink">USD 18,000</span></div>
-      <div class="example-row"><span class="k">Max Goal</span><span class="v pink">USD 20,000</span></div>
-      <div class="example-row"><span class="k">Royalties Offered</span><span class="v">50%</span></div>
-      <div class="example-row"><span class="k">Total Royalty Shares</span><span class="v">1,000</span></div>
-      <div class="example-row"><span class="k">Smallest Tier Price</span><span class="v">USD 20 <span class="muted">(1 share)</span></span></div>
+      <table>
+        <tr><td>Min Goal</td><td class="pink">USD 18,000</td></tr>
+        <tr><td>Max Goal</td><td class="pink">USD 20,000</td></tr>
+        <tr><td>Royalties Offered</td><td>50%</td></tr>
+        <tr><td>Total Royalty Shares</td><td>1,000</td></tr>
+        <tr><td>Smallest Tier Price</td><td>USD 20 <span class="muted">(1 share)</span></td></tr>
+      </table>
     </div>
     <div class="example-panel">
       <h4>System-derived (read-only)</h4>
-      <div class="example-row"><span class="k">Price per share</span><span class="v green">max ÷ shares = USD 20</span></div>
-      <div class="example-row"><span class="k">Implicit min-shares</span><span class="v muted">900 of 1,000</span></div>
-      <div class="example-row"><span class="k">Buffer (max − min)</span><span class="v pink">USD 2,000</span></div>
-      <div class="example-row"><span class="k">BR-N5 cap (50% of buffer)</span><span class="v pink">USD 1,000</span></div>
-      <div class="example-row"><span class="k">Smallest tier validation</span><span class="v green">✓ $20 ≤ $1,000</span></div>
-      <div class="computed">
-        <strong>Storefront copy fans see</strong>
-        <div class="calc">"$18,000 needed · $20,000 stretch goal"<br>Progress bar fills toward $20K. A notch at the $18K mark labels "Success line".<br><br>If raised ≥ $18,000 → status flips to <strong>Goal Achieved</strong> (pre-end-date possible, per BR-N3).<br>If raised = $20,000 → hard cap, batch capture fires immediately (BR-28).</div>
+      <table>
+        <tr><td>Price per share</td><td class="green">USD 20 (max ÷ shares)</td></tr>
+        <tr><td>Implicit min-shares</td><td class="muted">900 of 1,000</td></tr>
+        <tr><td>Buffer (max − min)</td><td class="pink">USD 2,000</td></tr>
+        <tr><td>BR-N5 cap (50% of buffer)</td><td class="pink">USD 1,000</td></tr>
+        <tr><td>Smallest tier check</td><td class="green">✓ $20 ≤ $1,000</td></tr>
+      </table>
+      <div class="fan-copy">
+        <strong>What fans see on the storefront</strong>
+        <ul class="bullets" style="margin-top: 6px;">
+          <li>Progress bar fills toward <code>$20,000</code></li>
+          <li>Notch at <code>$18,000</code> labelled <em>Success line</em></li>
+          <li>At <code>raised ≥ $18K</code>: status flips to <strong>Goal Achieved</strong> (pre-end-date possible · BR-N3)</li>
+          <li>Pledging stays open until end-date · no early close</li>
+        </ul>
       </div>
     </div>
   </div>
 
-  <!-- All 5 new BRs at a glance -->
-  <h2><span class="label lbl-rules">New BRs at a glance</span> What this wireframe implements</h2>
+  <!-- BRs AT A GLANCE -->
+  <h2><span class="label lbl-rules">New BRs</span> What this wireframe implements</h2>
 
   <div class="rules-grid">
     <div class="rule-card">
       <span class="rule-id">BR-N2</span>
-      <div class="rule-title">Campaign goal as min/max range</div>
-      <div class="rule-desc">Replace single <code>goalUsd</code> with <code>minGoalUsd</code> + <code>maxGoalUsd</code>. Locked at publish. Min = success threshold, max = displayed/hard cap.</div>
+      <div class="rule-title">Goal as min/max range</div>
+      <ul class="bullets">
+        <li>Replaces single <code>goalUsd</code></li>
+        <li><code>minGoalUsd</code> + <code>maxGoalUsd</code> locked at publish</li>
+        <li>Min = success threshold · Max = displayed stretch goal</li>
+      </ul>
     </div>
     <div class="rule-card">
       <span class="rule-id">BR-N3</span>
-      <div class="rule-title">Pre-end-date Goal Achieved + hard cap</div>
-      <div class="rule-desc">Auto-flip to Goal Achieved when <code>raised ≥ minGoalUsd</code>. Hard cap at <code>maxGoalUsd</code> → batch capture fires (BR-28).</div>
+      <div class="rule-title">Pre-end-date Goal Achieved</div>
+      <ul class="bullets">
+        <li>Auto-flips when <code>raised ≥ minGoalUsd</code></li>
+        <li>Pledging continues until end-date · no hard cap</li>
+        <li>Status history logs trigger amount</li>
+      </ul>
     </div>
     <div class="rule-card">
       <span class="rule-id">BR-N4</span>
-      <div class="rule-title">FIFO waitlist refill (amount-agnostic)</div>
-      <div class="rule-desc">When captures fail, pull next waitlister in FIFO. Buffer absorbs amount mismatch. Skip waitlisters whose pledge would push <code>collected &gt; maxGoalUsd</code>.</div>
+      <div class="rule-title">FIFO waitlist refill</div>
+      <ul class="bullets">
+        <li>Pure FIFO · amount-agnostic</li>
+        <li>Buffer absorbs variance</li>
+        <li>Refill until failed slots resolved or queue empty</li>
+      </ul>
     </div>
     <div class="rule-card">
       <span class="rule-id">BR-N5</span>
       <div class="rule-title">Smallest tier ≤ 50% of buffer</div>
-      <div class="rule-desc">At least one viable "filler" tier must exist for refill. Formula: smallest tier price ≤ <code>(max − min) × 0.5</code>. Single-tier campaigns: rule applies to that one tier.</div>
+      <ul class="bullets">
+        <li>Smallest tier price ≤ <code>(max − min) × 0.5</code></li>
+        <li>Guarantees a usable filler tier exists</li>
+        <li>Single-tier campaigns: rule applies to that tier</li>
+      </ul>
     </div>
   </div>
 
-  <!-- Implementation note -->
+  <!-- DEV NOTE -->
   <div class="impl-note">
     <h4>Implementation note for dev</h4>
-    <p><code>pricePerShare</code> stays a derived field, but the source changes: <code>pricePerShare = maxGoalUsd / totalShares</code>.</p>
-    <p>The old <code>minShares</code> field is no longer entered by the creator — it becomes a derived debug-only number: <code>implicitMinShares = totalShares × (minGoalUsd / maxGoalUsd)</code>. Keep in admin debug view for audit, drop from public surfaces.</p>
-    <p>All references to "Funding Target" in stored copy / emails / contracts (BR-C1 / BR-C2) need a sweep — replace with "Goal range" or "Minimum goal" depending on context.</p>
+    <ul class="bullets">
+      <li><code>pricePerShare = maxGoalUsd / totalShares</code> (was: <code>goalUsd / totalShares</code>)</li>
+      <li><code>minShares</code> field removed from form · keep as derived <code>totalShares × (minGoal/maxGoal)</code> for audit only</li>
+      <li>Sweep stored copy / emails / contracts (BR-C1 / BR-C2) for "Funding Target" → replace with "Goal range" or "Min goal" per context</li>
+      <li>BR-28 stays end-date-triggered (no early capture)</li>
+    </ul>
   </div>
 
   <footer>
