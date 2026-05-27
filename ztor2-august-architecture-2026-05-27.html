@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor 2.0 — August Deliverables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --report-500:#7c3aed; --report-600:#6d28d9; --report-tint:#f5f3ff; --report-line:#ddd6fe;
+    --auth-500:#2563eb;   --auth-600:#1d4ed8;   --auth-tint:#eff6ff;   --auth-line:#bfdbfe;
+    --cf-500:#059669;     --cf-600:#047857;     --cf-tint:#ecfdf5;     --cf-line:#a7f3d0;
+    --q-500:#d97706;      --q-tint:#fffbeb;      --q-line:#fde68a;
+    --ink:#0a0e1a; --ink-1:#1e2330; --ink-2:#4b5563; --ink-3:#6b7280; --ink-4:#9ca3af; --ink-5:#d1d5db;
+    --surface:#fff; --surface-2:#fafbfc; --surface-3:#f4f6f8; --line:#e6e8ec; --line-soft:#eef0f3;
+    --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+    --font-zh:'Noto Sans TC','Microsoft JhengHei','PingFang TC',var(--font-sans);
+    --font-mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+    --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-5:20px;--s-6:24px;--s-8:32px;--s-10:40px;--s-12:48px;--s-16:64px;
+    --r-sm:6px;--r-md:10px;--r-lg:14px;--r-xl:20px;--r-2xl:28px;
+    --shadow-sm:0 1px 2px rgba(10,14,26,.05),0 1px 3px rgba(10,14,26,.06);
+    --shadow-md:0 4px 12px rgba(10,14,26,.05),0 2px 4px rgba(10,14,26,.04);
+    --shadow-lg:0 12px 32px rgba(10,14,26,.07),0 4px 8px rgba(10,14,26,.04);
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth;}
+  body{
+    font-family:var(--font-sans);color:var(--ink-1);line-height:1.55;min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 100% -200px,rgba(124,58,237,.06),transparent 60%),
+      radial-gradient(900px 500px at -200px 100px,rgba(37,99,235,.05),transparent 60%),
+      linear-gradient(180deg,#fafbfc 0%,#f4f6f8 100%);
+  }
+  body.lang-zh{font-family:var(--font-zh);}
+
+  /* TOPBAR */
+  .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);
+    padding:var(--s-3) var(--s-6);background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .tb-brand{font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-2);letter-spacing:.02em;}
+  .tb-brand b{color:var(--report-600);}
+  .controls{display:flex;gap:var(--s-3);align-items:center;}
+  .seg{display:inline-flex;background:var(--surface-3);border:1px solid var(--line);border-radius:999px;padding:3px;}
+  .seg button{font-family:var(--font-sans);font-size:12.5px;font-weight:600;color:var(--ink-3);background:transparent;border:0;padding:6px 14px;border-radius:999px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .seg button:hover{color:var(--ink-1);}
+  .seg button.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);}
+  .seg.lang button.active{background:var(--report-500);color:#fff;}
+  .seg .t-en,.seg .t-zh{display:none;}
+  body.lang-en .seg .t-en{display:inline;}
+  body.lang-zh .seg .t-zh{display:inline;}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:var(--s-10) var(--s-5) var(--s-16);}
+  .doc-wrap{max-width:840px;}
+
+  /* PANEL / LANG VISIBILITY */
+  .panel{display:none;}
+  body.tab-diagram .panel.diagram{display:block;}
+  body.tab-doc .panel.doc{display:block;}
+  .lblock{display:none;}
+  body.lang-en .lblock.en{display:block;}
+  body.lang-zh .lblock.zh{display:block;}
+
+  /* HERO */
+  .hero{margin-bottom:var(--s-10);}
+  .eyebrow{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--report-600);margin-bottom:var(--s-3);}
+  h1{font-size:38px;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.12;margin-bottom:var(--s-3);}
+  body.lang-zh h1{letter-spacing:0;}
+  .sub{font-size:17px;color:var(--ink-2);max-width:720px;}
+  .meta{display:flex;gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-5);}
+  .chip{font-family:var(--font-mono);font-size:12px;font-weight:500;padding:5px 11px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--ink-3);box-shadow:var(--shadow-sm);}
+  .chip b{color:var(--ink-1);font-weight:600;}
+
+  .banner{display:flex;align-items:center;gap:var(--s-5);background:linear-gradient(135deg,var(--report-tint),#fff);border:1px solid var(--report-line);border-radius:var(--r-xl);padding:var(--s-6) var(--s-8);margin-bottom:var(--s-10);box-shadow:var(--shadow-md);}
+  .banner .icon{font-size:30px;}
+  .banner .from{font-family:var(--font-mono);font-size:13px;color:var(--ink-4);text-decoration:line-through;}
+  .banner .to{font-size:18px;font-weight:700;color:var(--ink);}
+  .banner .note{font-size:13.5px;color:var(--ink-2);margin-top:2px;}
+
+  section{margin-bottom:var(--s-12);}
+  .sec-head{display:flex;align-items:baseline;gap:var(--s-3);margin-bottom:var(--s-5);}
+  .sec-num{font-family:var(--font-mono);font-size:13px;font-weight:600;color:#fff;background:var(--ink-1);width:26px;height:26px;border-radius:var(--r-sm);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+  h2{font-size:23px;font-weight:700;letter-spacing:-.01em;color:var(--ink);}
+  .sec-sub{font-size:14px;color:var(--ink-3);margin-left:auto;text-align:right;max-width:340px;}
+
+  .grid{display:grid;gap:var(--s-4);}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  .grid-2{grid-template-columns:repeat(2,1fr);}
+  @media(max-width:860px){.grid-3,.grid-2{grid-template-columns:1fr;}}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--s-5);box-shadow:var(--shadow-sm);}
+  .card .ct{font-weight:700;font-size:15.5px;color:var(--ink);margin-bottom:var(--s-2);display:flex;align-items:center;gap:var(--s-2);}
+  .card .cd{font-size:13.5px;color:var(--ink-2);}
+  .card .tag{font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;display:inline-block;margin-bottom:var(--s-3);}
+  .report .tag{background:var(--report-tint);color:var(--report-600);border:1px solid var(--report-line);}
+  .report{border-top:3px solid var(--report-500);}
+  .src{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-4);margin-top:var(--s-3);padding-top:var(--s-3);border-top:1px dashed var(--line);}
+
+  .spine{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);padding:var(--s-8);box-shadow:var(--shadow-md);}
+  .node{border-radius:var(--r-md);padding:var(--s-3) var(--s-5);font-weight:600;font-size:14px;text-align:center;border:1.5px solid;}
+  .n-auth{background:var(--auth-tint);border-color:var(--auth-line);color:var(--auth-600);}
+  .n-id{background:#f5f3ff;border-color:var(--report-line);color:var(--report-600);}
+  .n-store{background:var(--surface-3);border-color:var(--line);color:var(--ink-1);}
+  .n-cf{background:var(--cf-tint);border-color:var(--cf-line);color:var(--cf-600);}
+  .n-report{background:#fff;border:1.5px dashed var(--report-line);color:var(--ink-1);}
+  .arrow{text-align:center;color:var(--ink-4);font-size:18px;line-height:1;margin:var(--s-2) 0;}
+  .lane-label{font-family:var(--font-mono);font-size:11px;color:var(--ink-4);text-align:center;margin-bottom:var(--s-2);}
+  .sources-row{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s-2);margin:var(--s-2) 0;}
+  .src-pill{font-family:var(--font-mono);font-size:11px;text-align:center;padding:6px 4px;border-radius:var(--r-sm);background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);}
+  @media(max-width:680px){.sources-row{grid-template-columns:repeat(2,1fr);}}
+
+  ul.clean{list-style:none;display:flex;flex-direction:column;gap:var(--s-2);}
+  ul.clean li{font-size:14px;color:var(--ink-2);padding-left:var(--s-5);position:relative;}
+  ul.clean li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:2px;background:var(--auth-500);}
+  ul.clean.cf li::before{background:var(--cf-500);}
+  ul.clean li b{color:var(--ink-1);font-weight:600;}
+
+  .decided{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--cf-600);background:var(--cf-tint);border:1px solid var(--cf-line);padding:4px 10px;border-radius:999px;margin-top:var(--s-3);}
+
+  .timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;margin-top:var(--s-3);}
+  .tl{position:relative;padding:var(--s-5) var(--s-3) 0;text-align:center;}
+  .tl::before{content:"";position:absolute;top:6px;left:0;right:0;height:2px;background:var(--line);}
+  .tl::after{content:"";position:absolute;top:1px;left:50%;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:var(--report-500);border:2px solid #fff;box-shadow:0 0 0 1px var(--report-line);}
+  .tl .d{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--report-600);}
+  .tl .e{font-size:12.5px;color:var(--ink-2);margin-top:4px;}
+  @media(max-width:680px){.timeline{grid-template-columns:1fr;}.tl::before{display:none;}.tl{text-align:left;padding-left:var(--s-6);}.tl::after{left:6px;transform:none;}}
+
+  .q-card{background:var(--q-tint);border:1px solid var(--q-line);border-radius:var(--r-md);padding:var(--s-4) var(--s-5);}
+  .q-card .qq{font-weight:700;font-size:14.5px;color:#92400e;margin-bottom:3px;}
+  .q-card .qd{font-size:13px;color:var(--ink-2);}
+
+  footer{margin-top:var(--s-12);padding-top:var(--s-5);border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-4);font-family:var(--font-mono);display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--s-2);}
+
+  /* DOC (Full Spec) */
+  .doc{color:var(--ink-1);}
+  .doc .doc-title{font-size:30px;font-weight:800;letter-spacing:-.02em;margin-bottom:var(--s-2);}
+  body.lang-zh .doc .doc-title{letter-spacing:0;}
+  .doc .doc-meta{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-3);margin-bottom:var(--s-2);}
+  .doc h2{font-size:21px;margin-top:var(--s-10);padding-top:var(--s-5);border-top:2px solid var(--line);}
+  .doc h3{font-size:15.5px;font-weight:700;color:var(--ink-1);margin-top:var(--s-6);margin-bottom:var(--s-2);}
+  .doc p{font-size:14.5px;color:var(--ink-2);margin:var(--s-3) 0;}
+  .doc ul{list-style:none;margin:var(--s-3) 0;display:flex;flex-direction:column;gap:6px;}
+  .doc li{font-size:14px;color:var(--ink-2);padding-left:var(--s-5);position:relative;}
+  .doc li::before{content:"";position:absolute;left:2px;top:8px;width:6px;height:6px;border-radius:2px;background:var(--ink-5);}
+  .doc strong{color:var(--ink-1);font-weight:600;}
+  .doc code{font-family:var(--font-mono);font-size:12.5px;background:var(--surface-3);border:1px solid var(--line);padding:1px 5px;border-radius:5px;color:var(--report-600);}
+  .doc pre{background:#0d1117;color:#e6edf3;border-radius:var(--r-md);padding:var(--s-4) var(--s-5);overflow-x:auto;margin:var(--s-4) 0;font-family:var(--font-mono);font-size:12.5px;line-height:1.6;}
+  .doc pre code{background:none;border:0;color:inherit;padding:0;}
+  .doc table{width:100%;border-collapse:collapse;margin:var(--s-4) 0;font-size:13px;}
+  .doc th,.doc td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top;}
+  .doc th{background:var(--surface-3);font-weight:600;color:var(--ink-1);}
+  .doc .box{border-radius:var(--r-md);padding:var(--s-3) var(--s-5);margin:var(--s-4) 0;font-size:13.5px;}
+  .doc .box.decided{background:var(--cf-tint);border:1px solid var(--cf-line);color:var(--cf-600);}
+  .doc .box.open{background:var(--q-tint);border:1px solid var(--q-line);color:#92400e;}
+  .doc .box.locked{display:inline-block;font-family:var(--font-mono);font-size:11px;font-weight:600;background:var(--cf-tint);border:1px solid var(--cf-line);color:var(--cf-600);padding:2px 9px;border-radius:999px;margin-left:var(--s-2);vertical-align:middle;}
+  .doc .strike{color:var(--ink-4);text-decoration:line-through;}
+</style>
+</head>
+<body class="lang-en tab-diagram">
+
+  <div class="topbar">
+    <div class="tb-brand"><b>Ztor 2.0</b> · August Deliverables</div>
+    <div class="controls">
+      <div class="seg tab" role="tablist">
+        <button data-tab="diagram" class="active"><span class="t-en">📊 Diagram</span><span class="t-zh">📊 架構圖</span></button>
+        <button data-tab="doc"><span class="t-en">📄 Full Spec</span><span class="t-zh">📄 完整規格</span></button>
+      </div>
+      <div class="seg lang">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================== DIAGRAM PANEL ============================== -->
+  <div class="panel diagram">
+  <div class="wrap">
+
+    <!-- ===== EN ===== -->
+    <div class="lblock en">
+      <div class="hero">
+        <div class="eyebrow">Solution Architecture · Ztor 2.0</div>
+        <h1>August Deliverables — Requirements &amp; Open Questions</h1>
+        <p class="sub">The cross-brand creator spine: reporting, the Ztor 2.0 SSO + identity service, and one crowdfund service for two brands. For alignment at the 2026-05-27 dev meeting.</p>
+        <div class="meta">
+          <span class="chip"><b>Target</b> · end of August</span>
+          <span class="chip"><b>Schema lock</b> · mid-July</span>
+          <span class="chip"><b>User DB migration</b> · Jun 26 – Jul 9</span>
+          <span class="chip"><b>Ztor redesign</b> · on 2.0 infra</span>
+          <span class="chip"><b>Beamco fans rebuild</b> · on 2.0 infra</span>
+        </div>
+      </div>
+      <div class="banner">
+        <div class="icon">🔀</div>
+        <div>
+          <div class="from">August = Creator Studio Phase 1 · eShop</div>
+          <div class="to">August = Content Studio Reporting Module (3 reports)</div>
+          <div class="note">eShop deferred. The reporting module is a read-model on the cross-brand creator spine — the real work is identity + a unified earnings record, not screens.</div>
+        </div>
+      </div>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">1</span><h2>Reporting module — three reports</h2><span class="sec-sub">Two data shapes, not one ledger. Money is recorded once; reports are views over it.</span></div>
+        <div class="grid grid-3">
+          <div class="card report"><span class="tag">Project-level</span><div class="ct">📊 Crowdfund Progress</div><div class="cd">Goal, amount raised, backers, % funded, milestone &amp; fund-release status.</div><div class="src">← reads crowdfund service campaign state</div></div>
+          <div class="card report"><span class="tag">Aggregation</span><div class="ct">💰 Creator Earnings</div><div class="cd">Sums realized earnings across all income streams, by source &amp; period.</div><div class="src">← earnings event store (source of money truth)</div></div>
+          <div class="card report"><span class="tag">Content POV</span><div class="ct">🎬 Film</div><div class="cd">VOD performance stats (views, watch-time) ⊕ the film earning line.</div><div class="src">← VOD analytics ⊕ earnings store (film slice)</div></div>
+        </div>
+        <div class="decided">✓ Decided — earnings recorded once; crowdfund escrow + 80/20 milestone release stays inside the crowdfund service</div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">◇</span><h2>How it stacks — the creator spine</h2><span class="sec-sub">Identity is authoritative &amp; real-time. Data is an eventually-consistent read-model.</span></div>
+        <div class="spine">
+          <div class="lane-label">issues token · canonical user_id</div>
+          <div class="node n-auth">Ztor 2.0 SSO (brand-aware IdP) — Beamco-built · Ztor · Beamco · Bookyay</div>
+          <div class="arrow">↓</div>
+          <div class="node n-id">Creator Identity Graph &nbsp;·&nbsp; brand-scoped roles &nbsp;·&nbsp; account-linking edge</div>
+          <div class="arrow">↓ &nbsp; canonical user_id</div>
+          <div class="node n-store">Unified Earnings Store — one canonical event per realized earning</div>
+          <div class="sources-row"><div class="src-pill">merch</div><div class="src-pill">event</div><div class="src-pill">affiliation</div><div class="src-pill">IP</div><div class="src-pill">film</div></div>
+          <div class="node n-cf" style="margin-top:var(--s-2)">Crowdfund service — escrow + 80/20 milestone release · emits released earnings only</div>
+          <div class="arrow">↓</div>
+          <div class="grid grid-3">
+            <div class="node n-report">📊 Crowdfund Progress</div>
+            <div class="node n-report">💰 Creator Earnings</div>
+            <div class="node n-report">🎬 Film (⊕ VOD stats)</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">2</span><h2>Identity &amp; Auth — Ztor 2.0 SSO</h2><span class="sec-sub">Authentication centralizes in the IdP. Authorization (brand bans) stays brand-side.</span></div>
+        <div class="grid grid-2">
+          <div class="card" style="border-top:3px solid var(--auth-500)">
+            <div class="ct" style="color:var(--auth-600)">Identity &amp; Auth — August-critical</div>
+            <ul class="clean">
+              <li><b>Brand-aware IdP</b> — Beamco-built; powers Ztor + Beamco, Bookyay later.</li>
+              <li><b>One canonical user</b> — brand-scoped roles: fan / creator / both.</li>
+              <li><b>3 populations migrated</b> — Ztor users, Beamco fans, Beamco creators. Creators are Beamco-origin.</li>
+              <li><b>OTP at cutover</b> — no password migration from either brand.</li>
+              <li><b>Account-linking in Creator Studio</b> — identity edge, not data merge; proof-of-ownership required.</li>
+            </ul>
+          </div>
+          <div class="card" style="border-top:3px solid var(--ink-5)">
+            <div class="ct">Deferred to a later phase</div>
+            <ul class="clean">
+              <li><b>User-data consolidation</b> — profiles, history, fan records stay per-brand.</li>
+              <li><b>Legacy DB phase-out</b> — brand DBs run in parallel; cut over only when proven.</li>
+              <li><b>Consumer-wide linking</b> — built generically, surfaced in Creator Studio first.</li>
+            </ul>
+            <div class="decided">✓ Decided — identity-authoritative + data-read-model</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">3</span><h2>Crowdfund service merge — one service, two brands</h2><span class="sec-sub">Live, stateful, money-holding services. The constraint shapes the playbook.</span></div>
+        <div class="grid grid-3">
+          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🪢 Strangler migration</div><div class="cd">New campaigns on the unified service; existing campaigns drain on the old path. <b>In-flight escrow never moves.</b></div></div>
+          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🧱 Base &amp; shape</div><ul class="clean cf"><li><b>Base</b> — extend Beamco crowdfund; retire Ztor simple version.</li><li><b>Shape</b> — brand-agnostic core + thin brand adapters.</li><li><b>Add brand-awareness</b> — single-brand today; brand attribute + config, not tenant isolation.</li></ul></div>
+          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">💳 Payment — brand-level + aggregator</div><ul class="clean cf"><li><b>Crowdfund</b> orchestrates (state, milestones, refund decisions).</li><li><b>Aggregator</b> moves money + owns retry/refund.</li><li><b>Brand PSP</b> holds custody — money never sits in 2.0.</li></ul></div>
+        </div>
+        <div class="decided">✓ August crowdfund = thin adapters wiring both brands in · aggregator owns retry/refund · escrow stays brand-side (resolves custody risk)</div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">📅</span><h2>Timeline</h2><span class="sec-sub">Feasible because reporting is read-only against a frozen contract.</span></div>
+        <div class="timeline">
+          <div class="tl"><div class="d">May 31</div><div class="e">1.17 Crowdfund Simple ships (ref impl A)</div></div>
+          <div class="tl"><div class="d">Jun 26–Jul 9</div><div class="e">User DB migration + identity cutover</div></div>
+          <div class="tl"><div class="d">End Jun</div><div class="e">Beamco crowdfund MVP (ref impl B)</div></div>
+          <div class="tl"><div class="d">~Jul 15</div><div class="e">Crowdfund schema locks → ETL adapters</div></div>
+          <div class="tl"><div class="d">End Aug</div><div class="e">Reporting + unified service delivered</div></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">?</span><h2>Open questions for the team</h2><span class="sec-sub">Decisions needed to de-risk the August path.</span></div>
+        <div class="grid grid-2">
+          <div class="q-card"><div class="qq">Ledger ready by July?</div><div class="qd">If not, reporting v1 reads operational data — reconcile as fast-follow.</div></div>
+          <div class="q-card"><div class="qq">Escrow custody / legal owner?</div><div class="qd">Holding fan money = money-transmitter / segregated-account exposure.</div></div>
+          <div class="q-card"><div class="qq">IdP — build vs buy?</div><div class="qd">From scratch, or Keycloak / Ory / managed? Recommend: don't reimplement OAuth.</div></div>
+          <div class="q-card"><div class="qq">Unified consumer account — Aug or fast-follow?</div><div class="qd">Linking decided for Creator Studio; scope it as its own track, not in the migration.</div></div>
+          <div class="q-card"><div class="qq">Brand-awareness in the core — scope for dev?</div><div class="qd">Beamco crowdfund is single-brand; add brand attribute + config (not multi-tenancy). Build it in now.</div></div>
+          <div class="q-card"><div class="qq">Feature-delta map owner?</div><div class="qd">Ztor-simple vs Beamco crowdfund — sets the core/adapter line.</div></div>
+          <div class="q-card"><div class="qq">Ztor content → creator link — ops owner?</div><div class="qd">Maps films to creator identities. Prerequisite for the Film report.</div></div>
+          <div class="q-card"><div class="qq">July Fans-site rebuild = Beamco-on-2.0 build?</div><div class="qd">Make the AI exercise the real consolidation, not throwaway practice.</div></div>
+        </div>
+      </section>
+
+      <footer><span>Ztor 2.0 · August Deliverables Architecture</span><span>Prepared 2026-05-27 · for dev-meeting alignment</span></footer>
+    </div>
+
+    <!-- ===== ZH ===== -->
+    <div class="lblock zh">
+      <div class="hero">
+        <div class="eyebrow">解決方案架構 · Ztor 2.0</div>
+        <h1>八月交付項目 — 需求與待決問題</h1>
+        <p class="sub">跨品牌創作者骨幹：報表、Ztor 2.0 SSO + 身分服務，以及一套服務兩個品牌的群眾募資服務。供 2026-05-27 開發會議對齊共識。</p>
+        <div class="meta">
+          <span class="chip"><b>目標</b> · 八月底</span>
+          <span class="chip"><b>Schema 鎖定</b> · 七月中</span>
+          <span class="chip"><b>User DB 遷移</b> · 6/26 – 7/9</span>
+          <span class="chip"><b>Ztor 改版</b> · 基於 2.0 infra</span>
+          <span class="chip"><b>Beamco 粉絲站重建</b> · 基於 2.0 infra</span>
+        </div>
+      </div>
+      <div class="banner">
+        <div class="icon">🔀</div>
+        <div>
+          <div class="from">八月 = Creator Studio 第一階段 · eShop</div>
+          <div class="to">八月 = Content Studio 報表模組（3 份報表）</div>
+          <div class="note">eShop 延後。報表模組是建立在跨品牌創作者骨幹上的讀取模型——真正的工作是身分與統一收益紀錄，而非畫面。</div>
+        </div>
+      </div>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">1</span><h2>報表模組 — 三份報表</h2><span class="sec-sub">兩種資料形態，而非單一帳本。金額只記錄一次；報表是其上的視圖。</span></div>
+        <div class="grid grid-3">
+          <div class="card report"><span class="tag">專案層級</span><div class="ct">📊 募資專案進度</div><div class="cd">目標、已募金額、贊助人數、達成率、里程碑與撥款狀態。</div><div class="src">← 讀取 crowdfund 服務的活動狀態</div></div>
+          <div class="card report"><span class="tag">彙整</span><div class="ct">💰 創作者收益</div><div class="cd">彙總所有收入來源的已實現收益，依來源與期間。</div><div class="src">← earnings event store（金額的唯一真實來源）</div></div>
+          <div class="card report"><span class="tag">影片視角</span><div class="ct">🎬 影片</div><div class="cd">VOD 成效數據（觀看數、觀看時長）⊕ 影片收益項目。</div><div class="src">← VOD 分析 ⊕ earnings store（影片切片）</div></div>
+        </div>
+        <div class="decided">✓ 已決定 — 收益只記錄一次；募資的 escrow + 80/20 里程碑撥款留在 crowdfund 服務內</div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">◇</span><h2>整體堆疊 — 創作者骨幹</h2><span class="sec-sub">身分是權威且即時的。資料則是最終一致的讀取模型。</span></div>
+        <div class="spine">
+          <div class="lane-label">發行 token · canonical user_id</div>
+          <div class="node n-auth">Ztor 2.0 SSO（品牌感知 IdP）— Beamco 建置 · Ztor · Beamco · Bookyay</div>
+          <div class="arrow">↓</div>
+          <div class="node n-id">創作者身分圖譜 &nbsp;·&nbsp; 品牌範圍角色 &nbsp;·&nbsp; 帳號連結邊</div>
+          <div class="arrow">↓ &nbsp; canonical user_id</div>
+          <div class="node n-store">統一收益存儲 — 每筆已實現收益對應一個標準事件</div>
+          <div class="sources-row"><div class="src-pill">merch</div><div class="src-pill">event</div><div class="src-pill">affiliation</div><div class="src-pill">IP</div><div class="src-pill">film</div></div>
+          <div class="node n-cf" style="margin-top:var(--s-2)">Crowdfund 服務 — escrow + 80/20 里程碑撥款 · 僅發出已撥付收益</div>
+          <div class="arrow">↓</div>
+          <div class="grid grid-3">
+            <div class="node n-report">📊 募資專案進度</div>
+            <div class="node n-report">💰 創作者收益</div>
+            <div class="node n-report">🎬 影片（⊕ VOD 數據）</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">2</span><h2>身分與驗證 — Ztor 2.0 SSO</h2><span class="sec-sub">驗證（Authentication）集中於 IdP。授權（封鎖等）留在品牌端。</span></div>
+        <div class="grid grid-2">
+          <div class="card" style="border-top:3px solid var(--auth-500)">
+            <div class="ct" style="color:var(--auth-600)">身分與驗證 — 八月關鍵</div>
+            <ul class="clean">
+              <li><b>品牌感知 IdP</b> — Beamco 建置；現支援 Ztor + Beamco，未來 Bookyay。</li>
+              <li><b>單一標準使用者</b> — 品牌範圍角色：fan / creator / 兩者皆是。</li>
+              <li><b>遷移 3 類人群</b> — Ztor 用戶、Beamco 粉絲、Beamco 創作者。創作者源自 Beamco。</li>
+              <li><b>切換時採 OTP</b> — 兩個品牌都不遷移密碼。</li>
+              <li><b>於 Creator Studio 做帳號連結</b> — 身分連結邊，非資料合併；需所有權驗證。</li>
+            </ul>
+          </div>
+          <div class="card" style="border-top:3px solid var(--ink-5)">
+            <div class="ct">延後至後續階段</div>
+            <ul class="clean">
+              <li><b>使用者資料整合</b> — 個人檔案、歷史、粉絲紀錄維持各品牌獨立。</li>
+              <li><b>舊 DB 淘汰</b> — 品牌 DB 並行運行；驗證穩定後才切換。</li>
+              <li><b>全站消費者連結</b> — 通用機制先在 Creator Studio 露出。</li>
+            </ul>
+            <div class="decided">✓ 已決定 — 身分權威 + 資料讀取模型</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">3</span><h2>募資服務合併 — 一套服務、兩個品牌</h2><span class="sec-sub">這是線上、有狀態、持有金流的服務。此約束決定了做法。</span></div>
+        <div class="grid grid-3">
+          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🪢 絞殺者式遷移</div><div class="cd">新活動走統一服務；既有活動在舊路徑跑完。<b>進行中的 escrow 金流絕不搬移。</b></div></div>
+          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🧱 基底與結構</div><ul class="clean cf"><li><b>基底</b> — 擴充 Beamco crowdfund；淘汰 Ztor 簡易版。</li><li><b>結構</b> — 品牌無關核心 + 輕量品牌轉接層。</li><li><b>加入品牌感知</b> — 目前為單品牌；加品牌屬性 + 設定，而非租戶隔離。</li></ul></div>
+          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">💳 金流 — 品牌層級 + 聚合器</div><ul class="clean cf"><li><b>Crowdfund</b> 負責編排（狀態、里程碑、退款決策）。</li><li><b>聚合器</b> 負責搬錢 + 重試/退款。</li><li><b>品牌 PSP</b> 持有資金 — 金流絕不停留在 2.0。</li></ul></div>
+        </div>
+        <div class="decided">✓ 八月募資 = 輕量轉接層把兩品牌接上 · 聚合器負責重試/退款 · escrow 留在品牌端（解除保管風險）</div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">📅</span><h2>時間軸</h2><span class="sec-sub">可行，因為報表是對凍結契約的唯讀彙整。</span></div>
+        <div class="timeline">
+          <div class="tl"><div class="d">5/31</div><div class="e">1.17 募資簡易版上線（參考實作 A）</div></div>
+          <div class="tl"><div class="d">6/26–7/9</div><div class="e">User DB 遷移 + 身分切換</div></div>
+          <div class="tl"><div class="d">6 月底</div><div class="e">Beamco 募資 MVP（參考實作 B）</div></div>
+          <div class="tl"><div class="d">~7/15</div><div class="e">募資 schema 鎖定 → ETL 轉接層</div></div>
+          <div class="tl"><div class="d">8 月底</div><div class="e">報表 + 統一服務交付</div></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">?</span><h2>給團隊的待決問題</h2><span class="sec-sub">為降低八月風險所需的決策。</span></div>
+        <div class="grid grid-2">
+          <div class="q-card"><div class="qq">Ledger 七月前就緒？</div><div class="qd">若否，報表 v1 讀取營運資料 — 之後再對帳補上。</div></div>
+          <div class="q-card"><div class="qq">Escrow 保管 / 法務負責人？</div><div class="qd">持有粉絲資金 = 金流業者 / 專戶隔離的法規風險。</div></div>
+          <div class="q-card"><div class="qq">IdP — 自建還是採購？</div><div class="qd">從零自建，還是 Keycloak / Ory / 託管？建議：別重寫 OAuth。</div></div>
+          <div class="q-card"><div class="qq">統一消費者帳號 — 八月還是後續？</div><div class="qd">連結已決定放 Creator Studio；列為獨立工項，不塞進遷移視窗。</div></div>
+          <div class="q-card"><div class="qq">核心品牌感知 — 開發範圍？</div><div class="qd">Beamco crowdfund 為單品牌；加品牌屬性 + 設定（非多租戶）。趁現在做進去。</div></div>
+          <div class="q-card"><div class="qq">功能差異對照負責人？</div><div class="qd">Ztor 簡易版 vs Beamco crowdfund — 決定核心/轉接層的界線。</div></div>
+          <div class="q-card"><div class="qq">Ztor 內容 → 創作者連結 — 維運負責人？</div><div class="qd">將影片對應到創作者身分。影片報表的前置條件。</div></div>
+          <div class="q-card"><div class="qq">七月粉絲站重建 = Beamco 上 2.0？</div><div class="qd">讓這次 AI 練習成為真正的整合，而非用過即丟。</div></div>
+        </div>
+      </section>
+
+      <footer><span>Ztor 2.0 · 八月交付架構</span><span>製作於 2026-05-27 · 供開發會議對齊</span></footer>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- ============================== DOC PANEL ============================== -->
+  <div class="panel doc">
+  <div class="wrap doc-wrap">
+
+    <!-- ===== EN ===== -->
+    <div class="lblock en doc">
+      <div class="doc-title">Solution Architecture: Ztor 2.0 — August Deliverables</div>
+      <div class="doc-meta">Date: 2026-05-27 · Prepared by Claude Solution Architect · Status: Reporting / Identity-Auth / Crowdfund all LOCKED</div>
+
+      <h2>Direction change (the trigger for this doc)</h2>
+      <p>August deliverable for <strong>Content Studio</strong> shifted:</p>
+      <ul>
+        <li><span class="strike">Creator Studio Phase 1 = eShop</span> → <strong>eShop deferred</strong></li>
+        <li><strong>August = Content Studio reporting module only</strong> (3 reports, below)</li>
+      </ul>
+      <p>Service-layer features still in scope for the 2.0 push:</p>
+      <ul>
+        <li>Migrate Ztor Simple-Version crowdfund into Beamco crowdfund — <strong>one crowdfund service serving two brands</strong></li>
+        <li><strong>Unified user DB</strong> — Ztor 2.0 SSO; 2.0 is system-of-record for identity (Ztor users + Beamco creators + Beamco fans); legacy brand DBs run in parallel, phased out later</li>
+        <li>Wire creator reporting data into 2.0 infra</li>
+      </ul>
+
+      <h2>Part 1 — Reporting Architecture <span class="box locked">LOCKED</span></h2>
+      <h3>The reframe</h3>
+      <p>"Reporting module" is not a UI project. It is a read-model on top of a <strong>cross-brand creator spine</strong>: canonical identity + a unified earnings record. Reporting is the spine's first consumer. Resource the plumbing, not the screens.</p>
+      <h3>The three reports (top-down from what a creator sees)</h3>
+      <p><strong>Report 1 — Crowdfund Project Progress</strong> (project-level, operational). Goal, raised, backers, % funded, milestone/fund-release status. Reads directly from the crowdfund service's own campaign state. All escrow + milestone-release machinery lives inside the crowdfund service and only surfaces here.</p>
+      <p><strong>Report 2 — Creator Earnings</strong> (the aggregation surface). Sums realized earnings across <code>{ merch, event, affiliation, ip, crowdfund, film }</code>. Crowdfund appears here only as released earnings — when a milestone fires, the crowdfund service emits one earning event. The escrow lifecycle never crosses into this report.</p>
+      <p><strong>Report 3 — Film</strong> (content-performance POV). Film stats (views, watch-time, completion) from the Ztor VOD source ⊕ the film's earning line, read from the same earnings store rows Report 2 uses (<code>source_type='film'</code>). Film earning is recorded once; Report 2 aggregates it, Report 3 slices it and dresses it with stats. No number can disagree with itself.</p>
+      <h3>Two data shapes (not one grand ledger)</h3>
+      <p><strong>1. Earnings event store</strong> — single source of money truth. One lean row per realized earning:</p>
+      <pre><code>{ creator_id, brand,
+  source_type: "merch"|"event"|"affiliation"|"ip"|"crowdfund"|"film",
+  gross, fees, net, currency,
+  occurred_at,
+  ref }   // order / campaign / title id — for drill-down</code></pre>
+      <p>No <code>fund_state</code> / <code>milestone_ref</code> / escrow fields — that complexity stays in the crowdfund service.</p>
+      <p><strong>2. Crowdfund campaign state</strong> — read directly from the crowdfund service for Report 1.</p>
+      <h3>Crowdfund money model (why escrow stays out of the earnings store)</h3>
+      <p>Pledged money is <strong>not</strong> creator earnings. It is held at the <strong>project level</strong> in escrow and released by milestone:</p>
+      <ul>
+        <li>Milestone 1 — payment fully collected → release <strong>80%</strong></li>
+        <li>Milestone 2 — released on Spotify → release <strong>20%</strong></li>
+      </ul>
+      <p>Only the released tranches become <code>crowdfund</code> earning events in the store.</p>
+      <h3>Decisions locked</h3>
+      <ul>
+        <li>Reporting is a consumer of the spine, not the deliverable itself.</li>
+        <li><strong>Identity-authoritative + data-read-model</strong> (see Part 2).</li>
+        <li><strong>Contract over schema:</strong> lock the earnings contract early; source schemas can churn until mid-July; only the thin ETL adapter waits for the lock.</li>
+        <li><strong>Single source of truth for money:</strong> earnings recorded once, reports are views.</li>
+      </ul>
+      <h3>Timeline</h3>
+      <table>
+        <tr><th>Window</th><th>Work</th></tr>
+        <tr><td>Now–Jun 26</td><td>Lock earnings contract · build identity graph + linking flow · build reporting read-side · design crowdfund core</td></tr>
+        <tr><td>Jun 26–Jul 9</td><td>User DB migration + identity cutover</td></tr>
+        <tr><td>~Jul 15</td><td>Crowdfund feature/schema locks → finalize ETL adapters</td></tr>
+        <tr><td>Mid-Jul–end Aug</td><td>Integration + testing (~6 weeks) — feasible because reporting is read-only against a frozen contract</td></tr>
+      </table>
+      <div class="box open"><strong>Open items —</strong> Ledger by July? (else reporting v1 reads operational data, reconcile as fast-follow). Escrow custody/legal — holding fan money has money-transmitter / segregated-account implications; name an owner before launch.</div>
+
+      <h2>Part 2 — Unified User DB + Auth Service <span class="box locked">LOCKED</span></h2>
+      <h3>Split the problem</h3>
+      <ul>
+        <li><strong>Identity &amp; Auth</strong> — who you are, login, canonical <code>user_id</code>. Authoritative, real-time, 2.0-owned. <strong>August-critical.</strong></li>
+        <li><strong>User data</strong> — profiles, history, fan records. Eventually-consistent read-model synced from legacy. <strong>Deferred.</strong></li>
+      </ul>
+      <h3>Ztor 2.0 SSO</h3>
+      <ul>
+        <li>A <strong>brand-aware platform IdP</strong> — one shared user base across brands, not tenant-isolated — built by the Beamco team, powering Ztor + Beamco now and Bookyay later. (Not "Beamco SSO".)</li>
+        <li>RS256 JWT + Redis sessions. Canonical <code>user_id</code> = token subject.</li>
+      </ul>
+      <h3>Canonical user model</h3>
+      <ul>
+        <li><strong>One canonical user</strong>, with <strong>brand-scoped roles</strong> — e.g. <code>user X → {beamco: creator, ztor: fan}</code>. Per-brand, not global (Bookyay drops in cleanly; supports per-brand bans).</li>
+        <li><strong>Three populations migrated:</strong> Ztor users (no native creator role), Beamco fans, Beamco creators. <strong>Creators are single-origin (Beamco)</strong> — removes the cross-brand creator entity-resolution problem.</li>
+      </ul>
+      <h3>Credentials &amp; migration</h3>
+      <ul>
+        <li><strong>OTP / magic-link at cutover</strong> — no password hashes migrated. Optional password-set post-login. Removes password reconciliation from the migration window.</li>
+        <li>Email is the identity key.</li>
+      </ul>
+      <h3>Account linking (BUILD in August, surfaced in Creator Studio)</h3>
+      <ul>
+        <li>Creator Studio is the cross-brand surface — the "two profiles, which one?" ambiguity bites there, so linking UX lives there.</li>
+        <li><strong>Linking ≠ data merge.</strong> Linking writes an identity-graph edge (<code>beamco acct ⇄ ztor acct = one canonical_user_id</code>); reporting aggregates by <code>canonical_user_id</code>. Profile data stays per-brand, deferred.</li>
+        <li><strong>Proof of ownership required</strong> — auto-suggest on email match, but always require an OTP/login challenge to the second account before writing the edge.</li>
+        <li><strong>Build generically, expose in Creator Studio for August</strong> — consumer-wide linking reuses it later.</li>
+        <li><strong>Don't gate the common case</strong> — single-identity creators walk straight in; detected-but-unlinked → logged-in identity + non-blocking nudge.</li>
+      </ul>
+      <h3>Ztor content → creator link (Topic C)</h3>
+      <p>Ztor back-office links Beamco creators (visible via the 2.0 user DB) to Ztor films. Requires back-office read access to canonical creator identities + an ops owner for the mapping. <strong>Prerequisite</strong> for the Film report and the film line in Creator Earnings.</p>
+      <h3>Auth-feature placement</h3>
+      <p><strong>Authentication → IdP (centralized). Authorization → brand.</strong></p>
+      <ul>
+        <li>IdP: social SSO (Google/FB/Apple — brokered), forgot-password (brand-skinned emails), MFA, email verification, session revocation, rate-limit/bot, global identity ban.</li>
+        <li>Brand: brand-level ban (authz — IdP validates identity; brand denies access), content moderation, role gating.</li>
+        <li>Cross-cutting: account deletion / GDPR export — name an owner.</li>
+        <li>Implications: IdP is a cross-brand SPOF → needs HA; per-brand theming is a hard requirement.</li>
+      </ul>
+      <div class="box open"><strong>Open (delegated to dev) —</strong> build IdP from scratch vs Keycloak / Ory / Auth0 / Cognito. Recommendation: don't reimplement OAuth — use an existing IdP, spend custom effort on the linking flow + canonical-user migration.</div>
+
+      <h2>Part 3 — Crowdfund Service Migration <span class="box locked">LOCKED</span></h2>
+      <h3>Base &amp; migration</h3>
+      <ul>
+        <li><strong>Base = Beamco crowdfund</strong>, generalized into the 2.0 crowdfund service. Ztor simple-version absorbed + retired (not ported).</li>
+        <li><strong>Strangler migration</strong> — new campaigns on the unified service; existing campaigns drain on their current path. In-flight escrow never moves.</li>
+      </ul>
+      <h3>Payment — brand-level + aggregator (resolves the escrow/legal risk)</h3>
+      <pre><code>Crowdfund service  →  orchestrates: campaign state, pledges, milestone triggers, refund decisions (what)
+Payment aggregator →  moves money: routes charge/refund/release to brand PSP, owns retry (how)
+Brand PSP/merchant →  holds custody: each brand keeps its own merchant account, escrow, settlement</code></pre>
+      <ul>
+        <li><strong>Money never sits in 2.0 infra</strong> — each brand's PSP holds funds; 2.0 only issues instructions. Largely answers the escrow-custody / money-transmitter question.</li>
+        <li><strong>80/20 milestone release</strong> = crowdfund service detects milestone → instructs aggregator → brand PSP executes payout.</li>
+        <li><strong>Aggregator owns retry + refund</strong> (not per-brand) — keeps adapters thin. Ztor 1.17 refund-flow + payment-retry lands here, built once.</li>
+      </ul>
+      <h3>August crowdfund scope = adapters (+ two riders)</h3>
+      <ul>
+        <li><strong>Adapters (the bulk)</strong> — per brand: branding/locale/currency, payment routing → aggregator, fan-tier/milestone config, notifications, frontend wiring.</li>
+        <li><strong>Payment aggregator</strong> — new service.</li>
+        <li><strong>Add brand-awareness to the core</strong> — Beamco base is single-brand; add a brand attribute + per-brand config. Lighter than multi-tenancy.</li>
+      </ul>
+      <h3>Brand-aware core — guidance for dev (delegated)</h3>
+      <p><strong>Brand-awareness, NOT multi-tenancy.</strong> Ztor + Beamco converge into 2.0, so brand is transitional metadata, not a permanent isolation boundary. Don't build tenant isolation you'll tear out.</p>
+      <ul>
+        <li>Add a <code>brand</code> attribute on campaigns/pledges — do it now while in dev (cheaper than retrofitting).</li>
+        <li>Per-brand config — branding, payment routing, currency, fan-tier/milestone rules.</li>
+        <li>Filter by brand only where the UX needs it. Cross-brand reads are wanted (reporting) — no hard isolation layer.</li>
+        <li>Be exact on the money path — campaign brand must route funds to the correct brand PSP; wrong brand = money to the wrong merchant account.</li>
+      </ul>
+      <h3>Sequencing</h3>
+      <ul>
+        <li><strong>Beamco fans-site rebuild (July) = build Beamco's crowdfund side on 2.0 infra</strong> — same pattern as the Ztor 2.0 redesign already underway. Turns the "AI exercise" into the real consolidation.</li>
+        <li>Reporting wiring is free — the core emits released-earnings events regardless of brand; reporting just reads them.</li>
+      </ul>
+      <div class="box open"><strong>Open for dev —</strong> scope of adding brand-awareness to the Beamco core (brand attribute + per-brand config).</div>
+    </div>
+
+    <!-- ===== ZH ===== -->
+    <div class="lblock zh doc">
+      <div class="doc-title">解決方案架構：Ztor 2.0 — 八月交付項目</div>
+      <div class="doc-meta">日期：2026-05-27 · 由 Claude Solution Architect 製作 · 狀態：報表 / 身分驗證 / 募資 皆已定案</div>
+
+      <h2>方向變更（本文件的緣由）</h2>
+      <p><strong>Content Studio</strong> 的八月交付改變：</p>
+      <ul>
+        <li><span class="strike">Creator Studio 第一階段 = eShop</span> → <strong>eShop 延後</strong></li>
+        <li><strong>八月 = 僅交付 Content Studio 報表模組</strong>（3 份報表，見下）</li>
+      </ul>
+      <p>2.0 仍在範圍內的服務層功能：</p>
+      <ul>
+        <li>將 Ztor 簡易版募資併入 Beamco crowdfund — <strong>一套募資服務、服務兩個品牌</strong></li>
+        <li><strong>統一 user DB</strong> — Ztor 2.0 SSO；2.0 為身分的權威紀錄（Ztor 用戶 + Beamco 創作者 + Beamco 粉絲）；舊品牌 DB 並行運行，之後再淘汰</li>
+        <li>把創作者報表資料接入 2.0 基礎設施</li>
+      </ul>
+
+      <h2>第一部分 — 報表架構 <span class="box locked">已定案</span></h2>
+      <h3>重新定義</h3>
+      <p>「報表模組」不是一個 UI 專案。它是建立在<strong>跨品牌創作者骨幹</strong>之上的讀取模型：標準身分 + 統一收益紀錄。報表是骨幹的第一個消費者。要投資底層管線，而非畫面。</p>
+      <h3>三份報表（由創作者所見由上而下定義）</h3>
+      <p><strong>報表 1 — 募資專案進度</strong>（專案層級、營運導向）。目標、已募金額、贊助人數、達成率、里程碑與撥款狀態。直接讀取 crowdfund 服務本身的活動狀態。所有 escrow + 里程碑撥款機制都留在 crowdfund 服務內，僅在此呈現。</p>
+      <p><strong>報表 2 — 創作者收益</strong>（彙整面）。彙總 <code>{ merch, event, affiliation, ip, crowdfund, film }</code> 的已實現收益。募資在此僅以「已撥付收益」出現——里程碑觸發時，crowdfund 服務發出一筆收益事件。escrow 生命週期絕不進入此報表。</p>
+      <p><strong>報表 3 — 影片</strong>（內容成效視角）。來自 Ztor VOD 的影片數據（觀看數、觀看時長、完播率）⊕ 影片收益項目，讀取的是與報表 2 相同的 earnings store 紀錄（<code>source_type='film'</code>）。影片收益只記錄一次；報表 2 彙總、報表 3 切片並加上數據。沒有任何數字會自相矛盾。</p>
+      <h3>兩種資料形態（而非單一大帳本）</h3>
+      <p><strong>1. Earnings event store</strong> — 金額的唯一真實來源。每筆已實現收益一列精簡紀錄：</p>
+      <pre><code>{ creator_id, brand,
+  source_type: "merch"|"event"|"affiliation"|"ip"|"crowdfund"|"film",
+  gross, fees, net, currency,
+  occurred_at,
+  ref }   // 訂單 / 活動 / 影片 id — 供下鑽</code></pre>
+      <p>沒有 <code>fund_state</code> / <code>milestone_ref</code> / escrow 欄位——那些複雜度留在 crowdfund 服務。</p>
+      <p><strong>2. Crowdfund 活動狀態</strong> — 報表 1 直接讀取 crowdfund 服務。</p>
+      <h3>募資金流模型（為何 escrow 不進 earnings store）</h3>
+      <p>已贊助的金額<strong>不是</strong>創作者收益。它在<strong>專案層級</strong>以 escrow 持有，並依里程碑撥款：</p>
+      <ul>
+        <li>里程碑 1 — 款項全數收齊 → 撥付 <strong>80%</strong></li>
+        <li>里程碑 2 — 於 Spotify 上架 → 撥付 <strong>20%</strong></li>
+      </ul>
+      <p>只有已撥付的款項才會成為 store 中的 <code>crowdfund</code> 收益事件。</p>
+      <h3>已定案決策</h3>
+      <ul>
+        <li>報表是骨幹的消費者，而非交付物本身。</li>
+        <li><strong>身分權威 + 資料讀取模型</strong>（見第二部分）。</li>
+        <li><strong>契約優先於 schema：</strong>先鎖定收益契約；來源 schema 可變動到七月中；只有輕量 ETL 轉接層需等鎖定。</li>
+        <li><strong>金額唯一真實來源：</strong>收益只記錄一次，報表是視圖。</li>
+      </ul>
+      <h3>時間軸</h3>
+      <table>
+        <tr><th>時段</th><th>工作</th></tr>
+        <tr><td>現在–6/26</td><td>鎖定收益契約 · 建身分圖譜 + 連結流程 · 建報表讀取端 · 設計 crowdfund 核心</td></tr>
+        <tr><td>6/26–7/9</td><td>User DB 遷移 + 身分切換</td></tr>
+        <tr><td>~7/15</td><td>募資功能/schema 鎖定 → 完成 ETL 轉接層</td></tr>
+        <tr><td>7 月中–8 月底</td><td>整合 + 測試（約 6 週）— 可行，因報表是對凍結契約的唯讀彙整</td></tr>
+      </table>
+      <div class="box open"><strong>待決項目 —</strong> Ledger 七月前就緒？（否則報表 v1 讀營運資料，之後對帳補上）。Escrow 保管/法務——持有粉絲資金涉及金流業者 / 專戶隔離的法規問題；上線前須指定負責人。</div>
+
+      <h2>第二部分 — 統一 User DB + 驗證服務 <span class="box locked">已定案</span></h2>
+      <h3>拆解問題</h3>
+      <ul>
+        <li><strong>身分與驗證</strong> — 你是誰、登入、標準 <code>user_id</code>。權威、即時、2.0 擁有。<strong>八月關鍵。</strong></li>
+        <li><strong>使用者資料</strong> — 個人檔案、歷史、粉絲紀錄。由舊系統同步的最終一致讀取模型。<strong>延後。</strong></li>
+      </ul>
+      <h3>Ztor 2.0 SSO</h3>
+      <ul>
+        <li>一個<strong>品牌感知的平台 IdP</strong> — 跨品牌共用一份使用者基底、非租戶隔離 — 由 Beamco 團隊建置，現支援 Ztor + Beamco，未來 Bookyay。（不是「Beamco SSO」。）</li>
+        <li>RS256 JWT + Redis session。標準 <code>user_id</code> = token subject。</li>
+      </ul>
+      <h3>標準使用者模型</h3>
+      <ul>
+        <li><strong>單一標準使用者</strong>，搭配<strong>品牌範圍角色</strong> — 例如 <code>user X → {beamco: creator, ztor: fan}</code>。依品牌而非全域（Bookyay 可乾淨接入；支援各品牌封鎖）。</li>
+        <li><strong>遷移三類人群：</strong>Ztor 用戶（無原生 creator 角色）、Beamco 粉絲、Beamco 創作者。<strong>創作者單一來源（Beamco）</strong>——消除跨品牌創作者的身分比對問題。</li>
+      </ul>
+      <h3>憑證與遷移</h3>
+      <ul>
+        <li><strong>切換時採 OTP / magic-link</strong> — 不遷移任何密碼雜湊。登入後可選擇設定密碼。把密碼對帳移出遷移視窗。</li>
+        <li>Email 為身分鍵。</li>
+      </ul>
+      <h3>帳號連結（八月建置，於 Creator Studio 露出）</h3>
+      <ul>
+        <li>Creator Studio 是跨品牌的介面——「兩個檔案、要哪個？」的模糊性在此浮現，故連結 UX 放這裡。</li>
+        <li><strong>連結 ≠ 資料合併。</strong>連結寫入一條身分圖譜邊（<code>beamco 帳號 ⇄ ztor 帳號 = 同一 canonical_user_id</code>）；報表依 <code>canonical_user_id</code> 彙整。檔案資料維持各品牌獨立、延後。</li>
+        <li><strong>需所有權驗證</strong> — email 相符時自動建議，但寫入連結邊前一律要求對第二個帳號做 OTP/登入挑戰。</li>
+        <li><strong>機制通用化、八月只在 Creator Studio 露出</strong> — 全站消費者連結之後沿用。</li>
+        <li><strong>別卡住常見情況</strong> — 單一身分的創作者直接進入；偵測到但未連結 → 載入已登入身分 + 非阻斷式提示。</li>
+      </ul>
+      <h3>Ztor 內容 → 創作者連結（主題 C）</h3>
+      <p>Ztor 後台把 Beamco 創作者（透過 2.0 user DB 可見）連到 Ztor 影片。需要後台對標準創作者身分的讀取權 + 一位維運負責人做對應。是影片報表與創作者收益中影片項目的<strong>前置條件</strong>。</p>
+      <h3>驗證功能歸屬</h3>
+      <p><strong>驗證 → IdP（集中）。授權 → 品牌。</strong></p>
+      <ul>
+        <li>IdP：社交登入（Google/FB/Apple — 由 IdP 代理）、忘記密碼（品牌樣式信件）、MFA、email 驗證、session 撤銷、限流/防爬、全域身分封鎖。</li>
+        <li>品牌：品牌層級封鎖（屬授權 — IdP 仍驗證身分；品牌拒絕存取）、內容審核、角色管控。</li>
+        <li>橫切：帳號刪除 / GDPR 匯出 — 須指定負責人。</li>
+        <li>影響：IdP 成為跨品牌單點故障 → 需高可用；各品牌樣式為硬性需求。</li>
+      </ul>
+      <div class="box open"><strong>待決（交付開發團隊）—</strong> IdP 從零自建 vs Keycloak / Ory / Auth0 / Cognito。建議：別重寫 OAuth — 採用現成 IdP，把自訂工時花在連結流程 + 標準使用者遷移。</div>
+
+      <h2>第三部分 — 募資服務遷移 <span class="box locked">已定案</span></h2>
+      <h3>基底與遷移</h3>
+      <ul>
+        <li><strong>基底 = Beamco crowdfund</strong>，泛化為 2.0 募資服務。Ztor 簡易版併入並淘汰（不移植）。</li>
+        <li><strong>絞殺者式遷移</strong> — 新活動走統一服務；既有活動在現有路徑跑完。進行中的 escrow 絕不搬移。</li>
+      </ul>
+      <h3>金流 — 品牌層級 + 聚合器（解除 escrow/法務風險）</h3>
+      <pre><code>Crowdfund 服務   →  編排：活動狀態、贊助、里程碑觸發、退款決策（做什麼）
+Payment 聚合器   →  搬錢：把扣款/退款/撥付路由到品牌 PSP，負責重試（怎麼做）
+品牌 PSP/金流商  →  持有資金：各品牌保留自己的商戶帳號、escrow、清算</code></pre>
+      <ul>
+        <li><strong>金流絕不停留在 2.0</strong> — 各品牌 PSP 持有資金；2.0 只下指令。大致解答了 escrow 保管 / 金流業者的問題。</li>
+        <li><strong>80/20 里程碑撥款</strong> = crowdfund 服務偵測里程碑 → 指示聚合器 → 品牌 PSP 執行撥付。</li>
+        <li><strong>聚合器負責重試 + 退款</strong>（非各品牌各做）— 讓轉接層保持輕薄。Ztor 1.17 退款流程 + 金流重試集中於此，只做一次。</li>
+      </ul>
+      <h3>八月募資範圍 = 轉接層（+ 兩項附帶）</h3>
+      <ul>
+        <li><strong>轉接層（主體）</strong> — 各品牌：品牌樣式/語系/幣別、金流路由 → 聚合器、fan-tier/里程碑設定、通知、前端接線。</li>
+        <li><strong>Payment 聚合器</strong> — 新服務。</li>
+        <li><strong>為核心加入品牌感知</strong> — Beamco 基底為單品牌；加品牌屬性 + 各品牌設定。比多租戶輕量。</li>
+      </ul>
+      <h3>品牌感知核心 — 給開發的指引（已交付）</h3>
+      <p><strong>是品牌感知，不是多租戶。</strong>Ztor + Beamco 會收斂進 2.0，所以品牌是過渡性中繼資料，而非永久隔離邊界。別建之後要拆掉的租戶隔離。</p>
+      <ul>
+        <li>在 campaigns/pledges 等加 <code>brand</code> 屬性 — 趁現在仍在開發時做（比事後補上便宜）。</li>
+        <li>各品牌設定 — 品牌樣式、金流路由、幣別、fan-tier/里程碑規則。</li>
+        <li>只在 UX 需要處依品牌過濾。跨品牌讀取是被期望的（報表）— 不做硬隔離層。</li>
+        <li>金流路徑要精確 — 活動的品牌必須把資金路由到正確的品牌 PSP；品牌錯了 = 錢進錯商戶帳號。</li>
+      </ul>
+      <h3>排序</h3>
+      <ul>
+        <li><strong>七月粉絲站重建 = 在 2.0 基礎設施上建 Beamco 的募資端</strong> — 與已進行的 Ztor 2.0 改版同一套做法。讓這次「AI 練習」成為真正的整合。</li>
+        <li>報表接線免費 — 核心無論品牌都發出已撥付收益事件；報表直接讀取。</li>
+      </ul>
+      <div class="box open"><strong>待決（開發）—</strong> 為 Beamco 核心加入品牌感知的範圍（品牌屬性 + 各品牌設定）。</div>
+    </div>
+
+  </div>
+  </div>
+
+  <script>
+    const body = document.body;
+    document.querySelectorAll('.seg.tab button').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('.seg.tab button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      body.classList.remove('tab-diagram','tab-doc');
+      body.classList.add('tab-' + b.dataset.tab);
+      window.scrollTo({top:0});
+    }));
+    document.querySelectorAll('.seg.lang button').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('.seg.lang button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      body.classList.remove('lang-en','lang-zh');
+      body.classList.add('lang-' + b.dataset.lang);
+      document.documentElement.lang = b.dataset.lang === 'zh' ? 'zh-Hant' : 'en';
+    }));
+  </script>
+</body>
+</html>
