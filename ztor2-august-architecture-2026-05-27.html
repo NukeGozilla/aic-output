@@ -240,6 +240,7 @@
               <li><b>3 populations migrated</b> — Ztor users, Beamco fans, Beamco creators. Creators are Beamco-origin.</li>
               <li><b>OTP at cutover</b> — no password migration from either brand.</li>
               <li><b>Account-linking in Creator Studio</b> — identity edge, not data merge; proof-of-ownership required.</li>
+              <li><b>iframe login + APP ID</b> — embedded per-brand styling; Apple-ID-no-email → force email.</li>
             </ul>
           </div>
           <div class="card" style="border-top:3px solid var(--ink-5)">
@@ -258,20 +259,31 @@
         <div class="sec-head"><span class="sec-num">3</span><h2>Crowdfund service merge — one service, two brands</h2><span class="sec-sub">Live, stateful, money-holding services. The constraint shapes the playbook.</span></div>
         <div class="grid grid-3">
           <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🪢 Strangler migration</div><div class="cd">New campaigns on the unified service; existing campaigns drain on the old path. <b>In-flight escrow never moves.</b></div></div>
-          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🧱 Base &amp; shape</div><ul class="clean cf"><li><b>Base</b> — extend Beamco crowdfund; retire Ztor simple version.</li><li><b>Shape</b> — brand-agnostic core + thin brand adapters.</li><li><b>Add brand-awareness</b> — single-brand today; brand attribute + config, not tenant isolation.</li></ul></div>
+          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🧱 Base &amp; shape</div><ul class="clean cf"><li><b>Base</b> — extend Beamco crowdfund (richer backend); fold in Ztor's film attributes; retire Ztor simple version.</li><li><b>Shape</b> — brand-agnostic core + thin brand adapters.</li><li><b>Add brand-awareness</b> — single-brand today; brand attribute + config, not tenant isolation.</li></ul></div>
           <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">💳 Payment — brand-level + aggregator</div><ul class="clean cf"><li><b>Crowdfund</b> orchestrates (state, milestones, refund decisions).</li><li><b>Aggregator</b> moves money + owns retry/refund.</li><li><b>Brand PSP</b> holds custody — money never sits in 2.0.</li></ul></div>
         </div>
         <div class="decided">✓ August crowdfund = thin adapters wiring both brands in · aggregator owns retry/refund · escrow stays brand-side (resolves custody risk)</div>
+        <div class="decided" style="margin-left:8px">↳ Crowdfund admin backend is a Beamco 1.0 build — must support both brands after the merge</div>
       </section>
 
       <section>
-        <div class="sec-head"><span class="sec-num">📅</span><h2>Timeline</h2><span class="sec-sub">Feasible because reporting is read-only against a frozen contract.</span></div>
+        <div class="sec-head"><span class="sec-num">4</span><h2>Shared platform services</h2><span class="sec-sub">Cross-brand 2.0 services; each brand plugs in via APP ID + brand config.</span></div>
+        <div class="grid grid-3">
+          <div class="card"><div class="ct">🛡️ API Gateway</div><div class="cd">Validates token → checks revocation → rate-limits (IP black/whitelist, QPS) → service discovery → forwards. Microservice registry (Server Code) + API/app-auth/log backend.</div></div>
+          <div class="card"><div class="ct">📣 Notification (SMS/Email)</div><div class="cd">APP ID → brand's provider account + template. Multi-provider per region (Twilio + Aliyun; Bookyay 5–6) for deliverability.</div></div>
+          <div class="card"><div class="ct">💳 Payment aggregator</div><div class="cd">Routes charge/refund/release to the correct brand PSP; owns retry/refund; brand PSP holds custody.</div></div>
+        </div>
+        <div class="decided" style="background:var(--auth-tint);border-color:var(--auth-line);color:var(--auth-600)">Shared 2.0 services: API Gateway · SSO/IdP · Payment aggregator · Notification · Unified Earnings Store</div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">📅</span><h2>Timeline</h2><span class="sec-sub">Confirmed at the 5/27 dev meeting.</span></div>
         <div class="timeline">
-          <div class="tl"><div class="d">May 31</div><div class="e">1.17 Crowdfund Simple ships (ref impl A)</div></div>
-          <div class="tl"><div class="d">Jun 26–Jul 9</div><div class="e">User DB migration + identity cutover</div></div>
-          <div class="tl"><div class="d">End Jun</div><div class="e">Beamco crowdfund MVP (ref impl B)</div></div>
-          <div class="tl"><div class="d">~Jul 15</div><div class="e">Crowdfund schema locks → ETL adapters</div></div>
-          <div class="tl"><div class="d">End Aug</div><div class="e">Reporting + unified service delivered</div></div>
+          <div class="tl"><div class="d">Early Jun</div><div class="e">API Gateway + microservice architecture</div></div>
+          <div class="tl"><div class="d">Jun 15</div><div class="e">SSO Demo / Prototype</div></div>
+          <div class="tl"><div class="d">End Jun</div><div class="e">Beamco crowdfund delivery (the base)</div></div>
+          <div class="tl"><div class="d">Mid-Jul</div><div class="e">Ztor 2.0 redesign · schema locks → ETL adapters</div></div>
+          <div class="tl"><div class="d">End Aug</div><div class="e">System integration complete</div></div>
         </div>
       </section>
 
@@ -356,6 +368,7 @@
               <li><b>遷移 3 類人群</b> — Ztor 用戶、Beamco 粉絲、Beamco 創作者。創作者源自 Beamco。</li>
               <li><b>切換時採 OTP</b> — 兩個品牌都不遷移密碼。</li>
               <li><b>於 Creator Studio 做帳號連結</b> — 身分連結邊，非資料合併；需所有權驗證。</li>
+              <li><b>iframe 登入 + APP ID</b> — 內嵌、各品牌樣式；Apple ID 無 email → 強制填寫。</li>
             </ul>
           </div>
           <div class="card" style="border-top:3px solid var(--ink-5)">
@@ -374,20 +387,31 @@
         <div class="sec-head"><span class="sec-num">3</span><h2>募資服務合併 — 一套服務、兩個品牌</h2><span class="sec-sub">這是線上、有狀態、持有金流的服務。此約束決定了做法。</span></div>
         <div class="grid grid-3">
           <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🪢 絞殺者式遷移</div><div class="cd">新活動走統一服務；既有活動在舊路徑跑完。<b>進行中的 escrow 金流絕不搬移。</b></div></div>
-          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🧱 基底與結構</div><ul class="clean cf"><li><b>基底</b> — 擴充 Beamco crowdfund；淘汰 Ztor 簡易版。</li><li><b>結構</b> — 品牌無關核心 + 輕量品牌轉接層。</li><li><b>加入品牌感知</b> — 目前為單品牌；加品牌屬性 + 設定，而非租戶隔離。</li></ul></div>
+          <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">🧱 基底與結構</div><ul class="clean cf"><li><b>基底</b> — 擴充 Beamco crowdfund（後台較完整）；併入 Ztor 影片屬性；淘汰 Ztor 簡易版。</li><li><b>結構</b> — 品牌無關核心 + 輕量品牌轉接層。</li><li><b>加入品牌感知</b> — 目前為單品牌；加品牌屬性 + 設定，而非租戶隔離。</li></ul></div>
           <div class="card" style="border-top:3px solid var(--cf-500)"><div class="ct" style="color:var(--cf-600)">💳 金流 — 品牌層級 + 聚合器</div><ul class="clean cf"><li><b>Crowdfund</b> 負責編排（狀態、里程碑、退款決策）。</li><li><b>聚合器</b> 負責搬錢 + 重試/退款。</li><li><b>品牌 PSP</b> 持有資金 — 金流絕不停留在 2.0。</li></ul></div>
         </div>
         <div class="decided">✓ 八月募資 = 輕量轉接層把兩品牌接上 · 聚合器負責重試/退款 · escrow 留在品牌端（解除保管風險）</div>
+        <div class="decided" style="margin-left:8px">↳ 募資後台屬 Beamco 1.0 — 合併後須同時支援兩個品牌</div>
       </section>
 
       <section>
-        <div class="sec-head"><span class="sec-num">📅</span><h2>時間軸</h2><span class="sec-sub">可行，因為報表是對凍結契約的唯讀彙整。</span></div>
+        <div class="sec-head"><span class="sec-num">4</span><h2>共用平台服務</h2><span class="sec-sub">跨品牌 2.0 服務；各品牌透過 APP ID + 品牌設定接入。</span></div>
+        <div class="grid grid-3">
+          <div class="card"><div class="ct">🛡️ API Gateway</div><div class="cd">驗 token → 查吊銷 → 限流（IP 黑白名單、QPS）→ 服務發現 → 轉發。微服務註冊（Server Code）+ API/應用授權/日誌後台。</div></div>
+          <div class="card"><div class="ct">📣 通知服務（SMS/Email）</div><div class="cd">APP ID → 該品牌供應商帳號 + 模板。各地區多供應商（Twilio + 阿里；Bookyay 5–6 家）確保送達。</div></div>
+          <div class="card"><div class="ct">💳 Payment 聚合器</div><div class="cd">把扣款/退款/撥付路由到正確的品牌 PSP；負責重試/退款；品牌 PSP 持有資金。</div></div>
+        </div>
+        <div class="decided" style="background:var(--auth-tint);border-color:var(--auth-line);color:var(--auth-600)">共用 2.0 服務：API Gateway · SSO/IdP · Payment 聚合器 · 通知服務 · 統一收益存儲</div>
+      </section>
+
+      <section>
+        <div class="sec-head"><span class="sec-num">📅</span><h2>時間軸</h2><span class="sec-sub">於 5/27 開發會議確認。</span></div>
         <div class="timeline">
-          <div class="tl"><div class="d">5/31</div><div class="e">1.17 募資簡易版上線（參考實作 A）</div></div>
-          <div class="tl"><div class="d">6/26–7/9</div><div class="e">User DB 遷移 + 身分切換</div></div>
-          <div class="tl"><div class="d">6 月底</div><div class="e">Beamco 募資 MVP（參考實作 B）</div></div>
-          <div class="tl"><div class="d">~7/15</div><div class="e">募資 schema 鎖定 → ETL 轉接層</div></div>
-          <div class="tl"><div class="d">8 月底</div><div class="e">報表 + 統一服務交付</div></div>
+          <div class="tl"><div class="d">6 月初</div><div class="e">API Gateway + 微服務架構</div></div>
+          <div class="tl"><div class="d">6/15</div><div class="e">SSO Demo / 原型</div></div>
+          <div class="tl"><div class="d">6 月底</div><div class="e">Beamco 募資交付（基底）</div></div>
+          <div class="tl"><div class="d">7 月中</div><div class="e">Ztor 2.0 改版 · schema 鎖定 → ETL 轉接層</div></div>
+          <div class="tl"><div class="d">8 月底</div><div class="e">系統整合完成</div></div>
         </div>
       </section>
 
@@ -431,19 +455,21 @@
         <li>Migrate Ztor Simple-Version crowdfund into Beamco crowdfund — <strong>one crowdfund service serving two brands</strong></li>
         <li><strong>Unified user DB</strong> — Ztor 2.0 SSO; 2.0 is system-of-record for identity (Ztor users + Beamco creators + Beamco fans); legacy brand DBs run in parallel, phased out later</li>
         <li>Wire creator reporting data into 2.0 infra</li>
+        <li><strong>Shared platform services</strong> — API Gateway · Notification (SMS/email) · payment aggregator (Part 4)</li>
       </ul>
+      <p style="font-size:13px;color:var(--ink-3)"><strong>Brand-name note:</strong> the 5/27 ASR transcript garbles brands as "Store"=Ztor (film), "Binco"=Beamco (music+fans), "Boo.ya"=Bookyay (ticketing).</p>
 
       <h2>Part 1 — Reporting Architecture <span class="box locked">LOCKED</span></h2>
       <h3>The reframe</h3>
       <p>"Reporting module" is not a UI project. It is a read-model on top of a <strong>cross-brand creator spine</strong>: canonical identity + a unified earnings record. Reporting is the spine's first consumer. Resource the plumbing, not the screens.</p>
       <h3>The three reports (top-down from what a creator sees)</h3>
       <p><strong>Report 1 — Crowdfund Project Progress</strong> (project-level, operational). Goal, raised, backers, % funded, milestone/fund-release status. Reads directly from the crowdfund service's own campaign state. All escrow + milestone-release machinery lives inside the crowdfund service and only surfaces here.</p>
-      <p><strong>Report 2 — Creator Earnings</strong> (the aggregation surface). Sums realized earnings across <code>{ merch, event, affiliation, ip, crowdfund, film }</code>. Crowdfund appears here only as released earnings — when a milestone fires, the crowdfund service emits one earning event. The escrow lifecycle never crosses into this report.</p>
-      <p><strong>Report 3 — Film</strong> (content-performance POV). Film stats (views, watch-time, completion) from the Ztor VOD source ⊕ the film's earning line, read from the same earnings store rows Report 2 uses (<code>source_type='film'</code>). Film earning is recorded once; Report 2 aggregates it, Report 3 slices it and dresses it with stats. No number can disagree with itself.</p>
+      <p><strong>Report 2 — Creator Earnings</strong> (the aggregation surface). Sums realized earnings across <code>{ merch, event, affiliation, ip, tastemaker, crowdfund, film }</code> (5/27 named Tastemaker + Affiliate + CrowdFund explicitly). Crowdfund appears here only as released earnings — when a milestone fires, the crowdfund service emits one earning event. The escrow lifecycle never crosses into this report.</p>
+      <p><strong>Report 3 — Film</strong> (content-performance POV). Film stats (views, watch-time, completion) from the Ztor VOD source ⊕ the film's earning line, read from the same earnings store rows Report 2 uses (<code>source_type='film'</code>). Film earning is recorded once; Report 2 aggregates it, Report 3 slices it and dresses it with stats. No number can disagree with itself. <strong>Built by porting Ztor's existing film-analytics reporting into Creator Studio</strong> (5/27; transcript named it "Fionvue" — confirm real name).</p>
       <h3>Two data shapes (not one grand ledger)</h3>
       <p><strong>1. Earnings event store</strong> — single source of money truth. One lean row per realized earning:</p>
       <pre><code>{ creator_id, brand,
-  source_type: "merch"|"event"|"affiliation"|"ip"|"crowdfund"|"film",
+  source_type: "merch"|"event"|"affiliation"|"ip"|"tastemaker"|"crowdfund"|"film",
   gross, fees, net, currency,
   occurred_at,
   ref }   // order / campaign / title id — for drill-down</code></pre>
@@ -463,14 +489,16 @@
         <li><strong>Contract over schema:</strong> lock the earnings contract early; source schemas can churn until mid-July; only the thin ETL adapter waits for the lock.</li>
         <li><strong>Single source of truth for money:</strong> earnings recorded once, reports are views.</li>
       </ul>
-      <h3>Timeline</h3>
+      <h3>Timeline (confirmed 5/27 dev meeting)</h3>
       <table>
-        <tr><th>Window</th><th>Work</th></tr>
-        <tr><td>Now–Jun 26</td><td>Lock earnings contract · build identity graph + linking flow · build reporting read-side · design crowdfund core</td></tr>
-        <tr><td>Jun 26–Jul 9</td><td>User DB migration + identity cutover</td></tr>
-        <tr><td>~Jul 15</td><td>Crowdfund feature/schema locks → finalize ETL adapters</td></tr>
-        <tr><td>Mid-Jul–end Aug</td><td>Integration + testing (~6 weeks) — feasible because reporting is read-only against a frozen contract</td></tr>
+        <tr><th>Date</th><th>Milestone</th></tr>
+        <tr><td>Early June</td><td>API Gateway + microservice architecture complete</td></tr>
+        <tr><td>Jun 15</td><td>SSO Demo / Prototype (this is what the earlier "Jun 15 prototype" was)</td></tr>
+        <tr><td>End June</td><td>Beamco crowdfund delivery (the base)</td></tr>
+        <tr><td>Mid-July</td><td>Ztor 2.0 redesign launch · crowdfund schema locks → ETL adapters</td></tr>
+        <tr><td>End August</td><td>System integration complete (reporting + unified crowdfund + SSO)</td></tr>
       </table>
+      <p style="font-size:13px;color:var(--ink-3)"><em>The earlier "User DB migration Jun 26–Jul 9" window was not restated on 5/27 — treat as unconfirmed pending verification.</em></p>
       <div class="box open"><strong>Open items —</strong> Ledger by July? (else reporting v1 reads operational data, reconcile as fast-follow). Escrow custody/legal — holding fan money has money-transmitter / segregated-account implications; name an owner before launch.</div>
 
       <h2>Part 2 — Unified User DB + Auth Service <span class="box locked">LOCKED</span></h2>
@@ -483,6 +511,9 @@
       <ul>
         <li>A <strong>brand-aware platform IdP</strong> — one shared user base across brands, not tenant-isolated — built by the Beamco team, powering Ztor + Beamco now and Bookyay later. (Not "Beamco SSO".)</li>
         <li>RS256 JWT + Redis sessions. Canonical <code>user_id</code> = token subject.</li>
+        <li><strong>Login UI = iframe embedded in each brand site</strong> (5/27) — APP ID identifies the brand → per-brand styling, seamless, no redirect. This is the concrete form of "per-brand theming".</li>
+        <li><strong>Apple ID with no email → force email collection</strong> at first login (email is the identity key, so the private-relay/no-email case must be handled).</li>
+        <li>Social (Google / Facebook) brokered via the IdP, including the third-party login buttons.</li>
       </ul>
       <h3>Canonical user model</h3>
       <ul>
@@ -505,21 +536,26 @@
       <h3>Ztor content → creator link (Topic C)</h3>
       <p>Ztor back-office links Beamco creators (visible via the 2.0 user DB) to Ztor films. Requires back-office read access to canonical creator identities + an ops owner for the mapping. <strong>Prerequisite</strong> for the Film report and the film line in Creator Earnings.</p>
       <h3>Auth-feature placement</h3>
-      <p><strong>Authentication → IdP (centralized). Authorization → brand.</strong></p>
+      <p><strong>IdP issues. Gateway enforces (edge). Brand authorizes.</strong> (Refined per the 5/27 Gateway walkthrough — see Part 4.)</p>
       <ul>
-        <li>IdP: social SSO (Google/FB/Apple — brokered), forgot-password (brand-skinned emails), MFA, email verification, session revocation, rate-limit/bot, global identity ban.</li>
-        <li>Brand: brand-level ban (authz — IdP validates identity; brand denies access), content moderation, role gating.</li>
+        <li><strong>IdP issues &amp; owns:</strong> social SSO (Google/FB/Apple — brokered), forgot-password (brand-skinned emails), MFA, email verification, the revocation list, global identity ban.</li>
+        <li><strong>Gateway enforces at the edge:</strong> validates token → checks revocation status → rate-limits (IP black/whitelist, QPS) → service discovery → forwards. (Token validation + revocation + rate-limit live here, NOT in the IdP.)</li>
+        <li><strong>Brand:</strong> brand-level ban (authz — IdP validates identity; brand denies access), content moderation, role gating.</li>
         <li>Cross-cutting: account deletion / GDPR export — name an owner.</li>
-        <li>Implications: IdP is a cross-brand SPOF → needs HA; per-brand theming is a hard requirement.</li>
+        <li>Implications: IdP + Gateway are cross-brand SPOFs → need HA; per-brand theming is a hard requirement.</li>
       </ul>
       <div class="box open"><strong>Open (delegated to dev) —</strong> build IdP from scratch vs Keycloak / Ory / Auth0 / Cognito. Recommendation: don't reimplement OAuth — use an existing IdP, spend custom effort on the linking flow + canonical-user migration.</div>
 
       <h2>Part 3 — Crowdfund Service Migration <span class="box locked">LOCKED</span></h2>
       <h3>Base &amp; migration</h3>
       <ul>
-        <li><strong>Base = Beamco crowdfund</strong>, generalized into the 2.0 crowdfund service. Ztor simple-version absorbed + retired (not ported).</li>
+        <li><strong>Base = Beamco crowdfund</strong> (richer backend workflow — status updates, workflow mgmt), generalized into the 2.0 crowdfund service. Ztor simple-version absorbed + retired (not ported).</li>
+        <li><strong>Feature delta to fold in:</strong> Ztor's <strong>film-related crowdfund attributes</strong> integrate into the Beamco base. (The concrete "feature-delta map".)</li>
         <li><strong>Strangler migration</strong> — new campaigns on the unified service; existing campaigns drain on their current path. In-flight escrow never moves.</li>
+        <li><strong>Order-data integration challenge (5/27):</strong> the two brands' order data is separate today — merging means historical-order migration, cross-brand report generation, and email-notification reconciliation.</li>
       </ul>
+      <h3>Crowdfund admin backend — a Beamco 1.0 build that must go cross-brand (5/27)</h3>
+      <p>The dedicated crowdfund ops backend (status updates, workflow mgmt) is a <strong>Beamco 1.0 deliverable — NOT a 2.0 platform deliverable.</strong> It already exists / is being built on 1.0. <strong>2.0 requirement:</strong> after the crowdfund merge it must <strong>support both brands</strong> (Ztor + Beamco campaigns) — i.e. become brand-aware too. It's more complete than Creator Studio and distinct from it; Report 1 is the creator-facing read, this is the internal ops portal that runs campaigns.</p>
       <h3>Payment — brand-level + aggregator (resolves the escrow/legal risk)</h3>
       <pre><code>Crowdfund service  →  orchestrates: campaign state, pledges, milestone triggers, refund decisions (what)
 Payment aggregator →  moves money: routes charge/refund/release to brand PSP, owns retry (how)
@@ -548,7 +584,35 @@ Brand PSP/merchant →  holds custody: each brand keeps its own merchant account
         <li><strong>Beamco fans-site rebuild (July) = build Beamco's crowdfund side on 2.0 infra</strong> — same pattern as the Ztor 2.0 redesign already underway. Turns the "AI exercise" into the real consolidation.</li>
         <li>Reporting wiring is free — the core emits released-earnings events regardless of brand; reporting just reads them.</li>
       </ul>
-      <div class="box open"><strong>Open for dev —</strong> scope of adding brand-awareness to the Beamco core (brand attribute + per-brand config).</div>
+      <h3>Open / action items (from 5/27 meeting)</h3>
+      <ul>
+        <li><strong>Eric (next week):</strong> share crowdfund DB schema + code repo — drives brand-awareness + feature-delta work.</li>
+        <li>Confirm Ztor vs Beamco crowdfund feature differences (the film-attribute delta) — assigned.</li>
+        <li>Order-data integration + sync mechanism — confirm approach.</li>
+        <li>Frontend-rebuild resourcing — ensure the Beamco fans rebuild doesn't slip crowdfund delivery.</li>
+        <li>Figma component-library ↔ HTML-output sync (Yves) — keep the Design System consistent.</li>
+        <li>Google / Facebook login — interface-handling research.</li>
+        <li>Bookyay SMS providers — document current providers + per-region strategy.</li>
+        <li>Brand-awareness scope for the Beamco core (brand attribute + per-brand config).</li>
+      </ul>
+
+      <h2>Part 4 — Shared platform &amp; infra services <span class="box locked">5/27</span></h2>
+      <p>Cross-brand services the 2.0 platform runs; each brand plugs in via <strong>APP ID / brand config</strong>.</p>
+      <h3>API Gateway (front door)</h3>
+      <ul>
+        <li>Request flow: client → request token → carry token to Gateway → <strong>Gateway validates token → checks revocation → rate-limits (IP black/whitelist, QPS) → service discovery → forwards to microservice.</strong></li>
+        <li><strong>Microservice registration:</strong> dev registers a microservice in the Gateway backend, gets a <strong>Server Code</strong>; the service registers its instance on startup.</li>
+        <li><strong>Gateway backend:</strong> microservice mgmt, API registration, app authorization, token mgmt, rate-limit policy, log collection. Future: Excel import of all microservice endpoints.</li>
+      </ul>
+      <h3>Notification service (SMS + Email)</h3>
+      <ul>
+        <li><strong>Unified microservice; APP ID identifies the brand → uses that brand's provider account + template.</strong> Pulls per-brand notification templates up out of the crowdfund adapter.</li>
+        <li><strong>Multi-provider per region</strong> for deliverability — Twilio + Aliyun today; Bookyay runs 5–6 SMS providers (Twilio fails in mainland CN, Aliyun fails in the US).</li>
+        <li>Each brand KYC-registers its own provider accounts; all sent through the one service.</li>
+      </ul>
+      <h3>Payment aggregator</h3>
+      <p>(Detailed in Part 3.) Routes charge/refund/release to the correct brand PSP; owns retry/refund; brand PSP holds custody.</p>
+      <div class="box decided"><strong>Shared 2.0 services:</strong> API Gateway · Ztor 2.0 SSO/IdP · Payment aggregator · Notification (SMS/email) · Unified Earnings Store · (RS256/Redis, Kafka, Ledger per prior roadmap).</div>
     </div>
 
     <!-- ===== ZH ===== -->
@@ -567,19 +631,21 @@ Brand PSP/merchant →  holds custody: each brand keeps its own merchant account
         <li>將 Ztor 簡易版募資併入 Beamco crowdfund — <strong>一套募資服務、服務兩個品牌</strong></li>
         <li><strong>統一 user DB</strong> — Ztor 2.0 SSO；2.0 為身分的權威紀錄（Ztor 用戶 + Beamco 創作者 + Beamco 粉絲）；舊品牌 DB 並行運行，之後再淘汰</li>
         <li>把創作者報表資料接入 2.0 基礎設施</li>
+        <li><strong>共用平台服務</strong> — API Gateway · 通知服務（SMS/email）· payment 聚合器（第四部分）</li>
       </ul>
+      <p style="font-size:13px;color:var(--ink-3)"><strong>品牌名稱備註：</strong>5/27 ASR 逐字稿會把品牌名打錯：「Store」=Ztor（影片）、「Binco」=Beamco（音樂+粉絲）、「Boo.ya」=Bookyay（票務）。</p>
 
       <h2>第一部分 — 報表架構 <span class="box locked">已定案</span></h2>
       <h3>重新定義</h3>
       <p>「報表模組」不是一個 UI 專案。它是建立在<strong>跨品牌創作者骨幹</strong>之上的讀取模型：標準身分 + 統一收益紀錄。報表是骨幹的第一個消費者。要投資底層管線，而非畫面。</p>
       <h3>三份報表（由創作者所見由上而下定義）</h3>
       <p><strong>報表 1 — 募資專案進度</strong>（專案層級、營運導向）。目標、已募金額、贊助人數、達成率、里程碑與撥款狀態。直接讀取 crowdfund 服務本身的活動狀態。所有 escrow + 里程碑撥款機制都留在 crowdfund 服務內，僅在此呈現。</p>
-      <p><strong>報表 2 — 創作者收益</strong>（彙整面）。彙總 <code>{ merch, event, affiliation, ip, crowdfund, film }</code> 的已實現收益。募資在此僅以「已撥付收益」出現——里程碑觸發時，crowdfund 服務發出一筆收益事件。escrow 生命週期絕不進入此報表。</p>
-      <p><strong>報表 3 — 影片</strong>（內容成效視角）。來自 Ztor VOD 的影片數據（觀看數、觀看時長、完播率）⊕ 影片收益項目，讀取的是與報表 2 相同的 earnings store 紀錄（<code>source_type='film'</code>）。影片收益只記錄一次；報表 2 彙總、報表 3 切片並加上數據。沒有任何數字會自相矛盾。</p>
+      <p><strong>報表 2 — 創作者收益</strong>（彙整面）。彙總 <code>{ merch, event, affiliation, ip, tastemaker, crowdfund, film }</code> 的已實現收益（5/27 明確點名 Tastemaker + Affiliate + CrowdFund）。募資在此僅以「已撥付收益」出現——里程碑觸發時，crowdfund 服務發出一筆收益事件。escrow 生命週期絕不進入此報表。</p>
+      <p><strong>報表 3 — 影片</strong>（內容成效視角）。來自 Ztor VOD 的影片數據（觀看數、觀看時長、完播率）⊕ 影片收益項目，讀取的是與報表 2 相同的 earnings store 紀錄（<code>source_type='film'</code>）。影片收益只記錄一次；報表 2 彙總、報表 3 切片並加上數據。沒有任何數字會自相矛盾。<strong>做法是把 Ztor 既有的影片分析報表移植進 Creator Studio</strong>（5/27；逐字稿稱該系統「Fionvue」— 待確認正式名稱）。</p>
       <h3>兩種資料形態（而非單一大帳本）</h3>
       <p><strong>1. Earnings event store</strong> — 金額的唯一真實來源。每筆已實現收益一列精簡紀錄：</p>
       <pre><code>{ creator_id, brand,
-  source_type: "merch"|"event"|"affiliation"|"ip"|"crowdfund"|"film",
+  source_type: "merch"|"event"|"affiliation"|"ip"|"tastemaker"|"crowdfund"|"film",
   gross, fees, net, currency,
   occurred_at,
   ref }   // 訂單 / 活動 / 影片 id — 供下鑽</code></pre>
@@ -601,12 +667,14 @@ Brand PSP/merchant →  holds custody: each brand keeps its own merchant account
       </ul>
       <h3>時間軸</h3>
       <table>
-        <tr><th>時段</th><th>工作</th></tr>
-        <tr><td>現在–6/26</td><td>鎖定收益契約 · 建身分圖譜 + 連結流程 · 建報表讀取端 · 設計 crowdfund 核心</td></tr>
-        <tr><td>6/26–7/9</td><td>User DB 遷移 + 身分切換</td></tr>
-        <tr><td>~7/15</td><td>募資功能/schema 鎖定 → 完成 ETL 轉接層</td></tr>
-        <tr><td>7 月中–8 月底</td><td>整合 + 測試（約 6 週）— 可行，因報表是對凍結契約的唯讀彙整</td></tr>
+        <tr><th>日期</th><th>里程碑</th></tr>
+        <tr><td>6 月初</td><td>API Gateway + 微服務架構完成</td></tr>
+        <tr><td>6/15</td><td>SSO Demo / 原型（即先前所謂的「6/15 原型」）</td></tr>
+        <tr><td>6 月底</td><td>Beamco 募資交付（基底）</td></tr>
+        <tr><td>7 月中</td><td>Ztor 2.0 改版上線 · 募資 schema 鎖定 → ETL 轉接層</td></tr>
+        <tr><td>8 月底</td><td>系統整合完成（報表 + 統一募資 + SSO）</td></tr>
       </table>
+      <p style="font-size:13px;color:var(--ink-3)"><em>先前的「User DB 遷移 6/26–7/9」視窗 5/27 並未重申 — 視為未確認，待核實。</em></p>
       <div class="box open"><strong>待決項目 —</strong> Ledger 七月前就緒？（否則報表 v1 讀營運資料，之後對帳補上）。Escrow 保管/法務——持有粉絲資金涉及金流業者 / 專戶隔離的法規問題；上線前須指定負責人。</div>
 
       <h2>第二部分 — 統一 User DB + 驗證服務 <span class="box locked">已定案</span></h2>
@@ -619,6 +687,9 @@ Brand PSP/merchant →  holds custody: each brand keeps its own merchant account
       <ul>
         <li>一個<strong>品牌感知的平台 IdP</strong> — 跨品牌共用一份使用者基底、非租戶隔離 — 由 Beamco 團隊建置，現支援 Ztor + Beamco，未來 Bookyay。（不是「Beamco SSO」。）</li>
         <li>RS256 JWT + Redis session。標準 <code>user_id</code> = token subject。</li>
+        <li><strong>登入介面 = 以 iframe 嵌入各品牌網站</strong>（5/27）— APP ID 辨識品牌 → 各品牌樣式、無感、不跳轉。這是「各品牌樣式」的具體形式。</li>
+        <li><strong>Apple ID 未提供 email → 首次登入強制填寫</strong>（email 為身分鍵，故 private-relay/無 email 的情況必須處理）。</li>
+        <li>社交登入（Google / Facebook）由 IdP 代理，含第三方登入按鈕。</li>
       </ul>
       <h3>標準使用者模型</h3>
       <ul>
@@ -641,21 +712,26 @@ Brand PSP/merchant →  holds custody: each brand keeps its own merchant account
       <h3>Ztor 內容 → 創作者連結（主題 C）</h3>
       <p>Ztor 後台把 Beamco 創作者（透過 2.0 user DB 可見）連到 Ztor 影片。需要後台對標準創作者身分的讀取權 + 一位維運負責人做對應。是影片報表與創作者收益中影片項目的<strong>前置條件</strong>。</p>
       <h3>驗證功能歸屬</h3>
-      <p><strong>驗證 → IdP（集中）。授權 → 品牌。</strong></p>
+      <p><strong>IdP 發行。Gateway 在邊緣強制執行。品牌做授權。</strong>（依 5/27 Gateway 說明修正 — 見第四部分。）</p>
       <ul>
-        <li>IdP：社交登入（Google/FB/Apple — 由 IdP 代理）、忘記密碼（品牌樣式信件）、MFA、email 驗證、session 撤銷、限流/防爬、全域身分封鎖。</li>
-        <li>品牌：品牌層級封鎖（屬授權 — IdP 仍驗證身分；品牌拒絕存取）、內容審核、角色管控。</li>
+        <li><strong>IdP 發行並擁有：</strong>社交登入（Google/FB/Apple — 由 IdP 代理）、忘記密碼（品牌樣式信件）、MFA、email 驗證、吊銷清單、全域身分封鎖。</li>
+        <li><strong>Gateway 在邊緣強制執行：</strong>驗 token → 查吊銷狀態 → 限流（IP 黑白名單、QPS）→ 服務發現 → 轉發。（token 驗證 + 吊銷 + 限流在此，而非 IdP。）</li>
+        <li><strong>品牌：</strong>品牌層級封鎖（屬授權 — IdP 仍驗證身分；品牌拒絕存取）、內容審核、角色管控。</li>
         <li>橫切：帳號刪除 / GDPR 匯出 — 須指定負責人。</li>
-        <li>影響：IdP 成為跨品牌單點故障 → 需高可用；各品牌樣式為硬性需求。</li>
+        <li>影響：IdP + Gateway 為跨品牌單點故障 → 需高可用；各品牌樣式為硬性需求。</li>
       </ul>
       <div class="box open"><strong>待決（交付開發團隊）—</strong> IdP 從零自建 vs Keycloak / Ory / Auth0 / Cognito。建議：別重寫 OAuth — 採用現成 IdP，把自訂工時花在連結流程 + 標準使用者遷移。</div>
 
       <h2>第三部分 — 募資服務遷移 <span class="box locked">已定案</span></h2>
       <h3>基底與遷移</h3>
       <ul>
-        <li><strong>基底 = Beamco crowdfund</strong>，泛化為 2.0 募資服務。Ztor 簡易版併入並淘汰（不移植）。</li>
+        <li><strong>基底 = Beamco crowdfund</strong>（後台流程較完整 — 狀態更新、工作流程管理），泛化為 2.0 募資服務。Ztor 簡易版併入並淘汰（不移植）。</li>
+        <li><strong>待併入的功能差異：</strong>Ztor 的<strong>影片相關募資屬性</strong>整合進 Beamco 基底。（這就是具體的「功能差異對照」。）</li>
         <li><strong>絞殺者式遷移</strong> — 新活動走統一服務；既有活動在現有路徑跑完。進行中的 escrow 絕不搬移。</li>
+        <li><strong>訂單數據整合挑戰（5/27）：</strong>兩個品牌的訂單數據目前分離 — 合併涉及歷史訂單遷移、跨品牌報表生成、電郵通知對齊。</li>
       </ul>
+      <h3>募資後台 — 屬 Beamco 1.0、但須跨品牌（5/27）</h3>
+      <p>專門的募資營運後台（狀態更新、工作流程管理）是 <strong>Beamco 1.0 的交付項目 — 不是 2.0 平台交付項目。</strong>它已存在 / 正在 1.0 上建置。<strong>2.0 需求：</strong>募資合併後，此後台必須<strong>同時支援兩個品牌</strong>（Ztor + Beamco 活動）— 亦即也要具備品牌感知。它比 Creator Studio 完整且各自獨立；報表 1 是創作者端的讀取，此後台是實際運行活動的內部營運入口。</p>
       <h3>金流 — 品牌層級 + 聚合器（解除 escrow/法務風險）</h3>
       <pre><code>Crowdfund 服務   →  編排：活動狀態、贊助、里程碑觸發、退款決策（做什麼）
 Payment 聚合器   →  搬錢：把扣款/退款/撥付路由到品牌 PSP，負責重試（怎麼做）
@@ -684,7 +760,35 @@ Payment 聚合器   →  搬錢：把扣款/退款/撥付路由到品牌 PSP，�
         <li><strong>七月粉絲站重建 = 在 2.0 基礎設施上建 Beamco 的募資端</strong> — 與已進行的 Ztor 2.0 改版同一套做法。讓這次「AI 練習」成為真正的整合。</li>
         <li>報表接線免費 — 核心無論品牌都發出已撥付收益事件；報表直接讀取。</li>
       </ul>
-      <div class="box open"><strong>待決（開發）—</strong> 為 Beamco 核心加入品牌感知的範圍（品牌屬性 + 各品牌設定）。</div>
+      <h3>待決 / 行動項目（來自 5/27 會議）</h3>
+      <ul>
+        <li><strong>Eric（下週）：</strong>分享募資 DB schema + 代碼 repo — 帶動品牌感知 + 功能差異工作。</li>
+        <li>確認 Ztor 與 Beamco 募資功能差異（影片屬性差異）— 已指派。</li>
+        <li>訂單數據整合 + 同步機制 — 確認做法。</li>
+        <li>前端重構人力 — 確保 Beamco 粉絲站重建不影響募資交付。</li>
+        <li>Figma 元件庫 ↔ HTML 輸出同步（義甫）— 維持 Design System 一致。</li>
+        <li>Google / Facebook 登入 — 接口處理研究。</li>
+        <li>Bookyay SMS 供應商 — 整理現有供應商 + 各地區策略。</li>
+        <li>為 Beamco 核心加入品牌感知的範圍（品牌屬性 + 各品牌設定）。</li>
+      </ul>
+
+      <h2>第四部分 — 共用平台與基礎服務 <span class="box locked">5/27</span></h2>
+      <p>2.0 平台運行的跨品牌服務；各品牌透過 <strong>APP ID / 品牌設定</strong>接入。</p>
+      <h3>API Gateway（前門）</h3>
+      <ul>
+        <li>請求流程：客戶端 → 申請 token → 攜帶 token 至 Gateway → <strong>Gateway 驗 token → 查吊銷 → 限流（IP 黑白名單、QPS）→ 服務發現 → 轉發至微服務。</strong></li>
+        <li><strong>微服務註冊：</strong>開發在 Gateway 後台登記微服務，取得 <strong>Server Code</strong>；服務啟動時註冊實例。</li>
+        <li><strong>Gateway 後台：</strong>微服務管理、API 登記、應用授權、token 管理、限流策略、日誌收集。未來：Excel 匯入所有微服務接口。</li>
+      </ul>
+      <h3>通知服務（SMS + Email）</h3>
+      <ul>
+        <li><strong>統一微服務；APP ID 辨識品牌 → 使用該品牌的供應商帳號 + 模板。</strong>把各品牌通知模板從募資轉接層往上抽到平台層。</li>
+        <li><strong>各地區多供應商</strong>確保送達 — 現用 Twilio + 阿里；Bookyay 有 5–6 家 SMS 供應商（Twilio 在內地收不到、阿里在美國收不到）。</li>
+        <li>各品牌自行 KYC 登記供應商帳號；皆透過同一服務發送。</li>
+      </ul>
+      <h3>Payment 聚合器</h3>
+      <p>（詳見第三部分。）把扣款/退款/撥付路由到正確的品牌 PSP；負責重試/退款；品牌 PSP 持有資金。</p>
+      <div class="box decided"><strong>共用 2.0 服務：</strong>API Gateway · Ztor 2.0 SSO/IdP · Payment 聚合器 · 通知服務（SMS/email）· 統一收益存儲 ·（RS256/Redis、Kafka、Ledger 依先前 roadmap）。</div>
     </div>
 
   </div>
