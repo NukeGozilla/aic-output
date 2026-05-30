@@ -147,7 +147,7 @@
 <div class="ui-shell">
   <div class="ui-shell-inner">
     <h1>New Beamco Crowdfund — Lifecycle <span class="tag">BRD v1</span></h1>
-    <div class="subtitle">Setup → Active → Goal Achieved → Successful → Released · updated 2026-05-25 (Funded → Goal Achieved · ops manual review · ops submits URL)</div>
+    <div class="subtitle">Setup → Active → Goal Achieved / Minimum Met → Successful → Released · updated 2026-05-29 (share-based goal · new Minimum Met status · mechanical threshold check · two-step URL+Release-Fund)</div>
     <nav class="breadcrumb">
       <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
       <a href="crowdfund-brd-v1-lifecycle.html" class="current">Lifecycle</a>
@@ -160,7 +160,7 @@
 <div class="notification">
   <span class="icon">●</span>
   <div class="body">
-    <strong>All-or-nothing, two-tranche payout.</strong> Card is collected at pledge but NOT charged. On end date, if goal met → batch-charge → recovery loop → 80% payout. On product URL submission → final 20% payout. Royalty income flows after Released.
+    <strong>Share-based goal · two-tranche payout.</strong> Goal = royalty shares (not $). Card is locked at pledge but NOT charged. On end date: <code>sharesSold == totalRoyaltyShares</code> → <strong>Goal Achieved</strong>; <code>sharesSold ≥ minRoyaltyShares</code> but <code>&lt; total</code> → <strong>Minimum Met</strong>; otherwise <strong>Unsuccessful → refund all</strong>. Both Goal Achieved + Minimum Met → batch-charge → 3+7 recovery → BR-32 mechanical check → <strong>ops manually clicks "Mark Successful" or "Refund all"</strong> based on the displayed result → 80% payout. URL submit + ops clicks "Release Fund" → final 20% (BR-35 two-step). Royalty income flows post-Released.
   </div>
 </div>
 
@@ -180,20 +180,20 @@
     <div class="phase-tile">
       <div class="ord">PHASE 02</div>
       <h3>Live</h3>
-      <p>Browse, eligibility check (≥ 1 LP), select plan, pledge with Stripe Future Payment (no charge).</p>
+      <p>Browse, eligibility check (≥ 1 LP), select package, pledge with Stripe Future Payment (no charge). Waitlist opens when all shares sell out.</p>
       <div class="who">Fan · System</div>
     </div>
     <div class="phase-tile">
       <div class="ord">PHASE 03</div>
       <h3>Collection</h3>
-      <p>On end date: goal-met check → batch charge → 3+7+waitlist recovery → threshold check.</p>
-      <div class="who">System · Ops Admin</div>
+      <p>On end date: share-threshold check (all sold / min met / below min) → batch charge → 3+7+FIFO swap recovery → mechanical BR-32 final check.</p>
+      <div class="who">System</div>
     </div>
     <div class="phase-tile">
       <div class="ord">PHASE 04</div>
       <h3>Payout &amp; Release</h3>
-      <p>80% to wallet on Successful → product URL submission → 20% release → ongoing royalty cash.</p>
-      <div class="who">Creator · System · Finance</div>
+      <p>80% to wallet on Successful → ops submits Spotify URL → "Release Fund" button → 20% release (BR-35 two-step) → ongoing royalty cash.</p>
+      <div class="who">Creator · Ops · Finance</div>
     </div>
   </div>
 
@@ -203,33 +203,41 @@
   <div class="chart">
     <pre class="mermaid">
 flowchart TD
-    A[Creator configures campaign] --> A2[Ops publishes<br/>Now or Scheduled]
+    A[Creator configures campaign<br/>+ Min Royalty Shares] --> A2[Ops publishes]
     A2 --> B[Active · campaign live]
     B --> P[Fan pledges<br/>Stripe Future Payment · no charge]
     P --> B
-    B --> E{End date reached?}
-    E -->|Goal not met| U[Unsuccessful · terminal<br/>Zero charges · no refund needed]
-    E -->|Goal met| F[Goal Achieved · batch charge cards]
-    F --> R[Recovery loop · 3d retry + 7d email + waitlist swap]
-    R --> T[Ops reviews via BR-32 dashboard<br/>successful · failed · waitlist amounts]
-    T --> TD{Ops decision}
-    TD -->|Cancel + refund| C[Cancelled · ops triggers refund-all · terminal]
-    TD -->|Proceed| S[Successful · ops releases 80% to wallet]
+    B --> SO{All shares sold?<br/>pre-end-date}
+    SO -->|Yes| GA[Goal Achieved · auto-flip]
+    SO -->|No| ED{End date reached?}
+    ED -->|No| B
+    ED -->|sharesSold ≥ min| MM[Minimum Met · auto-flip]
+    ED -->|sharesSold &lt; min| U[Unsuccessful · terminal<br/>Zero charges · no refund needed]
+    GA --> F[Batch charge cards<br/>BR-28]
+    MM --> F
+    F --> R[Recovery · 3d auto-retry + 7d email + FIFO waitlist swap<br/>BR-29/30/31]
+    R --> CK{BR-32 mechanical check<br/>finalSharesPaid ≥ min?<br/>result displayed}
+    CK -->|Fail| RA["Ops clicks 'Refund all'<br/>→ Unsuccessful · terminal"]
+    CK -->|Pass| S["Ops clicks 'Mark Successful'<br/>→ Successful · 80% to wallet"]
     S --> IP[In Progress · creator produces work]
-    IP --> URL[Ops uploads Spotify URL<br/>BR-35 walkthrough update]
-    URL --> RL[Released · 20% release]
-    RL --> RY[Post-MVP · royalty reporting deferred]
+    IP --> URL[Ops submits Spotify URL<br/>BR-35 Step 1]
+    URL --> RF[&quot;Release Fund&quot; button surfaces<br/>BR-35 Step 2]
+    RF --> RL[Released · 20% release]
+    RL --> RY[Post-MVP · royalty reporting]
 
     classDef ok fill:#defbe6,stroke:#198038,color:#044317
     classDef bad fill:#ffd7d9,stroke:#da1e28,color:#750e13
     classDef neutral fill:#f4f4f4,stroke:#525252,color:#161616
     classDef live fill:#d0e2ff,stroke:#0f62fe,color:#001d6c
     classDef recovery fill:#f6f2ff,stroke:#6929c4,color:#31135e
-    class A,A2,IP,URL neutral
+    classDef minmet fill:#fff8e1,stroke:#d9a900,color:#3d2c00
+    class A,A2,IP,URL,RF neutral
     class B,P live
     class F,R recovery
+    class GA recovery
+    class MM minmet
     class S,RL,RY ok
-    class U,C bad
+    class U,RA bad
     </pre>
   </div>
 
@@ -237,23 +245,23 @@ flowchart TD
     <h3>Worst-case timeline · backer POV</h3>
     <div class="tl-row">
       <div class="tl-when">Day 0 → 30</div>
-      <div class="tl-what"><strong>Campaign live.</strong> Backer pledges, card recorded, no charge. Maximum 30-day fundraising window.</div>
+      <div class="tl-what"><strong>Campaign live.</strong> Backer pledges; card locked, no charge. Max 30-day window. Auto-flip to <code>Goal Achieved</code> the moment all shares sell out.</div>
     </div>
     <div class="tl-row">
       <div class="tl-when">Day 30</div>
-      <div class="tl-what"><strong>Campaign closes.</strong> If goal met → batch-charge. Otherwise → Unsuccessful, nothing happens.</div>
+      <div class="tl-what"><strong>Campaign closes.</strong> Status check on end date: <code>sharesSold == total</code> → already Goal Achieved · <code>sharesSold ≥ min</code> → <code>Minimum Met</code> · <code>sharesSold &lt; min</code> → <code>Unsuccessful</code>. Batch charge runs for Goal Achieved + Minimum Met.</div>
     </div>
     <div class="tl-row">
       <div class="tl-when">Day 30 → 40</div>
-      <div class="tl-what"><strong>Recovery on declines.</strong> 3-day silent retry + 7-day email URL. If still failing on day 10 → drop + pull waitlister + restart cycle.</div>
+      <div class="tl-what"><strong>Recovery on declines.</strong> 3-day silent retry + 7-day email recovery URL. Day-10 fail → FIFO waitlist swap (BR-31, one-for-one share replacement) → re-run 3+7 cycle on the replacement.</div>
     </div>
     <div class="tl-row">
       <div class="tl-when">Day 40 → 50</div>
-      <div class="tl-what"><strong>Waitlister recovery (worst case).</strong> Another 3+7 cycle if the original substitute also declines.</div>
+      <div class="tl-what"><strong>Waitlister recovery (worst case).</strong> Second 3+7 cycle if the substitute also declines. Loop continues until queue exhausted.</div>
     </div>
     <div class="tl-row">
       <div class="tl-when">Day 50</div>
-      <div class="tl-what"><strong>Ops manual review (BR-32).</strong> Ops dashboard shows successful · failed · waitlist amounts. Ops decides: proceed → status = <code>Successful</code> + first tranche (80%) released, or cancel → refund-all via Stripe back-office.</div>
+      <div class="tl-what"><strong>Mechanical BR-32 check + manual ops flip.</strong> System displays <code>finalSharesPaid ≥ minRoyaltyShares</code> result on the recovery dashboard. <strong>Ops clicks one of two buttons:</strong> "Mark Successful" (releases 80%) when the check passes, or "Refund all" → <code>Unsuccessful</code> when it fails.</div>
     </div>
     <div class="tl-row">
       <div class="tl-when">Day 50 → 60</div>
@@ -261,11 +269,11 @@ flowchart TD
     </div>
     <div class="tl-row">
       <div class="tl-when">Weeks → months</div>
-      <div class="tl-what"><strong>Creator delivers</strong> → <strong>ops uploads</strong> the <code>Spotify</code> URL on creator's behalf (BR-35 is now an ops action per 2026-05-24 walkthrough) → status = <code>Released</code> → 20% tranche releases.</div>
+      <div class="tl-what"><strong>Creator delivers</strong> → ops submits Spotify URL (BR-35 Step 1) → <strong>"Release Fund" button surfaces</strong> in back office → ops clicks (BR-35 Step 2) → status = <code>Released</code> → 20% tranche releases. Triggers N13 release email to backers.</div>
     </div>
     <div class="tl-row">
       <div class="tl-when">Post-MVP</div>
-      <div class="tl-what"><strong>Royalty reporting deferred</strong> (BR-36) — royalty revenue won't arrive until 2+ months after launch. Royalty withdraw (BR-37/38) deferred with it. Fan wallet (BR-49) deferred to mid-July.</div>
+      <div class="tl-what"><strong>Royalty reporting</strong> (BR-36/37/38) ships as <strong>display-only / non-functional</strong> in MVP — Pat designs the empty-state surfaces; live wiring lands next release. Fan wallet (BR-49) deferred to mid-July.</div>
     </div>
   </div>
 

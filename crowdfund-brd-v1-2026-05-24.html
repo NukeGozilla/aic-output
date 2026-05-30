@@ -302,12 +302,28 @@
     border: 1px solid var(--cds-purple-60);
     font-family: 'IBM Plex Sans', sans-serif; vertical-align: middle;
   }
+  .new-badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 1px 6px; border-radius: 3px; margin-right: 8px;
+    background: rgba(36,161,72,0.18); color: var(--cds-green-50);
+    border: 1px solid var(--cds-green-50);
+    font-family: 'IBM Plex Sans', sans-serif; vertical-align: middle;
+  }
   .def-badge {
     display: inline-block; font-size: 9.5px; font-weight: 700;
     letter-spacing: 0.5px; text-transform: uppercase;
     padding: 1px 6px; border-radius: 3px; margin-right: 8px;
     background: rgba(15,98,254,0.12); color: var(--cds-blue-50);
     border: 1px solid var(--cds-blue-50);
+    font-family: 'IBM Plex Sans', sans-serif; vertical-align: middle;
+  }
+  .ui-badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    padding: 1px 6px; border-radius: 3px; margin-right: 8px;
+    background: rgba(36,161,72,0.14); color: var(--cds-green-50);
+    border: 1px solid var(--cds-green-50);
     font-family: 'IBM Plex Sans', sans-serif; vertical-align: middle;
   }
 
@@ -437,7 +453,7 @@
   <div class="ui-shell-inner">
     <h1>New Beamco Crowdfund BRD v1 <span class="tag">CANONICAL</span></h1>
     <div class="subtitle">
-      2026-05-24 · Draft v1
+      2026-05-24 · Draft v1 · revised 2026-05-29 (share-based model · range-target scrapped)
       <span class="dot">·</span>
       Beamco scope (Music) · Movies moved to separate Ztor BRD
     </div>
@@ -450,7 +466,7 @@
       <a class="ext" href="crowdfund-brd-v1-lifecycle.html">Lifecycle</a>
       <a class="ext" href="crowdfund-brd-v1-state-machine.html">State machine</a>
       <a class="ext" href="crowdfund-brd-v1-payment-retry.html">Payment retry</a>
-      <a class="ext" href="crowdfund-brd-v1-range-target-wireframe.html">Range target</a>
+      <a class="ext" href="crowdfund-brd-v1-range-target-wireframe.html" style="opacity:0.5;text-decoration:line-through;" title="Deprecated 2026-05-29 — range-target model scrapped">Range target (deprecated)</a>
       <span class="breadcrumb-divider" aria-hidden="true">·</span>
       <a class="ext proto" href="https://beamco-cf-fans-proto.vercel.app" target="_blank" rel="noopener noreferrer">Fans proto</a>
       <a class="ext proto" href="https://beamco-cf-admin-proto.vercel.app" target="_blank" rel="noopener noreferrer">Admin proto</a>
@@ -470,13 +486,70 @@
   <!-- ════════════════════ SPREADSHEET VIEW (default) ════════════════════ -->
   <div id="view-spreadsheet" class="tab-panel">
 
-  <div class="notification">
-    <span class="icon">●</span>
-    <div class="body">
-      <span class="lbl">TL;DR · updated 2026-05-25 post-walkthrough</span>
-      Beamco (Music) Crowdfund BRD covering Phase 1 + 2 in a single release. Currency = SGD/USD, LP = $1→28, recovery = 3-day auto-retry + 7-day manual + waitlist swap, then <strong>manual ops review</strong>. Reward = shares + plan items; royalty reporting (BR-36/37/38) + fan wallet (BR-49) deferred to post-MVP. Status renamed (<code>Funded</code> → <code>Goal Achieved</code>); most transitions now manual ops actions. Product URL submission = ops. New crowdfund platform-fee field (5%) + payment fee changes 3.4% → 4%. BR numbering mirrors the biz team's source spreadsheet.
-    </div>
-  </div>
+  <!-- ──────── Change log ──────── -->
+  <section class="section" id="changelog">
+    <div class="section-tag">CHANGE LOG</div>
+    <h2 class="productive-heading-02">Revision history</h2>
+    <table class="cds-data-table">
+      <thead><tr><th style="width:110px;">Date</th><th style="width:140px;">Driver</th><th>Changes</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="cell-mono"><strong>2026-05-29</strong> <span class="new-badge" style="margin-left:6px;">★ Latest</span></td>
+          <td class="cell-desc">Jeff + Jesse review<br><span style="font-size:11px;color:var(--cds-text-helper);">(Google Doc + comments + offline)</span></td>
+          <td class="cell-desc">
+            <ul style="margin:0;padding-left:18px;">
+              <li><strong>Model pivot:</strong> $-based → share-based goal (matches UAT)</li>
+              <li><strong>Scrapped:</strong> range-target solution — old BR-N2 / N3 / N4 / N5 deleted</li>
+              <li><strong>New status:</strong> <code>Minimum Met</code> added to BR-26 (end-date hit, min shares met, not all sold)</li>
+              <li><strong>BR-N3 expanded</strong> into full email-notification taxonomy (N1 → N13, adapted from Ztor §5.2)</li>
+              <li><strong>New BRs:</strong> BR-N2 Minimum Royalty Shares (AS-IS), BR-N4 inventory remaining "X Remaining"</li>
+              <li><strong>BR-36 / 37 / 38:</strong> flipped from deferred → TO BUILD (display-only, non-functional · Pat designs)</li>
+              <li><strong>BR-35:</strong> URL submit → "Release Fund" button surfaces → ops releases 20% (two-step manual)</li>
+              <li><strong>BR-32 dashboard:</strong> scope cut — no Extend / Hold / Swap / Recommend pills; only "Refund all" action</li>
+              <li><strong>BR-27:</strong> creators can post Updates throughout campaign</li>
+              <li><strong>OQs closed:</strong> O1 (re-closed share-based), O15 (4% confirmed), O17 (Minimum Met resolves), O18 (creator-proto link confirmed)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td class="cell-mono">2026-05-27</td>
+          <td class="cell-desc">Post-walkthrough alignment</td>
+          <td class="cell-desc">
+            <ul style="margin:0;padding-left:18px;">
+              <li>O1 closed with range-threshold buffer model <em>(later superseded 2026-05-29)</em></li>
+              <li>O14 closed via BR-N1 (creator portal reporting-only)</li>
+              <li>BR-N1 reframed</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td class="cell-mono">2026-05-25</td>
+          <td class="cell-desc">BRD walkthrough</td>
+          <td class="cell-desc">
+            <ul style="margin:0;padding-left:18px;">
+              <li>O2 closed: Stripe Connect deferred</li>
+              <li>O12 closed: BR-16 FX at charge time, Stripe-native</li>
+              <li>Status renamed Funded → Goal Achieved</li>
+              <li>Most state transitions moved to manual ops</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td class="cell-mono">2026-05-24</td>
+          <td class="cell-desc">Canonical-BRD review</td>
+          <td class="cell-desc">
+            <ul style="margin:0;padding-left:18px;">
+              <li>Draft v1 baseline</li>
+              <li>Crowdfund platform fee 5% added</li>
+              <li>Payment fee 3.4% → 4%</li>
+              <li>Range-target solution introduced <em>(later scrapped 2026-05-29)</em></li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
 
   <!-- Diagrams cross-link -->
   <section class="section" id="diagrams">
@@ -549,10 +622,10 @@
         <tr><td class="cell-mono">BR-1</td><td class="cell-desc"><strong>Fundraising target cap.</strong> Max $5M per campaign. Admin enforces manually — no platform validation in MVP.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Config already built — just raise the existing cap (SGD 20,000 today) to $5M. Manual enforcement.</td></tr>
         <tr><td class="cell-mono">BR-2</td><td class="cell-desc"><strong>Backer cap.</strong> No limit on number of backers per campaign.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Existing system already supports this.</td></tr>
         <tr><td class="cell-mono">BR-3</td><td class="cell-desc"><strong>Campaign duration cap.</strong> Max 30 days. Manually enforced; no platform validation in MVP.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Existing system already supports this.</td></tr>
-        <tr><td class="cell-mono">BR-4</td><td class="cell-desc"><strong>Waitlist (frontend).</strong> Opens when <code>raised ≥ minGoalUsd</code> OR shares sell out. Waitlisters lock payment + package + email. Also acts as recovery backup for failed captures (<a href="#brs">BR-N4</a>).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design copy explains "stretch-toward-max + backup" purpose.</td></tr>
+        <tr><td class="cell-mono">BR-4</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Waitlist (frontend).</strong> Opens when <code>sharesSold == totalRoyaltyShares</code> (all shares sold). Waitlisters lock payment + package + email. Also acts as recovery backup for failed captures (FIFO swap, see <a href="#brs">BR-31</a>).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: "Join waitlist" state on package selector once shares sell out + recovery-backup purpose in copy.</td></tr>
         <tr><td class="cell-mono">BR-5</td><td class="cell-desc"><strong>Campaign description.</strong> Single rich-text box, high char limit. No separate "project story" field.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Existing system already supports this.</td></tr>
         <tr><td class="cell-mono">BR-6</td><td class="cell-desc"><strong>Milestones.</strong> Not required for MVP — may be added later. FR-13 Notify-Users rule still applies if milestones are introduced.</td><td><span class="tag-pill pri-should">Should</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Feature already exists in the system; not a required field for MVP.</td></tr>
-        <tr><td class="cell-mono">BR-7</td><td class="cell-desc"><strong>Fundraising packages.</strong> Max 3 per campaign. All include royalty shares; bundling required. New: smallest-tier price ≤ 50% of <code>(max − min)</code> (<a href="#brs">BR-N5</a>) — single-tier campaigns: rule applies to that tier.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Packages feature exists; add live tier/range validation on admin form.</td></tr>
+        <tr><td class="cell-mono">BR-7</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Fundraising packages.</strong> Max 3 per campaign. All include royalty shares; bundling required.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Packages feature already exists.</td></tr>
         <tr><td class="cell-mono">BR-8</td><td class="cell-desc"><strong>Cover image.</strong> Portrait + landscape supported. High quality required.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Feature already exists.</td></tr>
         <tr><td class="cell-mono">BR-9</td><td class="cell-desc"><strong>Multimedia uploads.</strong> Multi-file (video, audio, images). Shown in separate section from cover.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Feature already exists.</td></tr>
       </tbody>
@@ -581,8 +654,22 @@
         <tr><td class="cell-mono">BR-23</td><td class="cell-desc"><strong>Disable edit after publish.</strong> All fields locked once published.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Management feature is only accessible by admin.</td></tr>
         <tr><td class="cell-mono">BR-24</td><td class="cell-desc"><strong>Delete campaign (draft only).</strong> Delete enabled in draft; disabled after publish.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Already exists.</td></tr>
         <tr><td class="cell-mono">BR-25</td><td class="cell-desc"><strong>Cancel published campaign.</strong> Once published, only cancellable. Listing stays with Cancelled status; no new pledges; refund all backers.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Needs modification.</td></tr>
-        <tr><td class="cell-mono">BR-26</td><td class="cell-desc"><strong>Campaign statuses.</strong> Draft / Active / Cancelled / Goal Achieved / Successful / Unsuccessful · In Progress · Released. <code>Active → Goal Achieved</code> auto-flips on <code>raised ≥ minGoalUsd</code> (pre-end-date possible · no hard cap). See <a href="crowdfund-brd-v1-state-machine.html">state machine</a>.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Single status column. Only Active→Goal Achieved + Active→Unsuccessful auto-flip; rest manual.</td></tr>
-        <tr><td class="cell-mono">BR-27</td><td class="cell-desc"><strong>Updates (was "Project Story").</strong> Creator-posts-only Updates · no fan commenting in MVP. Duplicate the editor into the creator dashboard so creators can post Updates from the reporting surface (per <a href="#brs">BR-N1</a>).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Campaign-page feature exists; new work = duplicate editor into creator dashboard.</td></tr>
+        <tr><td class="cell-mono">BR-26</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Campaign statuses.</strong>
+          <ul style="margin:6px 0 0 0;padding-left:18px;">
+            <li><strong>States:</strong> Draft · Active · Cancelled · Goal Achieved · <strong>Minimum Met</strong> <span class="new-badge">★ New</span> · Successful · Unsuccessful · In Progress · Released</li>
+            <li><strong>3 auto-flips (all from Active, at end-date or all-sold trigger):</strong>
+              <ul style="margin:2px 0 0 0;padding-left:18px;">
+                <li>→ <strong>Goal Achieved</strong> when all shares sold (<code>sharesSold == totalRoyaltyShares</code>); may fire pre-end-date</li>
+                <li>→ <strong>Minimum Met</strong> at end-date when <code>sharesSold ≥ minRoyaltyShares</code> but <code>&lt; total</code> (partial-but-viable)</li>
+                <li>→ <strong>Unsuccessful</strong> at end-date when <code>sharesSold &lt; minRoyaltyShares</code></li>
+              </ul>
+            </li>
+            <li>Goal Achieved + Minimum Met → recovery (BR-28→32) → <strong>ops manually marks <code>Successful</code> or triggers <code>Refund all</code></strong> based on the displayed BR-32 check result</li>
+            <li>All other transitions = manual ops actions</li>
+            <li>See <a href="crowdfund-brd-v1-state-machine.html">state machine</a></li>
+          </ul>
+        </td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Single status column. 3 auto-flips (Active end-state only), rest manual. Schema: add <code>Minimum Met</code> as a new enum value.</td></tr>
+        <tr><td class="cell-mono">BR-27</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Updates (was "Project Story").</strong> Creator-posts-only Updates · no fan commenting in MVP. Creators can post Updates <strong>throughout the campaign</strong> (during live + after end date). Duplicate the editor into the creator dashboard so creators can post Updates from the reporting surface (per <a href="#brs">BR-N1</a>).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Campaign-page feature exists; new work = duplicate editor into creator dashboard.</td></tr>
       </tbody>
     </table>
 
@@ -590,14 +677,33 @@
     <table class="cds-data-table">
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-origin">Status</th><th class="col-remark">Remark</th></tr></thead>
       <tbody>
-        <tr><td class="cell-mono">BR-28</td><td class="cell-desc"><strong>Batch charge backers at campaign end.</strong> On end date, if <code>raised ≥ minGoalUsd</code>, system batch-charges every locked-in card. End-date-triggered only.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Cron + Stripe batch charge.</td></tr>
+        <tr><td class="cell-mono">BR-28</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Batch charge backers at campaign end.</strong> On end date, if <code>sharesSold ≥ minRoyaltyShares</code> (<a href="#brs">BR-N2</a>), system batch-charges every locked-in card. End-date-triggered only.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Cron + Stripe batch charge. Triggers N2/N9 emails (capture outcome) — see Email taxonomy.</td></tr>
         <tr><td class="cell-mono">BR-29</td><td class="cell-desc"><strong>Auto-retry (Stripe smart retry).</strong> If decline, system silently retries 3 days (day 1, 2, 3) in background.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New build.</td></tr>
         <tr><td class="cell-mono">BR-30</td><td class="cell-desc"><strong>Manual recovery email.</strong> After auto-retry fails, system emails backer with URL to update payment. 7-day window.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">New build.</td></tr>
-        <tr><td class="cell-mono">BR-31</td><td class="cell-desc"><strong>Waitlist replacement.</strong> Day 10 fail → drop original + pull next waitlister in pure FIFO. Run same 3+7 cycle on the replacement. Final collected may exceed maxGoalUsd — accepted.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Buffer absorbs variance (<a href="#brs">BR-N4</a>) — no amount-match, no overshoot skip.</td></tr>
-        <tr><td class="cell-mono">BR-32</td><td class="cell-desc"><strong>Failure threshold check — mechanical.</strong> After recovery exhausted: auto-mark <strong>Successful</strong> if <code>collected ≥ minGoalUsd</code>, else <strong>Unsuccessful</strong>. Ops dashboard surfaces the ledger for transparency + compliance override. (<a class="oq-link" href="#oq-1">O1</a> closed)</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Range-threshold buffer makes math deterministic. Manual override for compliance edge cases only (legal flag, creator default, sanctioned region).</td></tr>
+        <tr><td class="cell-mono">BR-31</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Waitlist replacement.</strong> Day 10 fail → drop original backer + pull next waitlister in pure FIFO. Run same 3+7 cycle on the replacement. One-for-one share swap (failed backer's share count → next waitlister gets same package).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Pure FIFO; no amount-match logic needed since shares are unit-replaceable.</td></tr>
+        <tr><td class="cell-mono">BR-32</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Failure threshold check + recovery dashboard.</strong>
+          <ul style="margin:6px 0 0 0;padding-left:18px;">
+            <li><strong>Mechanical share-threshold check</strong> after recovery — the system computes <code>finalSharesPaid ≥ minRoyaltyShares</code> (<a href="#brs">BR-N2</a>) and displays the result. The check is deterministic; <strong>the resulting status flip is manual.</strong></li>
+            <li><strong>Two ops action buttons (post-recovery):</strong>
+              <ul style="margin:2px 0 0 0;padding-left:18px;">
+                <li><strong>"Mark Successful"</strong> — when threshold passed; flips Goal Achieved / Minimum Met → Successful + releases 80% to wallet</li>
+                <li><strong>"Refund all"</strong> — when threshold failed (or compliance edge case); flips → Unsuccessful</li>
+              </ul>
+            </li>
+            <li>Closes <a class="oq-link" href="#oq-1">O1</a></li>
+          </ul>
+        </td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Share-based threshold. Mechanical check + 2 manual flip actions. Post-recovery status flip stays manual to preserve ops oversight.</td></tr>
         <tr><td class="cell-mono">BR-33</td><td class="cell-desc"><span class="def-badge">⏸ Deferred</span><strong>Stripe Connect payout — deferred.</strong> Two-tranche payout via Stripe Connect post-MVP. MVP uses manual Finance bank transfer.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark">Creator wallet shows credited balance; Finance triggers off-platform. Resolves O2.</td></tr>
         <tr><td class="cell-mono">BR-34</td><td class="cell-desc"><strong>Withdraw funds from wallet.</strong> After $ on wallet, creator clicks Withdraw.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-carried">AS-IS</span></td><td class="cell-remark">Creator withdraw already exists.</td></tr>
-        <tr><td class="cell-mono">BR-35</td><td class="cell-desc"><strong>Submit final product URL (Spotify) — OPS action.</strong> Ops submits the Spotify release URL on the creator's behalf after track ships. Triggers the remainder 20% payout.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Spotify URL submission UI (back office) + 20% payout trigger.</td></tr>
+        <tr><td class="cell-mono">BR-35</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Submit final product URL + Release Fund — OPS two-step action.</strong>
+          <ul style="margin:6px 0 0 0;padding-left:18px;">
+            <li><strong>Step 1 — Submit URL:</strong> ops submits the Spotify release URL on the creator's behalf once the track ships</li>
+            <li><strong>Step 2 — Release Fund button surfaces:</strong> appears in the back office only after URL is submitted (mirrors the 80% release flow when a campaign first becomes funded)</li>
+            <li>Ops clicks "Release Fund" → remaining <strong>20% payout</strong> released</li>
+            <li>Both steps are manual — no auto-trigger</li>
+            <li>Triggers N13 release email to backers</li>
+          </ul>
+        </td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: URL input + confirm; conditional "Release Fund" button (visible only when URL is present). Dev: button hooks the 20% payout. Reference: <a href="https://beamco-cf-admin-proto.vercel.app/campaigns/sunday-light-ep">admin proto · sunday-light-ep</a>.</td></tr>
       </tbody>
     </table>
 
@@ -605,9 +711,9 @@
     <table class="cds-data-table">
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-origin">Status</th><th class="col-remark">Remark</th></tr></thead>
       <tbody>
-        <tr><td class="cell-mono">BR-36</td><td class="cell-desc"><span class="def-badge">⏸ Deferred</span><strong>Royalties reporting — deferred to post-MVP.</strong> Royalty revenue arrives 2+ months post-launch. Flow A (Beamco-as-label, manual weekly) baseline; Flow B deferred (<a class="oq-link" href="#oq-3">O3</a>).</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark">Spec continues; build in next release.</td></tr>
-        <tr><td class="cell-mono">BR-37</td><td class="cell-desc"><span class="def-badge">⏸ Deferred</span><strong>Withdraw royalties (creator) — deferred.</strong> With BR-36. Withdraw once ≥ USD 50.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark">Royalty revenue arrives 2+ months post-launch.</td></tr>
-        <tr><td class="cell-mono">BR-38</td><td class="cell-desc"><span class="def-badge">⏸ Deferred</span><strong>Withdraw royalties (fan) — DEFERRED</strong> with BR-36 + BR-49.</td><td><span class="tag-pill pri-should">Defer</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">DEFERRED</span></td><td class="cell-remark"><strong>Deferred to post-MVP</strong> with BR-36 + BR-49 fan wallet (mid-July).</td></tr>
+        <tr><td class="cell-mono">BR-36</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><span class="ui-badge">🎨 Display only · non-functional in MVP</span><strong>Royalties earned field — display surface.</strong> Show creators where royalties will appear on the creator reporting surface.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-music">Music</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Pat — empty-state field. Dev: UI scaffold only.</td></tr>
+        <tr><td class="cell-mono">BR-37</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><span class="ui-badge">🎨 Display only · non-functional in MVP</span><strong>Withdraw royalties (creator) — display surface.</strong> Show the withdraw control on the creator portal so creators see they'll be able to withdraw royalties later.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Pat — disabled withdraw control. Dev: UI only.</td></tr>
+        <tr><td class="cell-mono">BR-38</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><span class="ui-badge">🎨 Display only · non-functional in MVP</span><strong>Withdraw royalties (fan) — display surface.</strong> Show the withdraw control on the fans site so backers see they'll be able to withdraw royalties later. Pairs with BR-49 fan wallet (mid-July).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Pat — disabled withdraw control. Dev: UI only.</td></tr>
         <tr><td class="cell-mono">BR-39</td><td class="cell-desc"><strong>Campaign dashboard.</strong> View of campaigns (draft / published / cancelled). Columns scope still TBD — see <a class="oq-link" href="#oq-8">O8</a>.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>Suggest bundling into the BR-36 Creator Reporting build</strong> — single reporting module for the creator portal.</td></tr>
         <tr><td class="cell-mono">BR-40</td><td class="cell-desc"><strong>Overview tab.</strong> Progress · roadmap · payment breakdown · royalty splits · Spotify URL upload field.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark"><strong>Suggest bundling into the BR-36 Creator Reporting build</strong> — part of the same module.</td></tr>
         <tr><td class="cell-mono">BR-41</td><td class="cell-desc"><strong>Payout breakdown + new fee field.</strong> Add <code>Crowdfund project platform fee = 5%</code> to back-office fee schema (sibling to Physical 10% · Virtual 10% · Activity 5%). Change Payment fee 3.4% → 4%. Breakdown: raised · successfully charged · unsuccessfully charged · payment fee 4% · crowdfund platform fee 5% · final · 80% · 20%.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill scope-shared">Shared</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Manual processing for MVP — Finance computes off-platform, UI displays final numbers. <a class="oq-link" href="#oq-15">O15</a> pending: is 4% platform-wide or crowdfund-only?</td></tr>
@@ -632,8 +738,8 @@
     </table>
 
     <div class="net-new-block">
-      <h3>▸ Net-new from 2026-05-24 review (post-spreadsheet additions)</h3>
-      <p class="net-new-sub">BRs surfaced during the canonical-BRD review that are <strong>not</strong> in the biz team's source spreadsheet. Numbered BR-N* to keep biz-spreadsheet alignment intact.</p>
+      <h3>▸ Net-new from review (post-spreadsheet additions)</h3>
+      <p class="net-new-sub">BRs surfaced during BRD reviews (2026-05-24 + 2026-05-29) that are <strong>not</strong> in the biz team's source spreadsheet. Numbered BR-N* to keep biz-spreadsheet alignment intact. <strong>Note:</strong> prior BR-N2 / BR-N3 / BR-N4 / BR-N5 (range-target solution) scrapped 2026-05-29 — model reverted to share-based goal (matches UAT).</p>
       <table class="cds-data-table">
         <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-scope">Scope</th><th class="col-origin">Status</th><th class="col-remark">Remark</th></tr></thead>
         <tbody>
@@ -647,39 +753,60 @@
           </tr>
           <tr>
             <td class="cell-mono">BR-N2</td>
-            <td class="cell-desc"><strong>Campaign goal as min/max range.</strong> Replace single <code>goalUsd</code> with <code>minGoalUsd</code> + <code>maxGoalUsd</code>. Min = success threshold · Max = displayed stretch goal. Locked at publish. See <a href="crowdfund-brd-v1-range-target-wireframe.html">Range Target Solution</a>.</td>
+            <td class="cell-desc"><span class="new-badge">★ New 2026-05-29</span><strong>Minimum Royalty Shares (success threshold).</strong> New admin setup field — minimum royalty shares that must be sold + paid for the campaign to succeed. Below threshold → <strong>Unsuccessful → refund all</strong>. Matches the UAT campaign-create form (<em>"Min shares needed for success · If not reached → refund all"</em>). Locked at publish. Replaces the prior min/max-USD range model.</td>
             <td><span class="tag-pill pri-must">Must</span></td>
             <td><span class="tag-pill scope-shared">Shared</span></td>
-            <td><span class="tag-pill origin-new">TO BUILD</span></td>
-            <td class="cell-remark">Admin form: two-amount input replacing single Goal. Validation: <code>min &gt; 0</code>, <code>max &gt; min</code>, <code>max ≤ $5M</code> (BR-1). Fans: progress bar with min-marker notch. Backend: migrate <code>goalUsd</code> → pair.</td>
+            <td><span class="tag-pill origin-carried">AS-IS</span></td>
+            <td class="cell-remark">Field already exists in UAT. Spec'd here for traceability. Drives <a href="#brs">BR-28</a> (batch charge trigger) + <a href="#brs">BR-32</a> (success/fail check). Validation: <code>0 &lt; minRoyaltyShares ≤ totalRoyaltyShares</code> (BR-13).</td>
           </tr>
           <tr>
             <td class="cell-mono">BR-N3</td>
-            <td class="cell-desc"><strong>Pre-end-date Goal Achieved auto-flip.</strong> <code>Active → Goal Achieved</code> fires the moment <code>raised ≥ minGoalUsd</code>. Pledging continues through end date · no hard cap on raised.</td>
+            <td class="cell-desc"><span class="new-badge">★ New 2026-05-29</span><span class="upd-badge">✏ Expanded 2026-05-29</span><strong>Email notification taxonomy.</strong> Full lifecycle-event email coverage — pledge confirmation, capture outcomes, card-update reminders, funding status, cancellation, release. Adapted from Ztor §5.2 (N1–N14) for the Beamco share-based + manual-ops model. Detailed sub-rules in the <a href="#email-taxonomy">Email taxonomy table</a> below (N1 → N13).</td>
             <td><span class="tag-pill pri-must">Must</span></td>
             <td><span class="tag-pill scope-shared">Shared</span></td>
             <td><span class="tag-pill origin-new">TO BUILD</span></td>
-            <td class="cell-remark">Backend: continuous min-goal check during Active. Status-history logs trigger amount. Fans CTA copy shifts to "Stretch toward $\{max\}" post-flip.</td>
+            <td class="cell-remark">Trigger off lifecycle events (BR-26 status changes + BR-28/29/30/32). Template owner: Jeff to share Ztor templates → Sam to revise. Channel: email only for MVP (no in-app push).</td>
           </tr>
           <tr>
             <td class="cell-mono">BR-N4</td>
-            <td class="cell-desc"><strong>Buffer-absorbed waitlister refill.</strong> Failed captures → pull next waitlister in pure FIFO, amount-agnostic. <code>(max − min)</code> buffer is the tolerance window. Loop iterates until failed slots resolved or queue empty. Final check: <code>collected ≥ minGoalUsd → Successful</code>.</td>
+            <td class="cell-desc"><span class="new-badge">★ New 2026-05-29</span><strong>Inventory remaining on package selector (fans site).</strong> Show available inventory of each fundraising package to fans, e.g. <em>"5 Remaining"</em>. Surfaces scarcity + signals when shares are running out before full sell-out triggers the waitlist (<a href="#brs">BR-4</a>).</td>
             <td><span class="tag-pill pri-must">Must</span></td>
             <td><span class="tag-pill scope-shared">Shared</span></td>
             <td><span class="tag-pill origin-new">TO BUILD</span></td>
-            <td class="cell-remark">Backend: FIFO pop from <code>WAITLIST_QUEUE</code>. Admin recovery dashboard logs iterations. Replaces amount-matching in <a href="#brs">BR-31</a>. Closes <a class="oq-link" href="#oq-1">O1</a>.</td>
-          </tr>
-          <tr>
-            <td class="cell-mono">BR-N5</td>
-            <td class="cell-desc"><strong>Smallest tier ≤ 50% of goal-range buffer.</strong> Smallest tier price ≤ <code>(max − min) × 0.5</code>. Example: min $9K · max $10K → smallest tier ≤ $500. Single-tier campaigns: rule applies to that tier. Keeps refill math resilient.</td>
-            <td><span class="tag-pill pri-must">Must</span></td>
-            <td><span class="tag-pill scope-shared">Shared</span></td>
-            <td><span class="tag-pill origin-new">TO BUILD</span></td>
-            <td class="cell-remark">Admin form: live validation tying smallest tier price to <code>(max − min)</code>. Error copy: <em>"Smallest tier price must be ≤ \$X (50% of your goal-range buffer). Reduce the tier price or widen your goal range."</em> Backend: same validation on publish; reject violators. Updates <a href="#brs">BR-7</a>.</td>
+            <td class="cell-remark">Design owner: <strong>Pat</strong>. Dev: read remaining count per package on storefront; hide once at 0 (waitlist state kicks in).</td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <details class="net-new-block" id="email-taxonomy" style="margin-top:24px;padding:0;">
+      <summary style="cursor:pointer;list-style:none;padding:18px 22px;display:flex;align-items:center;gap:10px;user-select:none;">
+        <span style="font-size:11px;color:var(--cds-text-helper);font-family:'IBM Plex Mono',monospace;letter-spacing:0.32px;">▸ EXPAND</span>
+        <h3 style="margin:0;font-size:14px;font-weight:600;color:var(--cds-green-50);letter-spacing:0.16px;">✉ Email notification taxonomy — BR-N3 detail (N1 → N13)</h3>
+      </summary>
+      <div style="padding:0 22px 22px 22px;">
+      <p class="net-new-sub">Backer + creator email triggers across the campaign lifecycle. Adapted from Ztor §5.2 (N1–N14) for Beamco's share-based + manual-ops MVP. Sub-IDs (N1 → N13) map 1:1 with lifecycle events. <strong>Content/copy TBD</strong> — Jeff to share Ztor templates as baseline; Sam owns Beamco final copy.</p>
+      <table class="cds-data-table">
+        <thead><tr><th style="width:60px;">Sub-ID</th><th>Lifecycle event</th><th style="width:120px;">Recipient</th><th>Trigger source</th><th>Beamco-specific notes</th></tr></thead>
+        <tbody>
+          <tr><td class="cell-mono">N1</td><td class="cell-desc"><strong>Pledge confirmation.</strong> Sent immediately after a fan submits a pledge.</td><td>Backer</td><td>Fan pledge submit event</td><td>Include package details + share count + locked card last-4. Set expectation: charge happens at campaign end.</td></tr>
+          <tr><td class="cell-mono">N2</td><td class="cell-desc"><strong>First capture failure (initial batch charge).</strong> Sent when the BR-28 batch capture fails on attempt #1.</td><td>Backer</td><td>BR-28 + BR-29 first fail</td><td>"Check funds / verify card" copy. Triggers the 3-day silent retry quietly in the background.</td></tr>
+          <tr><td class="cell-mono">N3</td><td class="cell-desc"><strong>Card-update reminder · day 3.</strong> After auto-retry exhausted, day-3 manual recovery nudge.</td><td>Backer</td><td>BR-30 day-3 trigger</td><td>Includes the recovery URL (BR-30 secure tokenized link).</td></tr>
+          <tr><td class="cell-mono">N4</td><td class="cell-desc"><strong>Card-update reminder · day 5.</strong> Mid-window nudge.</td><td>Backer</td><td>BR-30 day-5 trigger</td><td>Same URL, escalated copy.</td></tr>
+          <tr><td class="cell-mono">N5</td><td class="cell-desc"><strong>Card-update final reminder · pre-forfeit.</strong> Day 6/7 — last chance.</td><td>Backer</td><td>BR-30 day-7 trigger</td><td>Emphasises forfeit deadline + waitlist swap.</td></tr>
+          <tr><td class="cell-mono">N6</td><td class="cell-desc"><strong>Pledge forfeited.</strong> Recovery window closed; spot released to waitlist (BR-31).</td><td>Backer</td><td>Day-10 FIFO swap event</td><td>Confirms order is void; no charge made.</td></tr>
+          <tr><td class="cell-mono">N7</td><td class="cell-desc"><strong>Goal Achieved.</strong> All shares sold (pre-end-date possible).</td><td>Backer + Creator</td><td>BR-26 Active→Goal Achieved transition</td><td>Celebrates full sell-out. Sets expectation that batch charge runs at end date.</td></tr>
+          <tr><td class="cell-mono">N8</td><td class="cell-desc"><strong>Minimum Met.</strong> End date hit, sharesSold ≥ minRoyaltyShares but &lt; total.</td><td>Backer + Creator</td><td>BR-26 Active→Minimum Met transition</td><td><span class="new-badge">★ New for Beamco</span> Replaces Ztor's single "funded" notice. Tone: "campaign cleared the minimum threshold + moving forward".</td></tr>
+          <tr><td class="cell-mono">N9</td><td class="cell-desc"><strong>Capture success — pledge collected.</strong> Sent on successful card charge.</td><td>Backer</td><td>BR-28/29 capture-success event</td><td>Per-backer receipt. Confirms share allocation.</td></tr>
+          <tr><td class="cell-mono">N10</td><td class="cell-desc"><strong>Unsuccessful — refund all.</strong> Campaign failed (sharesSold &lt; min, or post-recovery threshold missed).</td><td>Backer</td><td>BR-32 Active/Minimum Met → Unsuccessful</td><td>States refund timeline (Stripe back-office manual batch). Pairs with Ops Refund-all action.</td></tr>
+          <tr><td class="cell-mono">N11</td><td class="cell-desc"><strong>Project cancelled (ops/creator).</strong> Manual cancellation post-publish.</td><td>Backer</td><td>BR-25 cancel event</td><td>Pre-end-date: cancels pledges (no charge). Post-end-date: triggers refund queue.</td></tr>
+          <tr><td class="cell-mono">N12</td><td class="cell-desc"><strong>Creator Update posted.</strong> Notify backers when creator publishes an Update.</td><td>Backer</td><td>BR-27 Update post event</td><td>Throughout campaign + In Progress phase. Opt-in per backer (mute settings out of scope MVP).</td></tr>
+          <tr><td class="cell-mono">N13</td><td class="cell-desc"><strong>Released — product live.</strong> Spotify URL submitted + ops releases remaining 20% (BR-35).</td><td>Backer</td><td>BR-35 Step 2 "Release Fund" event</td><td>Includes the Spotify link. Beamco-specific copy (no Ztor-style unique redemption code).</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:11.5px;color:var(--cds-text-helper);margin:8px 0 0 0;"><strong>Out of scope for MVP:</strong> in-app push, per-event mute settings, multi-language localisation, A/B copy testing. Channel = email only.</p>
+      </div>
+    </details>
 
     <h3 style="font-size:14px;font-weight:600;color:var(--cds-text-helper);margin:32px 0 6px 0;letter-spacing:0.16px;">▸ Movies-only — out of scope (audit only)</h3>
     <p class="body-long-01" style="margin-bottom:10px;font-size:12.5px;color:var(--cds-text-helper);">Kept for biz-spreadsheet traceability. These rows live in a separate Ztor BRD; <strong>not in scope for Beamco MVP</strong>.</p>
@@ -727,20 +854,22 @@
     </p>
 
     <div class="q-block q-block--single">
-      <div class="q assumed" id="oq-1"><span class="n">O1</span><span class="q-cat">✓ Closed</span><strong>BR-32 waitlist coverage calculation.</strong> <strong>Closed 2026-05-27:</strong> Range-threshold model (BR-N2–N5) makes the math mechanical — no formula or ops eyeballing needed. The buffer between <code>collected</code> and <code>minGoalUsd</code> IS the formula; BR-N4 FIFO refill + hard-cap skip handles the rest. Ops dashboard still surfaces the ledger for transparency + compliance-edge-case override (legal flag, creator default, sanctioned region). Reframing history: 2026-05-24 "threshold value" → 2026-05-25 "manual ops review" → 2026-05-27 "mechanical with range buffer".<div class="own">Owner: Jesse + Agnes · resolved by range-threshold model</div></div>
+      <div class="q assumed" id="oq-1"><span class="n">O1</span><span class="q-cat">✓ Closed</span><strong>BR-32 waitlist coverage calculation.</strong> <strong>Re-closed 2026-05-29 (share-based model):</strong> Success threshold is now <code>finalSharesPaid ≥ minRoyaltyShares</code> (BR-N2 admin field) — deterministic, no formula needed. Ops dashboard surfaces the share ledger for transparency + compliance override (legal flag, creator default, sanctioned region). Earlier 2026-05-27 closure used a range-USD buffer model which has since been scrapped.<div class="own">Owner: Jesse + Agnes · resolved by share-based threshold</div></div>
       <div class="q assumed" id="oq-2"><span class="n">O2</span><span class="q-cat">✓ Assumed</span><strong>Stripe Connect yes/no?</strong> <strong>Closed 2026-05-25:</strong> Stripe Connect (BR-33) deferred to post-MVP. MVP path = manual Finance bank transfer.<div class="own">Owner: L</div></div>
-      <div class="q future" id="oq-3"><span class="n">O3</span><span class="q-cat">⏸ Future</span><strong>Music royalty:</strong> Flow A (label, weekly) baseline; Flow B deferred with <a href="#brs">BR-36</a>. Example reports pending Sam.<div class="own">Owner: Sam</div></div>
+      <div class="q future" id="oq-3"><span class="n">O3</span><span class="q-cat">⏸ Future</span><strong>Music royalty:</strong> Flow A (label, weekly) baseline; Flow B deferred with <a href="#brs">BR-36</a>. Example reports pending Sam. Updated 2026-05-29: BR-36 is now <strong>TO BUILD (display-only, non-functional)</strong> — Pat designs the empty-state field on creator reporting page; backend wiring follows in next release.<div class="own">Owner: Sam + Pat (design)</div></div>
       <div class="q assumed" id="oq-5"><span class="n">O5</span><span class="q-cat">✓ Assumed</span><strong>LP loophole:</strong> join → 1 LP → unjoin keeps eligibility. Phase 2 mitigation?<div class="suggest"><strong>Suggested approach:</strong> defer mitigation to Phase 2 — accept the loophole for MVP.</div><div class="own">Owner: Al · non-blocking</div></div>
       <div class="q pending" id="oq-6"><span class="n">O6</span><span class="q-cat">🟡 Pending</span><strong>Equity-like shares regulatory review</strong> (re <a href="#brs">BR-12</a> royalty shares % + <a href="#brs">BR-13</a> share count, in the context of <a href="#brs">BR-16</a> SGD/USD settlement). Are the royalty-share offerings considered equity-like securities in SG/US? Currency pivot raises the question because settlement now lands in regulated markets.<span class="blk">blocks production</span><div class="own">Owner: Legal</div></div>
       <div class="q assumed" id="oq-7"><span class="n">O7</span><span class="q-cat">✓ Assumed</span><strong>BR-35 — 20% auto-triggered</strong> on URL upload, or admin review first? <strong>Closed 2026-05-24:</strong> ops submits the URL and triggers the 20% payout — no auto-trigger. Captured in BR-35 desc.<div class="own">Owner: biz</div></div>
       <div class="q pending" id="oq-8"><span class="n">O8</span><span class="q-cat">🟡 Pending</span><strong>BR-39 dashboard column scope</strong> — "TBD by 2026-05-19" status; which fields appear in the creator dashboard list view?<div class="own">Owner: biz</div></div>
       <div class="q assumed" id="oq-9"><span class="n">O9</span><span class="q-cat">✓ Assumed</span><strong>BR-41 payout breakdown</strong> — which numbers automated vs manual?<div class="suggest"><strong>Suggested approach:</strong> manual for MVP — Finance computes off-platform, UI just displays the final numbers.</div><div class="own">Owner: dev</div></div>
-      <div class="q future" id="oq-11"><span class="n">O11</span><span class="q-cat">⏸ Future</span><strong>Fan wallet &amp; withdraw UI doesn't exist on fans site today.</strong> Resolved 2026-05-24: BR-49 + BR-38 deferred to mid-July (royalty revenue arrives 2+ months post-launch; $50 threshold unlikely hit in MVP window).<div class="own">Owner: L + dev</div></div>
+      <div class="q future" id="oq-11"><span class="n">O11</span><span class="q-cat">⏸ Future</span><strong>Fan wallet &amp; withdraw UI doesn't exist on fans site today.</strong> Resolved 2026-05-24: BR-49 + BR-38 deferred to mid-July. Updated 2026-05-29: BR-38 fan royalty withdraw is now <strong>TO BUILD (display-only, non-functional)</strong> — Pat designs the disabled withdraw surface. Backend wiring still lands with BR-49 fan wallet mid-July.<div class="own">Owner: L + Pat (design) + dev</div></div>
       <div class="q assumed" id="oq-12"><span class="n">O12</span><span class="q-cat">✓ Assumed</span><strong>BR-16 fan→creator FX conversion model.</strong> <strong>Closed 2026-05-25:</strong> FX locks at <strong>charge time</strong> — Stripe handles the conversion natively from fan&apos;s pledge currency to the creator&apos;s settlement currency. No custom FX layer needed. Fans see the pledge amount in their currency at checkout; the actual debit appears post-capture in their statement (per Stripe&apos;s standard cross-currency flow). Pledge confirmation copy should mention &ldquo;final charge in [creator currency], converted by your bank/card&rdquo;.<div class="own">Owner: biz + Finance</div></div>
-      <div class="q future" id="oq-13"><span class="n">O13</span><span class="q-cat">⏸ Future</span><strong>BR-37 royalty withdraw — same flow as BR-34?</strong> Deferred 2026-05-24: BR-37 royalty withdraw deferred with BR-36 to post-MVP; revisit when royalty reporting ships.<div class="own">Owner: dev + biz</div></div>
+      <div class="q future" id="oq-13"><span class="n">O13</span><span class="q-cat">⏸ Future</span><strong>BR-37 royalty withdraw — same flow as BR-34?</strong> Deferred 2026-05-24: BR-37 royalty withdraw deferred with BR-36 to post-MVP. Updated 2026-05-29: <strong>TO BUILD (display-only, non-functional)</strong> — Pat designs the disabled withdraw control. Decision on whether to mirror BR-34 flow revisited when royalty reporting ships.<div class="own">Owner: Pat (design) + dev + biz</div></div>
       <div class="q assumed" id="oq-14"><span class="n">O14</span><span class="q-cat">✓ Closed</span><strong>Sign-up closure scope + ops vs creator management model.</strong> <strong>Closed 2026-05-27:</strong> Option (b) chosen — hide all crowdfund management on creator portal, surface only reporting (per <a href="#brs">BR-N1</a>). All management moves to back office. No new permission tier on creator portal.<div class="own">Owner: Jesse + Sam + Susan · resolved by BR-N1</div></div>
-      <div class="q pending" id="oq-15"><span class="n">O15</span><span class="q-cat">🟡 Pending</span><strong>BR-41 payment fee 3.4% → 4%</strong> (new · 2026-05-24). Is the change platform-wide (all products) or crowdfund-only?<div class="own">Owner: biz</div></div>
+      <div class="q assumed" id="oq-15"><span class="n">O15</span><span class="q-cat">✓ Closed</span><strong>BR-41 payment fee 3.4% → 4%</strong> (new · 2026-05-24). <strong>Closed 2026-05-29:</strong> 4% confirmed by Susan. Treat as platform-wide unless biz says otherwise.<div class="own">Owner: biz · resolved by Susan</div></div>
       <div class="q pending" id="oq-16"><span class="n">O16</span><span class="q-cat">🟡 Pending</span><strong>Fan-creator contract content</strong> (new · 2026-05-24). BR-C1 / BR-C2 are the same contract (different surfaces). Final legal copy still pending.<div class="own">Owner: Sam</div></div>
+      <div class="q assumed" id="oq-17"><span class="n">O17</span><span class="q-cat">✓ Closed</span><strong>New status for "end date reached + min met but not all shares sold".</strong> <strong>Closed 2026-05-29:</strong> introduced <strong>"Minimum Met"</strong> as a new campaign status — fires when end date hits with <code>sharesSold ≥ minRoyaltyShares</code> but <code>&lt; totalRoyaltyShares</code>. Captured in BR-26. Sits between Active and Successful, alongside Goal Achieved. Triggers N8 backer + creator notification.<div class="own">Owner: Jeff + Jesse · resolved 2026-05-29</div></div>
+      <div class="q assumed" id="oq-18"><span class="n">O18</span><span class="q-cat">✓ Closed</span><strong>BR-41 creator-side surface.</strong> <strong>Closed 2026-05-29:</strong> Jeff confirmed the page exists on the creator proto: <a href="https://beamco-cf-creator-proto.vercel.app/campaigns/echoes-of-tomorrow">echoes-of-tomorrow</a>. Admin proto reference: <a href="https://beamco-cf-admin-proto.vercel.app/campaigns/sunday-light-ep">sunday-light-ep</a>. Both sides covered.<div class="own">Owner: Sam + dev · resolved 2026-05-29</div></div>
     </div>
   </section>
 
@@ -751,11 +880,11 @@
 
   <div class="build-banner">
     <h2>🔨 Build view — design &amp; development scope</h2>
-    <p>Filtered view of the BRD for the dev + design team. <strong>Only TO BUILD and TO MODIFY items</strong>, grouped by audience. AS-IS rows (existing features that work as-needed) are hidden. Deferred items collapse to a chip list at the bottom of each section.</p>
+    <p>Filtered view of the BRD for the dev + design team. <strong>Only TO BUILD and TO MODIFY items</strong>, grouped by audience. AS-IS rows (existing features that work as-needed) are hidden. Deferred items collapse to a chip list at the bottom of each section. <strong>UI placeholder</strong> items have deferred backend function but ship a static frontend surface in MVP.</p>
     <div class="build-stats">
-      <span class="stat tb"><strong>16</strong> <span style="color:var(--cds-green-50);font-weight:600;">TO BUILD</span></span>
+      <span class="stat tb"><strong>22</strong> <span style="color:var(--cds-green-50);font-weight:600;">TO BUILD</span></span>
       <span class="stat tm"><strong>5</strong> <span style="color:var(--cds-orange-40);font-weight:600;">TO MODIFY</span></span>
-      <span class="stat def"><strong>5</strong> <span style="color:var(--cds-blue-50);font-weight:600;">DEFERRED</span> (post-MVP)</span>
+      <span class="stat def"><strong>2</strong> <span style="color:var(--cds-blue-50);font-weight:600;">DEFERRED</span> (post-MVP)</span>
     </div>
   </div>
 
@@ -764,20 +893,21 @@
     <div class="audience-head">
       <span class="a-icon">👥</span>
       <span class="a-name">Fans · fans-facing storefront</span>
-      <span class="a-count">3 to build</span>
+      <span class="a-count">5 to build</span>
     </div>
     <table class="cds-data-table">
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-origin">Status</th><th class="col-remark">What design / dev needs</th></tr></thead>
       <tbody>
-        <tr><td class="cell-mono">BR-4</td><td class="cell-desc"><strong>Waitlist (frontend).</strong> Opens at <code>raised ≥ minGoalUsd</code> OR shares sold-out, whichever first. Acts as backup buffer for failed captures (per BR-N4). Waitlister UI locks payment method + package + email.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: "Join waitlist" state on package selector + waitlist confirmation screen + copy explaining the "stretch toward max + backup" purpose. Dev: persistent waitlist record with locked payment ref + tier-amount metadata.</td></tr>
+        <tr><td class="cell-mono">BR-4</td><td class="cell-desc"><strong>Waitlist (frontend).</strong> Opens when <code>sharesSold == totalRoyaltyShares</code> (all shares sold). Acts as backup for failed captures (FIFO swap, per BR-31). Waitlister UI locks payment method + package + email.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: "Join waitlist" state on package selector once shares sell out + waitlist confirmation screen. Dev: persistent waitlist record with locked payment ref + package metadata.</td></tr>
         <tr><td class="cell-mono">BR-17</td><td class="cell-desc"><strong>Currency display (storefront).</strong> Creator's chosen currency primary · fan's local currency (IP-based) in smaller text as reference.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: typography + position of secondary local-currency reference. Limited to 4 platform currencies.</td></tr>
+        <tr><td class="cell-mono">BR-38</td><td class="cell-desc"><span class="ui-badge">🎨 Display only · non-functional in MVP</span><strong>Withdraw royalties (fan) — display surface.</strong> Show the withdraw control on the fans site so backers see they'll be able to withdraw royalties later. Pairs with BR-49 fan wallet (mid-July).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Pat — disabled withdraw control. Dev: UI only.</td></tr>
         <tr><td class="cell-mono">BR-48</td><td class="cell-desc"><strong>Order detail page (crowdfund).</strong> Doesn't exist on fans site today. Shows purchased package + payment status + contract download link (BR-C1).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: full new page in the fan's order history area. Dev: route + data fetch for crowdfund-type orders + PDF download.</td></tr>
+        <tr><td class="cell-mono">BR-N4</td><td class="cell-desc"><strong>Inventory remaining on package selector.</strong> Show available inventory per package, e.g. <em>"5 Remaining"</em>. Signals scarcity before full sell-out triggers waitlist state.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: <strong>Pat</strong> — remaining-count surface on storefront. Dev: read per-package remaining; hide once at 0 (waitlist kicks in via BR-4).</td></tr>
       </tbody>
     </table>
     <div class="audience-deferred">
       <strong>⏸ Deferred — post-MVP:</strong>
       <div class="chip-list">
-        <span>BR-38 fan royalty withdraw</span>
         <span>BR-49 fan wallet</span>
       </div>
     </div>
@@ -788,13 +918,15 @@
     <div class="audience-head">
       <span class="a-icon">🎤</span>
       <span class="a-name">Creator · creator portal (web + dashboard)</span>
-      <span class="a-count">6 to build · 1 to modify</span>
+      <span class="a-count">8 to build · 1 to modify</span>
     </div>
     <table class="cds-data-table">
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-origin">Status</th><th class="col-remark">What design / dev needs</th></tr></thead>
       <tbody>
-        <tr><td class="cell-mono">BR-27</td><td class="cell-desc"><strong>Updates section — duplicate to dashboard.</strong> Campaign-page Updates feature exists; duplicate editor into the creator dashboard so creators can post from the reporting surface (BR-N1).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Design: Updates surface inside creator dashboard. Dev: reuse Updates data layer.</td></tr>
-        <tr><td class="cell-mono">BR-39</td><td class="cell-desc"><strong>Campaign dashboard.</strong> Lists creator's campaigns (draft / published / cancelled) with columns: name · status · raised/target · fanvestors · days remaining · result.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: list view; mobile-friendly. Bundle into BR-36 Creator Reporting module.</td></tr>
+        <tr><td class="cell-mono">BR-27</td><td class="cell-desc"><strong>Updates section — duplicate to dashboard.</strong> Campaign-page Updates feature exists; duplicate editor into the creator dashboard so creators can post from the reporting surface (BR-N1). Creators can post <strong>throughout the campaign</strong> (during live + after end).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Design: Updates surface inside creator dashboard. Dev: reuse Updates data layer.</td></tr>
+        <tr><td class="cell-mono">BR-36</td><td class="cell-desc"><span class="ui-badge">🎨 Display only · non-functional in MVP</span><strong>Royalties earned field — display surface.</strong> Show creators where royalties will appear on the creator reporting surface.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Pat — empty-state field. Dev: UI scaffold only.</td></tr>
+        <tr><td class="cell-mono">BR-37</td><td class="cell-desc"><span class="ui-badge">🎨 Display only · non-functional in MVP</span><strong>Withdraw royalties (creator) — display surface.</strong> Show the withdraw control on the creator portal so creators see they'll be able to withdraw royalties later.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Pat — disabled withdraw control. Dev: UI only.</td></tr>
+        <tr><td class="cell-mono">BR-39</td><td class="cell-desc"><strong>Campaign dashboard.</strong> Lists creator's campaigns (draft / published / cancelled) with columns: name · status · shares sold/total · fanvestors · days remaining · result.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: list view; mobile-friendly. Bundle into Creator Reporting module.</td></tr>
         <tr><td class="cell-mono">BR-40</td><td class="cell-desc"><strong>Campaign Overview tab.</strong> Per-campaign view with progress · roadmap · payment breakdown · royalty splits · Spotify URL field.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: multi-section dashboard layout. Note: Spotify URL field is <em>display-only</em> for creator; ops submits per BR-35.</td></tr>
         <tr><td class="cell-mono">BR-42</td><td class="cell-desc"><strong>Order history tab.</strong> Per-campaign backer list: name · package · price · items · fulfillment status · % royalties · payment status.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: filterable table. Part of Creator Reporting module.</td></tr>
         <tr><td class="cell-mono">BR-43</td><td class="cell-desc"><strong>Export order history (CSV).</strong> Filter date range + export button.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: server-side CSV generation + download.</td></tr>
@@ -802,13 +934,6 @@
         <tr><td class="cell-mono">BR-46</td><td class="cell-desc"><strong>Export transaction history (CSV).</strong> Filter date range + export.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Pairs with BR-45 wallet.</td></tr>
       </tbody>
     </table>
-    <div class="audience-deferred">
-      <strong>⏸ Deferred — post-MVP:</strong>
-      <div class="chip-list">
-        <span>BR-36 royalty reporting</span>
-        <span>BR-37 creator royalty withdraw</span>
-      </div>
-    </div>
   </section>
 
   <!-- ──────── Admin audience ──────── -->
@@ -816,24 +941,51 @@
     <div class="audience-head">
       <span class="a-icon">⚙️</span>
       <span class="a-name">Admin · back office (Ops + Finance)</span>
-      <span class="a-count">6 to build · 5 to modify</span>
+      <span class="a-count">4 to build · 4 to modify</span>
     </div>
     <table class="cds-data-table">
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-origin">Status</th><th class="col-remark">What design / dev needs</th></tr></thead>
       <tbody>
         <tr><td class="cell-mono">BR-1</td><td class="cell-desc"><strong>Fundraising target cap = $5M.</strong> Raise the existing cap (SGD 20,000 today) to $5M.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Dev: bump existing config; no new UI needed.</td></tr>
-        <tr><td class="cell-mono">BR-7</td><td class="cell-desc"><strong>Tier packages — add min-tier validation.</strong> Underlying packages feature exists; add live validation tying smallest tier price to <code>(maxGoalUsd − minGoalUsd) × 0.5</code> (per BR-N5).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Design: inline error copy when smallest tier exceeds 50% of goal-range buffer. Dev: validator on form change + on publish.</td></tr>
         <tr><td class="cell-mono">BR-16</td><td class="cell-desc"><strong>Crowdfund creation — currency selector + creator-link logic.</strong> Two coupled rules at campaign-creation time in the back office: <strong>(a) Currency selector</strong> restricted to <strong>SGD / USD only</strong> (locked at publish; merch + events keep all 4 currencies). <strong>(b) Creator-link picker</strong> filters out any creator whose home currency is <strong>TWD or MYR</strong> — those creators are listed but disabled with a "Not supported for crowdfund (TWD/MYR home currency)" reason chip.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Design: SGD/USD-only dropdown on the campaign form; eligible vs ineligible creator picker with reason chips + small rule banner. Dev: prune currency options; add <code>homeCurrency</code> on the creator record + <code>CROWDFUND_SUPPORTED_HOMES = ["USD", "SGD"]</code> filter.</td></tr>
         <tr><td class="cell-mono">BR-25</td><td class="cell-desc"><strong>Cancel published campaign (manual).</strong> Ops can cancel any published campaign; status → Cancelled, refund all backers via Stripe back-office.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Design: confirm-cancel modal + reason field. Dev: status flip + listing retention + manual refund queue trigger.</td></tr>
-        <tr><td class="cell-mono">BR-26</td><td class="cell-desc"><strong>Campaign status machine + ops controls.</strong> Rename Funded → Goal Achieved. Only Active→Goal Achieved + Active→Unsuccessful auto-flip; rest manual. <strong>Goal Achieved fires when <code>raised ≥ minGoalUsd</code></strong> (pre-end-date possible, per BR-N3). Pledging stays open until end date · no hard cap. Single status column. Mirror Store.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Dev: schema + state transition rules + continuous min-goal check during Active. Admin UI: manual transition buttons in detail view. State-machine diagram updated.</td></tr>
-        <tr><td class="cell-mono">BR-32</td><td class="cell-desc"><strong>Failure threshold check — mechanical.</strong> Auto-mark Successful if <code>collected ≥ minGoalUsd</code> after recovery; else Unsuccessful. Ops dashboard shows ledger (successful · failed · waitlist refills · skips) for transparency + compliance-edge-case override.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: per-campaign post-end ledger page. Dev: deterministic check (no ops eyeballing). Closes O1.</td></tr>
-        <tr><td class="cell-mono">BR-35</td><td class="cell-desc"><strong>Submit final product URL (ops action).</strong> Ops submits Spotify URL in back office → triggers 20% payout release.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: URL input + confirm modal in back office. Dev: validation + payout trigger.</td></tr>
-        <tr><td class="cell-mono">BR-41</td><td class="cell-desc"><strong>Payout breakdown + new fee field.</strong> Add Crowdfund project platform fee = 5% to back-office fee schema. Change payment fee 3.4% → 4%.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: fee config section in back office (sibling to existing product fees). Dev: schema field + payout calc. Open Q on payment-fee scope (O15).</td></tr>
+        <tr><td class="cell-mono">BR-26</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Campaign status machine + ops controls.</strong>
+          <ul style="margin:6px 0 0 0;padding-left:18px;">
+            <li><strong>3 auto-flips from Active:</strong>
+              <ul style="margin:2px 0 0 0;padding-left:18px;">
+                <li>→ Goal Achieved (all shares sold)</li>
+                <li>→ <strong>Minimum Met</strong> <span class="new-badge">★ New</span> (end-date · min met · not all sold)</li>
+                <li>→ Unsuccessful (end-date · min not met)</li>
+              </ul>
+            </li>
+            <li>Post-recovery: ops manually clicks <strong>"Mark Successful"</strong> or <strong>"Refund all"</strong> based on BR-32 check result</li>
+            <li>All other transitions = manual ops actions</li>
+          </ul>
+        </td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-changed">TO MODIFY</span></td><td class="cell-remark">Dev: schema + 3 auto-flip rules + shares-sold continuous check. Add <code>Minimum Met</code> enum.</td></tr>
+        <tr><td class="cell-mono">BR-32</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Failure threshold check + recovery dashboard.</strong>
+          <ul style="margin:6px 0 0 0;padding-left:18px;">
+            <li>Mechanical check (deterministic, display-only): <code>finalSharesPaid ≥ minRoyaltyShares</code> (BR-N2)</li>
+            <li><strong>2 ops action buttons:</strong>
+              <ul style="margin:2px 0 0 0;padding-left:18px;">
+                <li><strong>"Mark Successful"</strong> — when check passed; releases 80% to wallet</li>
+                <li><strong>"Refund all"</strong> — when check failed (or compliance edge case)</li>
+              </ul>
+            </li>
+          </ul>
+        </td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: per-campaign post-end share-ledger page (ledger + 2 buttons). Dev: deterministic check + 2 manual flip actions. Closes O1.</td></tr>
+        <tr><td class="cell-mono">BR-35</td><td class="cell-desc"><span class="upd-badge">✏ Updated 2026-05-29</span><strong>Submit final product URL + Release Fund — two-step ops action.</strong>
+          <ul style="margin:6px 0 0 0;padding-left:18px;">
+            <li><strong>Step 1:</strong> ops submits Spotify URL</li>
+            <li><strong>Step 2:</strong> "Release Fund" button surfaces → ops clicks → 20% payout released</li>
+            <li>Both manual; no auto-trigger</li>
+            <li>Triggers N13 release email</li>
+          </ul>
+        </td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: URL input + confirm modal; conditional "Release Fund" button (visible only post-submit). Dev: validation + manual payout trigger. Ref: <a href="https://beamco-cf-admin-proto.vercel.app/campaigns/sunday-light-ep">admin proto</a>.</td></tr>
+        <tr><td class="cell-mono">BR-41</td><td class="cell-desc"><strong>Payout breakdown + new fee field.</strong> Add Crowdfund project platform fee = 5% to back-office fee schema. Change payment fee 3.4% → 4% (confirmed by Susan; O15 closed).</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: fee config section in back office. Dev: schema field + payout calc. <strong>Note:</strong> not yet on admin prototype (<a href="#oq-18">O18</a>).</td></tr>
         <tr><td class="cell-mono">BR-N1</td><td class="cell-desc"><span class="upd-badge">✏ Reframed 2026-05-27</span><strong>Creator portal · reporting only.</strong> Hide all crowdfund management surfaces from creator portal; surface only the reporting module. No new permission tier. All management moves to back office.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: hide management nav + routes on creator portal. Closes O14.</td></tr>
-        <tr><td class="cell-mono">BR-N2</td><td class="cell-desc"><strong>Campaign goal as min/max range.</strong> Admin campaign-create form replaces single Goal field with Min goal + Max goal inputs. Locked at publish.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: two amount fields with buffer-size hint copy. Dev: data-model migration <code>goalUsd</code> → <code>minGoalUsd</code> + <code>maxGoalUsd</code>; validation <code>min&gt;0</code>, <code>max&gt;min</code>, <code>max≤$5M</code>.</td></tr>
-        <tr><td class="cell-mono">BR-N5</td><td class="cell-desc"><strong>Smallest tier price ≤ 50% of goal-range buffer.</strong> Live validation on the admin campaign-create form tying smallest tier price to <code>(max − min) × 0.5</code>. Single-tier campaigns: rule applies to the single tier.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Design: inline error copy with concrete cap amount. Dev: validator runs on every form change (tier price OR goal range edit) + on publish.</td></tr>
       </tbody>
     </table>
+    <p style="font-size:11.5px;color:var(--cds-text-helper);margin:8px 0 0 0;"><strong>AS-IS for context:</strong> BR-N2 (Minimum Royalty Shares · success threshold field) already exists in UAT — see UAT campaign-create form. Drives BR-28 + BR-32 logic.</p>
     <div class="audience-deferred">
       <strong>⏸ Deferred — post-MVP:</strong>
       <div class="chip-list">
@@ -847,17 +999,16 @@
     <div class="audience-head">
       <span class="a-icon">🤖</span>
       <span class="a-name">System · background jobs (no UI)</span>
-      <span class="a-count">6 to build</span>
+      <span class="a-count">5 to build</span>
     </div>
     <table class="cds-data-table">
       <thead><tr><th class="col-id">ID</th><th>Title &amp; description</th><th class="col-pri">Priority</th><th class="col-origin">Status</th><th class="col-remark">What dev needs</th></tr></thead>
       <tbody>
-        <tr><td class="cell-mono">BR-28</td><td class="cell-desc"><strong>Batch charge backers at campaign end.</strong> On end date with <code>raised ≥ minGoalUsd</code>, system batch-charges every locked-in card. End-date trigger only · no early capture.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: cron triggered by end-date passage. Stripe batch charge.</td></tr>
+        <tr><td class="cell-mono">BR-28</td><td class="cell-desc"><strong>Batch charge backers at campaign end.</strong> On end date with <code>sharesSold ≥ minRoyaltyShares</code> (BR-N2), system batch-charges every locked-in card. End-date trigger only · no early capture.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: cron triggered by end-date passage. Stripe batch charge. Triggers BR-N3 email notification on each capture outcome.</td></tr>
         <tr><td class="cell-mono">BR-29</td><td class="cell-desc"><strong>Auto-retry (Stripe smart retry).</strong> 3-day silent retry on decline; days 1, 2, 3 in background.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: Stripe smart-retries configuration + result tracking on pledge record.</td></tr>
         <tr><td class="cell-mono">BR-30</td><td class="cell-desc"><strong>Manual recovery email + URL.</strong> After auto-retry fails, system emails backer with secure 7-day URL to update payment.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: email template + tokenized URL endpoint. Design: email copy + on-site recovery page.</td></tr>
-        <tr><td class="cell-mono">BR-31</td><td class="cell-desc"><strong>Waitlist replacement (day 10).</strong> Pure FIFO, amount-agnostic. Total <code>collected</code> may end above maxGoalUsd — accepted.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: cron + FIFO queue + restart of recovery cycle on replacement. Buffer math from BR-N4.</td></tr>
-        <tr><td class="cell-mono">BR-N3</td><td class="cell-desc"><strong>Pre-end-date Goal Achieved auto-flip.</strong> Continuous check of <code>raised ≥ minGoalUsd</code> during Active. Pledging stays open through end-date · no hard cap.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: hook into every pledge submission. Status-flip event + status-history log entry. No cap-overshoot rejection.</td></tr>
-        <tr><td class="cell-mono">BR-N4</td><td class="cell-desc"><strong>Buffer-absorbed waitlister refill.</strong> Pure FIFO, amount-agnostic, no overshoot skip. Final success check: <code>collected ≥ minGoalUsd</code>.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: implements the BR-31 loop body. Logs every iteration (failed pledge ID · replacement waitlister ID · delta) into admin recovery dashboard.</td></tr>
+        <tr><td class="cell-mono">BR-31</td><td class="cell-desc"><strong>Waitlist replacement (day 10).</strong> Pure FIFO. Failed backer → next waitlister gets same package (one-for-one share swap). Same 3+7 cycle re-runs on the replacement.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: cron + FIFO queue + restart of recovery cycle on replacement. Shares are unit-replaceable so no amount-match needed.</td></tr>
+        <tr><td class="cell-mono">BR-N3</td><td class="cell-desc"><span class="new-badge">★ New 2026-05-29</span><span class="upd-badge">✏ Expanded 2026-05-29</span><strong>Email notification taxonomy.</strong> Full lifecycle email coverage — pledge, capture outcomes, card-update reminders, funding status, cancellation, release. 13 sub-triggers (N1 → N13), adapted from Ztor §5.2 for Beamco's share-based + manual-ops model. See <a href="#email-taxonomy">Email taxonomy table</a> in the Spreadsheet view.</td><td><span class="tag-pill pri-must">Must</span></td><td><span class="tag-pill origin-new">TO BUILD</span></td><td class="cell-remark">Dev: 13 triggers wired off lifecycle events (BR-26 status changes + BR-28/29/30/32 capture events + BR-25/35). Template owner: Jeff (Ztor baseline) → Sam to revise. Email channel only for MVP.</td></tr>
       </tbody>
     </table>
   </section>
@@ -866,7 +1017,7 @@
 
   <div class="footer">
     <span>New Beamco Crowdfund BRD v1 · 2026-05-24</span>
-    <span class="mono">45 in-scope + 4 Movies-only + 2 contracts + 5 net-new (N1–N5) · 13 open Qs (6 closed) · Updated 2026-05-27 · Canonical</span>
+    <span class="mono">44 in-scope + 4 Movies-only + 2 contracts + 4 net-new (N1–N4) + 13 email sub-rules (N1–N13) · 16 open Qs (10 closed) · Updated 2026-05-29 (share-based · Minimum Met status · BR-N3 email taxonomy · BR-35 two-step release · BR-32 lean dashboard) · Canonical</span>
   </div>
 </main>
 
@@ -900,6 +1051,23 @@
   window.addEventListener('load', flashTarget);
   document.addEventListener('click', e => {
     if (e.target.closest('a.oq-link')) setTimeout(flashTarget, 50);
+  });
+
+  // Auto-open the email-taxonomy <details> when navigated via #email-taxonomy
+  function openTaxonomyOnHash() {
+    if (location.hash === '#email-taxonomy') {
+      const el = document.getElementById('email-taxonomy');
+      if (el && el.tagName === 'DETAILS') el.open = true;
+    }
+  }
+  window.addEventListener('hashchange', openTaxonomyOnHash);
+  window.addEventListener('load', openTaxonomyOnHash);
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href="#email-taxonomy"]');
+    if (a) {
+      const el = document.getElementById('email-taxonomy');
+      if (el && el.tagName === 'DETAILS') el.open = true;
+    }
   });
 </script>
 </body>

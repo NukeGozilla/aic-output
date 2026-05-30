@@ -385,14 +385,21 @@ footer {
 <body>
 <div class="shell">
 
+  <div style="background:rgba(218,30,40,0.08);border-left:4px solid #da1e28;padding:16px 20px;margin-bottom:24px;font-family:'IBM Plex Sans',sans-serif;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:#da1e28;margin-bottom:6px;">⚠ Deprecated 2026-05-29 · archived for history</div>
+    <div style="font-size:14px;color:#161616;line-height:1.5;">
+      <strong>This range-threshold solution has been scrapped.</strong> BR-N2 (min/max goal range), BR-N3 (pre-end auto-flip on min), BR-N4 (buffer-absorbed FIFO refill), and BR-N5 (smallest-tier validation) were all removed in the <a href="crowdfund-brd-v1-2026-05-24.html" style="color:#0f62fe;">2026-05-29 BRD revision</a>. The current model is <strong>share-based</strong>: single funding target ($), total royalty shares, and a minimum-royalty-shares success threshold (matches UAT). Goal Achieved fires when all shares are sold; a new <strong>Minimum Met</strong> status covers end-date-with-min-met-but-not-all-sold. This page is retained for context only — do <strong>not</strong> use it as a spec source.
+    </div>
+  </div>
+
   <nav class="breadcrumb">
     <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
     <a href="crowdfund-brd-v1-state-machine.html">State machine</a>
     <a href="crowdfund-brd-v1-lifecycle.html">Lifecycle</a>
   </nav>
 
-  <h1>Range Target Solution<span class="tag">BR-N2 · BR-N5</span></h1>
-  <p class="subtitle">Admin Campaign Create → <strong>Target Selling Price &amp; Quantity</strong>. Range-threshold model, 2026-05-27.</p>
+  <h1 style="text-decoration:line-through;opacity:0.6;">Range Target Solution<span class="tag">BR-N2 · BR-N5</span></h1>
+  <p class="subtitle" style="opacity:0.6;"><em>(Archived)</em> Admin Campaign Create → <strong>Target Selling Price &amp; Quantity</strong>. Range-threshold model, 2026-05-27 — superseded by share-based model 2026-05-29.</p>
 
   <!-- PROBLEM STATEMENT -->
   <section class="problem-block">

@@ -149,7 +149,7 @@
 <div class="ui-shell">
   <div class="ui-shell-inner">
     <h1>New Beamco Crowdfund — Payment Retry &amp; Cancellation <span class="tag">BRD v1</span></h1>
-    <div class="subtitle">After batch-charge: 3 auto recovery checkpoints + manual ops review · updated 2026-05-25</div>
+    <div class="subtitle">After batch-charge: 3 auto recovery checkpoints + mechanical BR-32 threshold check · updated 2026-05-29 (share-based · lean dashboard · no manual review gate)</div>
     <nav class="breadcrumb">
       <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
       <a href="crowdfund-brd-v1-lifecycle.html">Lifecycle</a>
@@ -162,14 +162,14 @@
 <div class="notification">
   <span class="icon">●</span>
   <div class="body">
-    <strong>Three auto checkpoints, then manual ops review.</strong> Decline → 3-day silent retry → 7-day email URL → day-10 waitlist swap (restart 3+7). After all recovery exhausted, ops manually reviews via the BR-32 dashboard (successful · failed · waitlist amounts) and decides: proceed to Successful + 80% payout, or Cancel + refund-all-backers. <em>Walkthrough 2026-05-24: threshold check flipped from automated → manual ops.</em>
+    <strong>Three auto checkpoints, then mechanical BR-32 share-threshold check.</strong> Decline → 3-day silent retry (BR-29) → 7-day email URL (BR-30) → day-10 FIFO waitlist swap (BR-31, restart 3+7 on the replacement). After recovery, the system auto-marks <code>Successful</code> if <code>finalSharesPaid ≥ minRoyaltyShares</code>, else <code>Unsuccessful</code> → refund-all. <strong>Recovery dashboard is lean</strong> — read-only ledger + a single <strong>"Refund all"</strong> action for compliance edge cases. No Extend / Hold / per-pledge Swap buttons; no AI recommendations.
   </div>
 </div>
 
 <div class="canvas">
 
   <p class="body-long-01">
-    The recovery flow protects the campaign goal when individual cards decline. We run a structured cycle (3 + 7 + waitlist swap) and then <strong>ops manually reviews via the BR-32 dashboard</strong> before deciding whether to proceed to payout or cancel. Worst-case backer cycle = <code>3 + 7 + 3 + 7 = 20 days</code>. Communicate <strong>"up to 30 days from close"</strong> to creators (10-day buffer for the manual review step).
+    The recovery flow protects the campaign's share-threshold when individual cards decline. We run a structured cycle (3 + 7 + waitlist swap) and then the system runs the <strong>mechanical BR-32 share-threshold check</strong> — auto-promote to <code>Successful</code> if <code>finalSharesPaid ≥ minRoyaltyShares</code>, else <code>Unsuccessful → refund-all</code>. Worst-case backer cycle = <code>3 + 7 + 3 + 7 = 20 days</code>. Communicate <strong>"up to 30 days from close"</strong> to creators (10-day buffer).
   </p>
 
   <h2 class="productive-heading-02">Per-pledge recovery cycle</h2>
@@ -178,23 +178,23 @@
   <div class="chart">
     <pre class="mermaid">
 flowchart TD
-    A[Goal Achieved · batch-charge all pledged cards] --> B{Card cleared?}
-    B -->|Yes| OK[Pledge complete<br/>roll up into goal-met total]
-    B -->|No · decline| R1[① 3-day silent retry<br/>Stripe smart-retry · backer not notified]
+    A[Goal Achieved / Minimum Met<br/>batch-charge all pledged cards · BR-28] --> B{Card cleared?}
+    B -->|Yes| OK[Pledge captured<br/>shares allocated · N9 email]
+    B -->|No · decline| R1[① 3-day silent retry · BR-29<br/>Stripe smart-retry · backer not notified]
     R1 --> Q1{Recovered?}
     Q1 -->|Yes| OK
-    Q1 -->|No| R2[② Recovery email + 7-day URL<br/>Backer updates card in-session]
+    Q1 -->|No| R2[② Recovery email + 7-day URL · BR-30<br/>Backer updates card in-session]
     R2 --> Q2{Recovered?}
     Q2 -->|Yes| OK
-    Q2 -->|No, day 10| R3[③ Drop pledge · pull next waitlister<br/>Lock-in payment + email]
+    Q2 -->|No, day 10| R3[③ Drop pledge · FIFO swap next waitlister · BR-31<br/>one-for-one share replacement]
     R3 --> R4[Restart 3+7 cycle on waitlister]
     R4 --> Q3{Recovered?}
     Q3 -->|Yes| OK
-    Q3 -->|No| LOST[Pledge counted as lost]
-    LOST --> AGG[④ Ops dashboard · BR-32<br/>shows successful · failed · waitlist amounts]
-    AGG --> T{Ops decision}
-    T -->|Proceed| S[Successful · ops releases 80%]
-    T -->|Cancel| C[Cancelled · ops triggers refund-all<br/>via Stripe back-office]
+    Q3 -->|No| LOST[Pledge counted as lost · N6 forfeit email]
+    LOST --> AGG[④ Mechanical BR-32 check<br/>finalSharesPaid ≥ minRoyaltyShares?<br/>result displayed on dashboard]
+    AGG --> T{Check result}
+    T -->|Pass| S["Ops clicks 'Mark Successful'<br/>→ Successful · 80% to wallet"]
+    T -->|Fail| U["Ops clicks 'Refund all'<br/>→ Unsuccessful"]
 
     classDef ok fill:#defbe6,stroke:#198038,color:#044317
     classDef bad fill:#ffd7d9,stroke:#da1e28,color:#750e13
@@ -207,7 +207,7 @@ flowchart TD
     class R2 manual
     class R3,R4 swap
     class OK,S ok
-    class LOST,C bad
+    class LOST,U bad
     </pre>
   </div>
 
@@ -231,30 +231,30 @@ flowchart TD
       <p>If both windows expire, drop the original pledge and pull the next waitlister into the spot. Restart the 3+7 cycle on the waitlister.</p>
     </div>
     <div class="checkpoint threshold">
-      <span class="pill">④ · MANUAL OPS</span>
-      <h3>Ops review via dashboard</h3>
-      <p>After all pledges processed, BR-32 ops dashboard shows: successful charges · failed charges · waitlist pledge amounts. <strong>Ops decides</strong> whether to proceed to Successful + payout, or Cancel + refund-all. Waitlist coverage calculation TBD (Jesse).</p>
+      <span class="pill">④ · MECHANICAL CHECK + MANUAL FLIP</span>
+      <h3>BR-32 share-threshold check</h3>
+      <p>After all pledges processed, the system runs the mechanical check: <code>finalSharesPaid ≥ minRoyaltyShares</code>. The <strong>result is displayed</strong> on the recovery dashboard; the status flip is <strong>manual</strong>. Ops clicks one of two action buttons: <strong>"Mark Successful"</strong> (releases 80% to wallet) when the check passed, or <strong>"Refund all"</strong> → <code>Unsuccessful</code> when it failed.</p>
     </div>
   </div>
 
   <div class="timeline">
     <h3>Worst-case per-pledge timeline</h3>
-    <div class="tl-row"><div class="tl-when">Day 0</div><div class="tl-what"><strong>Campaign closes (Goal Achieved).</strong> System fires batch-charge. Most pledges clear cleanly.</div></div>
-    <div class="tl-row"><div class="tl-when">Day 0 → 3</div><div class="tl-what"><strong>① 3-day silent retry</strong> for declines. Stripe smart-retry attempts: <code>day 1, day 2, day 3</code>. Backer doesn't know anything is happening.</div></div>
-    <div class="tl-row"><div class="tl-when">Day 3</div><div class="tl-what"><strong>Recovery email sent</strong> to backers still failing. Email contains 7-day expiring URL to update card.</div></div>
-    <div class="tl-row"><div class="tl-when">Day 3 → 10</div><div class="tl-what"><strong>② 7-day manual recovery.</strong> Backer can enter a new card and retry within the window. URL expires day 10.</div></div>
-    <div class="tl-row"><div class="tl-when">Day 10</div><div class="tl-what"><strong>③ Waitlist swap.</strong> If still failing, drop the original backer. Pull next waitlister, lock their payment + email, restart the cycle on them.</div></div>
-    <div class="tl-row"><div class="tl-when">Day 10 → 20</div><div class="tl-what"><strong>Waitlister recovery (3+7).</strong> Second cycle. If the waitlister also fails, that pledge is counted as lost.</div></div>
-    <div class="tl-row"><div class="tl-when">Day 20</div><div class="tl-what"><strong>④ Manual ops review.</strong> After every pledge resolved (cleared or lost), ops opens the BR-32 dashboard and reviews the breakdown. <strong>Ops decides</strong>: proceed → Successful + 80% release · or cancel → refund-all via Stripe back-office.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 0</div><div class="tl-what"><strong>Campaign closes (Goal Achieved or Minimum Met).</strong> System fires batch-charge (BR-28). Most pledges clear cleanly; triggers N9 capture-success / N2 first-fail emails.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 0 → 3</div><div class="tl-what"><strong>① 3-day silent retry</strong> for declines (BR-29). Stripe smart-retry: <code>day 1, day 2, day 3</code>. Backer doesn't know anything is happening.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 3</div><div class="tl-what"><strong>Recovery email sent</strong> (BR-30 + N3). Includes 7-day expiring URL to update card.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 3 → 10</div><div class="tl-what"><strong>② 7-day manual recovery</strong> + reminder emails on day 5 (N4) + day 7 (N5). Backer can enter a new card and retry within the window.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 10</div><div class="tl-what"><strong>③ FIFO waitlist swap</strong> (BR-31). Drop original backer (N6 forfeit email); pull next waitlister; one-for-one share replacement; restart cycle on the waitlister.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 10 → 20</div><div class="tl-what"><strong>Waitlister recovery (3+7).</strong> Second cycle. If the waitlister also fails, that share is counted as lost.</div></div>
+    <div class="tl-row"><div class="tl-when">Day 20</div><div class="tl-what"><strong>④ Mechanical BR-32 share-threshold check.</strong> <code>finalSharesPaid ≥ minRoyaltyShares</code> ? → auto <code>Successful</code> + 80% to wallet. Else → <code>Unsuccessful</code> → ops triggers Refund-all (only ops action on the lean recovery dashboard).</div></div>
     <div class="tl-row"><div class="tl-when">Day 30 (SLA)</div><div class="tl-what"><strong>Communicated SLA.</strong> Creators are told payout takes up to 30 days from campaign close (10-day buffer over the 20-day actual worst case).</div></div>
   </div>
 
-  <h2 class="productive-heading-02">Project cancellation</h2>
-  <p class="helper-text">CANCELLATION = AUTO-TRIGGERED BY THRESHOLD CHECK · OR MANUAL BY OPS DURING ACTIVE / IN PROGRESS</p>
+  <h2 class="productive-heading-02">Project cancellation / refund</h2>
+  <p class="helper-text">REFUND-ALL = AUTO-TRIGGERED BY MECHANICAL BR-32 FAIL · OR OPS MANUAL CANCEL FROM ACTIVE / IN PROGRESS</p>
 
   <div class="triggers">
     <div class="trigger-grid">
-      <div class="trigger-item"><span class="ico">▲</span><div><strong>Manual · Post-recovery review.</strong> Ops decides at checkpoint ④ (BR-32 dashboard) that the failure rate is too high to proceed.</div></div>
+      <div class="trigger-item"><span class="ico">▲</span><div><strong>Auto · BR-32 share-threshold fail.</strong> After recovery, <code>finalSharesPaid &lt; minRoyaltyShares</code> → auto-mark <code>Unsuccessful</code>; ops clicks <strong>"Refund all"</strong> on the lean recovery dashboard to dispatch the refund batch.</div></div>
       <div class="trigger-item"><span class="ico">▲</span><div><strong>Manual · Creator default.</strong> Withdrawal, breach of artist contract, or non-delivery.</div></div>
       <div class="trigger-item"><span class="ico">▲</span><div><strong>Manual · Production failure.</strong> Cannot deliver the planned content; ops calls it during In Progress.</div></div>
       <div class="trigger-item"><span class="ico">▲</span><div><strong>Manual · Compliance / legal.</strong> Content, IP, or regulatory issue forces cancellation.</div></div>
