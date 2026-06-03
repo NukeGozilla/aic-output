@@ -284,7 +284,7 @@
 <div class="ui-shell">
   <div class="ui-shell-inner">
     <h1>New Beamco Crowdfund — State Machine <span class="tag">BRD v1</span></h1>
-    <div class="subtitle">9 campaign states · 15 allowed transitions · 6 fan-order states · updated 2026-05-29 (share-based goal · new Minimum Met state · Released-state 20% payout transitions)</div>
+    <div class="subtitle">9 campaign states · 16 allowed transitions · 6 fan-order states · updated 2026-06-03 (added Charged → Refunded for post-capture refund-all path)</div>
     <nav class="breadcrumb">
       <a href="crowdfund-brd-v1-2026-05-24.html">← Main BRD</a>
       <a href="crowdfund-brd-v1-lifecycle.html">Lifecycle</a>
@@ -547,7 +547,12 @@ flowchart LR
 
         <!-- Authorized → Refunded (drop down) -->
         <path d="M 285 196 L 285 250" stroke="#525252" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#ord-arr-neutral)"/>
-        <text x="296" y="226" font-family="IBM Plex Mono" font-size="10" fill="#525252">Cancelled / fan refund</text>
+        <text x="296" y="226" font-family="IBM Plex Mono" font-size="10" fill="#525252">pre-capture cancel</text>
+
+        <!-- Charged → Refunded (post-capture refund all) -->
+        <path d="M 495 196 C 495 252, 410 286, 352 280" stroke="#525252" stroke-width="1.8" stroke-dasharray="4 3" fill="none" marker-end="url(#ord-arr-neutral)"/>
+        <text x="436" y="248" font-family="IBM Plex Mono" font-size="10" fill="#525252">Refund all</text>
+        <text x="436" y="262" font-family="IBM Plex Mono" font-size="10" fill="#525252">+ import</text>
 
         <!-- Charged → Released -->
         <line x1="560" y1="168" x2="638" y2="168" stroke="#d02670" stroke-width="1.8" marker-end="url(#ord-arr-pink)"/>
@@ -574,7 +579,8 @@ flowchart LR
         <tr><td class="cell-mono">(submit)</td><td class="cell-mono">Failed</td><td class="cell-trig">Card auth declined (insufficient funds, fraud check, network error)</td><td><span class="cell-tag auto">Auto</span></td></tr>
         <tr><td class="cell-mono">Failed</td><td class="cell-mono">Authorized</td><td class="cell-trig">Fan updates payment + retries auth (in-app retry flow)</td><td><span class="cell-tag manual">Fan</span></td></tr>
         <tr><td class="cell-mono">Authorized</td><td class="cell-mono">Charged</td><td class="cell-trig">Campaign reached <code>Successful</code> · ops triggers batch capture</td><td><span class="cell-tag auto">Auto</span></td></tr>
-        <tr><td class="cell-mono">Authorized</td><td class="cell-mono">Refunded</td><td class="cell-trig">Campaign moved to <code>Cancelled</code> or <code>Unsuccessful</code> → auth released. OR fan-requested refund.</td><td><span class="cell-tag auto">Auto</span></td></tr>
+        <tr><td class="cell-mono">Authorized</td><td class="cell-mono">Refunded</td><td class="cell-trig">Campaign cancelled <strong>before</strong> capture → auth released. No money moved.</td><td><span class="cell-tag auto">Auto</span></td></tr>
+        <tr><td class="cell-mono">Charged</td><td class="cell-mono">Refunded</td><td class="cell-trig">Campaign cancelled <strong>after</strong> capture, OR BR-32 recovery fails → ops clicks "Refund all" → Finance runs Stripe Dashboard batch → manual CSV import flips each order to Refunded.</td><td><span class="cell-tag manual">Manual + Auto</span></td></tr>
         <tr><td class="cell-mono">Charged</td><td class="cell-mono">Released</td><td class="cell-trig">Ops submits production URL (BR-35) — campaign flips to <code>Released</code> and the fan sees the reward link</td><td><span class="cell-tag manual">Manual</span></td></tr>
         <tr><td class="cell-mono">Released</td><td class="cell-mono">Completed</td><td class="cell-trig">Royalty payout cycle ends — typically months/years after release</td><td><span class="cell-tag auto">Auto</span></td></tr>
         <tr><td class="cell-mono">Refunded</td><td class="cell-mono">—</td><td class="cell-trig">Terminal · auth released or refund processed</td><td><span class="cell-tag terminal">Terminal</span></td></tr>

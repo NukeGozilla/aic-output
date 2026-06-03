@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beamco Crowdfund — Backend Q&A Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --layer: #f4f4f4;
+    --layer-2: #fafafa;
+    --border: #e0e0e0;
+    --border-strong: #c6c6c6;
+    --text: #161616;
+    --text-secondary: #525252;
+    --text-helper: #6f6f6f;
+    --blue: #0f62fe;
+    --blue-dark: #002d9c;
+    --green: #198038;
+    --green-bg: #defbe6;
+    --red: #da1e28;
+    --yellow: #d9a900;
+    --yellow-bg: #fcf4d6;
+    --purple: #8a3ffc;
+    --teal: #007d79;
+    --cyan: #0072c3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg); color: var(--text);
+    font-size: 14px; line-height: 1.55; letter-spacing: 0.16px;
+  }
+  code, .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; }
+
+  /* Header */
+  .ui-shell {
+    background: var(--layer);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .ui-shell-inner { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .ui-shell h1 { font-size: 24px; font-weight: 400; letter-spacing: 0; line-height: 1.2; }
+  .ui-shell h1 .tag { display: inline-block; background: var(--blue-dark); color: #fff; font-size: 10.5px; font-weight: 500; padding: 3px 8px; border-radius: 12px; margin-left: 8px; vertical-align: middle; letter-spacing: 0.32px; }
+  .ui-shell .meta { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .ui-shell .meta a { color: var(--blue); text-decoration: none; }
+  .ui-shell .meta a:hover { text-decoration: underline; }
+
+  /* Pending summary banner */
+  .pending-banner {
+    background: var(--yellow-bg);
+    border-left: 3px solid var(--yellow);
+    padding: 14px 32px;
+    font-size: 13px;
+  }
+  .pending-banner-inner { max-width: 1280px; margin: 0 auto; }
+  .pending-banner strong { font-weight: 600; }
+  .pending-banner a { color: var(--blue); text-decoration: none; font-weight: 500; }
+  .pending-banner a:hover { text-decoration: underline; }
+
+  /* TOC */
+  .toc {
+    max-width: 1280px; margin: 24px auto;
+    padding: 16px 32px;
+    border: 1px solid var(--border);
+    background: var(--layer-2);
+    border-radius: 4px;
+  }
+  .toc-title { font-size: 11px; font-weight: 600; letter-spacing: 0.4px; color: var(--text-helper); text-transform: uppercase; margin-bottom: 10px; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+  .toc a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px; border-radius: 3px;
+    font-size: 12px; color: var(--text); text-decoration: none;
+    transition: background 0.1s;
+  }
+  .toc a:hover { background: var(--layer); }
+  .toc a .qid { font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: var(--blue); min-width: 38px; }
+  .toc a.pending .qid { color: var(--yellow); }
+  .toc a.pending::after { content: "⚠"; margin-left: auto; }
+
+  /* Sections */
+  .canvas { max-width: 1280px; margin: 0 auto; padding: 0 32px 80px; }
+  .section-header {
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--text);
+    font-size: 18px; font-weight: 600; letter-spacing: 0;
+  }
+  .section-header .sub { display: block; font-size: 12px; font-weight: 400; color: var(--text-helper); margin-top: 4px; letter-spacing: 0.32px; }
+
+  /* Question card */
+  .qcard {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--blue);
+    background: var(--bg);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .qcard.pending { border-left-color: var(--yellow); }
+
+  .qcard-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px;
+    background: var(--layer-2);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .qcard-id {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--blue);
+    background: rgba(15,98,254,0.08);
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.16px;
+  }
+  .qcard.pending .qcard-id { color: var(--yellow); background: rgba(217,169,0,0.12); }
+  .qcard-module {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--layer);
+    padding: 3px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.32px;
+  }
+  .qcard-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    min-width: 200px;
+  }
+  .qcard-pending-tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: #684e00;
+    background: var(--yellow-bg);
+    padding: 4px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.32px;
+    text-transform: uppercase;
+  }
+
+  .qcard-body { padding: 20px 24px; }
+  .qrow { margin-bottom: 18px; }
+  .qrow:last-child { margin-bottom: 0; }
+  .qrow-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-helper);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .qrow-content {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .qrow-content.zh { font-size: 14px; color: var(--text-secondary); }
+  .qrow-content.en {
+    font-size: 14px;
+    color: var(--text);
+    padding: 12px 14px;
+    background: var(--layer-2);
+    border-radius: 4px;
+    border-left: 2px solid var(--cyan);
+  }
+  .qrow-content.suggestion {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    padding: 12px 14px;
+    background: var(--layer);
+    border-radius: 4px;
+  }
+  .qrow-content.answer {
+    font-size: 14px;
+    color: var(--text);
+    padding: 14px 16px;
+    background: var(--green-bg);
+    border-left: 3px solid var(--green);
+    border-radius: 4px;
+  }
+  .qrow-content.answer.pending {
+    background: var(--yellow-bg);
+    border-left-color: var(--yellow);
+  }
+  .qrow-content.answer ul,
+  .qrow-content.answer ol { margin: 0 0 0 20px; }
+  .qrow-content.answer li { margin-bottom: 6px; }
+  .qrow-content.answer li:last-child { margin-bottom: 0; }
+  .qrow-content.answer code { background: rgba(0,0,0,0.06); padding: 1px 6px; border-radius: 2px; font-size: 12.5px; }
+  .qrow-content.answer .warning {
+    display: block;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-left: 3px solid var(--yellow);
+    border-radius: 3px;
+    font-size: 13px;
+    color: #684e00;
+  }
+  .qrow-content.answer .warning strong { color: var(--text); }
+
+  /* Tables in answers */
+  table.perm-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  table.perm-table th, table.perm-table td {
+    border: 1px solid var(--border);
+    padding: 7px 10px;
+    text-align: left;
+  }
+  table.perm-table th {
+    background: var(--layer);
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-helper);
+  }
+  table.perm-table td.check { text-align: center; }
+  table.perm-table td.yes { color: var(--green); font-weight: 600; }
+  table.perm-table td.no { color: var(--red); }
+
+  /* BRD ref pill */
+  .brd-ref {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--blue);
+    background: rgba(15,98,254,0.08);
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-right: 4px;
+  }
+
+  /* Footer */
+  .footer {
+    max-width: 1280px;
+    margin: 60px auto 40px;
+    padding: 24px 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-helper);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .footer a { color: var(--blue); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 768px) {
+    .ui-shell { padding: 16px 20px; }
+    .ui-shell h1 { font-size: 18px; }
+    .canvas { padding: 0 16px 60px; }
+    .qcard-header { padding: 12px 14px; }
+    .qcard-body { padding: 14px 16px; }
+    .toc { padding: 12px 16px; margin: 16px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="ui-shell">
+  <div class="ui-shell-inner">
+    <div>
+      <h1>Crowdfund — Backend Q&amp;A Walkthrough <span class="tag">MVP · v1</span></h1>
+      <div class="meta">
+        18 questions from dev team · 16 confirmed · 2 pending stakeholder review · last updated 2026-06-03
+        · <a href="https://docs.google.com/spreadsheets/d/1x8jC2QSF3GQcUMStzFSmuUEINbTpelnJ4KXfLi1dNQk/edit?gid=2022784446" target="_blank">source sheet</a>
+        · <a href="crowdfund-brd-v1-2026-05-24.html">main BRD</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pending-banner">
+  <div class="pending-banner-inner">
+    ⚠ <strong>2 items need stakeholder review:</strong>
+    <a href="#p0-10">P0-10 → Susan/Finance</a> (fee base + rounding + FX rate source)
+    ·
+    <a href="#p0-11">P0-11 → Biz team</a> (contract field list)
+  </div>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Quick Nav · 18 questions</div>
+  <div class="toc-grid">
+    <a href="#p0-1"><span class="qid">P0-1</span>Status rules</a>
+    <a href="#p0-2"><span class="qid">P0-2</span>Snapshot at publish</a>
+    <a href="#p0-3"><span class="qid">P0-3</span>Package inventory</a>
+    <a href="#p0-4"><span class="qid">P0-4</span>User uniqueness</a>
+    <a href="#p0-5"><span class="qid">P0-5</span>Waitlist swap</a>
+    <a href="#p0-6"><span class="qid">P0-6</span>Waitlist exit</a>
+    <a href="#p0-7"><span class="qid">P0-7</span>Payment lock</a>
+    <a href="#p0-8"><span class="qid">P0-8</span>Recovery end</a>
+    <a href="#p0-9"><span class="qid">P0-9</span>Refund all</a>
+    <a href="#p0-10" class="pending"><span class="qid">P0-10</span>Payment Breakdown</a>
+    <a href="#p0-11" class="pending"><span class="qid">P0-11</span>Contract records</a>
+    <a href="#p0-12"><span class="qid">P0-12</span>Role permissions</a>
+    <a href="#p1-1"><span class="qid">P1-1</span>Fulfillment</a>
+    <a href="#p1-2"><span class="qid">P1-2</span>CSV export</a>
+    <a href="#p1-3"><span class="qid">P1-3</span>N12 trigger</a>
+    <a href="#p1-4"><span class="qid">P1-4</span>Eligibility / LP</a>
+    <a href="#p1-5"><span class="qid">P1-5</span>Address collection</a>
+    <a href="#p1-6"><span class="qid">P1-6</span>Query scope</a>
+  </div>
+</div>
+
+<main class="canvas">
+
+  <h2 class="section-header">P0 — blocking <span class="sub">12 questions · core rules dev needs before build</span></h2>
+
+  <!-- P0-1 -->
+  <section class="qcard" id="p0-1">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-1</span>
+      <span class="qcard-module">跨端 · Cross-platform</span>
+      <span class="qcard-title">Project status rules</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">众筹项目状态是否只按新版 BRD 的 9 个状态走？另外 Successful / Unsuccessful 是系统自动变更，还是系统检查后由 Ops 手动确认？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">Should campaign status follow only the 9 states defined in the new BRD? And are Successful / Unsuccessful auto-changed by the system, or manually confirmed by Ops after the system check?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-26</span> 9-state machine · <span class="brd-ref">BR-32</span> recovery threshold check</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>9 states from BR-26 are canonical · same names across PC / Home / Back Office</li>
+            <li>Auto-flips only on end-date hit: <code>Active → Goal Achieved / Minimum Met / Unsuccessful</code></li>
+            <li><code>Successful</code> = <strong>manual</strong> ops flip via BR-32 "Mark Successful" (NOT auto)</li>
+            <li>All other transitions = manual ops</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-2 -->
+  <section class="qcard" id="p0-2">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-2</span>
+      <span class="qcard-module">跨端 · Cross-platform</span>
+      <span class="qcard-title">Snapshot at publish</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">项目发布后，fee、currency、package、share count、contract version、LP rate 等规则是按发布时固定，还是每次读取最新配置？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">Once a campaign is published, are rules like fee, currency, package, share count, contract version, LP rate fixed at publish time — or read fresh from the latest config each time?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-23</span> lock all fields at publish · <span class="brd-ref">BR-16</span> creator settlement currency</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>Lock at publish per BR-23. Snapshot includes: <code>currency</code>, <code>package(price/shares/inventory)</code>, <code>totalRoyaltyShares</code>, <code>minRoyaltyShares</code>, <code>paymentFee 4%</code>, <code>platformFee 5%</code>, <code>royaltySplits</code>, <code>LPrate</code>, <code>contractVersion</code></li>
+            <li>Snapshot stored on the campaign record at the moment of publish</li>
+            <li>Config changes post-publish apply <strong>only to campaigns published AFTER the change</strong>; already-published campaigns keep their snapshot</li>
+            <li>Drafts use latest config until they hit publish</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-3 -->
+  <section class="qcard" id="p0-3">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-3</span>
+      <span class="qcard-module">Home · Fans</span>
+      <span class="qcard-title">Package inventory + share deduction</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">每个 package 是否有自己的库存？还是只要 totalRoyaltyShares 够，就允许用户选择任意 package？一个 package 占多份 shares 时，是否同时扣 package 库存和总 shares？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">Does each package have its own inventory? Or is any package selectable as long as totalRoyaltyShares is sufficient? When a package consumes multiple shares, is both package inventory and total shares deducted?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-7</span> up to 3 packages with royalty shares · <span class="brd-ref">BR-N4</span> "remaining" hidden when 0</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>Each package has <strong>independent inventory</strong></li>
+            <li><code>totalRoyaltyShares = Σ(package.inventory × package.shares)</code> — locked at publish</li>
+            <li><code>package.remaining = package.inventory − package.sold</code> (sold = Captured + Authorized; <strong>excludes waitlist</strong>)</li>
+            <li><code>sharesSold = Σ(Captured + Authorized package.shares)</code> — waitlist NOT counted</li>
+            <li><code>progressPercent = sharesSold / totalRoyaltyShares</code></li>
+            <li><code>fanvestors</code> = unique users with Captured + Authorized records</li>
+            <li>Release rules: capture fail / refund / forfeit → restore <code>package.sold</code> + <code>sharesSold</code>; upgrade = vacate old, occupy new; waitlist swap = no change to totals</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-4 -->
+  <section class="qcard" id="p0-4">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-4</span>
+      <span class="qcard-module">Home · Fans</span>
+      <span class="qcard-title">Per-user uniqueness</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">同一个用户在同一个 campaign 下，只能有一个有效参与记录吗？用户能不能升级套餐？能不能取消？waitlist 和 pledge 能不能同时存在？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">Can a user have only one active record per campaign? Can they upgrade packages? Can they cancel? Can waitlist and pledge coexist?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-7</span> inherited rules: one active plan per fan per campaign; upgrade allowed; downgrade/cancel NOT allowed</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>One active record per user per campaign</li>
+            <li>Valid record states = <code>Authorized | Captured | Waitlisted</code></li>
+            <li>Waitlist DOES occupy the unique slot — user cannot pledge Package A + waitlist Package B at the same time</li>
+            <li><strong>Upgrade allowed</strong> (Basic → Plus → Pro): target package has remaining inventory; user pays price diff at upgrade time</li>
+            <li><strong>Downgrade NOT allowed</strong></li>
+            <li><strong>Cancel NOT allowed</strong> (refunds only via ops in failure/cancel scenarios)</li>
+            <li>Duplicate pledge attempt → blocked with "You already have an active record for this campaign"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-5 -->
+  <section class="qcard" id="p0-5">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-5</span>
+      <span class="qcard-module">Home · Fans</span>
+      <span class="qcard-title">Waitlist replacement</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">当原 backer 扣款失败并超过 recovery 时间后，waitlist 用户是自动补位，还是先收到 Slot Offered，需要用户确认后才补位？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">When the original backer's charge fails past the recovery window, does the waitlist user auto-fill the slot — or do they first receive a "Slot Offered" notification requiring their confirmation?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-31</span> day 10 FIFO one-for-one replacement · <span class="brd-ref">BR-4</span> waitlist frontend</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>Auto FIFO per package per BR-31 — <strong>NO Slot Offered confirmation step</strong></li>
+            <li><strong>Drop "Slot Offered" from Home mock</strong> — conflicts with BR-31</li>
+            <li>FIFO queue per package by <code>join_at</code></li>
+            <li>One-for-one same-package replacement</li>
+            <li>Waitlister's locked payment method auto-charged on promotion</li>
+            <li>Promoted waitlister restarts the 3+7 recovery cycle if charge fails</li>
+            <li>Notifications: <code>N6</code> forfeit to original; <code>N9</code> capture success to waitlister</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-6 -->
+  <section class="qcard" id="p0-6">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-6</span>
+      <span class="qcard-module">Home · Fans</span>
+      <span class="qcard-title">Waitlist proactive exit</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">用户加入 waitlist 后，是否允许主动退出？如果退出，是否释放 payment hold？是否允许重新加入？重新加入是否排到队尾？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">After joining the waitlist, can users proactively exit? If so, is the payment hold released? Can they rejoin? Do rejoiners go to the back of the queue?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-4</span> waitlist · <span class="brd-ref">BR-31</span> FIFO replacement</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li><strong>NO self-exit from waitlist</strong></li>
+            <li>On promotion: auto-charge per BR-31 (same as P0-5)</li>
+            <li>Once charged: treated as regular backer — no cancel, no refund, no exit (per P0-4)</li>
+            <li>Ops can manually remove waitlisters from back office for compliance / abuse cases</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-7 -->
+  <section class="qcard" id="p0-7">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-7</span>
+      <span class="qcard-module">Home · Fans</span>
+      <span class="qcard-title">Payment lock at pledge</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">用户 pledge 时，是只保存 payment method，还是创建一笔 authorization hold？end date 批量扣款时，是使用原授权扣款，还是重新发起扣款？用户更新支付方式后，是立即重试，还是等下一次系统处理？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">At pledge, do we save the payment method only, or create an authorization hold? At end-date batch charge, do we charge against the original auth or initiate a fresh charge? After a user updates their payment method, do we retry immediately or wait for the next scheduled retry?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">AC-09</span> lock at pledge, no immediate charge · <span class="brd-ref">BR-28</span> end-date batch charge</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>At pledge: <strong>Stripe SetupIntent</strong> → save PaymentMethod attached to Customer (no charge, no hold)</li>
+            <li>At end-date (BR-28): <strong>off-session PaymentIntent</strong> against saved PaymentMethod</li>
+            <li>BR-29 silent retry day 1/2/3: Stripe smart-retry for soft declines; SCA-required → surface to recovery window</li>
+            <li>BR-30 manual window (day 3 → 10): user clicks recovery URL → <strong>on-session checkout</strong>. On success → Captured, all retries cancelled, fire N9. On failure → stays in recovery window</li>
+            <li>Day 10 → forfeit (BR-31)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-8 -->
+  <section class="qcard" id="p0-8">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-8</span>
+      <span class="qcard-module">跨端 · Cross-platform</span>
+      <span class="qcard-title">Recovery end rules</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">如果原 backer 失败，day 10 拉一个 waitlister；这个 waitlister 也失败，是否继续拉下一位？最多替换几轮？没有可用 waitlist 用户时，什么时候做 finalSharesPaid 检查？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">If the original backer fails and a waitlister is pulled on day 10, what if that waitlister also fails — do we pull the next one? Max replacement rounds? When no waitlist users are available, when do we run the finalSharesPaid check?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-29</span> 3-day silent retry · <span class="brd-ref">BR-30</span> 7-day recovery URL · <span class="brd-ref">BR-31</span> day 10 waitlist swap</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li><strong>ONE round of replacement only.</strong> If waitlister also fails → share counted as lost. Do NOT pull next.</li>
+            <li>Total cycle from end-date: <strong>max 20 days</strong> (original 10 + waitlister 10)</li>
+            <li>After 20 days, ops team decides: Mark Successful or Refund all (BR-32 manual flip)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-9 -->
+  <section class="qcard" id="p0-9">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-9</span>
+      <span class="qcard-module">运营/Finance · Ops/Finance</span>
+      <span class="qcard-title">Refund all processing &amp; reconciliation</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">Refund all 是在产品内触发，还是 Finance/Ops 在 Stripe 后台手动做？退款完成后，每个用户订单是否要更新为 Refunded？如果部分退款失败，产品怎么处理？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">Is "Refund all" triggered inside the product, or manually by Finance/Ops in the Stripe Dashboard? After refunds complete, does each user order get updated to Refunded? If some refunds fail, how does the product handle it?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-25</span> cancel → refund all · <span class="brd-ref">BR-32</span> recovery fail → ops Refund all</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>Trigger: Ops clicks "Refund all" in back office → campaign status flips (Cancelled or Unsuccessful)</li>
+            <li><strong>NO per-order intermediate state</strong> — order stays as <code>Charged</code> until import lands</li>
+            <li>Actual refunds: Finance/Ops execute Stripe Dashboard batch</li>
+            <li>Reconciliation: <strong>manual import (CSV upload)</strong> → flips <code>Charged → Refunded</code> per order</li>
+            <li>Partial failure: surface failed rows in retry queue; ops re-runs Stripe + re-imports</li>
+            <li>Home/PC show "Refunded" only after the import lands per order</li>
+            <li>State machine diagram updated to add <code>Charged → Refunded</code> transition (2026-06-03)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-10 -->
+  <section class="qcard pending" id="p0-10">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-10</span>
+      <span class="qcard-module">PC/Finance</span>
+      <span class="qcard-title">Payment Breakdown formulas</span>
+      <span class="qcard-pending-tag">⚠ Pending Susan/Finance</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">Total Pledged、Successfully Charged、Unsuccessfully Charged、Payment Fee、Platform Fee、Final Amount、80% / 20% 分别怎么算？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">How are Total Pledged, Successfully Charged, Unsuccessfully Charged, Payment Fee, Platform Fee, Final Amount, and the 80% / 20% releases each calculated?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-40</span> Overview payment breakdown · <span class="brd-ref">BR-41</span> 4% payment fee + 5% platform fee · <span class="brd-ref">BR-35</span> Spotify URL + Release Fund</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer pending">
+          <ul>
+            <li>All amounts displayed in <strong>creator settlement currency</strong> (SGD/USD, locked at publish per P0-2)</li>
+            <li>FX conversion at <strong>charge time</strong> via Stripe native cross-currency (BR-16 + O12 closed)</li>
+            <li>Same-currency case (e.g., SGD fan → SGD creator): no FX, 1:1</li>
+            <li>Cross-currency case (e.g., TWD fan → SGD creator): Stripe converts at capture, rate snapshotted per charge</li>
+            <li><strong>Total Pledged</strong> (pre-capture display): convert using current FX rate as display estimate</li>
+            <li><strong>Successfully Charged</strong>: actual Stripe-converted amounts (post-capture, exact)</li>
+            <li>Unsuccessfully Charged = Total Pledged − Successfully Charged</li>
+            <li>Payment Fee = Successfully Charged × 4%</li>
+            <li>Platform Fee = Successfully Charged × 5%</li>
+            <li>Final = Successfully Charged − Payment Fee − Platform Fee</li>
+            <li>Initial Release = Final × 0.80; Final Release = Final × 0.20</li>
+            <li>Refunds reduce Successfully Charged retroactively</li>
+            <li>Round to 2 decimals</li>
+          </ul>
+          <span class="warning">
+            <strong>⚠ Needs Susan / Finance to confirm:</strong> fee base (gross vs charged amount) · rounding direction · pre-capture FX display rate source (Stripe published rate? daily snapshot?)
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-11 -->
+  <section class="qcard pending" id="p0-11">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-11</span>
+      <span class="qcard-module">Home · Fans</span>
+      <span class="qcard-title">Contract record rules</span>
+      <span class="qcard-pending-tag">⚠ Pending Biz team</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">合同文案内容先不讨论。这里只确认记录规则：用户勾选合同时，是否需要记录合同版本、项目名、套餐、shares、金额等动态信息？支付成功后是否允许下载？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">Set aside the contract copy itself — this is only about recording rules. When a user signs the contract, do we need to record the contract version, project name, package, shares, amount, and other dynamic fields? After successful payment, can the user download it?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-C1</span> / <span class="brd-ref">BR-C2</span> Fan contract with dynamic values · <span class="brd-ref">BR-48</span> order detail contract download</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer pending">
+          <ul>
+            <li>Snapshot fields locked at sign time: <code>contract_version</code>, <code>campaign_id</code>, <code>campaign_name</code>, <code>creator_id</code>, <code>creator_name</code>, <code>package_id</code>, <code>package_name</code>, <code>shares</code>, <code>amount</code>, <code>currency</code>, <code>user_id</code>, <code>signed_at</code> (UTC)</li>
+            <li>Required at <strong>both pledge AND waitlist signup</strong> (BR-C1/C2)</li>
+            <li>Download available once order state is <code>Charged</code> or later</li>
+            <li>Contract version updates do <strong>NOT</strong> mutate already-signed contracts (immutable per signed record)</li>
+            <li>New version mid-campaign → only new signups use it; existing records stay on original</li>
+          </ul>
+          <span class="warning">
+            <strong>⚠ Field list is placeholder pending biz team confirmation.</strong> Biz team to confirm/refine the full snapshot field list.
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P0-12 -->
+  <section class="qcard" id="p0-12">
+    <div class="qcard-header">
+      <span class="qcard-id">P0-12</span>
+      <span class="qcard-module">跨端 · Cross-platform</span>
+      <span class="qcard-title">Role permissions matrix</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">Creator Portal reporting-only 已确认。Back Office 里谁能 create、publish、cancel、Mark Successful、Refund all、提交 Spotify URL、Release Fund、导出 CSV？Creator 是否只能看 reporting 和发 Updates？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">Creator Portal as reporting-only is confirmed. In the Back Office, who can create / publish / cancel / Mark Successful / Refund all / submit Spotify URL / Release Fund / export CSV? Can Creators only view reporting and post Updates?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-N1</span> reporting-only creator portal · <span class="brd-ref">BR-35</span> Spotify URL + Release Fund · <span class="brd-ref">BR-43</span> / <span class="brd-ref">BR-46</span> CSV exports</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li><strong>Creator portal:</strong> reporting-only per BR-N1 — view own campaigns + reporting + post Updates + export own CSV</li>
+            <li><strong>Admin portal:</strong> single Admin role with all permissions — create, edit draft, publish, cancel, Mark Successful, Refund all, submit Spotify URL, Release Fund, view all data, export all CSV</li>
+            <li>No separate Ops/Finance roles for MVP — collapse into single Admin</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="section-header">P1 — secondary <span class="sub">6 questions · deferable or scoped-down concerns</span></h2>
+
+  <!-- P1-1 -->
+  <section class="qcard" id="p1-1">
+    <div class="qcard-header">
+      <span class="qcard-id">P1-1</span>
+      <span class="qcard-module">PC · Creator</span>
+      <span class="qcard-title">Fulfillment source</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">Orders 里的 Fulfillment 是普通商品物流状态，还是众筹自己的制作/履约状态？如果 package 只有数字权益，没有实体发货，Fulfillment 怎么处理？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">Is the Fulfillment column in Orders driven by regular merch logistics, or by crowdfund-specific production/delivery status? If a package has only digital perks (no physical shipment), how is Fulfillment handled?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-42</span> Order history fulfillment status</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>Reuses <strong>existing Beamco merch fulfillment status</strong> (already built for non-crowdfund merch)</li>
+            <li>Only displayed for orders whose package includes physical merch</li>
+            <li>Digital-only packages → blank (or <code>N/A</code>)</li>
+            <li>CSV: include column, populated only for physical-merch orders</li>
+            <li>Owner: same system/team as existing merch fulfillment</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P1-2 -->
+  <section class="qcard" id="p1-2">
+    <div class="qcard-header">
+      <span class="qcard-id">P1-2</span>
+      <span class="qcard-module">PC · Creator</span>
+      <span class="qcard-title">CSV export scope</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">CSV 导出需要确认：哪些角色能导出，导出哪些信息，是否脱敏，导出当前页还是当前筛选条件下全部数据？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">For CSV export, confirm: which roles can export, what fields are included, whether sensitive data is masked, and whether export is just the current page or all rows under the current filter.</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-43</span> Order history CSV · <span class="brd-ref">BR-46</span> Transaction history CSV</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <table class="perm-table">
+            <thead>
+              <tr><th>Field</th><th>Creator</th><th>Admin</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Order ID, package, shares, amount, currency, statuses, fulfillment status</td><td class="check yes">✓</td><td class="check yes">✓</td></tr>
+              <tr><td>Backer name, email, phone, shipping address</td><td class="check yes">✓</td><td class="check yes">✓</td></tr>
+              <tr><td>Card last4</td><td class="check yes">✓</td><td class="check yes">✓</td></tr>
+              <tr><td>Stripe charge ID</td><td class="check no">✗</td><td class="check yes">✓</td></tr>
+              <tr><td>Created at, captured at, refunded at, contract version</td><td class="check yes">✓</td><td class="check yes">✓</td></tr>
+            </tbody>
+          </table>
+          <ul style="margin-top: 12px;">
+            <li>Export = <strong>current filter result</strong> (not just current page)</li>
+            <li>Max 10,000 rows; user narrows date range if exceeded</li>
+            <li>Log who exported + when + filter params (audit)</li>
+            <li>File format: CSV, UTF-8</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P1-3 -->
+  <section class="qcard" id="p1-3">
+    <div class="qcard-header">
+      <span class="qcard-id">P1-3</span>
+      <span class="qcard-module">PC · Creator</span>
+      <span class="qcard-title">Updates trigger N12 email</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">Creator 发布 update 后，是否一定触发 N12 email？Update 是否可编辑、可删除？删除后是否影响已经发出的邮件？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">When a Creator publishes an Update, does it always trigger the N12 email? Can the Update be edited or deleted? Does deletion affect already-sent emails?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-27</span> Updates editor in dashboard · <span class="brd-ref">N12</span> Creator Update posted email</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>N12 fires on <strong>every Update publish</strong> — no creator opt-out for MVP (defer)</li>
+            <li>Recipients: all <code>Charged</code> + <code>Authorized</code> backers + active <code>Waitlisted</code> users for that campaign</li>
+            <li>Excluded: <code>Failed</code>, <code>Refunded</code>, <code>Forfeited</code></li>
+            <li>Edit allowed for 1 hour after publish, then immutable</li>
+            <li>Edits do NOT re-fire N12 (already-sent emails not recalled)</li>
+            <li>Delete = soft-delete (sets <code>deleted_at</code>, hides from fan view); audit trail preserved</li>
+            <li>Attachments: reuse existing star post editor limits</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P1-4 -->
+  <section class="qcard" id="p1-4">
+    <div class="qcard-header">
+      <span class="qcard-id">P1-4</span>
+      <span class="qcard-module">Home · Fans</span>
+      <span class="qcard-title">Eligibility / LP requirement</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">用户参与众筹是否必须满足 eligibility / LP 规则？这是参与前必须满足的条件，还是只在页面展示 requirement？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">Must users satisfy eligibility / LP rules before joining a crowdfund? Is this a hard precondition, or just a requirement shown on the page?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-20</span> LP rules + per-creator balance · inherited rules: eligibility flag permanent</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>Reuses previously-built eligibility logic</li>
+            <li><strong>Hard gate</strong> at both pledge AND waitlist</li>
+            <li>Follow a creator → earns 1 creator-LP point; gate threshold = 1 (no config, MVP)</li>
+            <li>Once followed → eligibility met; user can pledge/waitlist immediately</li>
+            <li>Unfollow later does NOT revoke existing pledges/waitlist (eligibility persists per-record once granted)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P1-5 -->
+  <section class="qcard" id="p1-5">
+    <div class="qcard-header">
+      <span class="qcard-id">P1-5</span>
+      <span class="qcard-module">Home · Fans</span>
+      <span class="qcard-title">Physical perk address collection</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">如果 package 包含实体权益，地址什么时候收集？pledge / waitlist 阶段是否需要地址？扣款成功后能否补地址？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">If a package includes physical perks, when is the address collected? Is it required at pledge / waitlist stage? Can the address be added after the charge succeeds?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-4</span> waitlist lock fields · <span class="brd-ref">AC-11</span> waitlist data lock</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <ul>
+            <li>Address collected at <strong>pledge AND waitlist</strong> (not deferred)</li>
+            <li>Required only for packages containing physical merch</li>
+            <li>Address editable by user until fulfillment marks order as <code>Shipped</code>, then locked</li>
+            <li>Address visible to <strong>Creator + Admin</strong> (creators handle fulfillment)</li>
+            <li>Reuse existing Beamco address form/storage</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P1-6 -->
+  <section class="qcard" id="p1-6">
+    <div class="qcard-header">
+      <span class="qcard-id">P1-6</span>
+      <span class="qcard-module">跨端 · Cross-platform</span>
+      <span class="qcard-title">Minimum list query scope</span>
+    </div>
+    <div class="qcard-body">
+      <div class="qrow">
+        <div class="qrow-label">原问题 · Question (Chinese)</div>
+        <div class="qrow-content zh">Campaign list、Orders list、Home order list 本期分别需要哪些筛选、搜索、排序？如果时间不够，哪些可以后置？</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">English translation</div>
+        <div class="qrow-content en">For Campaign list, Orders list, and Home order list, what filters, search, and sort are needed this cycle? If time runs short, which can be deferred?</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">BRD reference</div>
+        <div class="qrow-content"><span class="brd-ref">BR-39</span> Campaign dashboard · <span class="brd-ref">BR-42</span> Order history · <span class="brd-ref">BR-43</span> date range export · <span class="brd-ref">BR-44</span> Search (nice-to-have)</div>
+      </div>
+      <div class="qrow">
+        <div class="qrow-label">✅ Confirmed answer</div>
+        <div class="qrow-content answer">
+          <table class="perm-table">
+            <thead>
+              <tr><th>List</th><th>Page</th><th>Default sort</th><th>Filters</th><th>Search</th><th>CSV</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>PC Creator — Campaign list</strong> (BR-39)</td>
+                <td>20</td>
+                <td><code>end_date desc</code></td>
+                <td>status</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td><strong>PC Creator — Orders per campaign</strong> (BR-42)</td>
+                <td>50</td>
+                <td><code>created_at desc</code></td>
+                <td>payment status + date</td>
+                <td>BR-44 defer</td>
+                <td>respects filter</td>
+              </tr>
+              <tr>
+                <td><strong>Admin — Orders list</strong></td>
+                <td>50</td>
+                <td><code>created_at desc</code></td>
+                <td>campaign + payment status + date + creator</td>
+                <td>backer name/email/order ID (in-MVP)</td>
+                <td>respects filter (Admin full fields)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  Last reviewed 2026-06-03 with Jeff · 18 questions · 16 confirmed · 2 pending stakeholder review<br>
+  Source: <a href="https://docs.google.com/spreadsheets/d/1x8jC2QSF3GQcUMStzFSmuUEINbTpelnJ4KXfLi1dNQk/edit?gid=2022784446" target="_blank">Google Sheets</a> · Main BRD: <a href="crowdfund-brd-v1-2026-05-24.html">crowdfund-brd-v1-2026-05-24.html</a> · State machine: <a href="crowdfund-brd-v1-state-machine.html">crowdfund-brd-v1-state-machine.html</a>
+</footer>
+
+</body>
+</html>
