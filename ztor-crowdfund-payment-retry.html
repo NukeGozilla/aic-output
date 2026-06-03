@@ -278,7 +278,7 @@
 </div>
 
 <div class="callout">
-  <strong>🔁 Three recovery checkpoints</strong> &mdash; we don't give up after the first failed charge. The system retries silently for 7 days, then asks the backer to update their card for another 7 days, then escalates to ops only if both windows expire.
+  <strong>🔁 Three recovery checkpoints</strong> &mdash; we don't give up after the first failed charge. The system retries silently for 3 days (attempts on days 1, 2, 3), then asks the backer to update their card for another 7 days, then escalates to ops only if both windows expire.
 </div>
 
 <div class="canvas">
@@ -330,7 +330,7 @@ flowchart TD
     C --> D1[Successfully charge<br/>all the backers]
     C --> D2[Failure in some<br/>of the payments]
     D1 --> P1[Proceed payment to creator]
-    D2 --> R[① 7-day auto-retry<br/>Silent background attempts]
+    D2 --> R[① 3-day auto-retry<br/>Silent attempts on days 1, 2, 3]
     R --> Rok[Recovered]
     R --> Rfail[Still failing]
     Rok --> P1
@@ -361,12 +361,13 @@ flowchart TD
 
   <div class="checkpoints">
     <div class="checkpoint auto">
-      <span class="pill">① · 7 days</span>
+      <span class="pill">① · 3 days</span>
       <h3>Auto-retry</h3>
       <p>
-        The system retries the charge silently in the background &mdash; backer is not
-        notified. Most temporary declines (insufficient funds, network blip) clear
-        within this window on their own.
+        The system retries the charge silently on <strong>days 1, 2, and 3</strong>
+        after the initial failure &mdash; backer is not notified. Most temporary
+        declines (insufficient funds, network blip) clear within this window on
+        their own.
       </p>
     </div>
     <div class="checkpoint manual">
@@ -407,28 +408,29 @@ flowchart TD
       </div>
     </div>
     <div class="tl-row">
-      <div class="tl-when">Day 30 → 37</div>
+      <div class="tl-when">Day 30 → 33</div>
       <div class="tl-what">
-        <strong>① 7-day auto-retry.</strong> Silent background retries. Backer doesn't know
-        anything is happening; project payout to creator is held until this window settles.
+        <strong>① 3-day auto-retry.</strong> Silent retries on days 1, 2, and 3 after the
+        failed charge. Backer doesn't know anything is happening; project payout to creator
+        is held until this window settles.
       </div>
     </div>
     <div class="tl-row">
-      <div class="tl-when">Day 37</div>
+      <div class="tl-when">Day 33</div>
       <div class="tl-what">
         <strong>Recovery email sent</strong> to any backers whose charges are still failing.
         Page link lets them enter a new card and pay on the spot.
       </div>
     </div>
     <div class="tl-row">
-      <div class="tl-when">Day 37 → 44</div>
+      <div class="tl-when">Day 33 → 40</div>
       <div class="tl-what">
         <strong>② 7-day manual recovery.</strong> Backer can update their card and retry
         as many times as needed within the window.
       </div>
     </div>
     <div class="tl-row">
-      <div class="tl-when">Day 44+</div>
+      <div class="tl-when">Day 40+</div>
       <div class="tl-what">
         <strong>③ Ops decision.</strong> If the failed-payment gap is material, ops considers
         cancelling the project and refunding everyone who already paid. Manual call, not
