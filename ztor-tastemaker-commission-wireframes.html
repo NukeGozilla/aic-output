@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor — Tastemaker Commission · Wireframes</title>
+<style>
+  :root{
+    --bg:#0a0a0a; --panel:#141414; --field:#1f1f1f; --field2:#262626;
+    --text:#f2f2f2; --muted:#8a8a8a; --line:#2a2a2a;
+    --gold1:#c9a36a; --gold2:#a07d4e; --green:#5fb87a; --red:#d9776b; --blue:#6f9bd1;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#000;color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:36px 28px 60px;}
+  h1{font-weight:600;font-size:21px;letter-spacing:.5px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+
+  /* tabs */
+  .tabs{display:flex;gap:8px;margin-bottom:28px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .tab{padding:11px 20px;font-size:14px;color:var(--muted);cursor:pointer;border:none;background:none;
+    border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab.on{color:var(--gold1);border-bottom-color:var(--gold1);font-weight:600}
+  .view{display:none}
+  .view.on{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:.3}to{opacity:1}}
+
+  .grid{display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:1;min-width:380px;max-width:520px}
+  .state-label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--gold1);
+    margin:0 0 12px;font-weight:600}
+
+  /* modal */
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:28px 32px 24px;box-shadow:0 24px 60px rgba(0,0,0,.6);position:relative}
+  .modal-title{font-size:22px;letter-spacing:1.5px;font-weight:600;margin:4px 0 28px}
+  .close{position:absolute;top:24px;right:26px;color:var(--muted);font-size:22px;cursor:default}
+  .row{display:flex;align-items:center;margin-bottom:18px;gap:18px}
+  .label{width:120px;flex:none;font-size:15px;color:var(--text)}
+  .field{flex:1;background:var(--field);border:none;border-radius:24px;padding:14px 20px;
+    color:var(--text);font-size:15px;min-height:50px;display:flex;align-items:center;
+    justify-content:space-between}
+  .field.placeholder{color:var(--muted)}
+  .chev{color:var(--muted);font-size:13px}
+  .field.disabled{opacity:.55}
+  .new-wrap{position:relative;border-radius:24px;}
+  .new .field{box-shadow:0 0 0 2px var(--gold1);background:#221d14}
+  .badge-new{position:absolute;top:-9px;right:14px;background:var(--gold1);color:#1a1206;
+    font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:10px}
+  .auto-pill{background:#2a2a2a;color:#cdb088;border:1px solid #3a3320;font-size:11px;
+    padding:3px 10px;border-radius:12px;margin-left:auto}
+  .options{margin-top:8px;background:var(--field2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .opt{padding:12px 20px;font-size:15px;cursor:default}
+  .opt:hover{background:#30291b}
+  .opt.sel{background:#3a311e;color:var(--gold1);font-weight:600}
+  .opt+.opt{border-top:1px solid var(--line)}
+  .actions{display:flex;justify-content:flex-end;gap:14px;margin-top:30px}
+  .btn{padding:12px 26px;border-radius:8px;font-size:15px;cursor:default;border:1px solid var(--line);
+    background:transparent;color:var(--text)}
+  .btn.primary{background:linear-gradient(180deg,var(--gold1),var(--gold2));border:none;color:#fff;font-weight:600}
+  .notes{margin-top:18px;background:#101010;border:1px dashed #333;border-radius:10px;padding:14px 18px}
+  .notes b{color:var(--gold1)}
+  .notes ul{margin:8px 0 0;padding-left:18px}
+  .notes li{font-size:13px;color:#bdbdbd;margin:5px 0;line-height:1.45}
+  .callout{grid-column:1/-1;width:100%;margin-top:8px;background:#0e0e0e;border:1px solid var(--line);
+    border-radius:12px;padding:18px 22px;font-size:13px;color:#cfcfcf;line-height:1.5}
+  .callout h3{margin:0 0 10px;color:var(--gold1);font-size:13px;letter-spacing:.5px;text-transform:uppercase}
+  .tag{display:inline-block;background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:1px 7px;
+    font-size:11px;color:#cdb088;margin:0 2px}
+  code{background:#1e1e1e;padding:1px 6px;border-radius:4px;color:#cdb088;font-size:12px}
+
+  /* audit table */
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,.5)}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;padding:22px 26px 18px;border-bottom:1px solid var(--line)}
+  .panel-head h2{margin:0;font-size:18px;letter-spacing:1px;font-weight:600}
+  .panel-head .ctx{color:var(--muted);font-size:13px;margin-top:4px}
+  .filters{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:16px 26px;border-bottom:1px solid var(--line);background:#101010}
+  .search{flex:1;min-width:200px;background:var(--field);border:none;border-radius:22px;padding:11px 18px;color:var(--muted);font-size:14px}
+  .pill{background:var(--field);border:1px solid var(--line);border-radius:20px;padding:9px 16px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:8px}
+  .pill .chev{color:var(--muted);font-size:11px}
+  .btn-exp{background:linear-gradient(180deg,var(--gold1),var(--gold2));border:none;color:#fff;font-weight:600;border-radius:8px;padding:10px 18px;font-size:13px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{text-align:left;color:var(--muted);font-weight:500;font-size:12px;letter-spacing:.6px;text-transform:uppercase;padding:14px 20px;background:#0f0f0f;border-bottom:1px solid var(--line)}
+  tbody td{padding:16px 20px;border-bottom:1px solid #1c1c1c;vertical-align:middle}
+  tbody tr:hover{background:#171717}
+  .ts{color:#cfcfcf;white-space:nowrap}
+  .ts small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+  .tm{font-weight:600}
+  .tm small{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:2px}
+  .pct{font-variant-numeric:tabular-nums;font-weight:600}
+  .old{color:var(--muted);text-decoration:line-through;font-weight:500}
+  .arrow{color:var(--muted);margin:0 7px}
+  .up{color:var(--green)} .down{color:var(--red)}
+  .chip{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.4px;padding:3px 10px;border-radius:11px;border:1px solid}
+  .chip.manual{color:var(--gold1);border-color:#4a3f26;background:#241d11}
+  .chip.auto{color:var(--blue);border-color:#28384a;background:#121d28}
+  .chip.create{color:var(--green);border-color:#244a30;background:#10240f}
+  .actor{display:flex;align-items:center;gap:9px}
+  .avi{width:26px;height:26px;border-radius:50%;background:#33291a;color:var(--gold1);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+  .avi.sys{background:#1c2733;color:var(--blue)}
+  .note{color:#bdbdbd;font-size:13px;max-width:200px}
+  .note.empty{color:#555}
+  .foot{display:flex;align-items:center;justify-content:space-between;padding:16px 26px;color:var(--muted);font-size:13px}
+  .pager{display:flex;gap:6px}
+  .pg{width:30px;height:30px;border-radius:7px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text)}
+  .pg.on{background:var(--gold1);color:#1a1206;border-color:var(--gold1);font-weight:700}
+  .legend{margin-top:18px;background:#0e0e0e;border:1px dashed #333;border-radius:10px;padding:14px 20px;font-size:13px;color:#bdbdbd;line-height:1.5}
+  .legend b{color:var(--gold1)}
+</style>
+</head>
+<body>
+  <h1>Ztor — Tastemaker Commission (分成比例)</h1>
+  <div class="sub">Wireframes for dev handoff · 2026-06-10 · pairs with BR <code>ztor-tastemaker-commission-br-2026-06-10</code> · single <code>commission_mode = manual | auto</code> flag drives both logic sets</div>
+
+  <div class="tabs">
+    <button class="tab on" data-v="v1">1 · Edit User — Commission selector</button>
+    <button class="tab" data-v="v2">2 · Commission Audit Log</button>
+  </div>
+
+  <!-- ============ VIEW 1 ============ -->
+  <div class="view on" id="v1">
+    <div class="grid">
+
+      <!-- STATE A -->
+      <div class="col">
+        <p class="state-label">State A · commission_mode = manual — admin sets %</p>
+        <div class="modal">
+          <span class="close">✕</span>
+          <div class="modal-title">EDIT USER</div>
+          <div class="row"><div class="label">Nickname</div><div class="field placeholder">Lutfi</div></div>
+          <div class="row"><div class="label">Email Address</div><div class="field placeholder">mluthfi840@gmail.com</div></div>
+          <div class="row"><div class="label">Phone</div><div class="field"></div></div>
+          <div class="row"><div class="label">Role</div><div class="field">Tastemaker <span class="chev">▾</span></div></div>
+          <div class="row">
+            <div class="label">Commission</div>
+            <div class="new-wrap new" style="flex:1">
+              <span class="badge-new">NEW</span>
+              <div class="field">12% <span class="chev">▾</span></div>
+              <div class="options">
+                <div class="opt">10%</div>
+                <div class="opt sel">12%　✓</div>
+                <div class="opt">15%</div>
+              </div>
+            </div>
+          </div>
+          <div class="row"><div class="label">Status</div><div class="field placeholder">Enable <span class="chev">▾</span></div></div>
+          <div class="actions"><button class="btn">Cancel</button><button class="btn primary">Confirm</button></div>
+        </div>
+        <div class="notes">
+          <b>Behaviour</b>
+          <ul>
+            <li>Field appears <b>only when Role = Tastemaker</b> (BR-01).</li>
+            <li>Dropdown is locked to <span class="tag">10%</span><span class="tag">12%</span><span class="tag">15%</span> — no free typing (BR-02).</li>
+            <li>On Confirm: save <code>rate</code> + keep <code>commission_mode="manual"</code> + timestamp; write audit row (BR-03, BR-07).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- STATE B -->
+      <div class="col">
+        <p class="state-label">State B · commission_mode = auto — system calculates (P2)</p>
+        <div class="modal">
+          <span class="close">✕</span>
+          <div class="modal-title">EDIT USER</div>
+          <div class="row"><div class="label">Nickname</div><div class="field placeholder">Lutfi</div></div>
+          <div class="row"><div class="label">Email Address</div><div class="field placeholder">mluthfi840@gmail.com</div></div>
+          <div class="row"><div class="label">Phone</div><div class="field"></div></div>
+          <div class="row"><div class="label">Role</div><div class="field">Tastemaker <span class="chev">▾</span></div></div>
+          <div class="row">
+            <div class="label">Commission</div>
+            <div class="new-wrap" style="flex:1">
+              <div class="field disabled">15% <span class="auto-pill">Auto · updated monthly</span></div>
+            </div>
+          </div>
+          <div class="row"><div class="label">Status</div><div class="field placeholder">Enable <span class="chev">▾</span></div></div>
+          <div class="actions"><button class="btn">Cancel</button><button class="btn primary">Confirm</button></div>
+        </div>
+        <div class="notes">
+          <b>Behaviour</b>
+          <ul>
+            <li>Read-only — when <code>commission_mode = auto</code>, admin <b>cannot</b> edit; value is set by the monthly engine (BR-05, BR-09).</li>
+            <li>Pill shows it is system-managed so admin doesn't expect to change it (BR-05 / US-02).</li>
+            <li>% derived from prior-month gross revenue → tier table (thresholds TBD by marketing).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout">
+        <h3>Scope notes for dev</h3>
+        <b style="color:#fff">In scope here:</b> the back-office Commission selector only (the two states above).
+        &nbsp;<b style="color:#fff">Out of scope:</b> the front-end profile display of the % — that lives on the user profile page and the visual is owned by the designer; backend just exposes it via API (BR-11).<br><br>
+        <b style="color:#fff">Two models, one flag:</b> a single <code>commission_mode</code> per TM drives both logic sets — there is <b>no</b> "invited/non-invited" concept in the system.
+        <span class="tag">P0 / PH-01</span> <code>commission_mode = manual</code> → admin selects from 10/12/15 (State A).
+        <span class="tag">P1 / PH-02</span> <code>commission_mode = auto</code> → monthly auto-calc from gross revenue (State B), gated on revenue-data feed + marketing-confirmed tiers.<br><br>
+        A TM record carries: <code>commission_rate</code> · <code>commission_mode = manual | auto</code> (defaults to <code>manual</code>) · <code>updated_at</code>. The <code>commission_mode</code> flag decides whether State A or State B renders.
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIEW 2 ============ -->
+  <div class="view" id="v2">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>COMMISSION CHANGE HISTORY</h2>
+          <div class="ctx">All Tastemakers · also openable scoped to one TM from the Edit User screen</div>
+        </div>
+        <button class="btn-exp">⤓ Export CSV</button>
+      </div>
+      <div class="filters">
+        <div class="search">🔍&nbsp; Search by Tastemaker name or email…</div>
+        <div class="pill">Source: All <span class="chev">▾</span></div>
+        <div class="pill">Changed by: All <span class="chev">▾</span></div>
+        <div class="pill">📅 Last 30 days <span class="chev">▾</span></div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:160px">Timestamp</th>
+            <th>Tastemaker</th>
+            <th style="width:150px">Change</th>
+            <th style="width:110px">Source</th>
+            <th style="width:190px">Changed by</th>
+            <th>Reason / Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ts">2026-06-10 14:32 <small>GMT+8</small></td>
+            <td><div class="tm">Lutfi <small>mluthfi840@gmail.com</small></div></td>
+            <td><span class="old pct">12%</span><span class="arrow">→</span><span class="pct up">15% ↑</span></td>
+            <td><span class="chip manual">MANUAL</span></td>
+            <td><div class="actor"><div class="avi">ST</div>Sarah Tan</div></td>
+            <td class="note">Promoted per Q3 partner deal</td>
+          </tr>
+          <tr>
+            <td class="ts">2026-06-01 00:30 <small>GMT+8</small></td>
+            <td><div class="tm">Aaron Lim <small>aaron.lim@gmail.com</small></div></td>
+            <td><span class="old pct">10%</span><span class="arrow">→</span><span class="pct up">12% ↑</span></td>
+            <td><span class="chip auto">AUTO</span></td>
+            <td><div class="actor"><div class="avi sys">⚙</div>System · Monthly job</div></td>
+            <td class="note">Tier ↑: gross rev $3,240 (May)</td>
+          </tr>
+          <tr>
+            <td class="ts">2026-06-01 00:30 <small>GMT+8</small></td>
+            <td><div class="tm">Mei Chen <small>meichen@gmail.com</small></div></td>
+            <td><span class="old pct">15%</span><span class="arrow">→</span><span class="pct down">12% ↓</span></td>
+            <td><span class="chip auto">AUTO</span></td>
+            <td><div class="actor"><div class="avi sys">⚙</div>System · Monthly job</div></td>
+            <td class="note">Tier ↓: gross rev $2,110 (May)</td>
+          </tr>
+          <tr>
+            <td class="ts">2026-05-28 09:14 <small>GMT+8</small></td>
+            <td><div class="tm">Lutfi <small>mluthfi840@gmail.com</small></div></td>
+            <td><span class="old pct">10%</span><span class="arrow">→</span><span class="pct up">12% ↑</span></td>
+            <td><span class="chip manual">MANUAL</span></td>
+            <td><div class="actor"><div class="avi">ML</div>Marcus Lee</div></td>
+            <td class="note empty">—</td>
+          </tr>
+          <tr>
+            <td class="ts">2026-05-20 11:02 <small>GMT+8</small></td>
+            <td><div class="tm">Aaron Lim <small>aaron.lim@gmail.com</small></div></td>
+            <td><span class="arrow" style="margin-left:0">—</span><span class="pct up" style="margin-left:6px">10%</span></td>
+            <td><span class="chip create">INITIAL</span></td>
+            <td><div class="actor"><div class="avi">ML</div>Marcus Lee</div></td>
+            <td class="note">First rate set on onboarding</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="foot">
+        <span>Showing 1–5 of 128 entries</span>
+        <div class="pager">
+          <div class="pg">‹</div><div class="pg on">1</div><div class="pg">2</div><div class="pg">3</div><div class="pg">›</div>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <b>What each row captures (BR-07):</b> timestamp · tastemaker · old % → new % (with ↑/↓ direction) · source <span class="chip manual" style="vertical-align:middle">MANUAL</span> vs <span class="chip auto" style="vertical-align:middle">AUTO</span> vs <span class="chip create" style="vertical-align:middle">INITIAL</span> · actor (admin name <em>or</em> System for the monthly job) · optional reason/note.<br><br>
+      <b>Notes for dev:</b> rows are <b>immutable</b> (append-only — never edited or deleted). The same table is reused two ways: a global log (shown here) and a per-TM history panel opened from Edit User. Auto rows are written by the monthly engine and stamp the revenue basis in the note. Export CSV respects the active filters. Manual reason/note is optional input on the Edit User Confirm step. Per-row <code>source</code> reflects what produced that change, distinct from the TM's current <code>commission_mode</code>.
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.tab').forEach(function(t){
+      t.addEventListener('click', function(){
+        document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});
+        document.querySelectorAll('.view').forEach(function(x){x.classList.remove('on')});
+        t.classList.add('on');
+        document.getElementById(t.dataset.v).classList.add('on');
+      });
+    });
+  </script>
+</body>
+</html>
