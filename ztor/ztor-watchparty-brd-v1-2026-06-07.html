@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ztor Watch Party — BRD v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* Visual system: Geist (light) — see design-systems/geist.md */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #fafafa; color: #111111; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .header {
+    background: #ffffff; padding: 30px 48px 26px; border-bottom: 1px solid #eaeaea;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: #000; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .header .badge {
+    display: inline-block; background: #fff; color: #0070f3;
+    font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 5px;
+    margin-left: 12px; vertical-align: middle; letter-spacing: 0.3px;
+    border: 1px solid #cfe3ff;
+  }
+  .header .meta { font-size: 13px; color: #666; max-width: 920px; margin-top: 6px; }
+  .header .meta strong { color: #111; font-weight: 600; }
+  .nav { margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav a {
+    font-size: 11px; color: #444; background: #fff;
+    border: 1px solid #eaeaea; padding: 5px 11px; border-radius: 5px;
+    text-decoration: none; transition: all 0.15s;
+  }
+  .nav a:hover { border-color: #0070f3; color: #0070f3; }
+  .nav a.live { border-color: #b6e2c6; color: #0a7d33; }
+  .nav a.live:hover { border-color: #0a7d33; }
+  .canvas { padding: 40px 48px 80px; max-width: 1240px; margin: 0 auto; }
+  .section-title {
+    font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;
+    color: #888; margin: 46px 0 6px; scroll-margin-top: 20px;
+    padding-bottom: 8px; border-bottom: 1px solid #eaeaea;
+  }
+  .section-title:first-child { margin-top: 0; }
+  .section-sub { font-size: 13px; color: #666; margin-bottom: 18px; max-width: 920px; }
+  .group-title { font-size: 13px; font-weight: 600; color: #111; margin: 24px 0 8px; }
+  /* callout */
+  .callout {
+    background: #f5f9ff; border: 1px solid #d9e8ff;
+    border-left: 3px solid #0070f3; border-radius: 6px; padding: 14px 18px;
+    font-size: 13px; color: #33405a; line-height: 1.55; margin-bottom: 8px;
+  }
+  .callout strong { color: #0a2540; font-weight: 600; }
+  /* tables */
+  .panel { background: #fff; border: 1px solid #eaeaea; border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 11px 16px; text-align: left; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  th { color: #666; font-weight: 600; font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; background: #fafafa; }
+  td code, .meta code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; color: #0a7d33; font-size: 12px; font-family: "Geist Mono", ui-monospace, "SF Mono", monospace; }
+  td .brid { font-family: "Geist Mono", ui-monospace, monospace; font-weight: 600; color: #111; white-space: nowrap; }
+  td .brtitle { font-weight: 600; color: #000; }
+  .remark { color: #666; font-size: 12px; }
+  .nn { color: #b25000; font-weight: 600; }
+  /* chips */
+  .chip { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 5px; letter-spacing: 0.3px; white-space: nowrap; }
+  .pri-must { background: #fef2f2; color: #b3261e; border: 1px solid #fad9d6; }
+  .pri-should { background: #eff6ff; color: #0058c6; border: 1px solid #cfe3ff; }
+  .st-demo { background: #ecfdf3; color: #0a7d33; border: 1px solid #c6f0d4; }
+  .st-build { background: #fff7ed; color: #8a5300; border: 1px solid #fde6c2; }
+  .st-reuse { background: #f7f1fe; color: #6b2fb3; border: 1px solid #e6d6fb; }
+  .src { display: inline-block; font-size: 9.5px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin: 0 2px 2px 0; letter-spacing: 0.3px; }
+  .src-ops { background: #eff6ff; color: #0058c6; border: 1px solid #cfe3ff; }
+  .src-design { background: #f7f1fe; color: #6b2fb3; border: 1px solid #e6d6fb; }
+  .src-arch { background: #f1f5f9; color: #475569; border: 1px solid #dbe3ec; }
+  .src-demo { background: #ecfdf3; color: #0a7d33; border: 1px solid #c6f0d4; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #666; margin: 4px 0 16px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  /* open questions status */
+  .oq-pending { color: #8a5300; font-weight: 600; }
+  .oq-assumed { color: #0a7d33; font-weight: 600; }
+  .oq-future { color: #888; font-weight: 600; }
+  /* phasing */
+  .phase { background: #fff; border: 1px solid #eaeaea; border-radius: 6px; padding: 16px 20px; margin-bottom: 12px; }
+  .phase .pname { font-size: 14px; font-weight: 700; color: #0070f3; margin-bottom: 4px; }
+  .phase .pbrs { font-family: "Geist Mono", ui-monospace, monospace; font-size: 12px; color: #444; margin-bottom: 6px; }
+  .phase .pwhy { font-size: 12.5px; color: #666; }
+  .footer { padding: 24px 48px 60px; color: #999; font-size: 12px; max-width: 1240px; margin: 0 auto; border-top: 1px solid #eaeaea; }
+  @media (max-width: 760px) {
+    .header, .canvas, .footer { padding-left: 22px; padding-right: 22px; }
+    th, td { padding: 9px 10px; }
+    table { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Ztor Watch Party — BRD<span class="badge">v1 · DRAFT</span></h1>
+  <div class="meta">
+    <strong>Scope:</strong> Co-watching / live premiere &nbsp;·&nbsp; <strong>Date:</strong> 2026-06-07 &nbsp;·&nbsp; <strong>Format:</strong> mirrors Beamco Crowdfund BRD v1<br>
+    <strong>Sources:</strong> Ops requirements doc · Designer premiere spec <em>(Twitch route dropped)</em> · Solution architecture diagram
+  </div>
+  <div class="nav">
+    <a class="live" href="https://ztor-watchparty.vercel.app" target="_blank" rel="noopener">▶ Reference demo ↗</a>
+    <a href="ztor-watchparty-architecture.html">🏗 Solution architecture ↗</a>
+    <a href="#scope">Scope</a>
+    <a href="#groups">User groups</a>
+    <a href="#brs">Requirements</a>
+    <a href="#reuse">Reuse map</a>
+    <a href="#open">Open questions</a>
+    <a href="#phasing">Phasing</a>
+  </div>
+</div>
+
+<div class="canvas">
+
+  <!-- SCOPE -->
+  <div class="section-title" id="scope">Scope note — what this is NOT</div>
+  <div class="callout">
+    No <strong>Twitch iframe player</strong>, no <strong>Twitch-native chat</strong> (both dropped per Jeff).
+    Video is served from Ztor's own CDN (HLS/DRM); chat + sync + presence run on our self-built Ably stack.
+    <strong>Voice chat is out of scope</strong> (optional fast-follow via LiveKit/Daily).
+  </div>
+
+  <!-- CHANGE LOG -->
+  <div class="section-title">Change log</div>
+  <div class="panel">
+    <table>
+      <thead><tr><th style="width:110px">Date</th><th style="width:90px">Driver</th><th>Changes</th></tr></thead>
+      <tbody>
+        <tr><td>2026-06-07</td><td>Jeff</td><td>v1 — reconciled ops requirements + designer premiere spec (minus Twitch) against the solution diagram.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- USER GROUPS -->
+  <div class="section-title" id="groups">§1 · User groups &amp; stories</div>
+  <div class="panel">
+    <table>
+      <thead><tr><th style="width:170px">Group</th><th>Role</th><th style="width:120px">Access</th><th>Key need</th></tr></thead>
+      <tbody>
+        <tr><td class="brtitle">Host <span class="remark">(premium, ticketed)</span></td><td>Launches a room from a title, controls playback for all</td><td>Create + control</td><td>Watch a premiere "together" and lead the session</td></tr>
+        <tr><td class="brtitle">Guest viewer <span class="remark">(ticketed)</span></td><td>Joins via link/code, watches in sync, chats</td><td>Join + chat</td><td>Drop in, stay synced, talk — and rejoin if they drop</td></tr>
+        <tr><td class="brtitle">Ops / Admin</td><td>Sets participant cap &amp; geoblock config; monitors</td><td>Configure</td><td>Manage capacity &amp; licensing per campaign</td></tr>
+        <tr><td class="brtitle">Ztor backend <span class="remark">(system)</span></td><td>Verifies entitlement, mints scoped tokens, holds room records</td><td>—</td><td>Only eligible users reach the stream</td></tr>
+        <tr><td class="brtitle">Analytics <span class="remark">(system)</span></td><td>Captures engagement events for reporting</td><td>—</td><td>Measure co-watching value</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="group-title">User stories</div>
+  <div class="panel">
+    <table>
+      <tbody>
+        <tr><td class="brid">US-01</td><td>As a <strong>host</strong>, I want to start a watch party from a title page and share a link, so others can join my session.</td></tr>
+        <tr><td class="brid">US-02</td><td>As a <strong>guest</strong>, I want to join with a link and be let in only if I'm registered and have paid, so the room stays valid and licensed.</td></tr>
+        <tr><td class="brid">US-03</td><td>As a <strong>viewer</strong>, I want playback to stay in sync and to chat with emojis beside the video, so it feels like watching together.</td></tr>
+        <tr><td class="brid">US-04</td><td>As a <strong>guest</strong>, I want to leave and re-enter the same room freely, so a dropout doesn't end my night.</td></tr>
+        <tr><td class="brid">US-05</td><td>As <strong>ops</strong>, I want to cap room size and enforce regional licensing, so we protect capacity and rights.</td></tr>
+        <tr><td class="brid">US-06</td><td>As the <strong>business</strong>, I want watch-party engagement measured, so we can value co-watching against normal viewing.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BUSINESS REQUIREMENTS -->
+  <div class="section-title" id="brs">§2 · Business requirements</div>
+  <div class="legend">
+    <span><span class="chip pri-must">MUST</span> / <span class="chip pri-should">SHOULD</span> priority</span>
+    <span><span class="chip st-demo">DEMO-PROVEN</span> <span class="chip st-build">TO BUILD</span> <span class="chip st-reuse">REUSE</span> status</span>
+    <span><span class="src src-ops">Ops</span><span class="src src-design">Design</span><span class="src src-arch">Arch</span><span class="src src-demo">Demo</span> source</span>
+  </div>
+
+  <div class="group-title">Access &amp; Entitlement</div>
+  <div class="panel"><table>
+    <thead><tr><th style="width:62px">ID</th><th>Requirement</th><th style="width:54px">Pri</th><th style="width:120px">Status</th><th style="width:130px">Source</th><th style="width:260px">Remark</th></tr></thead>
+    <tbody>
+      <tr><td class="brid">BR-01</td><td><span class="brtitle">Host creation (premium-gated).</span> Premium users SHALL launch a room from the player and receive a shareable link/code.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-build">TO BUILD</span></td><td><span class="src src-ops">Ops</span><span class="src src-design">Design</span><span class="src src-arch">Arch</span></td><td class="remark">Needs Ztor backend permission to launch. Demo stubs this.</td></tr>
+      <tr><td class="brid">BR-02</td><td><span class="brtitle">Community validation.</span> System SHALL verify the user is registered <strong>and</strong> has paid <strong>before the party starts</strong> before granting room access.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-build">TO BUILD</span></td><td><span class="src src-ops">Ops</span><span class="src src-design">Design</span><span class="src src-arch">Arch</span></td><td class="remark">Entitlement resolver + token mint. The page itself is the gate.</td></tr>
+      <tr><td class="brid">BR-03</td><td><span class="brtitle">Per-room capability token.</span> Ably tokens SHALL be scoped to one room — publish on <code>video-{room}</code> for host only, subscribe-only for guests.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-build">TO BUILD</span></td><td><span class="src src-arch">Arch</span><span class="src src-ops">Ops</span></td><td class="remark">Demo uses a broad key + client host flag; prod asserts host from room record.</td></tr>
+      <tr><td class="brid">BR-04</td><td><span class="brtitle">Geoblocking.</span> System SHALL enforce regional licensing at the video/entitlement layer. F《我要衝線》 = worldwide; imported titles SHALL be geoblocked.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-reuse">REUSE</span></td><td><span class="src src-ops">Ops</span><span class="src src-design">Design</span><span class="src src-arch">Arch</span></td><td class="remark">Enforced at CDN/manifest, <strong>not</strong> Ably. Reuse Ztor playback authz.</td></tr>
+      <tr><td class="brid">BR-05</td><td><span class="brtitle">Participant cap (dynamic).</span> System SHALL enforce a per-room member limit, adjustable on the backend per campaign.</td><td><span class="chip pri-should">SHOULD</span></td><td><span class="chip st-build">TO BUILD</span></td><td><span class="src src-ops">Ops</span></td><td class="remark"><span class="nn">Net-new</span> (not in diagram). Check presence occupancy before issuing token.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="group-title">Room &amp; Lifecycle</div>
+  <div class="panel"><table>
+    <thead><tr><th style="width:62px">ID</th><th>Requirement</th><th style="width:54px">Pri</th><th style="width:120px">Status</th><th style="width:130px">Source</th><th style="width:260px">Remark</th></tr></thead>
+    <tbody>
+      <tr><td class="brid">BR-06</td><td><span class="brtitle">Room service.</span> System SHALL create/look up rooms as <code>{roomCode, videoId, hostId, status}</code>; codes server-validated, videoId resolved server-side.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-build">TO BUILD</span></td><td><span class="src src-ops">Ops</span><span class="src src-arch">Arch</span></td><td class="remark">Stops trusting videoId/host from the URL.</td></tr>
+      <tr><td class="brid">BR-07</td><td><span class="brtitle">Premiere phase state machine.</span> A scheduled title SHALL move Selling → Pre-show → Live → Ended, driven by server time + a host/ops "go live" signal.</td><td><span class="chip pri-should">SHOULD</span></td><td><span class="chip st-build">TO BUILD</span></td><td><span class="src src-design">Design</span></td><td class="remark">"Live" = countdown hits 0 <strong>AND</strong> backend confirms live.</td></tr>
+      <tr><td class="brid">BR-08</td><td><span class="brtitle">Premiere title-page states.</span> Title/home pages SHALL show a server-time countdown banner and phase × ticket button states (Trailer / Rent / Buy ticket / Join).</td><td><span class="chip pri-should">SHOULD</span></td><td><span class="chip st-build">TO BUILD</span></td><td><span class="src src-design">Design</span></td><td class="remark">Reuse crowdfund proto title layout. Server-time, not client clock.</td></tr>
+      <tr><td class="brid">BR-09</td><td><span class="brtitle">Exit &amp; re-entry.</span> Guests SHALL leave without disrupting others and re-enter the <strong>same</strong> link/code while the room is live.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-demo">DEMO-PROVEN</span></td><td><span class="src src-ops">Ops</span><span class="src src-demo">Demo</span></td><td class="remark">Ably presence + persistent room record.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="group-title">Sync &amp; Playback</div>
+  <div class="panel"><table>
+    <thead><tr><th style="width:62px">ID</th><th>Requirement</th><th style="width:54px">Pri</th><th style="width:120px">Status</th><th style="width:130px">Source</th><th style="width:260px">Remark</th></tr></thead>
+    <tbody>
+      <tr><td class="brid">BR-10</td><td><span class="brtitle">Host-authoritative sync.</span> Host play / pause / seek SHALL propagate to all guests; guests are passengers that replay events.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-demo">DEMO-PROVEN</span></td><td><span class="src src-ops">Ops</span><span class="src src-arch">Arch</span><span class="src src-demo">Demo</span></td><td class="remark"><code>video-{room}</code>, <code>echoMessages:false</code>.</td></tr>
+      <tr><td class="brid">BR-11</td><td><span class="brtitle">Late-join catch-up.</span> A joining guest SHALL receive a snapshot <code>{videoId, currentTime, isPlaying}</code> and adopt it; a "Force sync" action SHALL re-fetch it.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-demo">DEMO-PROVEN</span></td><td><span class="src src-ops">Ops</span><span class="src src-arch">Arch</span><span class="src src-demo">Demo</span></td><td class="remark"><code>status-request</code> → host snapshot handshake.</td></tr>
+      <tr><td class="brid">BR-12</td><td><span class="brtitle">HLS/DRM player.</span> The player SHALL serve Ztor CDN streams (HLS + DRM), preserving the play/pause/seek hooks the sync layer uses.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-build">TO BUILD</span></td><td><span class="src src-arch">Arch</span></td><td class="remark">Swaps the demo's <code>/public</code> MP4s. Snapshot carries <code>videoId</code>.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="group-title">Social &amp; Engagement</div>
+  <div class="panel"><table>
+    <thead><tr><th style="width:62px">ID</th><th>Requirement</th><th style="width:54px">Pri</th><th style="width:120px">Status</th><th style="width:130px">Source</th><th style="width:260px">Remark</th></tr></thead>
+    <tbody>
+      <tr><td class="brid">BR-13</td><td><span class="brtitle">Live text chat.</span> A real-time chat channel beside the player SHALL support standard emojis, using Ztor identity (not Twitch login).</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-demo">DEMO-PROVEN</span></td><td><span class="src src-ops">Ops</span><span class="src src-demo">Demo</span></td><td class="remark">LiveComments over <code>comments-{room}</code>, 5-min rewind.</td></tr>
+      <tr><td class="brid">BR-14</td><td><span class="brtitle">Presence list.</span> A "watching now" list SHALL show participants with avatar + host badge, from Ztor profile.</td><td><span class="chip pri-must">MUST</span></td><td><span class="chip st-demo">DEMO-PROVEN</span></td><td><span class="src src-ops">Ops</span><span class="src src-arch">Arch</span><span class="src src-demo">Demo</span></td><td class="remark"><code>presence-{room}</code> enter/leave/get.</td></tr>
+      <tr><td class="brid">BR-15</td><td><span class="brtitle">Engagement reporting.</span> System SHALL capture watch-party events to compute avg watch time, co-watching ratio, participants (subscriber vs new), chat activity rate, and comment volume.</td><td><span class="chip pri-should">SHOULD</span></td><td><span class="chip st-build">TO BUILD</span></td><td><span class="src src-ops">Ops</span></td><td class="remark"><span class="nn">Net-new.</span> Ably Firehose → Ztor warehouse; segmentation from user data.</td></tr>
+    </tbody>
+  </table></div>
+
+  <!-- REUSE MAP -->
+  <div class="section-title" id="reuse">§3 · Reuse map — don't rebuild</div>
+  <div class="panel"><table>
+    <thead><tr><th>From</th><th>Reused for</th><th style="width:140px">BR</th></tr></thead>
+    <tbody>
+      <tr><td>Crowdfund proto — theme, app shell, title-page layout, Comments UI</td><td>Watch party UI</td><td class="brid">BR-08, BR-13</td></tr>
+      <tr><td>Crowdfund Comments / Moderation service (BR-19)</td><td>Optional comment persistence/moderation</td><td class="brid">BR-13 (future)</td></tr>
+      <tr><td>Ztor playback authz / entitlement</td><td>Eligibility + geoblock</td><td class="brid">BR-02, BR-04</td></tr>
+      <tr><td>Ztor session / profile</td><td>Identity, avatars, host assertion</td><td class="brid">BR-03, BR-14</td></tr>
+      <tr><td>Demo <code>/api/ably-auth</code></td><td>Token endpoint starting point</td><td class="brid">BR-03</td></tr>
+    </tbody>
+  </table></div>
+
+  <!-- OPEN QUESTIONS -->
+  <div class="section-title" id="open">§4 · Open questions</div>
+  <div class="section-sub">Chips: <span class="oq-assumed">✓ ASSUMED</span> · <span class="oq-pending">🟡 PENDING</span> · <span class="oq-future">⏸ FUTURE</span></div>
+  <div class="panel"><table>
+    <thead><tr><th style="width:50px">#</th><th>Question</th><th style="width:120px">Owner</th><th style="width:170px">Status</th></tr></thead>
+    <tbody>
+      <tr><td class="brid">O1</td><td>Replay/VOD after live — does the ticket include replay?</td><td>Product</td><td><span class="oq-pending">🟡 PENDING</span></td></tr>
+      <tr><td class="brid">O2</td><td>Ticket limited quantity? Can you buy after live starts?</td><td>Product</td><td><span class="oq-pending">🟡 PENDING</span></td></tr>
+      <tr><td class="brid">O3</td><td>Refund policy for missing the live event?</td><td>Product/Ops</td><td><span class="oq-pending">🟡 PENDING</span></td></tr>
+      <tr><td class="brid">O4</td><td>How does revenue from Watch Party flow to licensor accounts + rev-share %?</td><td>IT/Finance</td><td><span class="oq-pending">🟡 PENDING</span> <span class="remark">(ops follow-up)</span></td></tr>
+      <tr><td class="brid">O5</td><td>Keep the Rent button after buying a watch-party ticket? (double-charge confusion)</td><td>Design</td><td><span class="oq-pending">🟡 PENDING</span></td></tr>
+      <tr><td class="brid">O6</td><td>Participant-cap default + per-campaign override mechanism</td><td>Ops/Eng</td><td><span class="oq-assumed">✓ ASSUMED</span> <span class="remark">backend config</span></td></tr>
+      <tr><td class="brid">O7</td><td>Persist/moderate comments beyond Ably rewind?</td><td>Product</td><td><span class="oq-future">⏸ FUTURE</span> <span class="remark">(reuse BR-19)</span></td></tr>
+      <tr><td class="brid">O8</td><td>Voice chat (talk-while-watching)?</td><td>Product</td><td><span class="oq-future">⏸ FUTURE</span> <span class="remark">(LiveKit/Daily)</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <!-- PHASING -->
+  <div class="section-title" id="phasing">§5 · Phasing</div>
+  <div class="phase">
+    <div class="pname">PH-1 · Realtime core in Ztor</div>
+    <div class="pbrs">BR-03 · BR-06 · BR-09 · BR-10 · BR-11 · BR-13 · BR-14</div>
+    <div class="pwhy">Demo-proven mechanism embedded in the Ztor shell with real identity + scoped tokens. Usable internal co-watch.</div>
+  </div>
+  <div class="phase">
+    <div class="pname">PH-2 · Entitlement &amp; real content</div>
+    <div class="pbrs">BR-01 · BR-02 · BR-04 · BR-12</div>
+    <div class="pwhy">Gating + HLS/DRM. First licensed, ticketed watch party.</div>
+  </div>
+  <div class="phase">
+    <div class="pname">PH-3 · Premiere lifecycle &amp; metrics</div>
+    <div class="pbrs">BR-05 · BR-07 · BR-08 · BR-15</div>
+    <div class="pwhy">Scheduled premiere (F《我要衝線》), capacity caps, and reporting. 💡 BR-05 / BR-15 can defer past first premiere.</div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Ztor Watch Party · BRD v1 (DRAFT) · 2026-06-07 · mirrors Beamco Crowdfund BRD format ·
+  reference demo at <code>ztor-watchparty.vercel.app</code> · companion: <a href="ztor-watchparty-architecture.html">solution architecture</a>
+</div>
+</body>
+</html>
