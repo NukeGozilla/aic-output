@@ -134,6 +134,13 @@
           <div class="row"><div class="label">Phone</div><div class="field"></div></div>
           <div class="row"><div class="label">Role</div><div class="field">Tastemaker <span class="chev">▾</span></div></div>
           <div class="row">
+            <div class="label">Mode</div>
+            <div class="new-wrap new" style="flex:1">
+              <span class="badge-new">NEW</span>
+              <div class="field">Manual <span class="chev">▾</span></div>
+            </div>
+          </div>
+          <div class="row">
             <div class="label">Commission</div>
             <div class="new-wrap new" style="flex:1">
               <span class="badge-new">NEW</span>
@@ -151,9 +158,9 @@
         <div class="notes">
           <b>Behaviour</b>
           <ul>
-            <li>Field appears <b>only when Role = Tastemaker</b> (BR-01).</li>
-            <li>Dropdown is locked to <span class="tag">10%</span><span class="tag">12%</span><span class="tag">15%</span> — no free typing (BR-02).</li>
-            <li>On Confirm: save <code>rate</code> + keep <code>commission_mode="manual"</code> + timestamp; write audit row (BR-03, BR-07).</li>
+            <li>Both <b>Mode</b> and <b>Commission</b> fields appear <b>only when Role = Tastemaker</b> (BR-01).</li>
+            <li><b>Mode = Manual</b> → Commission dropdown is editable, locked to <span class="tag">10%</span><span class="tag">12%</span><span class="tag">15%</span> (BR-02, BR-06).</li>
+            <li>On Confirm: save <code>commission_mode="manual"</code> + <code>rate</code> + timestamp; write audit row (BR-03, BR-07).</li>
           </ul>
         </div>
       </div>
@@ -169,6 +176,13 @@
           <div class="row"><div class="label">Phone</div><div class="field"></div></div>
           <div class="row"><div class="label">Role</div><div class="field">Tastemaker <span class="chev">▾</span></div></div>
           <div class="row">
+            <div class="label">Mode</div>
+            <div class="new-wrap new" style="flex:1">
+              <span class="badge-new">NEW</span>
+              <div class="field">Auto <span class="chev">▾</span></div>
+            </div>
+          </div>
+          <div class="row">
             <div class="label">Commission</div>
             <div class="new-wrap" style="flex:1">
               <div class="field disabled">15% <span class="auto-pill">Auto · updated monthly</span></div>
@@ -180,7 +194,7 @@
         <div class="notes">
           <b>Behaviour</b>
           <ul>
-            <li>Read-only — when <code>commission_mode = auto</code>, admin <b>cannot</b> edit; value is set by the monthly engine (BR-05, BR-09).</li>
+            <li>Admin sets <b>Mode = Auto</b> → the Commission % becomes read-only and is owned by the monthly engine (BR-05, BR-06, BR-09).</li>
             <li>Pill shows it is system-managed so admin doesn't expect to change it (BR-05 / US-02).</li>
             <li>% derived from prior-month gross revenue → tier table (thresholds TBD by marketing).</li>
           </ul>
@@ -191,10 +205,10 @@
         <h3>Scope notes for dev</h3>
         <b style="color:#fff">In scope here:</b> the back-office Commission selector only (the two states above).
         &nbsp;<b style="color:#fff">Out of scope:</b> the front-end profile display of the % — that lives on the user profile page and the visual is owned by the designer; backend just exposes it via API (BR-11).<br><br>
-        <b style="color:#fff">Two models, one flag:</b> a single <code>commission_mode</code> per TM drives both logic sets — there is <b>no</b> "invited/non-invited" concept in the system.
-        <span class="tag">P0 / PH-01</span> <code>commission_mode = manual</code> → admin selects from 10/12/15 (State A).
-        <span class="tag">P1 / PH-02</span> <code>commission_mode = auto</code> → monthly auto-calc from gross revenue (State B), gated on revenue-data feed + marketing-confirmed tiers.<br><br>
-        A TM record carries: <code>commission_rate</code> · <code>commission_mode = manual | auto</code> (defaults to <code>manual</code>) · <code>updated_at</code>. The <code>commission_mode</code> flag decides whether State A or State B renders.
+        <b style="color:#fff">Two models, one flag:</b> the admin sets <code>commission_mode</code> via the new <b>Mode</b> dropdown (Manual / Auto) — there is <b>no</b> "invited/non-invited" concept in the system.
+        <span class="tag">P0 / PH-01</span> <code>Mode = Manual</code> → admin selects % from 10/12/15 (State A).
+        <span class="tag">P1 / PH-02</span> <code>Mode = Auto</code> → % becomes read-only, monthly auto-calc from gross revenue (State B), gated on revenue-data feed + marketing-confirmed tiers.<br><br>
+        A TM record carries: <code>commission_rate</code> · <code>commission_mode = manual | auto</code> (defaults to <code>manual</code>) · <code>updated_at</code>. The <b>Mode</b> field writes <code>commission_mode</code>, which decides whether State A or State B renders.
       </div>
     </div>
   </div>
