@@ -283,7 +283,7 @@
 
 <header class="canvas-header">
   <div class="brand">ztor.<small>BETA</small></div>
-  <div class="title">eShop — User Flow &amp; Architecture · wireframe v0.2 (draft)</div>
+  <div class="title">eShop — User Flow &amp; Architecture · wireframe v0.4 (draft)</div>
   <div class="meta">
     <span class="chip"><span class="swatch" style="background:var(--yellow)"></span>New build</span>
     <span class="chip"><span class="swatch" style="background:#e8f7ea"></span>Existing / reused</span>
@@ -298,22 +298,22 @@
   <section class="board" aria-labelledby="flows-h">
     <div class="board-title">
       <h2 id="flows-h">1 · User Flows</h2>
-      <span class="sub">three actors · ops-gated launch, artist-authored promotion, fan checkout</span>
+      <span class="sub">three actors · Creator Studio auto-creation · dual-currency checkout (fiat + POPCORN)</span>
     </div>
     <div class="board-rule"></div>
 
     <div class="lane">
-      <div class="lane-head"><span class="dot" style="background:var(--purple)"></span>Ops (Back Office)</div>
+      <div class="lane-head"><span class="dot" style="background:var(--purple)"></span>Admin (Creator Studio)</div>
       <div class="flow">
-        <div class="step step--new"><b>Create shop</b><span class="en">BO · same pattern as crowdfund</span></div>
+        <div class="step step--new"><b>Create creator profile</b><span class="en">Creator Studio · handle set here · Store account linked</span></div>
         <div class="arrow"></div>
-        <div class="step step--new"><b>Set handle</b><span class="en">vanity slug · uniqueness check</span><span class="path">/shop/:handle</span></div>
+        <div class="step step--new"><b>eShop auto-generated</b><span class="en">created together with the profile · no separate step</span></div>
         <div class="arrow"></div>
-        <div class="step step--new"><b>Link creator</b><span class="en">search existing Ztor user → attach creator profile</span></div>
+        <div class="step step--new"><b>Pick creator → manage</b><span class="en">opens Product/Orders/Reports as that artist's role · admin has no global view</span></div>
         <div class="arrow"></div>
-        <div class="step"><b>Review products</b><span class="en">listings, pricing, media</span></div>
+        <div class="step step--new"><b>Add products</b><span class="en">dual pricing: cash base + POPCORN ref · separate fields</span></div>
         <div class="arrow"></div>
-        <div class="step step--new"><b>Publish</b><span class="en">shop visible on frontend</span></div>
+        <div class="step step--new"><b>Publish</b><span class="en">CMS surfaces Published shops only · manual + conditional sort</span></div>
       </div>
     </div>
 
@@ -324,11 +324,11 @@
         <div class="arrow"></div>
         <div class="step"><b>Ztor account</b><span class="en">existing user DB · no separate artist auth</span></div>
         <div class="arrow"></div>
-        <div class="step step--new"><b>Creator profile</b><span class="en">entity on user · has_shop flag</span></div>
+        <div class="step step--new"><b>Creator profile</b><span class="en">created by Admin in Creator Studio · approval flow TBC w/ business</span></div>
         <div class="arrow"></div>
-        <div class="step"><b>Add products</b><span class="en">existing artist portal (star-web) or Ztor BO — D5 open</span></div>
+        <div class="step"><b>Shop run by internal staff</b><span class="en">v1 = admin-operated · artist SSO self-serve is phase 2</span></div>
         <div class="arrow"></div>
-        <div class="step step--new"><b>Author drop post</b><span class="en">feed post + product card · personalized</span></div>
+        <div class="step step--new"><b>Author drop post</b><span class="en">optional intro post on listing → Store social feed</span></div>
         <div class="arrow"></div>
         <div class="step"><b>Promote URL</b><span class="en">share /shop/:handle on socials</span></div>
       </div>
@@ -341,11 +341,13 @@
         <div class="arrow"></div>
         <div class="step step--new"><b>Browse shop</b><span class="path">/shop/:handle</span></div>
         <div class="arrow"></div>
-        <div class="step step--new"><b>Product detail</b><span class="en">price in HKD · variants</span></div>
+        <div class="step step--new"><b>Product detail</b><span class="en">cash + POPCORN price shown · variants</span></div>
         <div class="arrow"></div>
-        <div class="step step--money"><b>Checkout</b><span class="en">Stripe / Antom (2C2P) · on-page · Popcorn not in v1</span></div>
+        <div class="step step--money"><b>Checkout</b><span class="en">fiat via Stripe = NEW rail · POPCORN reuses existing flow · platform toggle (Aug: Stripe only)</span></div>
         <div class="arrow"></div>
-        <div class="step step--money"><b>Order confirmed</b><span class="en">revenue → artist wallet · Ztor cut TBD</span></div>
+        <div class="step step--money"><b>Order confirmed</b><span class="en">income stays cash · no refunds in v1</span></div>
+        <div class="arrow"></div>
+        <div class="step step--new"><b>Pickup / delivery</b><span class="en">dynamic QR local pickup · shipping offline v1</span></div>
       </div>
     </div>
 
@@ -357,8 +359,18 @@
       </div>
       <div class="sticky sticky--note">
         <span class="tagline">Note</span>
-        <strong>Ops-gated launch</strong>
-        <ul><li>shop only live after ops links creator + publishes</li><li>mirrors crowdfund BO flow → familiar to team</li></ul>
+        <strong>Shop creation lives in Creator Studio</strong>
+        <ul><li>shop auto-created with the creator profile — nothing to create in BO</li><li>only Published shops reach the frontend (CMS-gated)</li></ul>
+      </div>
+      <div class="sticky sticky--note">
+        <span class="tagline">Note</span>
+        <strong>Fiat checkout is net-new for Ztor</strong>
+        <ul><li>today Ztor only takes POPCORN (virtual currency)</li><li>eShop adds a direct fiat rail (Stripe) — new payment integration</li><li>POPCORN purchase reuses the existing flow</li></ul>
+      </div>
+      <div class="sticky sticky--decision">
+        <span class="tagline">Open</span>
+        <strong>Creator registration approval</strong>
+        <ul><li>does opening creator sign-up need a review flow?</li><li>confirm with business team</li></ul>
       </div>
     </div>
   </section>
@@ -367,7 +379,7 @@
   <section class="board" aria-labelledby="screens-h">
     <div class="board-title">
       <h2 id="screens-h">2 · Key Screens</h2>
-      <span class="sub">lo-fi · mobile-first for fan surfaces · desktop for BO</span>
+      <span class="sub">lo-fi · mobile-first for buyer surfaces · desktop for Creator Studio</span>
     </div>
     <div class="board-rule"></div>
 
@@ -403,8 +415,8 @@
         <div class="screen-caption">
           <div class="screen-name">Home — Artist Shops rail<span class="path">/home</span></div>
           <div class="sticky">
-            <strong>Reuses list-rail component</strong>
-            <ul><li>same grammar as movie rails</li><li>card → shop landing</li><li>placement below spotlight, above fold TBC</li></ul>
+            <strong>Reuses CMS Content Blocks</strong>
+            <ul><li>same grammar as movie rails · manual + conditional sort</li><li>only Published shops appear (CMS-gated)</li><li>card → shop landing · placement above fold TBC</li></ul>
           </div>
         </div>
       </div>
@@ -442,7 +454,7 @@
           <div class="screen-name">Creator Profile ≡ Shop landing — one page, two routes<span class="path">/shop/:handle → /social/member/u-:id · tab=shop</span></div>
           <div class="sticky">
             <strong>One page, one data source</strong>
-            <ul><li>vanity URL deep-links to profile with Shop tab active — no separate shop page to build</li><li>Shop tab + category chips render only when <code>has_shop</code></li><li>short shareable URL for socials / bio links</li><li>needs handle registry: unique, reserved words, rename policy</li></ul>
+            <ul><li>vanity URL deep-links to profile with Shop tab active — no separate shop page to build</li><li>Social + Shop content share the same page</li><li>Movie DB person page stays separate → links here via button (not merged)</li><li>Shop tab + category chips render only when <code>has_shop</code></li><li>needs handle registry: unique, reserved words, rename policy</li></ul>
           </div>
         </div>
       </div>
@@ -454,10 +466,12 @@
           <div class="frame-body">
             <div class="wf-img" style="height:110px"></div>
             <div class="wf-line w-70"></div>
-            <div class="wf-row" style="justify-content:space-between"><span class="price" style="font-size:13px">HK$280</span><span class="wf-tag">In stock</span></div>
+            <div class="wf-row" style="justify-content:space-between"><span class="price" style="font-size:13px">US$36 · 🍿 360</span><span class="wf-tag">In stock</span></div>
             <div class="wf-label">Size / Variant</div>
             <div class="wf-row"><span class="wf-tag">S</span><span class="wf-tag wf-tag--on">M</span><span class="wf-tag">L</span><span class="wf-tag">XL</span></div>
-            <div class="wf-btn wf-btn--accent" style="padding:9px">Buy now · Stripe / Antom</div>
+            <div class="wf-label">Pay with</div>
+            <div class="wf-row"><span class="wf-tag wf-tag--on">💳 Card (Stripe)</span><span class="wf-tag">🍿 POPCORN</span></div>
+            <div class="wf-btn wf-btn--accent" style="padding:9px">Buy now</div>
             <div class="wf-hr"></div>
             <div class="wf-row"><div class="wf-avatar" style="width:22px;height:22px"></div><div class="wf-line thin w-40"></div><div class="wf-line thin" style="width:14px;margin-left:auto"></div></div>
             <div class="wf-line thin w-90"></div>
@@ -467,8 +481,8 @@
         <div class="screen-caption">
           <div class="screen-name">Product detail<span class="path">/shop/:handle/p-:id</span></div>
           <div class="sticky">
-            <strong>Checkout owned by commerce module</strong>
-            <ul><li>Stripe: cards · Apple/Google Pay · Antom (2C2P): AlipayHK · Octopus · GCash · JKOPay</li><li>API-only · payment selection stays on Ztor page</li><li>multi-currency / KYC lands Aug 31 wave</li><li>Popcorn NOT in v1 purchase path</li></ul>
+            <strong>Dual-currency checkout</strong>
+            <ul><li>Aug scope: Stripe only · Antom + local wallets longer-term</li><li>fiat + POPCORN both supported · platform-level on/off switch</li><li>dual price fields — cash base, POPCORN auto-converted, stored separately (no rounding drift)</li><li>POPCORN UX = USD-mapped amount, never "buying tokens"</li><li>no refunds in v1 · pickup via dynamic QR or offline shipping</li></ul>
           </div>
         </div>
       </div>
@@ -507,51 +521,95 @@
         </div>
       </div>
 
-      <!-- Screen F: BO shop management -->
-      <div class="screen screen--wide" style="grid-column: 1 / -1;">
-        <div class="frame frame--wide" role="img" aria-label="Wireframe: back-office shop management table with create-shop drawer">
-          <div class="frame-bar"><div class="dots"><i></i><i></i><i></i></div><div class="urlbar">bo.ztor.com/<b>shops</b></div></div>
-          <div class="frame-body" style="flex-direction:row; gap:10px;">
-            <div style="width:110px; flex:none; display:flex; flex-direction:column; gap:6px; border-right:1px solid var(--wf-line); padding-right:10px;">
-              <div class="wf-line w-70"></div>
-              <div class="wf-hr"></div>
-              <span class="wf-tag">Crowdfund</span>
-              <span class="wf-tag wf-tag--on">🛍 Shops</span>
-              <span class="wf-tag">Products</span>
-              <span class="wf-tag">Orders</span>
-              <span class="wf-tag">Creators</span>
-            </div>
-            <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
-              <div class="wf-row" style="justify-content:space-between">
-                <div class="wf-line w-30"></div>
-                <div class="wf-btn wf-btn--primary">+ Create shop</div>
+      <!-- Screen F: Creator Studio — two permission POVs -->
+      <div style="grid-column: 1 / -1; display:flex; flex-direction:column; gap:16px;">
+        <div class="screen-name" style="text-align:left; font-size:13px">Creator Studio — two permission POVs<span class="path">internal tool · Beamco team · artist SSO = phase 2</span></div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(330px, 1fr)); gap:30px;">
+
+          <!-- POV 1 · Admin -->
+          <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+            <div class="frame frame--wide" role="img" aria-label="Wireframe: Creator Studio Admin POV — sees Creators module, must select a creator to open scoped modules">
+              <div class="frame-bar"><div class="dots"><i></i><i></i><i></i></div><div class="urlbar">studio.ztor.com/<b>creators</b></div></div>
+              <div class="frame-body" style="flex-direction:row; gap:10px;">
+                <div style="width:124px; flex:none; display:flex; flex-direction:column; gap:6px; border-right:1px solid var(--wf-line); padding-right:10px;">
+                  <div class="wf-label" style="color:var(--ink)">🛡 Admin</div>
+                  <span class="wf-tag wf-tag--on">👤 Creators</span>
+                  <div class="wf-hr"></div>
+                  <span class="wf-tag" style="opacity:0.4">🔒 Products</span>
+                  <span class="wf-tag" style="opacity:0.4">🔒 Orders</span>
+                  <span class="wf-tag" style="opacity:0.4">🔒 Reports</span>
+                  <div class="wf-label" style="margin-top:2px">locked until a creator is picked</div>
+                </div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+                  <div class="wf-row" style="justify-content:space-between">
+                    <div class="wf-line w-30"></div>
+                    <div class="wf-btn wf-btn--primary">+ Create creator</div>
+                  </div>
+                  <div class="wf-card">
+                    <div class="wf-row"><span class="wf-label" style="width:84px">Creator</span><span class="wf-label" style="width:96px">Handle</span><span class="wf-label" style="width:74px">Status</span><span class="wf-label" style="margin-left:auto">&nbsp;</span></div>
+                    <div class="wf-hr"></div>
+                    <div class="wf-row"><div class="wf-row" style="width:84px"><div class="wf-avatar" style="width:18px;height:18px"></div><div class="wf-line thin" style="width:44px"></div></div><span class="wf-tag" style="width:96px">/shop/denise</span><span class="wf-tag wf-tag--on" style="width:74px">Published</span><span class="wf-btn" style="margin-left:auto">Manage →</span></div>
+                    <div class="wf-row"><div class="wf-row" style="width:84px"><div class="wf-avatar" style="width:18px;height:18px"></div><div class="wf-line thin" style="width:44px"></div></div><span class="wf-tag" style="width:96px">/shop/aya</span><span class="wf-tag" style="width:74px">Draft</span><span class="wf-btn" style="margin-left:auto">Manage →</span></div>
+                    <div class="wf-row"><div class="wf-row" style="width:84px"><div class="wf-avatar" style="width:18px;height:18px"></div><div class="wf-line thin" style="width:44px"></div></div><span class="wf-tag" style="width:96px">/shop/kmt</span><span class="wf-tag" style="width:74px">Draft</span><span class="wf-btn" style="margin-left:auto">Manage →</span></div>
+                  </div>
+                  <div class="wf-label">select a creator → opens Product / Orders / Reports <b>as that artist's role</b> (POV 2)</div>
+                </div>
               </div>
-              <div class="wf-card">
-                <div class="wf-row"><span class="wf-label" style="width:90px">Shop</span><span class="wf-label" style="width:110px">Handle</span><span class="wf-label" style="width:110px">Linked creator</span><span class="wf-label">Status</span></div>
-                <div class="wf-hr"></div>
-                <div class="wf-row"><div class="wf-line thin" style="width:90px"></div><span class="wf-tag" style="width:110px">/shop/denise</span><div class="wf-row" style="width:110px"><div class="wf-avatar" style="width:18px;height:18px"></div><div class="wf-line thin" style="width:50px"></div></div><span class="wf-tag wf-tag--on">Live</span></div>
-                <div class="wf-row"><div class="wf-line thin" style="width:90px"></div><span class="wf-tag" style="width:110px">/shop/aya</span><div class="wf-row" style="width:110px"><div class="wf-avatar" style="width:18px;height:18px"></div><div class="wf-line thin" style="width:50px"></div></div><span class="wf-tag">Draft</span></div>
-                <div class="wf-row"><div class="wf-line thin" style="width:90px"></div><span class="wf-tag" style="width:110px">/shop/kmt</span><div class="wf-row" style="width:110px"><div class="wf-avatar" style="width:18px;height:18px"></div><div class="wf-line thin" style="width:50px"></div></div><span class="wf-tag">Draft</span></div>
-              </div>
             </div>
-            <div style="width:150px; flex:none; border:1.5px dashed var(--wf-line); border-radius:6px; padding:8px; display:flex; flex-direction:column; gap:6px;">
-              <div class="wf-label">Create shop drawer</div>
-              <div class="wf-line thin w-90"></div>
-              <div class="wf-label">Handle</div>
-              <div class="wf-line thin w-90"></div>
-              <div class="wf-label">Link creator (user search)</div>
-              <div class="wf-line thin w-90"></div>
-              <div class="wf-label">Status</div>
-              <div class="wf-row"><span class="wf-tag">Draft</span><span class="wf-tag">Live</span></div>
-              <div class="wf-btn wf-btn--primary">Save</div>
+            <div class="screen-caption" style="max-width:520px;">
+              <div class="screen-name">POV 1 · Admin permission<span class="path">studio.ztor.com/creators</span></div>
+              <div class="sticky" style="max-width:none;">
+                <strong>Creator Management is the only global module</strong>
+                <ul><li>sees the full creator list · creates creators (auto-generates the eShop)</li><li>Product / Orders / Reports are locked until a creator is selected</li><li>picking a creator drops admin into that artist's role-scoped view = POV 2</li></ul>
+              </div>
             </div>
           </div>
+
+          <!-- POV 2 · Creator -->
+          <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+            <div class="frame frame--wide" role="img" aria-label="Wireframe: Creator Studio Creator POV — only own-shop Product, Orders, Reports; no Creators module">
+              <div class="frame-bar"><div class="dots"><i></i><i></i><i></i></div><div class="urlbar">studio.ztor.com/<b>products</b></div></div>
+              <div class="frame-body" style="flex-direction:row; gap:10px;">
+                <div style="width:124px; flex:none; display:flex; flex-direction:column; gap:6px; border-right:1px solid var(--wf-line); padding-right:10px;">
+                  <div class="wf-row"><div class="wf-avatar" style="width:22px;height:22px"></div><div class="wf-line thin" style="width:48px"></div></div>
+                  <div class="wf-label">Creator · own shop</div>
+                  <div class="wf-hr"></div>
+                  <span class="wf-tag wf-tag--on">🛍 Products</span>
+                  <span class="wf-tag">Orders</span>
+                  <span class="wf-tag">Reports</span>
+                  <div class="wf-label" style="margin-top:2px">no Creators module</div>
+                </div>
+                <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+                  <div class="wf-row" style="justify-content:space-between">
+                    <div class="wf-line w-30"></div>
+                    <div class="wf-btn wf-btn--primary">+ Add product</div>
+                  </div>
+                  <div class="wf-card">
+                    <div class="wf-row"><span class="wf-label" style="width:96px">Product</span><span class="wf-label" style="width:66px">Price</span><span class="wf-label" style="width:54px">Stock</span><span class="wf-label">Status</span></div>
+                    <div class="wf-hr"></div>
+                    <div class="wf-row"><div class="wf-row" style="width:96px"><div class="wf-img" style="width:18px;height:18px;flex:none"></div><div class="wf-line thin" style="width:56px"></div></div><span class="price" style="width:66px">US$36</span><span class="wf-tag" style="width:54px">120</span><span class="wf-tag wf-tag--on">Live</span></div>
+                    <div class="wf-row"><div class="wf-row" style="width:96px"><div class="wf-img" style="width:18px;height:18px;flex:none"></div><div class="wf-line thin" style="width:56px"></div></div><span class="price" style="width:66px">US$18</span><span class="wf-tag" style="width:54px">0</span><span class="wf-tag">Draft</span></div>
+                    <div class="wf-row"><div class="wf-row" style="width:96px"><div class="wf-img" style="width:18px;height:18px;flex:none"></div><div class="wf-line thin" style="width:56px"></div></div><span class="price" style="width:66px">US$45</span><span class="wf-tag" style="width:54px">30</span><span class="wf-tag wf-tag--on">Live</span></div>
+                  </div>
+                  <div class="wf-label">scoped to own shop · same screens admin enters after picking this creator</div>
+                </div>
+              </div>
+            </div>
+            <div class="screen-caption" style="max-width:520px;">
+              <div class="screen-name">POV 2 · Creator permission<span class="path">studio.ztor.com/products · via SSO (phase 2)</span></div>
+              <div class="sticky" style="max-width:none;">
+                <strong>Own shop only — no creator switching</strong>
+                <ul><li>access limited to Product / Orders / Reports for their own shop</li><li>no Creators module · cannot see or switch to other artists</li><li>v1 = admin operates this on the artist's behalf · artist SSO self-serve is phase 2</li></ul>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div class="screen-caption">
-          <div class="screen-name">Back Office — Shops module<span class="path">bo · ops only</span></div>
-          <div class="sticky">
-            <strong>Same skeleton as crowdfund BO</strong>
-            <ul><li>create → set handle → link creator → publish</li><li>creator link = user search over existing Ztor DB</li><li>orders + payout views live here too (v1)</li></ul>
+        <div class="notes-row">
+          <div class="sticky sticky--note" style="max-width:none;">
+            <span class="tagline">Permission model</span>
+            <strong>Same modules, role decides the scope</strong>
+            <ul><li>Admin role: Creator Management (global) + role-assumption into any creator's scoped modules</li><li>Creator role: only their own Product / Orders / Reports</li><li>one codebase, one UI — the permission layer gates what each role can reach</li></ul>
           </div>
         </div>
       </div>
@@ -563,7 +621,7 @@
   <section class="board" aria-labelledby="arch-h">
     <div class="board-title">
       <h2 id="arch-h">3 · Architecture Sketch</h2>
-      <span class="sub">wrap Beamco commerce module as multi-tenant microservice · ZTor-api middleware · creator_profile bridges identity</span>
+      <span class="sub">commerce microservice (Beamco team) · Ztor team owns its own client API gateway · dual-currency money path</span>
     </div>
     <div class="board-rule"></div>
 
@@ -572,20 +630,21 @@
       <div class="arch-col">
         <div class="arch-col-head">Clients</div>
         <div class="node">
-          <h4>Ztor Web FE <span class="badge badge--exist">Existing</span></h4>
+          <h4>Ztor Web FE <span class="badge badge--exist">Eric team</span></h4>
           <ul>
+            <li>Store FE as <b>Widget</b> — accelerates Jul 30 target (pending Eric confirm)</li>
             <li>Home rail · Artist Shops <span class="badge badge--new">New</span></li>
-            <li>Creator profile + Shop tab <span class="badge badge--new">New</span></li>
-            <li><span class="path">/shop/:handle</span> + product pages <span class="badge badge--new">New</span></li>
+            <li>Creator profile + Shop tab · <span class="path">/shop/:handle</span> <span class="badge badge--new">New</span></li>
             <li>Feed · product-card post type <span class="badge badge--new">New</span></li>
           </ul>
         </div>
-        <div class="node">
-          <h4>Back Office <span class="badge badge--exist">Existing</span></h4>
+        <div class="node node--new">
+          <h4>Creator Studio <span class="badge badge--new">New · Beamco team</span></h4>
           <ul>
-            <li>Shops module <span class="badge badge--new">New</span></li>
-            <li>create / handle / link creator / publish</li>
-            <li>orders + payout views</li>
+            <li>creator profile → eShop auto-generated</li>
+            <li>products · orders · reports · publish gating</li>
+            <li>role-scoped: Admin = creator mgmt + role-assumption · Creator = own shop only</li>
+            <li>internal tool v1 · artist SSO phase 2</li>
           </ul>
         </div>
         <div class="node node--dashed">
@@ -615,18 +674,20 @@
         </div>
         <div class="arch-link">tenant-scoped calls via</div>
         <div class="node node--new">
-          <h4>ZTor-api middleware <span class="badge badge--new">New</span></h4>
+          <h4>Ztor client API gateway <span class="badge badge--new">New · Eric team</span></h4>
           <ul>
+            <li>Ztor owns its own gateway — does NOT reuse Beamco fans-site gateway</li>
             <li>maps Ztor session → commerce tenant context</li>
-            <li>same pattern as Events / Bookyay: open API + middleware</li>
+            <li>Creator Studio has its own gateway — Beamco team</li>
           </ul>
         </div>
         <div class="arch-link">calls</div>
         <div class="node">
-          <h4>Beamco commerce module <span class="badge badge--exist">Existing</span></h4>
+          <h4>Beamco commerce module <span class="badge badge--exist">Existing · Beamco team</span></h4>
           <ul>
             <li>Shop · Product · Inventory · Order (+ <span class="path">base</span>: auth · tenants · payment)</li>
             <li>multi-tenant by design — ZTor a named tenant in original arch</li>
+            <li>movie orders &amp; eShop orders stay in separate DBs</li>
             <li>⚠ API spec undocumented · shop UAT bugs in flight</li>
           </ul>
         </div>
@@ -638,28 +699,27 @@
       </div>
 
       <div class="arch-col">
-        <div class="arch-col-head">Money</div>
+        <div class="arch-col-head">Money &amp; Fulfillment</div>
         <div class="node node--money">
-          <h4>Stripe + Antom (2C2P) <span class="badge badge--exist">Existing</span></h4>
-          <ul><li>Stripe: cards · Apple/Google Pay · API refunds</li><li>Antom: AlipayHK · Octopus · GCash · Maya · JKOPay</li><li>owned by commerce/base · on-page checkout, API-only</li></ul>
+          <h4>Fiat rail · Stripe <span class="badge badge--new">New for Ztor</span></h4>
+          <ul><li>Ztor has only ever taken POPCORN — direct fiat is a net-new integration</li><li>cards · Apple/Google Pay · on-page, API-only · Aug = Stripe only</li><li>longer-term: Antom local wallets · PayPal · Alipay · WeChat Pay · LINE Pay · 街口 · 悠遊卡 (Jeff documenting)</li><li>no refunds in v1</li></ul>
+        </div>
+        <div class="node node--money">
+          <h4>POPCORN rail <span class="badge badge--exist">Existing Ztor flow</span></h4>
+          <ul><li>reuses Ztor's virtual-currency purchase — new part is POPCORN-for-merch</li><li>both rails toggle on/off at platform level</li><li>dual price fields: cash base + auto-converted POPCORN, stored separately</li><li>UX shows USD-mapped amount — never "buying tokens"</li></ul>
         </div>
         <div class="arch-link">settles into</div>
         <div class="node node--money">
           <h4>Artist wallet <span class="badge badge--exist">Existing · base module</span></h4>
           <ul>
-            <li>categorized income: shop · events · crowdfund</li>
-            <li>physical merch = 0% platform fee today</li>
-            <li>payout mechanics undocumented → confirm w/ Sam</li>
+            <li>income stays CASH only — POPCORN payouts deferred (legal / scale)</li>
+            <li>Stripe Connect direct-bank settlement — research open</li>
+            <li>Ztor platform cut TBD: 0% today vs 60/40 vision · Alex pushes full-POPCORN</li>
           </ul>
         </div>
-        <div class="arch-link">maps into</div>
-        <div class="node node--money">
-          <h4>Ztor revenue waterfall <span class="badge badge--open">Open</span></h4>
-          <ul><li>Ztor platform cut TBD: 0% today vs 60/40 vision</li><li>ledger mapping for "Follow the Money" reporting</li><li>multi-currency / KYC — Aug 31 wave</li></ul>
-        </div>
-        <div class="node node--dashed">
-          <h4>Popcorn wallet <span class="badge badge--exist">Existing</span></h4>
-          <ul><li>NOT in eShop v1 purchase path</li><li>future option: popcorn-only drops / discounts</li></ul>
+        <div class="node node--new">
+          <h4>Dynamic QR pickup <span class="badge badge--open">Blocker · scope TBD</span></h4>
+          <ul><li>only in-system fulfillment v1 · shipping handled offline</li><li>token/ID link, JS-generated · refresh 5–30s (anti-screenshot) · operator validates ID</li><li>needs solutioning · HK/TW logistics provider TBD</li></ul>
         </div>
       </div>
 
@@ -672,29 +732,29 @@
         <ul><li>one primitive for eShop + Sept crowdfund merge</li><li>avoids role sprawl per feature</li></ul>
       </div>
       <div class="sticky sticky--decision">
-        <span class="tagline">Decision D2 · narrowed</span>
-        <strong>Checkout stays with commerce module</strong>
-        <ul><li>Stripe + Antom · on-page, API-only</li><li>still open: Ztor platform cut + waterfall mapping</li></ul>
+        <span class="tagline">Decision D2 · partial</span>
+        <strong>Dual-currency in, payouts cash</strong>
+        <ul><li>fiat + POPCORN checkout · platform-level toggle</li><li>income stays cash · POPCORN payouts deferred</li><li>still open: platform cut + Stripe Connect settlement</li></ul>
       </div>
       <div class="sticky sticky--assume">
         <span class="tagline">Decision D3 · resolved</span>
         <strong>Wrap commerce module as microservice</strong>
-        <ul><li>multi-tenant by design · ZTor a named tenant from day one</li><li>Jun 11 Core meeting · Aug 12 release wave</li></ul>
+        <ul><li>multi-tenant by design · ZTor a named tenant from day one</li><li>gateway split: Ztor team owns client gateway · Beamco owns Creator Studio gateway</li></ul>
       </div>
       <div class="sticky sticky--assume">
         <span class="tagline">Decision D4 · resolved</span>
-        <strong>Physical merch + bundled digital</strong>
-        <ul><li>standalone digital out of MVP scope</li><li>shipping: Beamco-managed or self-managed · refunds Stripe API only</li></ul>
+        <strong>Physical goods + bundles only</strong>
+        <ul><li>excludes virtual goods · music · event tickets · membership cards</li><li>no refunds v1 · QR pickup + offline shipping</li></ul>
       </div>
-      <div class="sticky sticky--decision">
-        <span class="tagline">Decision D5 · open</span>
-        <strong>Artist admin surface</strong>
-        <ul><li>keep Beamco star-web portal vs fold into Ztor BO</li><li>affects onboarding + product mgmt flow</li></ul>
+      <div class="sticky sticky--assume">
+        <span class="tagline">Decision D5 · resolved</span>
+        <strong>Admin surface = Creator Studio</strong>
+        <ul><li>v1 admin-operated via Creator list layer</li><li>artist SSO self-serve = phase 2</li><li>internal-tool quality bar</li></ul>
       </div>
       <div class="sticky sticky--note">
         <span class="tagline">Schedule</span>
-        <strong>Aug 12 release wave</strong>
-        <ul><li>Creator Studio swimlane · eShop ships first</li><li>no BRD or task breakdown yet</li><li>2.0 roadmap shift pending — eShop unaffected</li></ul>
+        <strong>Jul 30 internal · Aug wk-1 launch</strong>
+        <ul><li>Widget FE approach — pending Eric confirm</li><li>QR generator is an Asana blocker</li><li>no BRD or task breakdown yet</li></ul>
       </div>
     </div>
   </section>
@@ -702,10 +762,10 @@
 </main>
 
 <footer class="canvas-footer">
-  Ztor eShop wireframe v0.2 · drafted 2026-06-11 · rev 2026-06-12 with Beamco commerce-module ground truth ·
+  Ztor eShop wireframe v0.4 · 2026-06-15 ·
   companion to <code>aic-output/ztor/ztor-sitemap.html</code> (v1.15) ·
   visual system: Ztor sitemap canvas style · lo-fi frames are layout intent, not visual design ·
-  D1–D2 proposed · D3–D4 resolved · D5 open.
+  D1 proposed · D2 partial · D3–D5 resolved · open: QR scope · registration approval · platform cut.
 </footer>
 
 </body>
