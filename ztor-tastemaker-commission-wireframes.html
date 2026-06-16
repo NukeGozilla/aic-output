@@ -8,7 +8,7 @@
   :root{
     --bg:#0a0a0a; --panel:#141414; --field:#1f1f1f; --field2:#262626;
     --text:#f2f2f2; --muted:#8a8a8a; --line:#2a2a2a;
-    --gold1:#c9a36a; --gold2:#a07d4e; --green:#5fb87a; --red:#d9776b; --blue:#6f9bd1;
+    --gold1:#c9a36a; --gold2:#a07d4e; --green:#5fb87a; --red:#d9776b; --blue:#6f9bd1; --teal:#7fc5b5;
   }
   *{box-sizing:border-box}
   body{margin:0;background:#000;color:var(--text);
@@ -35,30 +35,32 @@
   .modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;
     padding:28px 32px 24px;box-shadow:0 24px 60px rgba(0,0,0,.6);position:relative}
   .modal-title{font-size:22px;letter-spacing:1.5px;font-weight:600;margin:4px 0 28px}
-  .close{position:absolute;top:24px;right:26px;color:var(--muted);font-size:22px;cursor:default}
+  .close{position:absolute;top:24px;right:26px;color:var(--muted);font-size:22px;cursor:pointer}
   .row{display:flex;align-items:center;margin-bottom:18px;gap:18px}
   .label{width:120px;flex:none;font-size:15px;color:var(--text)}
   .field{flex:1;background:var(--field);border:none;border-radius:24px;padding:14px 20px;
     color:var(--text);font-size:15px;min-height:50px;display:flex;align-items:center;
     justify-content:space-between}
   .field.placeholder{color:var(--muted)}
+  .field.click{cursor:pointer}
   .chev{color:var(--muted);font-size:13px}
   .field.disabled{opacity:.55}
   .new-wrap{position:relative;border-radius:24px;}
   .new .field{box-shadow:0 0 0 2px var(--gold1);background:#221d14}
   .badge-new{position:absolute;top:-9px;right:14px;background:var(--gold1);color:#1a1206;
-    font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:10px}
-  .auto-pill{background:#2a2a2a;color:#cdb088;border:1px solid #3a3320;font-size:11px;
-    padding:3px 10px;border-radius:12px;margin-left:auto}
+    font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:10px;z-index:2}
   .options{margin-top:8px;background:var(--field2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-  .opt{padding:12px 20px;font-size:15px;cursor:default}
+  .opt{padding:12px 20px;font-size:15px;cursor:pointer}
   .opt:hover{background:#30291b}
   .opt.sel{background:#3a311e;color:var(--gold1);font-weight:600}
   .opt+.opt{border-top:1px solid var(--line)}
   .actions{display:flex;justify-content:flex-end;gap:14px;margin-top:30px}
-  .btn{padding:12px 26px;border-radius:8px;font-size:15px;cursor:default;border:1px solid var(--line);
+  .btn{padding:12px 26px;border-radius:8px;font-size:15px;cursor:pointer;border:1px solid var(--line);
     background:transparent;color:var(--text)}
   .btn.primary{background:linear-gradient(180deg,var(--gold1),var(--gold2));border:none;color:#fff;font-weight:600}
+  .btn.sm{padding:9px 18px;font-size:13px;border-radius:7px}
+  .btn.ghost{color:var(--muted)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
   .notes{margin-top:18px;background:#101010;border:1px dashed #333;border-radius:10px;padding:14px 18px}
   .notes b{color:var(--gold1)}
   .notes ul{margin:8px 0 0;padding-left:18px}
@@ -70,62 +72,191 @@
     font-size:11px;color:#cdb088;margin:0 2px}
   code{background:#1e1e1e;padding:1px 6px;border-radius:4px;color:#cdb088;font-size:12px}
 
-  /* audit table */
+  /* panel + table (list & audit) */
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
     box-shadow:0 24px 60px rgba(0,0,0,.5)}
   .panel-head{display:flex;align-items:center;justify-content:space-between;padding:22px 26px 18px;border-bottom:1px solid var(--line)}
   .panel-head h2{margin:0;font-size:18px;letter-spacing:1px;font-weight:600}
   .panel-head .ctx{color:var(--muted);font-size:13px;margin-top:4px}
   .filters{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:16px 26px;border-bottom:1px solid var(--line);background:#101010}
-  .search{flex:1;min-width:200px;background:var(--field);border:none;border-radius:22px;padding:11px 18px;color:var(--muted);font-size:14px}
-  .pill{background:var(--field);border:1px solid var(--line);border-radius:20px;padding:9px 16px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:8px}
+  .filters .grp{display:flex;gap:8px;align-items:center;flex-wrap:wrap;position:relative}
+  .flabel{color:var(--muted);font-size:11px;letter-spacing:.6px;text-transform:uppercase;margin-right:2px}
+  .search{flex:1;min-width:180px;background:var(--field);border:none;border-radius:22px;padding:11px 18px;color:var(--muted);font-size:14px}
+  .pill{background:var(--field);border:1px solid var(--line);border-radius:20px;padding:9px 16px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
   .pill .chev{color:var(--muted);font-size:11px}
-  .btn-exp{background:linear-gradient(180deg,var(--gold1),var(--gold2));border:none;color:#fff;font-weight:600;border-radius:8px;padding:10px 18px;font-size:13px}
+  .pill.on{background:#3a311e;color:var(--gold1);border-color:var(--gold1);font-weight:600}
+  .btn-exp{background:linear-gradient(180deg,var(--gold1),var(--gold2));border:none;color:#fff;font-weight:600;border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer}
+
+  /* dropdown menu */
+  .menu{position:absolute;z-index:40;top:100%;left:0;margin-top:6px;background:var(--field2);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:185px;box-shadow:0 16px 40px rgba(0,0,0,.6);display:none}
+  .menu.on{display:block}
+  .menu .mi{padding:11px 18px;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;gap:14px}
+  .menu .mi:hover{background:#30291b}
+  .menu .mi.sel{color:var(--gold1)}
+  .menu .mi+.mi{border-top:1px solid var(--line)}
+  .custompanel{display:none;flex-direction:column;gap:9px;padding:13px 18px;border-top:1px solid var(--line);background:#1c1810}
+  .custompanel.on{display:flex}
+  .custompanel label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .custompanel input[type=date]{background:var(--field);border:1px solid var(--line);border-radius:7px;color:var(--text);padding:7px 9px;font-size:12px;color-scheme:dark}
+  .custompanel button{margin-top:2px}
+
+  /* batch action bar */
+  .batchbar{display:flex;align-items:center;gap:16px;padding:14px 26px;background:#221d14;border-bottom:1px solid #4a3f26;flex-wrap:wrap;position:relative}
+  .batchbar.hide{display:none}
+  .batchbar .cnt{font-weight:600;color:var(--gold1);font-size:14px}
+  .batchbar .sep{color:#4a3f26}
+  .miniselect{background:var(--field);border:1px solid #4a3f26;border-radius:8px;padding:9px 14px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;cursor:pointer;position:relative}
+
   table{width:100%;border-collapse:collapse;font-size:14px}
   thead th{text-align:left;color:var(--muted);font-weight:500;font-size:12px;letter-spacing:.6px;text-transform:uppercase;padding:14px 20px;background:#0f0f0f;border-bottom:1px solid var(--line)}
-  tbody td{padding:16px 20px;border-bottom:1px solid #1c1c1c;vertical-align:middle}
+  tbody td{padding:15px 20px;border-bottom:1px solid #1c1c1c;vertical-align:middle}
   tbody tr:hover{background:#171717}
+  tbody tr.selected{background:#1c1810}
+  tbody tr.empty:hover{background:none}
+  .cbx{width:18px;height:18px;border-radius:5px;border:1px solid #555;display:inline-flex;align-items:center;justify-content:center;flex:none;color:transparent;font-size:12px;cursor:pointer;user-select:none}
+  .cbx.ck{background:var(--gold1);border-color:var(--gold1);color:#1a1206;font-weight:800}
+  .cbx.part{background:#4a3f26;border-color:var(--gold1);color:var(--gold1)}
   .ts{color:#cfcfcf;white-space:nowrap}
   .ts small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
   .tm{font-weight:600}
   .tm small{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:2px}
+  .rev{font-variant-numeric:tabular-nums;font-weight:600}
+  .rev small{display:block;color:var(--muted);font-weight:400;font-size:11px;margin-top:2px}
   .pct{font-variant-numeric:tabular-nums;font-weight:600}
   .old{color:var(--muted);text-decoration:line-through;font-weight:500}
   .arrow{color:var(--muted);margin:0 7px}
   .up{color:var(--green)} .down{color:var(--red)}
+  .band{display:inline-block;font-size:11px;color:#cdb088;background:#1e1a12;border:1px solid #3a3320;border-radius:6px;padding:2px 8px}
+  .stat{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:11px;border:1px solid #244a30;color:var(--green);background:#10240f}
   .chip{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.4px;padding:3px 10px;border-radius:11px;border:1px solid}
   .chip.manual{color:var(--gold1);border-color:#4a3f26;background:#241d11}
-  .chip.auto{color:var(--blue);border-color:#28384a;background:#121d28}
+  .chip.batch{color:var(--teal);border-color:#27433c;background:#10211d}
   .chip.create{color:var(--green);border-color:#244a30;background:#10240f}
   .actor{display:flex;align-items:center;gap:9px}
   .avi{width:26px;height:26px;border-radius:50%;background:#33291a;color:var(--gold1);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
-  .avi.sys{background:#1c2733;color:var(--blue)}
-  .note{color:#bdbdbd;font-size:13px;max-width:200px}
+  .note{color:#bdbdbd;font-size:13px;max-width:230px}
   .note.empty{color:#555}
   .foot{display:flex;align-items:center;justify-content:space-between;padding:16px 26px;color:var(--muted);font-size:13px}
   .pager{display:flex;gap:6px}
-  .pg{width:30px;height:30px;border-radius:7px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text)}
+  .pg{width:30px;height:30px;border-radius:7px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text);cursor:pointer}
   .pg.on{background:var(--gold1);color:#1a1206;border-color:var(--gold1);font-weight:700}
   .legend{margin-top:18px;background:#0e0e0e;border:1px dashed #333;border-radius:10px;padding:14px 20px;font-size:13px;color:#bdbdbd;line-height:1.5}
   .legend b{color:var(--gold1)}
+
+  /* overlay + toast */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:flex-start;justify-content:center;padding:8vh 16px 16px;z-index:50}
+  .overlay.on{display:flex}
+  .overlay .modal{width:480px;max-width:100%}
+  .confirm{width:420px!important}
+  .confirm p{font-size:14px;color:#cfcfcf;line-height:1.5;margin:0 0 4px}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(8px);background:#16241a;border:1px solid #2f7a47;color:#cfeeda;padding:13px 22px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:60}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .hint{display:inline-block;background:#10211d;border:1px solid #27433c;color:var(--teal);font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;margin-left:8px;vertical-align:middle}
 </style>
 </head>
 <body>
   <h1>Ztor — Tastemaker Commission (分成比例)</h1>
-  <div class="sub">Wireframes for dev handoff · 2026-06-10 · pairs with BR <code>ztor-tastemaker-commission-br-2026-06-10</code> · single <code>commission_mode = manual | auto</code> flag drives both logic sets</div>
+  <div class="sub">Wireframes for dev handoff · updated 2026-06-15 · pairs with the Notion BRD · <b style="color:#cdb088">Auto monthly engine deferred</b> — Ops manages rates manually, with a revenue-band filter + batch tool <span class="hint">View 1 is interactive — try the band pills, window, checkboxes, Apply &amp; Edit</span></div>
 
   <div class="tabs">
-    <button class="tab on" data-v="v1">1 · Edit User — Commission selector</button>
-    <button class="tab" data-v="v2">2 · Commission Audit Log</button>
+    <button class="tab on" data-v="v1">1 · Tastemaker List — Revenue filter &amp; batch rates</button>
+    <button class="tab" data-v="v2">2 · Edit User — Commission selector</button>
+    <button class="tab" data-v="v3">3 · Commission Audit Log</button>
   </div>
 
-  <!-- ============ VIEW 1 ============ -->
+  <!-- ============ VIEW 1 — TASTEMAKER LIST (INTERACTIVE) ============ -->
   <div class="view on" id="v1">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>TASTEMAKER LIST</h2>
+          <div class="ctx">Filter by gross-revenue band over a chosen window, multi-select, then batch-set the commission % — replaces the deferred auto engine</div>
+        </div>
+        <button class="btn-exp" onclick="toast('Exported '+visibleRows().length+' rows (current band + window) to CSV')">⤓ Export CSV</button>
+      </div>
+
+      <!-- filters -->
+      <div class="filters">
+        <div class="search">🔍&nbsp; Search by Tastemaker name or email…</div>
+        <div class="grp">
+          <span class="flabel">Gross revenue</span>
+          <div class="pill" id="bandPill"><span id="bandLabel">All</span> <span class="chev">▾</span></div>
+          <div class="menu" id="bandMenu">
+            <div class="mi sel" data-band="all">All revenue <span>✓</span></div>
+            <div class="mi" data-band="low">&lt; HKD 3,000</div>
+            <div class="mi" data-band="mid">HKD 3,000 – 9,999.99</div>
+            <div class="mi" data-band="top">≥ HKD 10,000</div>
+          </div>
+        </div>
+        <div class="grp">
+          <span class="flabel">Period</span>
+          <div class="pill" id="periodPill">📅 <span id="periodLabel">Prior month</span> <span class="chev">▾</span></div>
+          <div class="menu" id="periodMenu" style="min-width:210px">
+            <div class="mi sel" data-period="prior">Prior month <span>✓</span></div>
+            <div class="mi" data-period="mtd">Month-to-date</div>
+            <div class="mi" data-period="30d">Last 30 days</div>
+            <div class="mi" data-period="custom">Custom date…</div>
+            <div class="custompanel" id="customPanel">
+              <label>From <input type="date" id="cFrom" value="2026-03-17"></label>
+              <label>To <input type="date" id="cTo" value="2026-06-15"></label>
+              <button class="btn primary sm" id="cApply">Apply range</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- batch action bar (appears when ≥1 row selected) -->
+      <div class="batchbar hide" id="batchBar">
+        <span class="cnt"><span id="selCount">0</span> Tastemakers selected</span>
+        <span class="sep">│</span>
+        <span style="color:#cfcfcf;font-size:13px">Set commission %</span>
+        <div class="miniselect" id="rateSelect">
+          <span id="rateLabel">15%</span> <span class="chev">▾</span>
+          <div class="menu" id="rateMenu" style="left:0;top:100%">
+            <div class="mi" data-rate="10">10%</div>
+            <div class="mi" data-rate="12">12%</div>
+            <div class="mi sel" data-rate="15">15% <span>✓</span></div>
+          </div>
+        </div>
+        <button class="btn primary sm" id="applyBtn">Apply to selected</button>
+        <button class="btn ghost sm" id="clearBtn">Clear</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:46px"><span class="cbx" id="selAll" title="Select all in band">▢</span></th>
+            <th>Tastemaker</th>
+            <th style="width:200px">Gross revenue</th>
+            <th style="width:120px">Current %</th>
+            <th style="width:110px">Status</th>
+            <th style="width:90px"></th>
+          </tr>
+        </thead>
+        <tbody id="tmBody"><!-- rendered by JS --></tbody>
+      </table>
+
+      <div class="foot">
+        <span id="footText"></span>
+        <div class="pager">
+          <div class="pg">‹</div><div class="pg on">1</div><div class="pg">2</div><div class="pg">3</div><div class="pg">›</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <b>How the batch tool works (BR-12 → BR-14):</b> pick a <b>gross-revenue band</b> (<span class="tag">&lt; 3,000</span><span class="tag">3,000–9,999.99</span><span class="tag">≥ 10,000</span>, all HKD) measured over a <b>period</b> (<span class="tag">prior month</span><span class="tag">month-to-date</span><span class="tag">last 30 days</span><span class="tag">custom range</span>) → tick the rows (or "select all in band") → choose a <b>commission %</b> from <span class="tag">10%</span><span class="tag">12%</span><span class="tag">15%</span> → <b>Apply to selected</b>.<br><br>
+      <b>Free pick — no auto-mapping:</b> the band is purely a <em>filter</em>; the % Ops applies is their own choice (the system does not suggest a rate from the band). One Confirm applies the same % to every selected TM and writes <b>one audit row per TM</b> with source <span class="chip batch" style="vertical-align:middle">BATCH</span> (BR-14, BR-07).<br><br>
+      <b>Notes for dev:</b> changing the <b>Period</b> recomputes each TM's gross revenue (and therefore which band they fall in); band thresholds are inclusive-low / exclusive-high. <b>Custom date</b> opens a from/to range. Selection persists while paging within the active filter. Export CSV respects the active band + period.
+    </div>
+  </div>
+
+  <!-- ============ VIEW 2 — EDIT USER ============ -->
+  <div class="view" id="v2">
     <div class="grid">
 
-      <!-- STATE A -->
       <div class="col">
-        <p class="state-label">State A · commission_mode = manual — admin sets %</p>
+        <p class="state-label">Edit User · Role = Tastemaker — admin sets the commission %</p>
         <div class="modal">
           <span class="close">✕</span>
           <div class="modal-title">EDIT USER</div>
@@ -133,13 +264,6 @@
           <div class="row"><div class="label">Email Address</div><div class="field placeholder">mluthfi840@gmail.com</div></div>
           <div class="row"><div class="label">Phone</div><div class="field"></div></div>
           <div class="row"><div class="label">Role</div><div class="field">Tastemaker <span class="chev">▾</span></div></div>
-          <div class="row">
-            <div class="label">Mode</div>
-            <div class="new-wrap new" style="flex:1">
-              <span class="badge-new">NEW</span>
-              <div class="field">Manual <span class="chev">▾</span></div>
-            </div>
-          </div>
           <div class="row">
             <div class="label">Commission</div>
             <div class="new-wrap new" style="flex:1">
@@ -158,70 +282,38 @@
         <div class="notes">
           <b>Behaviour</b>
           <ul>
-            <li>Both <b>Mode</b> and <b>Commission</b> fields appear <b>only when Role = Tastemaker</b> (BR-01).</li>
-            <li><b>Mode = Manual</b> → Commission dropdown is editable, locked to <span class="tag">10%</span><span class="tag">12%</span><span class="tag">15%</span> (BR-02, BR-06).</li>
-            <li>On Confirm: save <code>commission_mode="manual"</code> + <code>rate</code> + timestamp; write audit row (BR-03, BR-07).</li>
+            <li>The <b>Commission</b> field appears <b>only when Role = Tastemaker</b> (BR-01).</li>
+            <li>Editable dropdown, locked to <span class="tag">10%</span><span class="tag">12%</span><span class="tag">15%</span> (enforced server-side) (BR-02).</li>
+            <li>On Confirm: save <code>rate</code> + timestamp; write an audit row with source <span class="chip manual" style="vertical-align:middle">MANUAL</span> (BR-03, BR-07).</li>
+            <li>This is the <b>single-record</b> path; bulk changes happen on the Tastemaker List (View 1). <b style="color:#cdb088">Try the live Edit on View 1 →</b></li>
           </ul>
         </div>
       </div>
 
-      <!-- STATE B -->
       <div class="col">
-        <p class="state-label">State B · commission_mode = auto — system calculates (P2)</p>
-        <div class="modal">
-          <span class="close">✕</span>
-          <div class="modal-title">EDIT USER</div>
-          <div class="row"><div class="label">Nickname</div><div class="field placeholder">Lutfi</div></div>
-          <div class="row"><div class="label">Email Address</div><div class="field placeholder">mluthfi840@gmail.com</div></div>
-          <div class="row"><div class="label">Phone</div><div class="field"></div></div>
-          <div class="row"><div class="label">Role</div><div class="field">Tastemaker <span class="chev">▾</span></div></div>
-          <div class="row">
-            <div class="label">Mode</div>
-            <div class="new-wrap new" style="flex:1">
-              <span class="badge-new">NEW</span>
-              <div class="field">Auto <span class="chev">▾</span></div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="label">Commission</div>
-            <div class="new-wrap" style="flex:1">
-              <div class="field disabled">15% <span class="auto-pill">Auto · updated monthly</span></div>
-            </div>
-          </div>
-          <div class="row"><div class="label">Status</div><div class="field placeholder">Enable <span class="chev">▾</span></div></div>
-          <div class="actions"><button class="btn">Cancel</button><button class="btn primary">Confirm</button></div>
-        </div>
-        <div class="notes">
-          <b>Behaviour</b>
-          <ul>
-            <li>Admin sets <b>Mode = Auto</b> → the Commission % becomes read-only and is owned by the monthly engine (BR-05, BR-06, BR-09).</li>
-            <li>Pill shows it is system-managed so admin doesn't expect to change it (BR-05 / US-02).</li>
-            <li>% derived from prior-month gross revenue → tier table (thresholds TBD by marketing).</li>
-          </ul>
+        <div class="callout" style="margin-top:34px">
+          <h3>What changed in this version</h3>
+          <b style="color:#fff">Auto mode removed from the UI.</b> The earlier <code>Mode (Manual / Auto)</code> selector and the read-only "Auto · updated monthly" state are <b>deferred</b> (the monthly auto-tiering engine is parked for a later phase). Every TM now carries a single, admin-managed <code>commission_rate</code>; there is no <code>commission_mode</code> flag in P0.<br><br>
+          <b style="color:#fff">Two ways to set a rate:</b>
+          <span class="tag">Single</span> here in Edit User (this view).
+          <span class="tag">Bulk</span> via the revenue-band filter + batch tool on the Tastemaker List (View 1).<br><br>
+          <b style="color:#fff">Out of scope:</b> the front-end profile display of the % — that lives on the user profile page, the visual is owned by the designer; backend just exposes it via API (BR-11).<br><br>
+          A TM record carries: <code>commission_rate</code> · <code>updated_at</code> · <code>updated_by</code>. (The auto-engine fields — <code>commission_mode</code>, tier table, monthly cron — return only if/when Auto is un-deferred.)
         </div>
       </div>
 
-      <div class="callout">
-        <h3>Scope notes for dev</h3>
-        <b style="color:#fff">In scope here:</b> the back-office Commission selector only (the two states above).
-        &nbsp;<b style="color:#fff">Out of scope:</b> the front-end profile display of the % — that lives on the user profile page and the visual is owned by the designer; backend just exposes it via API (BR-11).<br><br>
-        <b style="color:#fff">Two models, one flag:</b> the admin sets <code>commission_mode</code> via the new <b>Mode</b> dropdown (Manual / Auto) — there is <b>no</b> "invited/non-invited" concept in the system.
-        <span class="tag">P0 / PH-01</span> <code>Mode = Manual</code> → admin selects % from 10/12/15 (State A).
-        <span class="tag">P1 / PH-02</span> <code>Mode = Auto</code> → % becomes read-only, monthly auto-calc from gross revenue (State B), gated on revenue-data feed + marketing-confirmed tiers.<br><br>
-        A TM record carries: <code>commission_rate</code> · <code>commission_mode = manual | auto</code> (defaults to <code>manual</code>) · <code>updated_at</code>. The <b>Mode</b> field writes <code>commission_mode</code>, which decides whether State A or State B renders.
-      </div>
     </div>
   </div>
 
-  <!-- ============ VIEW 2 ============ -->
-  <div class="view" id="v2">
+  <!-- ============ VIEW 3 — AUDIT LOG ============ -->
+  <div class="view" id="v3">
     <div class="panel">
       <div class="panel-head">
         <div>
           <h2>COMMISSION CHANGE HISTORY</h2>
           <div class="ctx">All Tastemakers · also openable scoped to one TM from the Edit User screen</div>
         </div>
-        <button class="btn-exp">⤓ Export CSV</button>
+        <button class="btn-exp" onclick="toast('Audit log exported to CSV')">⤓ Export CSV</button>
       </div>
       <div class="filters">
         <div class="search">🔍&nbsp; Search by Tastemaker name or email…</div>
@@ -240,7 +332,23 @@
             <th>Reason / Note</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="auditBody">
+          <tr>
+            <td class="ts">2026-06-15 10:05 <small>GMT+8</small></td>
+            <td><div class="tm">Aaron Lim <small>aaron.lim@gmail.com</small></div></td>
+            <td><span class="old pct">12%</span><span class="arrow">→</span><span class="pct up">15% ↑</span></td>
+            <td><span class="chip batch">BATCH</span></td>
+            <td><div class="actor"><div class="avi">ST</div>Sarah Tan</div></td>
+            <td class="note">Batch · band ≥HKD10k (last 3 mo)</td>
+          </tr>
+          <tr>
+            <td class="ts">2026-06-15 10:05 <small>GMT+8</small></td>
+            <td><div class="tm">Mei Chen <small>meichen@gmail.com</small></div></td>
+            <td><span class="old pct">10%</span><span class="arrow">→</span><span class="pct up">15% ↑</span></td>
+            <td><span class="chip batch">BATCH</span></td>
+            <td><div class="actor"><div class="avi">ST</div>Sarah Tan</div></td>
+            <td class="note">Batch · band ≥HKD10k (last 3 mo)</td>
+          </tr>
           <tr>
             <td class="ts">2026-06-10 14:32 <small>GMT+8</small></td>
             <td><div class="tm">Lutfi <small>mluthfi840@gmail.com</small></div></td>
@@ -248,22 +356,6 @@
             <td><span class="chip manual">MANUAL</span></td>
             <td><div class="actor"><div class="avi">ST</div>Sarah Tan</div></td>
             <td class="note">Promoted per Q3 partner deal</td>
-          </tr>
-          <tr>
-            <td class="ts">2026-06-01 00:30 <small>GMT+8</small></td>
-            <td><div class="tm">Aaron Lim <small>aaron.lim@gmail.com</small></div></td>
-            <td><span class="old pct">10%</span><span class="arrow">→</span><span class="pct up">12% ↑</span></td>
-            <td><span class="chip auto">AUTO</span></td>
-            <td><div class="actor"><div class="avi sys">⚙</div>System · Monthly job</div></td>
-            <td class="note">Tier ↑: gross rev $3,240 (May)</td>
-          </tr>
-          <tr>
-            <td class="ts">2026-06-01 00:30 <small>GMT+8</small></td>
-            <td><div class="tm">Mei Chen <small>meichen@gmail.com</small></div></td>
-            <td><span class="old pct">15%</span><span class="arrow">→</span><span class="pct down">12% ↓</span></td>
-            <td><span class="chip auto">AUTO</span></td>
-            <td><div class="actor"><div class="avi sys">⚙</div>System · Monthly job</div></td>
-            <td class="note">Tier ↓: gross rev $2,110 (May)</td>
           </tr>
           <tr>
             <td class="ts">2026-05-28 09:14 <small>GMT+8</small></td>
@@ -284,19 +376,56 @@
         </tbody>
       </table>
       <div class="foot">
-        <span>Showing 1–5 of 128 entries</span>
+        <span>Showing 1–5 of 132 entries</span>
         <div class="pager">
           <div class="pg">‹</div><div class="pg on">1</div><div class="pg">2</div><div class="pg">3</div><div class="pg">›</div>
         </div>
       </div>
     </div>
     <div class="legend">
-      <b>What each row captures (BR-07):</b> timestamp · tastemaker · old % → new % (with ↑/↓ direction) · source <span class="chip manual" style="vertical-align:middle">MANUAL</span> vs <span class="chip auto" style="vertical-align:middle">AUTO</span> vs <span class="chip create" style="vertical-align:middle">INITIAL</span> · actor (admin name <em>or</em> System for the monthly job) · optional reason/note.<br><br>
-      <b>Notes for dev:</b> rows are <b>immutable</b> (append-only — never edited or deleted). The same table is reused two ways: a global log (shown here) and a per-TM history panel opened from Edit User. Auto rows are written by the monthly engine and stamp the revenue basis in the note. Export CSV respects the active filters. Manual reason/note is optional input on the Edit User Confirm step. Per-row <code>source</code> reflects what produced that change, distinct from the TM's current <code>commission_mode</code>.
+      <b>What each row captures (BR-07):</b> timestamp · tastemaker · old % → new % (with ↑/↓ direction) · source <span class="chip manual" style="vertical-align:middle">MANUAL</span> (single Edit User) vs <span class="chip batch" style="vertical-align:middle">BATCH</span> (revenue-band batch apply) vs <span class="chip create" style="vertical-align:middle">INITIAL</span> (onboarding) · actor (admin name) · optional reason/note.<br><br>
+      <b>Notes for dev:</b> rows are <b>immutable</b> (append-only — never edited or deleted). The same table is reused two ways: a global log (shown here) and a per-TM history panel opened from Edit User. A batch apply writes <b>one row per affected TM</b>, all sharing the same actor + timestamp, with the band + window stamped in the note. <em>Live tip: changes you make on View 1 are prepended here.</em>
     </div>
   </div>
 
+  <!-- ===== Edit User modal overlay (opened from View 1) ===== -->
+  <div class="overlay" id="editOverlay">
+    <div class="modal">
+      <span class="close" onclick="closeEdit()">✕</span>
+      <div class="modal-title">EDIT USER</div>
+      <div class="row"><div class="label">Nickname</div><div class="field placeholder" id="edName">—</div></div>
+      <div class="row"><div class="label">Email Address</div><div class="field placeholder" id="edEmail">—</div></div>
+      <div class="row"><div class="label">Role</div><div class="field">Tastemaker <span class="chev">▾</span></div></div>
+      <div class="row">
+        <div class="label">Commission</div>
+        <div class="new-wrap" style="flex:1">
+          <div class="field click" id="edRateField">12% <span class="chev">▾</span></div>
+          <div class="options" id="edRateOpts" style="display:none">
+            <div class="opt" data-rate="10">10%</div>
+            <div class="opt" data-rate="12">12%</div>
+            <div class="opt" data-rate="15">15%</div>
+          </div>
+        </div>
+      </div>
+      <div class="row"><div class="label">Status</div><div class="field placeholder">Enable <span class="chev">▾</span></div></div>
+      <div class="actions"><button class="btn" onclick="closeEdit()">Cancel</button><button class="btn primary" id="edConfirm">Confirm</button></div>
+    </div>
+  </div>
+
+  <!-- ===== Apply confirm overlay ===== -->
+  <div class="overlay" id="applyOverlay">
+    <div class="modal confirm">
+      <div class="modal-title" style="font-size:18px;margin-bottom:18px">CONFIRM BATCH UPDATE</div>
+      <p id="applyMsg">Set commission to 15% for 3 Tastemakers?</p>
+      <p style="color:var(--muted);font-size:13px;margin-top:10px">This writes one <span class="chip batch" style="vertical-align:middle">BATCH</span> audit row per Tastemaker and cannot be undone.</p>
+      <div class="actions"><button class="btn" onclick="closeApply()">Cancel</button><button class="btn primary" id="applyConfirm">Confirm &amp; apply</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
   <script>
+    /* ---------- tabs ---------- */
     document.querySelectorAll('.tab').forEach(function(t){
       t.addEventListener('click', function(){
         document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});
@@ -305,6 +434,272 @@
         document.getElementById(t.dataset.v).classList.add('on');
       });
     });
+
+    /* ---------- data + state ---------- */
+    var TMS = [
+      {id:1, name:'Devon Ko',  email:'devon.ko@gmail.com',   monthly:10633, rate:15},
+      {id:2, name:'Lutfi',     email:'mluthfi840@gmail.com', monthly:8267,  rate:12},
+      {id:3, name:'Aaron Lim', email:'aaron.lim@gmail.com',  monthly:6100,  rate:12},
+      {id:4, name:'Mei Chen',  email:'meichen@gmail.com',    monthly:4150,  rate:10},
+      {id:5, name:'Priya N.',  email:'priya.n@gmail.com',    monthly:3400,  rate:12},
+      {id:6, name:'Hassan R.', email:'hassan.r@gmail.com',   monthly:2900,  rate:10},
+      {id:7, name:'Sara M.',   email:'sara.m@gmail.com',     monthly:1500,  rate:10},
+      {id:8, name:'Yuki T.',   email:'yuki.t@gmail.com',     monthly:850,   rate:10}
+    ];
+    var state = { period:'prior', customDays:90, custom:{from:'2026-03-17', to:'2026-06-15'}, band:'all', rate:15, selected:new Set(), editId:null };
+
+    function fmt(n){ return 'HKD ' + Math.round(n).toLocaleString('en-US'); }
+    function bandOf(total){ return total >= 10000 ? 'top' : (total >= 3000 ? 'mid' : 'low'); }
+    function bandTag(b){ return b==='top' ? '≥ 10,000' : (b==='mid' ? '3,000–9,999.99' : '< 3,000'); }
+    // each period maps to a fraction of a TM's monthly gross (illustrative)
+    function periodMult(){
+      if(state.period==='prior') return 1;        // last full calendar month
+      if(state.period==='mtd')   return 0.5;       // ~half-month elapsed (15 Jun)
+      if(state.period==='30d')   return 1.05;      // rolling 30 days
+      return state.customDays/30;                  // custom range
+    }
+    function periodShort(){
+      if(state.period==='prior') return 'prior month';
+      if(state.period==='mtd')   return 'month-to-date';
+      if(state.period==='30d')   return 'last 30 days';
+      return 'custom '+state.customDays+'d';
+    }
+    function periodPillLabel(){
+      if(state.period==='prior') return 'Prior month';
+      if(state.period==='mtd')   return 'Month-to-date';
+      if(state.period==='30d')   return 'Last 30 days';
+      return 'Custom ('+state.customDays+'d)';
+    }
+    function rev(tm){ return tm.monthly * periodMult(); }
+    function visibleRows(){
+      return TMS.filter(function(tm){ return state.band==='all' || bandOf(rev(tm))===state.band; });
+    }
+    function initials(name){ return name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase(); }
+
+    /* ---------- render list ---------- */
+    function render(){
+      var rows = visibleRows();
+      var body = document.getElementById('tmBody');
+      body.innerHTML = '';
+      if(rows.length===0){
+        body.innerHTML = '<tr class="empty"><td colspan="6" style="text-align:center;color:#666;padding:34px">No Tastemakers in this band for the selected period.</td></tr>';
+      }
+      rows.forEach(function(tm){
+        var total = rev(tm), b = bandOf(total), sel = state.selected.has(tm.id);
+        var tr = document.createElement('tr');
+        if(sel) tr.className='selected';
+        tr.innerHTML =
+          '<td><span class="cbx '+(sel?'ck':'')+'" data-id="'+tm.id+'">'+(sel?'✓':'▢')+'</span></td>'+
+          '<td><div class="tm">'+tm.name+' <small>'+tm.email+'</small></div></td>'+
+          '<td><div class="rev">'+fmt(total)+' <small>'+periodShort()+' · <span class="band">'+bandTag(b)+'</span></small></div></td>'+
+          '<td><span class="pct">'+tm.rate+'%</span></td>'+
+          '<td><span class="stat">Enabled</span></td>'+
+          '<td><button class="btn sm" data-edit="'+tm.id+'">Edit</button></td>';
+        body.appendChild(tr);
+      });
+      // wire row controls
+      body.querySelectorAll('.cbx').forEach(function(c){
+        c.addEventListener('click', function(){ toggleSel(+c.dataset.id); });
+      });
+      body.querySelectorAll('[data-edit]').forEach(function(btn){
+        btn.addEventListener('click', function(){ openEdit(+btn.dataset.edit); });
+      });
+      // foot + selectAll + batchbar
+      var bandName = state.band==='all' ? 'all bands' : ('band ' + bandTag(state.band));
+      document.getElementById('footText').innerHTML =
+        'Showing '+rows.length+' of '+TMS.length+' Tastemakers · '+bandName+' · '+periodShort()+' · <b style="color:#cdb088">'+state.selected.size+' selected</b>';
+      updateSelectAll(rows);
+      updateBatchBar();
+    }
+
+    function updateSelectAll(rows){
+      var ids = rows.map(function(r){return r.id;});
+      var selVis = ids.filter(function(id){return state.selected.has(id);}).length;
+      var el = document.getElementById('selAll');
+      el.classList.remove('ck','part');
+      if(rows.length && selVis===rows.length){ el.classList.add('ck'); el.textContent='✓'; }
+      else if(selVis>0){ el.classList.add('part'); el.textContent='–'; }
+      else { el.textContent='▢'; }
+    }
+
+    function updateBatchBar(){
+      var bar = document.getElementById('batchBar');
+      document.getElementById('selCount').textContent = state.selected.size;
+      bar.classList.toggle('hide', state.selected.size===0);
+    }
+
+    function toggleSel(id){
+      if(state.selected.has(id)) state.selected.delete(id); else state.selected.add(id);
+      render();
+    }
+
+    function markSel(menu, activeMi){
+      menu.querySelectorAll('.mi').forEach(function(x){
+        x.classList.remove('sel');
+        var last = x.lastElementChild;
+        if(last && last.tagName==='SPAN' && last.textContent.indexOf('✓')>-1) last.remove();
+      });
+      if(activeMi){
+        activeMi.classList.add('sel');
+        var s = document.createElement('span'); s.textContent='✓'; activeMi.appendChild(s);
+      }
+    }
+
+    /* ---------- gross-revenue band dropdown ---------- */
+    var bandPill = document.getElementById('bandPill'), bandMenu = document.getElementById('bandMenu');
+    bandPill.addEventListener('click', function(e){ e.stopPropagation(); closeMenus(bandMenu); bandMenu.classList.toggle('on'); });
+    bandMenu.addEventListener('click', function(e){ e.stopPropagation(); });
+    bandMenu.querySelectorAll('.mi').forEach(function(mi){
+      mi.addEventListener('click', function(){
+        state.band = mi.dataset.band;
+        document.getElementById('bandLabel').textContent = state.band==='all' ? 'All' : bandTag(state.band);
+        markSel(bandMenu, mi);
+        bandMenu.classList.remove('on');
+        render();
+      });
+    });
+
+    /* ---------- period dropdown (prior / mtd / 30d / custom) ---------- */
+    var periodPill = document.getElementById('periodPill'), periodMenu = document.getElementById('periodMenu');
+    var customPanel = document.getElementById('customPanel');
+    periodPill.addEventListener('click', function(e){ e.stopPropagation(); closeMenus(periodMenu); periodMenu.classList.toggle('on'); });
+    periodMenu.addEventListener('click', function(e){ e.stopPropagation(); });
+    function applyPeriod(mi){
+      document.getElementById('periodLabel').textContent = periodPillLabel();
+      markSel(periodMenu, mi);
+      render();
+    }
+    periodMenu.querySelectorAll('.mi[data-period]').forEach(function(mi){
+      mi.addEventListener('click', function(){
+        if(mi.dataset.period==='custom'){ customPanel.classList.toggle('on'); return; }
+        state.period = mi.dataset.period;
+        customPanel.classList.remove('on');
+        periodMenu.classList.remove('on');
+        applyPeriod(mi);
+      });
+    });
+    document.getElementById('cApply').addEventListener('click', function(e){
+      e.stopPropagation();
+      var f = document.getElementById('cFrom').value, t = document.getElementById('cTo').value;
+      if(!f || !t || new Date(t) < new Date(f)){ toast('Pick a valid From → To range'); return; }
+      state.custom = {from:f, to:t};
+      state.customDays = Math.max(1, Math.round((new Date(t) - new Date(f)) / 86400000));
+      state.period = 'custom';
+      customPanel.classList.remove('on');
+      periodMenu.classList.remove('on');
+      applyPeriod(periodMenu.querySelector('.mi[data-period="custom"]'));
+      toast('Period set to custom range '+f+' → '+t+' ('+state.customDays+' days)');
+    });
+
+    /* ---------- batch rate select ---------- */
+    var rateSel = document.getElementById('rateSelect'), rateMenu = document.getElementById('rateMenu');
+    rateSel.addEventListener('click', function(e){ e.stopPropagation(); closeMenus(rateMenu); rateMenu.classList.toggle('on'); });
+    rateMenu.querySelectorAll('.mi').forEach(function(mi){
+      mi.addEventListener('click', function(e){
+        e.stopPropagation();
+        state.rate = +mi.dataset.rate;
+        document.getElementById('rateLabel').textContent = state.rate+'%';
+        rateMenu.querySelectorAll('.mi').forEach(function(x){ x.classList.remove('sel'); x.innerHTML = x.textContent.replace(' ✓',''); });
+        mi.classList.add('sel'); mi.innerHTML = mi.textContent + ' <span>✓</span>';
+        rateMenu.classList.remove('on');
+      });
+    });
+
+    /* ---------- select-all / clear ---------- */
+    document.getElementById('selAll').addEventListener('click', function(){
+      var rows = visibleRows(), ids = rows.map(function(r){return r.id;});
+      var allSel = ids.length && ids.every(function(id){return state.selected.has(id);});
+      if(allSel) ids.forEach(function(id){ state.selected.delete(id); });
+      else ids.forEach(function(id){ state.selected.add(id); });
+      render();
+    });
+    document.getElementById('clearBtn').addEventListener('click', function(){ state.selected.clear(); render(); });
+
+    /* ---------- apply (confirm dialog) ---------- */
+    document.getElementById('applyBtn').addEventListener('click', function(){
+      if(!state.selected.size) return;
+      document.getElementById('applyMsg').innerHTML =
+        'Set commission to <b style="color:var(--gold1)">'+state.rate+'%</b> for <b style="color:var(--gold1)">'+state.selected.size+'</b> selected Tastemaker'+(state.selected.size>1?'s':'')+'?';
+      document.getElementById('applyOverlay').classList.add('on');
+    });
+    function closeApply(){ document.getElementById('applyOverlay').classList.remove('on'); }
+    document.getElementById('applyConfirm').addEventListener('click', function(){
+      var n=0;
+      TMS.forEach(function(tm){
+        if(state.selected.has(tm.id) && tm.rate!==state.rate){
+          addAudit(tm, tm.rate, state.rate, 'BATCH', 'Batch · band '+(state.band==='all'?'all':bandTag(state.band))+' ('+periodShort()+')');
+          tm.rate = state.rate; n++;
+        }
+      });
+      var total = state.selected.size;
+      state.selected.clear();
+      closeApply(); render();
+      toast(n+' of '+total+' Tastemaker'+(total>1?'s':'')+' set to '+state.rate+'% · audit rows written');
+    });
+
+    /* ---------- edit modal ---------- */
+    function openEdit(id){
+      var tm = TMS.find(function(t){return t.id===id;});
+      state.editId = id;
+      document.getElementById('edName').textContent = tm.name;
+      document.getElementById('edEmail').textContent = tm.email;
+      setEdRate(tm.rate);
+      document.getElementById('edRateOpts').style.display='none';
+      document.getElementById('editOverlay').classList.add('on');
+    }
+    function closeEdit(){ document.getElementById('editOverlay').classList.remove('on'); state.editId=null; }
+    var edRate = null;
+    function setEdRate(r){ edRate=r; document.getElementById('edRateField').innerHTML = r+'% <span class="chev">▾</span>'; }
+    document.getElementById('edRateField').addEventListener('click', function(e){
+      e.stopPropagation();
+      var o=document.getElementById('edRateOpts'); o.style.display = o.style.display==='none'?'block':'none';
+    });
+    document.getElementById('edRateOpts').querySelectorAll('.opt').forEach(function(o){
+      o.addEventListener('click', function(){ setEdRate(+o.dataset.rate); document.getElementById('edRateOpts').style.display='none'; });
+    });
+    document.getElementById('edConfirm').addEventListener('click', function(){
+      var tm = TMS.find(function(t){return t.id===state.editId;});
+      if(tm && tm.rate!==edRate){
+        addAudit(tm, tm.rate, edRate, 'MANUAL', '—');
+        tm.rate = edRate;
+        toast(tm.name+' set to '+edRate+'% · audit row written');
+      } else { toast('No change'); }
+      closeEdit(); render();
+    });
+
+    /* ---------- audit prepend ---------- */
+    function addAudit(tm, oldR, newR, source, note){
+      var dir = newR>oldR ? 'up' : 'down', sym = newR>oldR ? '↑' : '↓';
+      var chip = source==='BATCH' ? 'batch' : (source==='MANUAL' ? 'manual' : 'create');
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td class="ts">2026-06-15 '+nowHM()+' <small>GMT+8</small></td>'+
+        '<td><div class="tm">'+tm.name+' <small>'+tm.email+'</small></div></td>'+
+        '<td><span class="old pct">'+oldR+'%</span><span class="arrow">→</span><span class="pct '+dir+'">'+newR+'% '+sym+'</span></td>'+
+        '<td><span class="chip '+chip+'">'+source+'</span></td>'+
+        '<td><div class="actor"><div class="avi">ST</div>Sarah Tan</div></td>'+
+        '<td class="note'+(note==='—'?' empty':'')+'">'+note+'</td>';
+      var body = document.getElementById('auditBody');
+      body.insertBefore(tr, body.firstChild);
+    }
+    function nowHM(){ return '10:'+String(5 + document.querySelectorAll('#auditBody tr').length).padStart(2,'0'); }
+
+    /* ---------- toast + global close ---------- */
+    var toastT=null;
+    function toast(msg){
+      var el=document.getElementById('toast'); el.textContent=msg; el.classList.add('on');
+      clearTimeout(toastT); toastT=setTimeout(function(){ el.classList.remove('on'); }, 2600);
+    }
+    function closeMenus(except){
+      [bandMenu, periodMenu, rateMenu].forEach(function(m){ if(m!==except) m.classList.remove('on'); });
+      customPanel.classList.remove('on');
+    }
+    document.addEventListener('click', function(){ closeMenus(null); document.getElementById('edRateOpts').style.display='none'; });
+    document.querySelectorAll('.overlay').forEach(function(o){
+      o.addEventListener('click', function(e){ if(e.target===o) o.classList.remove('on'); });
+    });
+
+    render();
   </script>
 </body>
 </html>
