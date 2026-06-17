@@ -5,252 +5,418 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AIC Output</title>
   <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #161616;
+      --surface-h: #1c1c1c;
+      --border: #262626;
+      --border-h: #454545;
+      --text: #ededed;
+      --text-2: #a3a3a3;   /* ~7:1 on bg */
+      --text-3: #8c8c8c;   /* ~5.8:1 on bg — meta/dates */
+      --focus: #6ba4ff;
+      /* project accents */
+      --beamco-bg: #1e3a5f; --beamco-fg: #7cb5ff;
+      --ztor-bg: #3b1f4e;   --ztor-fg: #c79bf5;
+      --unified-bg: #3d2900;--unified-fg: #f1c21b;
+      --other-bg: #1f3d2e;  --other-fg: #6ee7b7;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e5e5e5; min-height: 100vh; padding: 3rem 1.5rem; }
-    .container { max-width: 720px; margin: 0 auto; }
-    h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.5rem; color: #fff; }
-    .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2.5rem; }
-    .section { margin-bottom: 2rem; }
-    .section-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #666; margin-bottom: 0.75rem; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 840px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+    /* ---- Sticky header + controls ---- */
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner { max-width: 840px; margin: 0 auto; padding: 1.5rem 1.5rem 1rem; }
+    .head-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    h1 { font-size: 1.6rem; font-weight: 650; color: #fff; letter-spacing: -0.01em; }
+    .subtitle { color: var(--text-3); font-size: 0.85rem; margin-top: 0.15rem; }
+    .count { font-size: 0.8rem; color: var(--text-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+    .controls { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+
+    /* search */
+    .search-wrap { position: relative; display: flex; align-items: center; }
+    .search-wrap svg { position: absolute; left: 0.85rem; width: 16px; height: 16px; color: var(--text-3); pointer-events: none; }
+    #search {
+      width: 100%; padding: 0.7rem 2.5rem 0.7rem 2.5rem;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-size: 0.95rem; font-family: inherit;
+    }
+    #search::placeholder { color: var(--text-3); }
+    #search:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-color: transparent; }
+    #search::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+    .clear-btn {
+      position: absolute; right: 0.5rem; display: none; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border: none; background: transparent; color: var(--text-3);
+      cursor: pointer; border-radius: 6px; font-size: 1.1rem; line-height: 1;
+    }
+    .clear-btn:hover { color: var(--text); background: var(--surface-h); }
+    .clear-btn:focus-visible { outline: 2px solid var(--focus); }
+    .kbd-hint { position: absolute; right: 0.7rem; color: var(--text-3); font-size: 0.7rem;
+      border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; pointer-events: none; }
+
+    .filter-row { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: center; justify-content: space-between; }
+
+    /* sort segmented control */
+    .seg { display: inline-flex; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 3px; gap: 2px; }
+    .seg button {
+      border: none; background: transparent; color: var(--text-2); cursor: pointer;
+      font-size: 0.8rem; font-weight: 500; font-family: inherit; padding: 0.4rem 0.7rem; border-radius: 6px; white-space: nowrap;
+      min-height: 32px; transition: background 0.12s, color 0.12s;
+    }
+    .seg button:hover { color: var(--text); }
+    .seg button[aria-pressed="true"] { background: #2e2e2e; color: #fff; }
+    .seg button:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+
+    /* project chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text-2);
+      font-size: 0.78rem; font-weight: 500; font-family: inherit; padding: 0.35rem 0.7rem; border-radius: 999px;
+      cursor: pointer; min-height: 32px; transition: all 0.12s;
+    }
+    .chip:hover { border-color: var(--border-h); color: var(--text); }
+    .chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+    .chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .chip[data-p="all"] .dot { background: #777; }
+    .chip[data-p="ztor"] .dot { background: var(--ztor-fg); }
+    .chip[data-p="beamco"] .dot { background: var(--beamco-fg); }
+    .chip[data-p="unified"] .dot { background: var(--unified-fg); }
+    .chip[data-p="other"] .dot { background: var(--other-fg); }
+    .chip[aria-pressed="true"] { background: #2a2a2a; color: #fff; border-color: var(--border-h); }
+
+    /* ---- List ---- */
+    main { padding-top: 1.75rem; }
+    .group-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin: 1.75rem 0 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .group-label:first-child { margin-top: 0; }
+    .group-label .gcount { color: #555; font-weight: 500; }
     .file-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    a.file { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1rem; background: #161616; border: 1px solid #262626; border-radius: 8px; text-decoration: none; color: #e5e5e5; transition: all 0.15s ease; }
-    a.file:hover { background: #1a1a1a; border-color: #404040; transform: translateX(2px); }
-    .file-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; flex-shrink: 0; }
-    .beamco .file-icon { background: #1e3a5f; color: #60a5fa; }
-    .ztor .file-icon { background: #3b1f4e; color: #c084fc; }
-    .unified .file-icon { background: #3d2900; color: #f1c21b; }
-    .unified { border-color: #3d2900; }
-    .unified:hover { border-color: #f1c21b; }
-    .other .file-icon { background: #1f3d2e; color: #6ee7b7; }
-    .file-name { font-size: 0.95rem; font-weight: 500; }
-    .file-desc { font-size: 0.8rem; color: #666; margin-top: 2px; }
-    .canonical-badge { display: inline-block; background: rgba(241,194,27,0.18); color: #f1c21b; border: 1px solid #f1c21b; font-size: 0.65rem; font-weight: 600; padding: 1px 7px; border-radius: 10px; margin-left: 0.5rem; letter-spacing: 0.04em; vertical-align: middle; }
+
+    a.file {
+      display: flex; align-items: flex-start; gap: 0.85rem; padding: 0.85rem 1rem;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      text-decoration: none; color: var(--text); transition: background 0.13s, border-color 0.13s, transform 0.13s;
+    }
+    a.file:hover { background: var(--surface-h); border-color: var(--border-h); transform: translateX(2px); }
+    a.file:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+    .file-icon { width: 34px; height: 34px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .file.beamco .file-icon  { background: var(--beamco-bg);  color: var(--beamco-fg); }
+    .file.ztor .file-icon    { background: var(--ztor-bg);    color: var(--ztor-fg); }
+    .file.unified .file-icon { background: var(--unified-bg); color: var(--unified-fg); }
+    .file.other .file-icon   { background: var(--other-bg);   color: var(--other-fg); }
+    .file.unified { border-color: #3d2900; }
+    .file.unified:hover { border-color: var(--unified-fg); }
+
+    .file-main { flex: 1; min-width: 0; }
+    .file-head { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .file-name { font-size: 0.95rem; font-weight: 550; color: var(--text); }
+    .ext-arrow { color: var(--text-3); font-size: 0.85rem; }
+    .file-desc { font-size: 0.8rem; color: var(--text-2); margin-top: 3px; line-height: 1.45; }
+    .file-foot { margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    body.mode-grouped .file-foot { display: none; }
+
+    .pill { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; letter-spacing: 0.02em; }
+    .pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .pill.beamco  { background: rgba(124,181,255,0.13); color: var(--beamco-fg); }
+    .pill.ztor    { background: rgba(199,155,245,0.13); color: var(--ztor-fg); }
+    .pill.unified { background: rgba(241,194,27,0.13);  color: var(--unified-fg); }
+    .pill.other   { background: rgba(110,231,183,0.13); color: var(--other-fg); }
+    .pill.beamco .dot  { background: var(--beamco-fg); }
+    .pill.ztor .dot    { background: var(--ztor-fg); }
+    .pill.unified .dot { background: var(--unified-fg); }
+    .pill.other .dot   { background: var(--other-fg); }
+    .group-tag { font-size: 0.72rem; color: var(--text-3); }
+
+    /* tag + recency badges */
+    .badge { display: inline-block; font-size: 0.62rem; font-weight: 700; padding: 1px 7px; border-radius: 10px; letter-spacing: 0.04em; vertical-align: middle; white-space: nowrap; }
+    .badge.tag { background: rgba(241,194,27,0.18); color: var(--unified-fg); border: 1px solid var(--unified-fg); }
+    .badge.new { background: rgba(110,231,183,0.16); color: var(--other-fg); border: 1px solid rgba(110,231,183,0.5); }
+    .badge.upd { background: rgba(124,181,255,0.16); color: var(--beamco-fg); border: 1px solid rgba(124,181,255,0.5); }
+
+    /* dates column */
+    .file-dates { flex-shrink: 0; text-align: right; font-size: 0.72rem; color: var(--text-3); font-variant-numeric: tabular-nums; line-height: 1.5; padding-top: 2px; min-width: 84px; }
+    .d-mod { color: var(--text-2); }
+    .d-add { color: var(--text-3); }
+    @media (max-width: 540px) {
+      .file-dates { min-width: 64px; }
+      .file-dates .lbl { display: none; }
+    }
+
+    /* empty state */
+    .empty { text-align: center; padding: 4rem 1rem; color: var(--text-3); }
+    .empty strong { color: var(--text-2); }
+    .empty button { margin-top: 1rem; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 0.85rem; }
+    .empty button:hover { border-color: var(--border-h); }
+
+    .footer { margin-top: 3rem; text-align: center; color: #555; font-size: 0.75rem; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>AIC Output</h1>
-    <p class="subtitle">Shared output files for team review</p>
-
-    <div class="section">
-      <div class="section-label">AI Development Workflow <span class="canonical-badge">EN · 中文 · 2026-06-16</span></div>
-      <div class="file-list">
-        <a class="file other" href="ai-dev-workflow-2026-06-16.html">
-          <div class="file-icon">AI</div>
-          <div><div class="file-name">AI Development Workflow — v1</div><div class="file-desc">5-stage BA-driven pipeline · split spec contract (prototype + BRD) · layered QA · role map · bilingual (EN / 繁中)</div></div>
-        </a>
+<body class="mode-grouped">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="head-row">
+        <div>
+          <h1>AIC Output</h1>
+          <p class="subtitle">Shared output files for team review</p>
+        </div>
+        <div class="count" id="count" aria-live="polite"></div>
       </div>
-    </div>
 
-    <div class="section">
-      <div class="section-label">Crowdfund BRD v1 — Unified Music + Movies <span class="canonical-badge">CANONICAL · 2026-05-24</span></div>
-      <div class="file-list">
-        <a class="file unified" href="beamco/crowdfund-brd-v1-2026-05-24.html">
-          <div class="file-icon">BRD</div>
-          <div><div class="file-name">Main BRD — Unified Music + Movies</div><div class="file-desc">51 BRs (BR-1 → BR-49 + BR-C1/C2) · 8 locked decisions · 10 open Qs · IBM Carbon theme</div></div>
-        </a>
-        <a class="file unified" href="beamco/crowdfund-brd-v1-lifecycle.html">
-          <div class="file-icon">LF</div>
-          <div><div class="file-name">Lifecycle</div><div class="file-desc">Setup → Active → Funded → Successful → Released · 4-phase strip + Mermaid flow + backer-POV timeline</div></div>
-        </a>
-        <a class="file unified" href="beamco/crowdfund-brd-v1-state-machine.html">
-          <div class="file-icon">SM</div>
-          <div><div class="file-name">State Machine</div><div class="file-desc">8 states · 13 valid transitions · positioned HTML + SVG arrows · auto-vs-manual matrix</div></div>
-        </a>
-        <a class="file unified" href="beamco/crowdfund-brd-v1-payment-retry.html">
-          <div class="file-icon">PR</div>
-          <div><div class="file-name">Payment Retry & Cancellation</div><div class="file-desc">3-day silent retry → 7-day URL → day-10 waitlist swap → threshold check → cancellation flow</div></div>
-        </a>
-        <a class="file unified" href="beamco/crowdfund-brd-three-way-diff-2026-05-22.html">
-          <div class="file-icon">DIF</div>
-          <div><div class="file-name">3-Way Diff (history) — Biz spreadsheet vs Phase 1 vs Ztor v6</div><div class="file-desc">Pre-decision comparison doc that drove the v1 consolidation · 2026-05-22</div></div>
-        </a>
-        <a class="file unified" href="beamco/crowdfund-brd-v1-range-target-wireframe.html">
-          <div class="file-icon">RT</div>
-          <div><div class="file-name">Range Target Solution — Wireframe</div><div class="file-desc">Range-threshold funding model wireframe for the unified crowdfund BRD</div></div>
-        </a>
-      </div>
-    </div>
+      <div class="controls">
+        <div class="search-wrap" role="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <label for="search" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search files</label>
+          <input id="search" type="search" autocomplete="off" placeholder="Search by name, project, or keyword…" aria-describedby="count">
+          <span class="kbd-hint" id="kbdHint">/</span>
+          <button class="clear-btn" id="clearBtn" aria-label="Clear search" type="button">&times;</button>
+        </div>
 
-    <div class="section">
-      <div class="section-label">Beamco</div>
-      <div class="file-list">
-        <a class="file beamco" href="beamco/beamco-dev-workflow.html">
-          <div class="file-icon">DEV</div>
-          <div><div class="file-name">Dev Workflow</div><div class="file-desc">End-to-end ticket flow: BRD &rarr; design &rarr; build &rarr; QA &rarr; UAT &rarr; biz validation &rarr; ship</div></div>
-        </a>
-        <a class="file beamco" href="beamco/beamco-qa-gate-workflow.html">
-          <div class="file-icon">QA</div>
-          <div><div class="file-name">QA Gate Sub-Workflow</div><div class="file-desc">Tester intake routing through three lanes (Bug &middot; Design &middot; Change Request) and back to closure</div></div>
-        </a>
-        <a class="file beamco" href="beamco/beamco-qa-status-flow.html">
-          <div class="file-icon">QSF</div>
-          <div><div class="file-name">QA Workflow Status Flow Diagram</div><div class="file-desc">End-to-end ticket status flow for Feature &amp; Bug tickets with new Testing status; retire/adopt/risk notes</div></div>
-        </a>
-        <a class="file beamco" href="beamco/beamco-antom-payment-flow.html">
-          <div class="file-icon">PAY</div>
-          <div><div class="file-name">Antom Payment Flow</div><div class="file-desc">Payment integration flow documentation</div></div>
-        </a>
-        <a class="file beamco" href="beamco/beamco-shipping-wireframe.html">
-          <div class="file-icon">v1</div>
-          <div><div class="file-name">Shipping Wireframe</div><div class="file-desc">Shipping feature wireframe &mdash; version 1</div></div>
-        </a>
-        <a class="file beamco" href="beamco/beamco-shipping-wireframe-v2.html">
-          <div class="file-icon">v2</div>
-          <div><div class="file-name">Shipping Wireframe v2</div><div class="file-desc">Shipping feature wireframe &mdash; version 2</div></div>
-        </a>
-        <a class="file beamco" href="beamco/pickup-workflow-options.html">
-          <div class="file-icon">PKP</div>
-          <div><div class="file-name">Pickup Workflow Options</div><div class="file-desc">Pickup workflow comparison and options</div></div>
-        </a>
-        <a class="file beamco" href="beamco/beamco-storefront-proposal.html">
-          <div class="file-icon">STR</div>
-          <div><div class="file-name">Storefront Proposal</div><div class="file-desc">Beamco storefront proposal</div></div>
-        </a>
-        <a class="file beamco" href="beamco/beamco-crowdfund-phase1-userflow.html">
-          <div class="file-icon">CF</div>
-          <div><div class="file-name">Crowdfund Phase 1 User Flow</div><div class="file-desc">Artist × Fan flowchart + technical detail tab (BR-180/203/236/265/267 ingested)</div></div>
-        </a>
-        <a class="file beamco" href="beamco/crowdfund-backend-qa-walkthrough.html">
-          <div class="file-icon">QA</div>
-          <div><div class="file-name">Crowdfund — Backend Q&amp;A Walkthrough</div><div class="file-desc">18 dev-team questions, 16 confirmed; P0-10/P0-11 pending stakeholder review</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Ztor Crowdfund Stage 2</div>
-      <div class="file-list">
-        <a class="file ztor" href="ztor/ztor-crowdfund-flowchart.html">
-          <div class="file-icon">CF</div>
-          <div><div class="file-name">Crowdfund — Lifecycle Flowchart</div><div class="file-desc">End-to-end project lifecycle (Stage 2 BRD-aligned)</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-crowdfund-pledge-flow.html">
-          <div class="file-icon">PL</div>
-          <div><div class="file-name">Crowdfund — Pledge Happy Path</div><div class="file-desc">Backer-facing 5-step flow from 贊助 to confirmation</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-crowdfund-state-machine.html">
-          <div class="file-icon">SM</div>
-          <div><div class="file-name">Crowdfund — State Machine</div><div class="file-desc">6 user-visible states + allowed transitions</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-crowdfund-architecture.html">
-          <div class="file-icon">ARC</div>
-          <div><div class="file-name">Crowdfund — System Architecture</div><div class="file-desc">Module map · BR cross-refs · internal vs external</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-crowdfund-payment-retry.html">
-          <div class="file-icon">PR</div>
-          <div><div class="file-name">Crowdfund — Lifecycle &amp; Payment Recovery</div><div class="file-desc">Payment retry / recovery path across the project lifecycle</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-crowdfund-cancellation.html">
-          <div class="file-icon">CXL</div>
-          <div><div class="file-name">Crowdfund — Project Cancellation Flow</div><div class="file-desc">Cancellation path and refund handling</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Ztor Tastemaker Commission</div>
-      <div class="file-list">
-        <a class="file ztor" href="ztor-tastemaker-commission-wireframes.html">
-          <div class="file-icon">WF</div>
-          <div><div class="file-name">Tastemaker Commission — Wireframes</div><div class="file-desc">Edit User Mode + % selector (manual/auto) + Commission Audit Log · BRD lives in Notion</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Ztor eShop</div>
-      <div class="file-list">
-        <a class="file ztor" href="ztor/ztor-eshop-wireframe-2026-06-11.html">
-          <div class="file-icon">WF</div>
-          <div><div class="file-name">eShop — User Flow &amp; Architecture (v0.4)</div><div class="file-desc">3 boards: actor flows · key screens · architecture · two-POV Creator Studio · dual-currency checkout</div></div>
-        </a>
-        <a class="file ztor" href="https://ztor-eshop-proto.vercel.app/" target="_blank" rel="noopener">
-          <div class="file-icon">PRO</div>
-          <div><div class="file-name">eShop — Clickable Prototype &#8599;</div><div class="file-desc">Live Next.js prototype matching ztor.com · buyer flow + Creator Studio (separate app) · BRD v1.1 in outputs/specs</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Ztor</div>
-      <div class="file-list">
-        <a class="file ztor" href="ztor/ztor2-august-architecture-2026-05-27.html">
-          <div class="file-icon">AUG</div>
-          <div><div class="file-name">Ztor 2.0 — August Deliverables Architecture <span class="canonical-badge">EN · 中文</span></div><div class="file-desc">Reporting · Ztor 2.0 SSO/identity · crowdfund merge · open questions — Diagram + Full Spec tabs, bilingual (2026-05-27)</div></div>
-        </a>
-        <a class="file ztor" href="beamco/crowdfund-tech-status-2026-05-10.html">
-          <div class="file-icon">CFP</div>
-          <div><div class="file-name">Crowdfund Tech Plan — Ztor + Beamco &rarr; Full Version</div><div class="file-desc">Cross-project plan: Ztor + Beamco crowdfund tracks, Ztor 2.0 infra + redesign + Creator Studio roadmap (2026-05-10)</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-tracks-diagram.html">
-          <div class="file-icon">STR</div>
-          <div><div class="file-name">Ztor 1.0/2.0 — Project Stream Planning Overview</div><div class="file-desc">Stream 1/2/3 timeline, architecture diagrams &amp; milestones</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-creator-studio-phase1-dependency-map.html">
-          <div class="file-icon">DEP</div>
-          <div><div class="file-name">Creator Studio Phase 1 Dependency Map</div><div class="file-desc">Phase 1 service dependency map</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-2.0-phase1-architecture.html">
-          <div class="file-icon">2.0</div>
-          <div><div class="file-name">Ztor 2.0 Phase 1 Architecture</div><div class="file-desc">Phase 1 architecture documentation</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-phase1-deploy.html">
-          <div class="file-icon">DEP</div>
-          <div><div class="file-name">Ztor Phase 1 Deploy</div><div class="file-desc">Phase 1 deployment page</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ai-content-studio-new-workflow.html">
-          <div class="file-icon">ACS</div>
-          <div><div class="file-name">AI Content Studio Workflow</div><div class="file-desc">New content studio workflow design</div></div>
-        </a>
-        <a class="file ztor" href="ztor/wireframe-ztor-bo-movie.html">
-          <div class="file-icon">BO</div>
-          <div><div class="file-name">Ztor BO Movie Wireframe</div><div class="file-desc">Back-office movie management wireframe</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-sitemap.html">
-          <div class="file-icon">MAP</div>
-          <div><div class="file-name">Ztor.com Site Map</div><div class="file-desc">Miro-style page hierarchy of the live ztor.com site</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-ip-bank-backoffice-wireframe.html">
-          <div class="file-icon">IPB</div>
-          <div><div class="file-name">IP Bank — Back-Office Wireframe</div><div class="file-desc">Back-office surface for the Ztor 2.0 IP Bank</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-watchparty-architecture.html">
-          <div class="file-icon">WP</div>
-          <div><div class="file-name">Watch Party — Solution Architecture</div><div class="file-desc">Synced co-watching architecture (Ably-based)</div></div>
-        </a>
-        <a class="file ztor" href="ztor/ztor-watchparty-brd-v1-2026-06-07.html">
-          <div class="file-icon">BRD</div>
-          <div><div class="file-name">Watch Party — BRD v1</div><div class="file-desc">Business requirements for synced co-watching · 2026-06-07</div></div>
-        </a>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">Other</div>
-      <div class="file-list">
-        <a class="file other" href="ztor/wireframe-movie-dashboard.html">
-          <div class="file-icon">MOV</div>
-          <div><div class="file-name">Movie Dashboard Wireframe</div><div class="file-desc">Movie dashboard UI wireframe</div></div>
-        </a>
-        <a class="file other" href="ztor/wireframe-topic-source-management.html">
-          <div class="file-icon">TSM</div>
-          <div><div class="file-name">Topic Source Management</div><div class="file-desc">Topic source management wireframe</div></div>
-        </a>
-        <a class="file other" href="ztor/wireframe-crawler-dashboard.html">
-          <div class="file-icon">CRL</div>
-          <div><div class="file-name">Crawler Dashboard</div><div class="file-desc">Crawler dashboard wireframe</div></div>
-        </a>
-        <a class="file other" href="ztor/aic-cms-workflow.html">
-          <div class="file-icon">CMS</div>
-          <div><div class="file-name">AIC CMS Workflow</div><div class="file-desc">CMS workflow documentation</div></div>
-        </a>
-        <a class="file other" href="ztor/aic-contest-save-design.html">
-          <div class="file-icon">CON</div>
-          <div><div class="file-name">AIC CMS — Contest Save Design</div><div class="file-desc">Contest save-flow design for the AIC CMS</div></div>
-        </a>
+        <div class="filter-row">
+          <div class="seg" role="group" aria-label="Sort order">
+            <button data-sort="grouped" aria-pressed="true">Grouped</button>
+            <button data-sort="updated" aria-pressed="false">Updated</button>
+            <button data-sort="added" aria-pressed="false">Added</button>
+            <button data-sort="az" aria-pressed="false">A–Z</button>
+          </div>
+          <div class="chips" role="group" aria-label="Filter by project">
+            <button class="chip" data-p="all" aria-pressed="true"><span class="dot"></span>All</button>
+            <button class="chip" data-p="ztor" aria-pressed="false"><span class="dot"></span>Ztor</button>
+            <button class="chip" data-p="beamco" aria-pressed="false"><span class="dot"></span>Beamco</button>
+            <button class="chip" data-p="unified" aria-pressed="false"><span class="dot"></span>Unified</button>
+            <button class="chip" data-p="other" aria-pressed="false"><span class="dot"></span>Other</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="container">
+    <main id="list"></main>
+    <div class="footer">AIC Output · <span id="footCount"></span> files · press <strong>/</strong> to search</div>
+  </div>
+
+  <script>
+  // ─────────────────────────────────────────────────────────────
+  // Catalog data. To add a file: copy one object below.
+  //   n=name  d=description  h=href  i=icon  p=project(ztor|beamco|unified|other)
+  //   g=group(section heading)  c=created (ISO)  m=modified (ISO)
+  //   t=badge text (optional)   x=true for external link (optional)
+  // c/m dates are auto-maintained — run `node outputs/scripts/refresh-aic-index.mjs`
+  // to refresh them from git and list any files not yet catalogued.
+  // Edit n/d/i/p/g/t freely; the generator preserves them.
+  // ─────────────────────────────────────────────────────────────
+  // AIC-DATA-START
+  const DATA = [
+    { n:"AI Development Workflow — v1", d:"5-stage BA-driven pipeline · split spec contract (prototype + BRD) · layered QA · role map · bilingual (EN / 繁中)", h:"ai-dev-workflow-2026-06-16.html", i:"AI", p:"other", g:"AI Development Workflow", t:"EN · 中文", c:"2026-06-16", m:"2026-06-16" },
+
+    { n:"Main BRD — Unified Music + Movies", d:"51 BRs (BR-1 → BR-49 + BR-C1/C2) · 8 locked decisions · 10 open Qs · IBM Carbon theme", h:"beamco/crowdfund-brd-v1-2026-05-24.html", i:"BRD", p:"unified", g:"Crowdfund BRD v1 — Unified", t:"CANONICAL", c:"2026-05-24", m:"2026-06-03" },
+    { n:"Lifecycle", d:"Setup → Active → Funded → Successful → Released · 4-phase strip + Mermaid flow + backer-POV timeline", h:"beamco/crowdfund-brd-v1-lifecycle.html", i:"LF", p:"unified", g:"Crowdfund BRD v1 — Unified", c:"2026-05-24", m:"2026-05-30" },
+    { n:"State Machine", d:"8 states · 13 valid transitions · positioned HTML + SVG arrows · auto-vs-manual matrix", h:"beamco/crowdfund-brd-v1-state-machine.html", i:"SM", p:"unified", g:"Crowdfund BRD v1 — Unified", c:"2026-05-24", m:"2026-06-03" },
+    { n:"Payment Retry & Cancellation", d:"3-day silent retry → 7-day URL → day-10 waitlist swap → threshold check → cancellation flow", h:"beamco/crowdfund-brd-v1-payment-retry.html", i:"PR", p:"unified", g:"Crowdfund BRD v1 — Unified", c:"2026-05-24", m:"2026-05-30" },
+    { n:"3-Way Diff (history) — Biz spreadsheet vs Phase 1 vs Ztor v6", d:"Pre-decision comparison doc that drove the v1 consolidation · 2026-05-22", h:"beamco/crowdfund-brd-three-way-diff-2026-05-22.html", i:"DIF", p:"unified", g:"Crowdfund BRD v1 — Unified", c:"2026-05-24", m:"2026-05-24" },
+    { n:"Range Target Solution — Wireframe", d:"Range-threshold funding model wireframe for the unified crowdfund BRD", h:"beamco/crowdfund-brd-v1-range-target-wireframe.html", i:"RT", p:"unified", g:"Crowdfund BRD v1 — Unified", c:"2026-05-27", m:"2026-05-30" },
+
+    { n:"Dev Workflow", d:"End-to-end ticket flow: BRD → design → build → QA → UAT → biz validation → ship", h:"beamco/beamco-dev-workflow.html", i:"DEV", p:"beamco", g:"Beamco", c:"2026-05-04", m:"2026-05-11" },
+    { n:"QA Gate Sub-Workflow", d:"Tester intake routing through three lanes (Bug · Design · Change Request) and back to closure", h:"beamco/beamco-qa-gate-workflow.html", i:"QA", p:"beamco", g:"Beamco", c:"2026-05-07", m:"2026-05-07" },
+    { n:"QA Workflow Status Flow Diagram", d:"End-to-end ticket status flow for Feature & Bug tickets with new Testing status; retire/adopt/risk notes", h:"beamco/beamco-qa-status-flow.html", i:"QSF", p:"beamco", g:"Beamco", c:"2026-04-29", m:"2026-04-29" },
+    { n:"Antom Payment Flow", d:"Payment integration flow documentation", h:"beamco/beamco-antom-payment-flow.html", i:"PAY", p:"beamco", g:"Beamco", c:"2026-04-08", m:"2026-04-08" },
+    { n:"Shipping Wireframe", d:"Shipping feature wireframe — version 1", h:"beamco/beamco-shipping-wireframe.html", i:"v1", p:"beamco", g:"Beamco", c:"2026-04-08", m:"2026-04-08" },
+    { n:"Shipping Wireframe v2", d:"Shipping feature wireframe — version 2", h:"beamco/beamco-shipping-wireframe-v2.html", i:"v2", p:"beamco", g:"Beamco", c:"2026-04-08", m:"2026-04-08" },
+    { n:"Pickup Workflow Options", d:"Pickup workflow comparison and options", h:"beamco/pickup-workflow-options.html", i:"PKP", p:"beamco", g:"Beamco", c:"2026-04-08", m:"2026-04-08" },
+    { n:"Storefront Proposal", d:"Beamco storefront proposal", h:"beamco/beamco-storefront-proposal.html", i:"STR", p:"beamco", g:"Beamco", c:"2026-04-10", m:"2026-04-10" },
+    { n:"Crowdfund Phase 1 User Flow", d:"Artist × Fan flowchart + technical detail tab (BR-180/203/236/265/267 ingested)", h:"beamco/beamco-crowdfund-phase1-userflow.html", i:"CF", p:"beamco", g:"Beamco", c:"2026-04-30", m:"2026-05-01" },
+    { n:"Crowdfund — Backend Q&A Walkthrough", d:"18 dev-team questions, 16 confirmed; P0-10/P0-11 pending stakeholder review", h:"beamco/crowdfund-backend-qa-walkthrough.html", i:"QA", p:"beamco", g:"Beamco", c:"2026-06-03", m:"2026-06-03" },
+
+    { n:"Crowdfund — Lifecycle Flowchart", d:"End-to-end project lifecycle (Stage 2 BRD-aligned)", h:"ztor/ztor-crowdfund-flowchart.html", i:"CF", p:"ztor", g:"Ztor Crowdfund Stage 2", c:"2026-04-14", m:"2026-05-17" },
+    { n:"Crowdfund — Pledge Happy Path", d:"Backer-facing 5-step flow from 贊助 to confirmation", h:"ztor/ztor-crowdfund-pledge-flow.html", i:"PL", p:"ztor", g:"Ztor Crowdfund Stage 2", c:"2026-04-29", m:"2026-05-17" },
+    { n:"Crowdfund — State Machine", d:"6 user-visible states + allowed transitions", h:"ztor/ztor-crowdfund-state-machine.html", i:"SM", p:"ztor", g:"Ztor Crowdfund Stage 2", c:"2026-04-29", m:"2026-05-22" },
+    { n:"Crowdfund — System Architecture", d:"Module map · BR cross-refs · internal vs external", h:"ztor/ztor-crowdfund-architecture.html", i:"ARC", p:"ztor", g:"Ztor Crowdfund Stage 2", c:"2026-04-29", m:"2026-05-17" },
+    { n:"Crowdfund — Lifecycle & Payment Recovery", d:"Payment retry / recovery path across the project lifecycle", h:"ztor/ztor-crowdfund-payment-retry.html", i:"PR", p:"ztor", g:"Ztor Crowdfund Stage 2", c:"2026-05-16", m:"2026-06-03" },
+    { n:"Crowdfund — Project Cancellation Flow", d:"Cancellation path and refund handling", h:"ztor/ztor-crowdfund-cancellation.html", i:"CXL", p:"ztor", g:"Ztor Crowdfund Stage 2", c:"2026-05-17", m:"2026-05-18" },
+
+    { n:"Tastemaker Commission — Wireframes", d:"Edit User Mode + % selector (manual/auto) + Commission Audit Log · BRD lives in Notion", h:"ztor-tastemaker-commission-wireframes.html", i:"WF", p:"ztor", g:"Ztor Tastemaker Commission", c:"2026-06-10", m:"2026-06-15" },
+
+    { n:"eShop — User Flow & Architecture (v0.4)", d:"3 boards: actor flows · key screens · architecture · two-POV Creator Studio · dual-currency checkout", h:"ztor/ztor-eshop-wireframe-2026-06-11.html", i:"WF", p:"ztor", g:"Ztor eShop", c:"2026-06-12", m:"2026-06-15" },
+    { n:"eShop — Clickable Prototype", d:"Live Next.js prototype matching ztor.com · buyer flow + Creator Studio (separate app) · BRD v1.1 in outputs/specs", h:"https://ztor-eshop-proto.vercel.app/", i:"PRO", p:"ztor", g:"Ztor eShop", c:"2026-06-12", m:"2026-06-12", x:true },
+
+    { n:"Ztor 2.0 — August Deliverables Architecture", d:"Reporting · Ztor 2.0 SSO/identity · crowdfund merge · open questions — Diagram + Full Spec tabs, bilingual (2026-05-27)", h:"ztor/ztor2-august-architecture-2026-05-27.html", i:"AUG", p:"ztor", g:"Ztor", t:"EN · 中文", c:"2026-05-27", m:"2026-05-27" },
+    { n:"Crowdfund Tech Plan — Ztor + Beamco → Full Version", d:"Cross-project plan: Ztor + Beamco crowdfund tracks, Ztor 2.0 infra + redesign + Creator Studio roadmap (2026-05-10)", h:"beamco/crowdfund-tech-status-2026-05-10.html", i:"CFP", p:"ztor", g:"Ztor", c:"2026-05-10", m:"2026-05-11" },
+    { n:"Ztor 1.0/2.0 — Project Stream Planning Overview", d:"Stream 1/2/3 timeline, architecture diagrams & milestones", h:"ztor/ztor-tracks-diagram.html", i:"STR", p:"ztor", g:"Ztor", c:"2026-04-22", m:"2026-05-28" },
+    { n:"Creator Studio Phase 1 Dependency Map", d:"Phase 1 service dependency map", h:"ztor/ztor-creator-studio-phase1-dependency-map.html", i:"DEP", p:"ztor", g:"Ztor", c:"2026-04-16", m:"2026-04-16" },
+    { n:"Ztor 2.0 Phase 1 Architecture", d:"Phase 1 architecture documentation", h:"ztor/ztor-2.0-phase1-architecture.html", i:"2.0", p:"ztor", g:"Ztor", c:"2026-04-08", m:"2026-05-18" },
+    { n:"Ztor Phase 1 Deploy", d:"Phase 1 deployment page", h:"ztor/ztor-phase1-deploy.html", i:"DEP", p:"ztor", g:"Ztor", c:"2026-04-08", m:"2026-04-08" },
+    { n:"AI Content Studio Workflow", d:"New content studio workflow design", h:"ztor/ai-content-studio-new-workflow.html", i:"ACS", p:"ztor", g:"Ztor", c:"2026-04-08", m:"2026-04-09" },
+    { n:"Ztor BO Movie Wireframe", d:"Back-office movie management wireframe", h:"ztor/wireframe-ztor-bo-movie.html", i:"BO", p:"ztor", g:"Ztor", c:"2026-04-08", m:"2026-04-09" },
+    { n:"Ztor.com Site Map", d:"Miro-style page hierarchy of the live ztor.com site", h:"ztor/ztor-sitemap.html", i:"MAP", p:"ztor", g:"Ztor", c:"2026-04-28", m:"2026-04-28" },
+    { n:"IP Bank — Back-Office Wireframe", d:"Back-office surface for the Ztor 2.0 IP Bank", h:"ztor/ztor-ip-bank-backoffice-wireframe.html", i:"IPB", p:"ztor", g:"Ztor", c:"2026-06-10", m:"2026-06-10" },
+    { n:"Watch Party — Solution Architecture", d:"Synced co-watching architecture (Ably-based)", h:"ztor/ztor-watchparty-architecture.html", i:"WP", p:"ztor", g:"Ztor", c:"2026-06-05", m:"2026-06-11" },
+    { n:"Watch Party — BRD v1", d:"Business requirements for synced co-watching · 2026-06-07", h:"ztor/ztor-watchparty-brd-v1-2026-06-07.html", i:"BRD", p:"ztor", g:"Ztor", c:"2026-06-11", m:"2026-06-11" },
+
+    { n:"Movie Dashboard Wireframe", d:"Movie dashboard UI wireframe", h:"ztor/wireframe-movie-dashboard.html", i:"MOV", p:"other", g:"Other", c:"2026-04-08", m:"2026-04-09" },
+    { n:"Topic Source Management", d:"Topic source management wireframe", h:"ztor/wireframe-topic-source-management.html", i:"TSM", p:"other", g:"Other", c:"2026-04-08", m:"2026-04-09" },
+    { n:"Crawler Dashboard", d:"Crawler dashboard wireframe", h:"ztor/wireframe-crawler-dashboard.html", i:"CRL", p:"other", g:"Other", c:"2026-04-08", m:"2026-04-10" },
+    { n:"AIC CMS Workflow", d:"CMS workflow documentation", h:"ztor/aic-cms-workflow.html", i:"CMS", p:"other", g:"Other", c:"2026-04-08", m:"2026-04-08" },
+    { n:"AIC CMS — Contest Save Design", d:"Contest save-flow design for the AIC CMS", h:"ztor/aic-contest-save-design.html", i:"CON", p:"other", g:"Other", c:"2026-04-30", m:"2026-04-30" }
+  ];
+  // AIC-DATA-END
+
+  // Group display order (grouped view) + project labels
+  const GROUP_ORDER = [
+    "AI Development Workflow",
+    "Crowdfund BRD v1 — Unified",
+    "Beamco",
+    "Ztor Crowdfund Stage 2",
+    "Ztor Tastemaker Commission",
+    "Ztor eShop",
+    "Ztor",
+    "Other"
+  ];
+  const PROJECT_LABEL = { ztor:"Ztor", beamco:"Beamco", unified:"Unified", other:"Other" };
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  const state = { q:"", project:"all", sort:"grouped" };
+  const NOW = new Date();
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+  function parse(iso){ const [y,mo,d] = iso.split("-").map(Number); return new Date(y, mo-1, d); }
+  function fmt(iso){ const dt = parse(iso); const base = MONTHS[dt.getMonth()] + " " + dt.getDate(); return dt.getFullYear() === NOW.getFullYear() ? base : base + ", " + dt.getFullYear(); }
+  function daysSince(iso){ return Math.floor((NOW - parse(iso)) / 86400000); }
+
+  function matches(it){
+    if (state.project !== "all" && it.p !== state.project) return false;
+    if (state.q){
+      const hay = (it.n + " " + it.d + " " + it.g + " " + PROJECT_LABEL[it.p] + " " + (it.t||"")).toLowerCase();
+      return state.q.split(/\s+/).filter(Boolean).every(term => hay.includes(term));
+    }
+    return true;
+  }
+
+  function recencyBadge(it){
+    if (daysSince(it.c) <= 7) return '<span class="badge new">NEW</span>';
+    if (daysSince(it.m) <= 7) return '<span class="badge upd">UPDATED</span>';
+    return "";
+  }
+
+  function datesHtml(it){
+    if (it.c === it.m){
+      return '<div class="d-add"><span class="lbl">added </span>' + fmt(it.c) + '</div>';
+    }
+    return '<div class="d-mod" title="Last edited ' + esc(it.m) + '"><span class="lbl">updated </span>' + fmt(it.m) + '</div>' +
+           '<div class="d-add" title="First added ' + esc(it.c) + '"><span class="lbl">added </span>' + fmt(it.c) + '</div>';
+  }
+
+  function cardHtml(it){
+    const tag = it.t ? '<span class="badge tag">' + esc(it.t) + '</span>' : "";
+    const arrow = it.x ? ' <span class="ext-arrow" aria-hidden="true">↗</span>' : "";
+    const target = it.x ? ' target="_blank" rel="noopener"' : "";
+    const foot = '<div class="file-foot">' +
+        '<span class="pill ' + it.p + '"><span class="dot"></span>' + esc(PROJECT_LABEL[it.p]) + '</span>' +
+        '<span class="group-tag">' + esc(it.g) + '</span></div>';
+    return '<a class="file ' + it.p + '" href="' + esc(it.h) + '"' + target + '>' +
+      '<div class="file-icon">' + esc(it.i) + '</div>' +
+      '<div class="file-main">' +
+        '<div class="file-head"><span class="file-name">' + esc(it.n) + '</span>' + arrow + tag + recencyBadge(it) + '</div>' +
+        '<div class="file-desc">' + esc(it.d) + '</div>' +
+        foot +
+      '</div>' +
+      '<div class="file-dates">' + datesHtml(it) + '</div>' +
+    '</a>';
+  }
+
+  function render(){
+    const list = document.getElementById("list");
+    const filtered = DATA.filter(matches);
+
+    document.getElementById("count").textContent = "Showing " + filtered.length + " of " + DATA.length;
+    document.getElementById("footCount").textContent = DATA.length;
+    document.body.classList.toggle("mode-grouped", state.sort === "grouped");
+
+    if (!filtered.length){
+      list.innerHTML = '<div class="empty">No files match <strong>"' + esc(state.q) + '"</strong>' +
+        (state.project !== "all" ? ' in ' + esc(PROJECT_LABEL[state.project]) : "") +
+        '.<br><button type="button" id="resetBtn">Clear filters</button></div>';
+      document.getElementById("resetBtn").addEventListener("click", resetAll);
+      return;
+    }
+
+    if (state.sort === "grouped"){
+      let html = "";
+      GROUP_ORDER.forEach(g => {
+        const items = filtered.filter(it => it.g === g);
+        if (!items.length) return;
+        html += '<div class="group-label">' + esc(g) + ' <span class="gcount">' + items.length + '</span></div>' +
+                '<div class="file-list">' + items.map(cardHtml).join("") + '</div>';
+      });
+      list.innerHTML = html;
+    } else {
+      const sorted = filtered.slice();
+      if (state.sort === "updated") sorted.sort((a,b) => b.m.localeCompare(a.m) || b.c.localeCompare(a.c) || a.n.localeCompare(b.n));
+      else if (state.sort === "added") sorted.sort((a,b) => b.c.localeCompare(a.c) || a.n.localeCompare(b.n));
+      else if (state.sort === "az") sorted.sort((a,b) => a.n.localeCompare(b.n));
+      list.innerHTML = '<div class="file-list">' + sorted.map(cardHtml).join("") + '</div>';
+    }
+  }
+
+  function resetAll(){
+    state.q = ""; state.project = "all"; state.sort = "grouped";
+    document.getElementById("search").value = "";
+    syncClear();
+    document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.p === "all"));
+    document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.sort === "grouped"));
+    render();
+  }
+
+  function syncClear(){
+    const has = state.q.length > 0;
+    document.getElementById("clearBtn").style.display = has ? "flex" : "none";
+    document.getElementById("kbdHint").style.display = has ? "none" : "block";
+  }
+
+  // ---- events ----
+  const searchEl = document.getElementById("search");
+  searchEl.addEventListener("input", e => { state.q = e.target.value.trim().toLowerCase(); syncClear(); render(); });
+  document.getElementById("clearBtn").addEventListener("click", () => { searchEl.value = ""; state.q = ""; syncClear(); render(); searchEl.focus(); });
+
+  document.querySelectorAll(".seg button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.sort = btn.dataset.sort;
+      document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b === btn));
+      render();
+    });
+  });
+
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      state.project = chip.dataset.p;
+      document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === chip));
+      render();
+    });
+  });
+
+  // keyboard: "/" focuses search, Escape clears when focused
+  document.addEventListener("keydown", e => {
+    if (e.key === "/" && document.activeElement !== searchEl){ e.preventDefault(); searchEl.focus(); }
+    else if (e.key === "Escape" && document.activeElement === searchEl && searchEl.value){ searchEl.value = ""; state.q = ""; syncClear(); render(); }
+  });
+
+  render();
+  </script>
 </body>
 </html>
