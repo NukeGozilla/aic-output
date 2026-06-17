@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Development Workflow — v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Carbon G10 light theme */
+    --bg: #f4f4f4;
+    --layer: #ffffff;
+    --layer-02: #f4f4f4;
+    --text: #161616;
+    --text-secondary: #525252;
+    --text-helper: #6f6f6f;
+    --border-subtle: #e0e0e0;
+    --border-strong: #c6c6c6;
+    --blue: #0f62fe;
+    --blue-70: #0043ce;
+    --blue-10: #edf5ff;
+    --green-70: #0e6027;
+    --green-10: #defbe6;
+    --magenta-70: #9f1853;
+    --magenta-10: #fff0f7;
+    --teal-70: #005d5d;
+    --teal-10: #d9fbfb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: 0 24px 96px;
+  }
+
+  .wrap { max-width: 1040px; margin: 0 auto; }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ---- Language tabs ---- */
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky; top: 0;
+    background: var(--bg);
+    z-index: 10;
+    padding-top: 24px;
+    margin-bottom: 48px;
+  }
+  .tab {
+    font-family: 'IBM Plex Sans', 'IBM Plex Sans TC', sans-serif;
+    font-size: 14px; font-weight: 400;
+    padding: 12px 20px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab:hover { background: var(--layer-02); color: var(--text); }
+  .tab.active { color: var(--text); border-bottom-color: var(--blue); font-weight: 600; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+  #panel-zh { font-family: 'IBM Plex Sans TC', 'IBM Plex Sans', system-ui, sans-serif; }
+  #panel-zh .mono, #panel-zh .row dt, #panel-zh th, #panel-zh .meta { font-family: 'IBM Plex Sans TC', 'IBM Plex Mono', monospace; }
+
+  /* ---- Header ---- */
+  header { margin-bottom: 48px; border-bottom: 1px solid var(--border-strong); padding-bottom: 32px; }
+  .eyebrow { font-size: 12px; color: var(--blue); margin-bottom: 16px; }
+  h1 { font-size: 42px; font-weight: 600; line-height: 1.1; letter-spacing: -0.01em; }
+  .sub { font-size: 18px; color: var(--text-secondary); margin-top: 12px; font-weight: 400; }
+  .meta { font-size: 12px; color: var(--text-helper); margin-top: 24px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .meta span { padding-right: 16px; border-right: 1px solid var(--border-subtle); }
+  .meta span:last-child { border-right: none; }
+
+  /* ---- Section ---- */
+  section { margin-top: 56px; }
+  .sec-label { font-size: 12px; color: var(--text-helper); margin-bottom: 8px; }
+  .sec-label::before { content: ""; display: inline-block; width: 12px; height: 2px; background: var(--blue); vertical-align: middle; margin-right: 8px; }
+  h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  .sec-note { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; max-width: 720px; }
+
+  /* ---- Operating model banner ---- */
+  .banner {
+    background: var(--layer);
+    border: 1px solid var(--border-subtle);
+    border-left: 4px solid var(--blue);
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+  }
+  .banner .flow { font-size: 20px; font-weight: 600; }
+  .banner .flow .arrow { color: var(--blue); margin: 0 8px; }
+  .banner p { font-size: 14px; color: var(--text-secondary); margin-top: 8px; max-width: 560px; }
+  .goals { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .goal { font-size: 11px; padding: 4px 10px; background: var(--layer-02); border: 1px solid var(--border-subtle); color: var(--text-secondary); }
+  .goal.primary { background: var(--blue-10); border-color: var(--blue); color: var(--blue-70); font-weight: 600; }
+
+  /* ---- Legend ---- */
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; font-size: 12px; color: var(--text-secondary); }
+  .legend .dot { display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: middle; }
+
+  /* ---- Stage cards ---- */
+  .stage {
+    background: var(--layer);
+    border: 1px solid var(--border-subtle);
+    border-left: 4px solid var(--owner, var(--border-strong));
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    margin-bottom: 12px;
+  }
+  .stage-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--owner, var(--text-helper));
+    padding: 20px 0 0 20px;
+  }
+  .stage-body { padding: 20px 24px 22px 4px; }
+  .stage-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .stage-head h3 { font-size: 18px; font-weight: 600; }
+
+  .chip { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 9px; font-weight: 500; font-family: 'IBM Plex Mono', 'IBM Plex Sans TC', monospace; }
+  .chip-ba { background: var(--blue-10); color: var(--blue-70); }
+  .chip-design { background: var(--magenta-10); color: var(--magenta-70); }
+  .chip-dev { background: var(--teal-10); color: var(--teal-70); }
+  .chip-new { background: var(--green-10); color: var(--green-70); }
+
+  dl.rows { display: grid; gap: 12px; }
+  .row { display: grid; grid-template-columns: 104px 1fr; gap: 16px; align-items: baseline; }
+  .row dt { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-helper); padding-top: 2px; }
+  .row dd { font-size: 14px; color: var(--text); }
+  .row.gate dd { color: var(--blue-70); font-weight: 500; }
+
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 12px; padding: 2px 8px; background: var(--layer-02); border: 1px solid var(--border-subtle); color: var(--text-secondary); }
+
+  /* QA ladder inside stage 05 */
+  ol.ladder { list-style: none; display: grid; gap: 10px; counter-reset: q; }
+  ol.ladder li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: baseline; font-size: 14px; counter-increment: q; }
+  ol.ladder li::before { content: counter(q); font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: var(--layer-02); border: 1px solid var(--border-strong); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+  ol.ladder li b { font-weight: 600; }
+  ol.ladder li span { color: var(--text-secondary); }
+
+  /* ---- Tables ---- */
+  table { width: 100%; border-collapse: collapse; background: var(--layer); border: 1px solid var(--border-subtle); }
+  th, td { text-align: left; padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border-subtle); vertical-align: top; }
+  th { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-helper); background: var(--layer-02); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+  td .who { font-weight: 600; }
+
+  /* ---- Split contract ---- */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { background: var(--layer); border: 1px solid var(--border-subtle); padding: 20px; }
+  .card.proto { border-top: 3px solid var(--magenta-70); }
+  .card.brd { border-top: 3px solid var(--blue); }
+  .card h4 { font-size: 14px; margin-bottom: 4px; }
+  .card .auth { font-family: 'IBM Plex Mono', 'IBM Plex Sans TC', monospace; font-size: 11px; text-transform: uppercase; color: var(--text-helper); margin-bottom: 12px; letter-spacing: 0.04em; }
+  .card ul { list-style: none; display: grid; gap: 6px; }
+  .card li { font-size: 13px; color: var(--text-secondary); padding-left: 14px; position: relative; }
+  .card li::before { content: "—"; position: absolute; left: 0; color: var(--border-strong); }
+  .split-foot { text-align: center; font-size: 13px; color: var(--text-secondary); margin-top: 12px; }
+  .split-foot b { color: var(--text); }
+
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--text-helper); }
+
+  @media (max-width: 720px) {
+    h1 { font-size: 32px; }
+    .banner, .split { grid-template-columns: 1fr; }
+    .goals { justify-content: flex-start; }
+    .row { grid-template-columns: 1fr; gap: 4px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .tabs { display: none; }
+    .panel { display: block !important; }
+    .stage, .card, table, .banner { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- LANGUAGE TABS -->
+  <div class="tabs">
+    <button class="tab active" id="tab-en" onclick="showLang('en')">English</button>
+    <button class="tab" id="tab-zh" onclick="showLang('zh')">繁體中文</button>
+  </div>
+
+  <!-- ============================ ENGLISH ============================ -->
+  <div class="panel active" id="panel-en">
+
+    <header>
+      <div class="eyebrow mono">Process Design</div>
+      <h1>AI Development Workflow</h1>
+      <p class="sub">Idea to shipped — BA-driven, design-system-powered.</p>
+      <div class="meta mono">
+        <span>v1 draft</span>
+        <span>2026-06-16</span>
+        <span>Owner: Jeff</span>
+      </div>
+    </header>
+
+    <section>
+      <div class="sec-label mono">Operating model</div>
+      <div class="banner">
+        <div>
+          <div class="flow">Relay <span class="arrow">→</span> Single-driver front</div>
+          <p>BAs drive the front end-to-end. The designer shepherds the build, so the BA never becomes a help desk — and only business-logic questions come back upstream.</p>
+        </div>
+        <div class="goals">
+          <span class="goal primary">Speed</span>
+          <span class="goal">Less rework</span>
+          <span class="goal">Consistency</span>
+          <span class="goal">Quality</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-label mono">The pipeline</div>
+      <h2>Five stages, gated handoffs</h2>
+      <p class="sec-note">Each stage hands one artifact forward. Gates keep speed honest — nothing moves until the prior gate clears.</p>
+
+      <div class="legend mono">
+        <span><span class="dot" style="background:#0f62fe"></span>BA</span>
+        <span><span class="dot" style="background:#9f1853"></span>Designer</span>
+        <span><span class="dot" style="background:#005d5d"></span>Dev</span>
+      </div>
+
+      <div class="stage" style="--owner: var(--blue)">
+        <div class="stage-num">01</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Discover &amp; Align</h3><span class="chip chip-ba">BA</span></div>
+          <dl class="rows">
+            <div class="row"><dt>AI does</dt><dd>Feature brief → user flow + low-fi clickable prototype.</dd></div>
+            <div class="row"><dt>Artifacts</dt><dd><div class="tags"><span class="tag">User flow</span><span class="tag">Low-fi prototype</span></div></dd></div>
+            <div class="row gate"><dt>Gate</dt><dd>Weekly biz/ops review — approve direction. Low-fi on purpose: debate flow, not colors.</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="stage" style="--owner: var(--blue)">
+        <div class="stage-num">02</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Specify</h3><span class="chip chip-ba">BA</span></div>
+          <dl class="rows">
+            <div class="row"><dt>AI does</dt><dd>Upgrade approved proto onto the design system · draft BRD — rules, states, permissions, edge cases · write acceptance criteria as given / when / then.</dd></div>
+            <div class="row"><dt>Artifacts</dt><dd><div class="tags"><span class="tag">Production-fidelity prototype</span><span class="tag">BRD</span></div></dd></div>
+            <div class="row gate"><dt>Gate</dt><dd>Spec freeze — BA + biz owner sign off. BA hands off and moves on.</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="stage" style="--owner: var(--magenta-70)">
+        <div class="stage-num">03</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Design</h3><span class="chip chip-design">Designer</span></div>
+          <dl class="rows">
+            <div class="row"><dt>Design system</dt><dd>Own &amp; extend the component library — the source BA prototypes and dev both build on.</dd></div>
+            <div class="row"><dt>Detail polish</dt><dd>Take the BA prototype to final production detail before dev handoff.</dd></div>
+            <div class="row"><dt>Big features</dt><dd>For multi-page work (e.g. eShop), build the HTML page scaffolds so dev stays on the rails.</dd></div>
+            <div class="row"><dt>Shepherd</dt><dd>Own the feature through build — field detail / UI questions, escalate business ones to BA.</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="stage" style="--owner: var(--teal-70)">
+        <div class="stage-num">04</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Build</h3><span class="chip chip-dev">Dev</span> <span class="chip chip-design">Designer-shepherded</span></div>
+          <dl class="rows">
+            <div class="row"><dt>Input</dt><dd>Prototype (UI / flow) + BRD (logic).</dd></div>
+            <div class="row"><dt>AI does</dt><dd>AI-assisted implementation.</dd></div>
+            <div class="row"><dt>Questions</dt><dd>Detail / UI → designer · business logic → escalate to BA.</dd></div>
+            <div class="row gate"><dt>Done when</dt><dd>Dev self-tests against the BRD checklist.</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="stage" style="--owner: var(--teal-70)">
+        <div class="stage-num">05</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>Verify</h3><span class="chip chip-new">New formal flow</span></div>
+          <ol class="ladder">
+            <li><span><b>Dev self-test</b> against BRD checklist — entry gate to QA.</span></li>
+            <li><span><b>AI test pass</b> — cases generated from BRD acceptance criteria, run via Playwright → bug report.</span></li>
+            <li><span><b>Designer review</b> — visual / UX fidelity vs. the prototype.</span></li>
+            <li><span><b>BA sign-off</b> — business-critical flows.</span></li>
+          </ol>
+          <dl class="rows" style="margin-top:16px">
+            <div class="row gate"><dt>Gate</dt><dd>All four pass → ship.</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-label mono">Who does what</div>
+      <h2>Role map</h2>
+      <table>
+        <thead><tr><th style="width:120px">Role</th><th>Owns</th><th style="width:34%">On-call for</th></tr></thead>
+        <tbody>
+          <tr><td><span class="who">BA ×3</span></td><td>Flow · wireframe · prototype · BRD · runs the weekly review</td><td>Escalated <b>business</b> questions only</td></tr>
+          <tr><td><span class="who">Designer</span></td><td>Design system · prototype polish · build shepherd · big-page scaffolds · QA review</td><td>Detail / UI / design-system questions</td></tr>
+          <tr><td><span class="who">Dev</span></td><td>Implementation from prototype + BRD · self-test</td><td>—</td></tr>
+          <tr><td><span class="who">Biz / Ops</span></td><td>Direction + spec approval</td><td>Weekly review</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <div class="sec-label mono">The spec contract</div>
+      <h2>Two sources of truth</h2>
+      <p class="sec-note">A prototype shows the happy path and the look. It can't show the invisible logic. So the contract is split — and the BRD stays light because it stops re-describing the UI.</p>
+      <div class="split">
+        <div class="card proto">
+          <h4>Prototype</h4>
+          <div class="auth mono">Authoritative for UI + flow</div>
+          <ul>
+            <li>What it looks like</li>
+            <li>Screen order &amp; navigation</li>
+            <li>Components from the design system</li>
+          </ul>
+        </div>
+        <div class="card brd">
+          <h4>BRD</h4>
+          <div class="auth mono">Authoritative for logic</div>
+          <ul>
+            <li>Business rules &amp; permissions</li>
+            <li>Empty / error / loading states</li>
+            <li>Edge cases &amp; failure handling</li>
+            <li>Acceptance criteria (given / when / then)</li>
+          </ul>
+        </div>
+      </div>
+      <p class="split-foot">QA tests against <b>both</b>.</p>
+    </section>
+
+    <footer>AI Development Workflow · v1 draft · 2026-06-16 · IBM Carbon (G10 light)</footer>
+  </div>
+
+  <!-- ============================ 繁體中文 ============================ -->
+  <div class="panel" id="panel-zh">
+
+    <header>
+      <div class="eyebrow mono">流程設計</div>
+      <h1>AI 開發流程</h1>
+      <p class="sub">從構想到上線 — 由 BA 主導、design system 驅動。</p>
+      <div class="meta mono">
+        <span>v1 草案</span>
+        <span>2026-06-16</span>
+        <span>負責人：Jeff</span>
+      </div>
+    </header>
+
+    <section>
+      <div class="sec-label mono">運作模式</div>
+      <div class="banner">
+        <div>
+          <div class="flow">接力式 <span class="arrow">→</span> 前段單一主導</div>
+          <p>BA 主導整個前段流程；設計師在開發期全程跟進，BA 因此不必變成隨時待命的客服 — 只有牽涉商業邏輯的問題才會回到上游。</p>
+        </div>
+        <div class="goals">
+          <span class="goal primary">速度</span>
+          <span class="goal">減少返工</span>
+          <span class="goal">一致性</span>
+          <span class="goal">品質</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-label mono">流程</div>
+      <h2>五個階段，把關交接</h2>
+      <p class="sec-note">每個階段往下交付一份產出。把關點確保速度不打折 — 上一關未過，不能往下走。</p>
+
+      <div class="legend mono">
+        <span><span class="dot" style="background:#0f62fe"></span>BA</span>
+        <span><span class="dot" style="background:#9f1853"></span>設計師</span>
+        <span><span class="dot" style="background:#005d5d"></span>開發</span>
+      </div>
+
+      <div class="stage" style="--owner: var(--blue)">
+        <div class="stage-num">01</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>發掘與對齊</h3><span class="chip chip-ba">BA</span></div>
+          <dl class="rows">
+            <div class="row"><dt>AI 負責</dt><dd>功能簡報 → user flow ＋ 低保真可點擊原型。</dd></div>
+            <div class="row"><dt>產出</dt><dd><div class="tags"><span class="tag">User flow</span><span class="tag">低保真原型</span></div></dd></div>
+            <div class="row gate"><dt>把關</dt><dd>每週業務／營運評審 — 確認方向。刻意做低保真：討論流程，而非顏色。</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="stage" style="--owner: var(--blue)">
+        <div class="stage-num">02</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>確立需求</h3><span class="chip chip-ba">BA</span></div>
+          <dl class="rows">
+            <div class="row"><dt>AI 負責</dt><dd>將通過的原型升級套用 design system · 撰寫 BRD — 規則、狀態、權限、邊界情況 · 以 given／when／then 撰寫驗收條件。</dd></div>
+            <div class="row"><dt>產出</dt><dd><div class="tags"><span class="tag">生產級原型</span><span class="tag">BRD</span></div></dd></div>
+            <div class="row gate"><dt>把關</dt><dd>規格凍結 — BA ＋ 業務負責人簽核。BA 交接後即前進下一項。</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="stage" style="--owner: var(--magenta-70)">
+        <div class="stage-num">03</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>設計</h3><span class="chip chip-design">設計師</span></div>
+          <dl class="rows">
+            <div class="row"><dt>design system</dt><dd>維護並擴充元件庫 — BA 原型與開發都以此為基礎。</dd></div>
+            <div class="row"><dt>細節打磨</dt><dd>交接給開發前，將 BA 原型完善到生產級細節。</dd></div>
+            <div class="row"><dt>大型功能</dt><dd>多頁面工作（例如 eShop）由設計師建立 HTML 頁面骨架，讓開發不偏離方向。</dd></div>
+            <div class="row"><dt>全程跟進</dt><dd>開發期全程跟進該功能 — 回答細節／UI 問題，商業問題則上呈 BA。</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="stage" style="--owner: var(--teal-70)">
+        <div class="stage-num">04</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>開發</h3><span class="chip chip-dev">開發</span> <span class="chip chip-design">設計師跟進</span></div>
+          <dl class="rows">
+            <div class="row"><dt>輸入</dt><dd>原型（UI／流程）＋ BRD（邏輯）。</dd></div>
+            <div class="row"><dt>AI 負責</dt><dd>AI 輔助開發。</dd></div>
+            <div class="row"><dt>提問</dt><dd>細節／UI → 設計師 · 商業邏輯 → 上呈 BA。</dd></div>
+            <div class="row gate"><dt>完成條件</dt><dd>開發自行對照 BRD 檢查清單測試。</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="stage" style="--owner: var(--teal-70)">
+        <div class="stage-num">05</div>
+        <div class="stage-body">
+          <div class="stage-head"><h3>驗證</h3><span class="chip chip-new">全新正式流程</span></div>
+          <ol class="ladder">
+            <li><span><b>開發自測</b> — 對照 BRD 檢查清單，進入 QA 的門檻。</span></li>
+            <li><span><b>AI 測試</b> — 依 BRD 驗收條件產生測試案例，以 Playwright 執行 → 產出缺陷報告。</span></li>
+            <li><span><b>設計師審查</b> — 對照原型檢查視覺／UX 一致性。</span></li>
+            <li><span><b>BA 簽核</b> — 商業關鍵流程。</span></li>
+          </ol>
+          <dl class="rows" style="margin-top:16px">
+            <div class="row gate"><dt>把關</dt><dd>四項全過 → 上線。</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-label mono">角色分工</div>
+      <h2>角色對照</h2>
+      <table>
+        <thead><tr><th style="width:120px">角色</th><th>負責</th><th style="width:34%">待命處理</th></tr></thead>
+        <tbody>
+          <tr><td><span class="who">BA ×3</span></td><td>流程 · wireframe · 原型 · BRD · 主持每週評審</td><td>僅處理上呈的<b>商業</b>問題</td></tr>
+          <tr><td><span class="who">設計師</span></td><td>design system · 原型打磨 · 開發跟進 · 大型頁面骨架 · QA 審查</td><td>細節／UI／design system 問題</td></tr>
+          <tr><td><span class="who">開發</span></td><td>依原型＋BRD 實作 · 自測</td><td>—</td></tr>
+          <tr><td><span class="who">業務／營運</span></td><td>方向與規格簽核</td><td>每週評審</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <div class="sec-label mono">規格契約</div>
+      <h2>兩個真實來源</h2>
+      <p class="sec-note">原型呈現主要流程與外觀，卻無法呈現隱藏的邏輯。因此契約一分為二 — BRD 也因為不再用文字重述 UI 而保持精簡。</p>
+      <div class="split">
+        <div class="card proto">
+          <h4>原型</h4>
+          <div class="auth mono">UI ＋ 流程的權威依據</div>
+          <ul>
+            <li>外觀樣式</li>
+            <li>畫面順序與導覽</li>
+            <li>來自 design system 的元件</li>
+          </ul>
+        </div>
+        <div class="card brd">
+          <h4>BRD</h4>
+          <div class="auth mono">邏輯的權威依據</div>
+          <ul>
+            <li>商業規則與權限</li>
+            <li>空白／錯誤／載入狀態</li>
+            <li>邊界情況與失敗處理</li>
+            <li>驗收條件（given／when／then）</li>
+          </ul>
+        </div>
+      </div>
+      <p class="split-foot">QA 對照<b>兩者</b>測試。</p>
+    </section>
+
+    <footer>AI 開發流程 · v1 草案 · 2026-06-16 · IBM Carbon（G10 淺色）</footer>
+  </div>
+
+</div>
+
+<script>
+  function showLang(lang) {
+    document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+    document.getElementById('panel-' + lang).classList.add('active');
+    document.getElementById('tab-' + lang).classList.add('active');
+    document.documentElement.lang = (lang === 'zh') ? 'zh-Hant' : 'en';
+  }
+</script>
+</body>
+</html>
