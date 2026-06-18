@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor — Asana Board Architecture · AI Dev Workflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* lens colors */
+    --what-500:#7c3aed; --what-600:#6d28d9; --what-tint:#f5f3ff; --what-line:#ddd6fe;   /* Feature Board / domain */
+    --when-500:#2563eb; --when-600:#1d4ed8; --when-tint:#eff6ff; --when-line:#bfdbfe;   /* Roadmap / release */
+    --where-500:#d97706; --where-600:#b45309; --where-tint:#fffbeb; --where-line:#fde68a;/* Stage / process */
+    --how-500:#059669; --how-600:#047857; --how-tint:#ecfdf5; --how-line:#a7f3d0;       /* Dev board / execution */
+    --ink:#0a0e1a; --ink-1:#1e2330; --ink-2:#4b5563; --ink-3:#6b7280; --ink-4:#9ca3af; --ink-5:#d1d5db;
+    --surface:#fff; --surface-2:#fafbfc; --surface-3:#f4f6f8; --line:#e6e8ec; --line-soft:#eef0f3;
+    --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+    --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-5:20px;--s-6:24px;--s-8:32px;--s-10:40px;--s-12:48px;--s-16:64px;
+    --r-sm:6px;--r-md:10px;--r-lg:14px;--r-xl:20px;
+    --shadow-sm:0 1px 2px rgba(10,14,26,.05),0 1px 3px rgba(10,14,26,.06);
+    --shadow-md:0 4px 12px rgba(10,14,26,.05),0 2px 4px rgba(10,14,26,.04);
+    --shadow-lg:0 12px 32px rgba(10,14,26,.07),0 4px 8px rgba(10,14,26,.04);
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth;}
+  body{
+    font-family:var(--font-sans);color:var(--ink-1);line-height:1.55;min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 100% -200px,rgba(124,58,237,.06),transparent 60%),
+      radial-gradient(900px 500px at -200px 100px,rgba(37,99,235,.05),transparent 60%),
+      linear-gradient(180deg,#fafbfc 0%,#f4f6f8 100%);
+  }
+  .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);
+    padding:var(--s-3) var(--s-6);background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .tb-brand{font-family:var(--font-mono);font-size:12.5px;font-weight:600;color:var(--ink-2);letter-spacing:.02em;}
+  .tb-brand b{color:var(--what-600);}
+  .tb-date{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-4);}
+  .wrap{max-width:1120px;margin:0 auto;padding:var(--s-12) var(--s-5) var(--s-16);}
+
+  .eyebrow{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--what-600);margin-bottom:var(--s-3);}
+  h1{font-size:36px;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.12;margin-bottom:var(--s-3);}
+  .sub{font-size:17px;color:var(--ink-2);max-width:760px;}
+
+  h2{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:var(--s-16) 0 var(--s-5);display:flex;align-items:center;gap:var(--s-3);}
+  h2::after{content:"";flex:1;height:1px;background:var(--line);}
+  h2 .n{font-family:var(--font-mono);color:var(--ink-4);}
+
+  .lead{font-size:15px;color:var(--ink-2);max-width:820px;margin-bottom:var(--s-6);}
+  .lead b{color:var(--ink-1);font-weight:600;}
+
+  /* LEGEND */
+  .legend{display:flex;gap:var(--s-2);flex-wrap:wrap;margin-top:var(--s-6);}
+  .lg{display:inline-flex;align-items:center;gap:var(--s-2);font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow-sm);}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .d-what{background:var(--what-500);} .d-when{background:var(--when-500);} .d-where{background:var(--where-500);} .d-how{background:var(--how-500);}
+
+  /* SPINE DIAGRAM */
+  .spine-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);padding:var(--s-8) var(--s-6) var(--s-6);box-shadow:var(--shadow-md);}
+  .spine{margin:0 auto var(--s-2);max-width:560px;background:linear-gradient(180deg,#fff,#fcfcfd);border:2px solid var(--ink-1);border-radius:var(--r-lg);padding:var(--s-5) var(--s-6);text-align:center;box-shadow:var(--shadow-md);position:relative;}
+  .spine .tag{font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4);}
+  .spine .ttl{font-size:18px;font-weight:800;color:var(--ink);margin:2px 0 4px;}
+  .spine .desc{font-size:13px;color:var(--ink-2);}
+  .spine .chips{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:var(--s-3);}
+  .chip{font-family:var(--font-mono);font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);background:var(--surface-3);}
+  .chip.proto{color:var(--what-600);background:var(--what-tint);border-color:var(--what-line);}
+  .chip.brd{color:var(--where-600);background:var(--where-tint);border-color:var(--where-line);}
+
+  .fork{height:var(--s-8);position:relative;max-width:920px;margin:0 auto;}
+  .fork::before{content:"";position:absolute;top:0;left:50%;width:2px;height:14px;background:var(--ink-5);transform:translateX(-50%);}
+  .fork::after{content:"";position:absolute;top:14px;left:12.5%;right:12.5%;height:2px;background:var(--ink-5);}
+
+  .lenses{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-3);}
+  .lens{position:relative;border-radius:var(--r-lg);padding:var(--s-4);border:1px solid;background:var(--surface);box-shadow:var(--shadow-sm);}
+  .lens::before{content:"";position:absolute;top:-18px;left:50%;width:2px;height:18px;background:var(--ink-5);transform:translateX(-50%);}
+  .lens .axis{font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+  .lens .name{font-size:14.5px;font-weight:800;color:var(--ink);margin:3px 0 6px;line-height:1.2;}
+  .lens .meta{font-size:12px;color:var(--ink-2);}
+  .lens .meta b{font-weight:600;color:var(--ink-1);}
+  .lens .grain{margin-top:var(--s-3);font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);border-top:1px dashed var(--line);padding-top:var(--s-2);}
+  .lens.what{border-color:var(--what-line);background:linear-gradient(180deg,var(--what-tint),#fff 70%);} .lens.what .axis{color:var(--what-600);}
+  .lens.when{border-color:var(--when-line);background:linear-gradient(180deg,var(--when-tint),#fff 70%);} .lens.when .axis{color:var(--when-600);}
+  .lens.where{border-color:var(--where-line);background:linear-gradient(180deg,var(--where-tint),#fff 70%);} .lens.where .axis{color:var(--where-600);}
+  .lens.how{border-color:var(--how-line);background:linear-gradient(180deg,var(--how-tint),#fff 70%);} .lens.how .axis{color:var(--how-600);}
+  .lens .mech{display:inline-block;margin-top:var(--s-2);font-family:var(--font-mono);font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:999px;background:var(--ink-1);color:#fff;}
+
+  /* 3 real boards + stage-as-view */
+  .boards{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-3);align-items:start;}
+  .fork.f3::after{left:16.6%;right:16.6%;}
+  .views{margin-top:var(--s-3);border-top:1px dashed var(--what-line);padding-top:var(--s-3);}
+  .views-h{font-family:var(--font-mono);font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);margin-bottom:6px;}
+  .vtab{display:block;font-size:11.5px;font-weight:700;padding:6px 10px;border-radius:var(--r-sm);border:1px solid var(--what-line);margin-bottom:5px;background:#fff;color:var(--ink-1);}
+  .vtab i{font-weight:500;color:var(--ink-3);font-style:normal;}
+  .vtab.active{background:var(--what-500);color:#fff;border-color:var(--what-500);}
+  .vtab.active i{color:rgba(255,255,255,.82);}
+  .vtab.pipe{border-color:var(--where-500);background:var(--where-tint);color:var(--where-600);}
+  .vtab.pipe i{color:var(--where-600);}
+
+  .stagebanner{margin-top:var(--s-4);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap;
+    background:linear-gradient(180deg,var(--where-tint),#fff);border:1.5px dashed var(--where-500);border-radius:var(--r-lg);padding:var(--s-4) var(--s-5);position:relative;}
+  .stagebanner::before{content:"";position:absolute;top:-15px;left:16.6%;width:2px;height:15px;background:var(--where-500);transform:translateX(-50%);}
+  .sb-left{display:flex;align-items:center;gap:var(--s-3);flex:1;min-width:280px;}
+  .sb-badge{flex:none;font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:var(--where-500);padding:5px 10px;border-radius:999px;}
+  .sb-txt{font-size:13px;color:var(--ink-2);} .sb-txt b{color:var(--ink-1);font-weight:700;} .sb-arrow{color:var(--where-600);font-weight:800;padding:0 2px;}
+  .sb-pipe{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--where-600);background:#fff;border:1px solid var(--where-line);border-radius:999px;padding:6px 12px;}
+
+  /* PIPELINE */
+  .pipe{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:var(--s-2) 2px var(--s-4);}
+  .stage{flex:1 0 0;min-width:138px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-3) var(--s-3) var(--s-4);position:relative;box-shadow:var(--shadow-sm);}
+  .stage + .stage{margin-left:26px;}
+  .stage + .stage::before{content:"›";position:absolute;left:-21px;top:50%;transform:translateY(-50%);font-size:22px;font-weight:700;color:var(--ink-5);}
+  .stage .sn{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--ink-4);}
+  .stage .st{font-size:13.5px;font-weight:800;color:var(--ink);margin:2px 0 6px;line-height:1.2;}
+  .stage .owner{display:inline-block;font-family:var(--font-mono);font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;}
+  .o-ba{background:var(--what-tint);color:var(--what-600);border:1px solid var(--what-line);}
+  .o-des{background:#fdf2f8;color:#be185d;border:1px solid #fbcfe8;}
+  .o-dev{background:var(--how-tint);color:var(--how-600);border:1px solid var(--how-line);}
+  .o-qa{background:var(--where-tint);color:var(--where-600);border:1px solid var(--where-line);}
+  .stage .art{margin-top:var(--s-3);font-size:11px;color:var(--ink-2);line-height:1.5;}
+  .stage.ship{background:linear-gradient(180deg,#ecfdf5,#fff);border-color:var(--how-line);}
+  .stage.ship .st{color:var(--how-600);}
+
+  .gate{display:flex;align-items:center;gap:var(--s-2);font-size:12px;font-weight:600;color:var(--ink-2);margin:var(--s-4) 0 0;padding:10px 14px;border:1px dashed var(--where-line);background:var(--where-tint);border-radius:var(--r-md);}
+  .gate b{color:var(--where-600);} .gate .pin{font-size:14px;}
+
+  .qa{margin-top:var(--s-4);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s-4) var(--s-5);box-shadow:var(--shadow-sm);}
+  .qa .h{font-size:12.5px;font-weight:700;color:var(--ink-1);margin-bottom:var(--s-3);display:flex;align-items:center;gap:8px;}
+  .qa .h .b{font-family:var(--font-mono);font-size:10px;font-weight:600;color:#fff;background:var(--where-500);padding:2px 7px;border-radius:999px;}
+  .qa ol{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s-2) var(--s-5);list-style:none;counter-reset:q;}
+  .qa li{font-size:12.5px;color:var(--ink-2);counter-increment:q;padding-left:26px;position:relative;line-height:1.45;}
+  .qa li::before{content:counter(q);position:absolute;left:0;top:0;width:18px;height:18px;border-radius:50%;background:var(--surface-3);border:1px solid var(--line);font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--ink-2);display:flex;align-items:center;justify-content:center;}
+  .qa li b{color:var(--ink-1);font-weight:600;}
+
+  /* TWO SOURCES */
+  .truth{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4);}
+  .src{border-radius:var(--r-lg);padding:var(--s-5);border:1px solid;box-shadow:var(--shadow-sm);}
+  .src.p{border-color:var(--what-line);background:linear-gradient(180deg,var(--what-tint),#fff 80%);}
+  .src.b{border-color:var(--where-line);background:linear-gradient(180deg,var(--where-tint),#fff 80%);}
+  .src .lbl{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+  .src.p .lbl{color:var(--what-600);} .src.b .lbl{color:var(--where-600);}
+  .src .t{font-size:16px;font-weight:800;color:var(--ink);margin:4px 0 6px;}
+  .src .d{font-size:13px;color:var(--ink-2);}
+
+  /* SET RULE */
+  .setrule{display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--s-6);box-shadow:var(--shadow-sm);}
+  .venn{display:flex;align-items:center;gap:14px;}
+  .vcircle{border-radius:var(--r-md);padding:var(--s-4) var(--s-5);text-align:center;border:2px solid;}
+  .vcircle.big{border-color:var(--what-line);background:var(--what-tint);}
+  .vcircle.small{border-color:var(--when-line);background:var(--when-tint);}
+  .vcircle .vn{font-size:13px;font-weight:800;color:var(--ink);}
+  .vcircle .vs{font-size:11px;color:var(--ink-2);margin-top:2px;}
+  .setrule .supseteq{font-size:28px;font-weight:700;color:var(--ink-3);font-family:var(--font-mono);}
+  .setrule .expl{font-size:13.5px;color:var(--ink-2);flex:1;min-width:240px;}
+  .setrule .expl b{color:var(--ink-1);font-weight:600;}
+
+  /* WALKTHROUGH TABLE */
+  .tbl{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm);font-size:12.5px;}
+  .tbl th{text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);background:var(--surface-3);padding:10px 14px;border-bottom:1px solid var(--line);}
+  .tbl td{padding:11px 14px;border-bottom:1px solid var(--line-soft);color:var(--ink-2);vertical-align:top;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td b{color:var(--ink-1);font-weight:600;}
+  .pill{display:inline-block;font-family:var(--font-mono);font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;white-space:nowrap;}
+  .pill.what{background:var(--what-tint);color:var(--what-600);} .pill.when{background:var(--when-tint);color:var(--when-600);}
+  .pill.where{background:var(--where-tint);color:var(--where-600);} .pill.how{background:var(--how-tint);color:var(--how-600);}
+  .pill.off{background:var(--surface-3);color:var(--ink-4);}
+
+  /* AUTHORITY */
+  .auth{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-3);}
+  .acard{border-radius:var(--r-lg);padding:var(--s-4);border:1px solid;box-shadow:var(--shadow-sm);}
+  .acard .ax{font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+  .acard .own{font-size:14px;font-weight:800;color:var(--ink);margin:4px 0 4px;}
+  .acard .dd{font-size:12px;color:var(--ink-2);}
+  .acard.what{border-color:var(--what-line);background:var(--what-tint);} .acard.what .ax{color:var(--what-600);}
+  .acard.when{border-color:var(--when-line);background:var(--when-tint);} .acard.when .ax{color:var(--when-600);}
+  .acard.where{border-color:var(--where-line);background:var(--where-tint);} .acard.where .ax{color:var(--where-600);}
+  .acard.how{border-color:var(--how-line);background:var(--how-tint);} .acard.how .ax{color:var(--how-600);}
+
+  .note{margin-top:var(--s-5);font-size:12.5px;color:var(--ink-3);border-left:3px solid var(--where-line);background:var(--where-tint);padding:12px 16px;border-radius:0 var(--r-md) var(--r-md) 0;}
+  .note b{color:var(--where-600);}
+
+  .foot{margin-top:var(--s-16);padding-top:var(--s-6);border-top:1px solid var(--line);font-size:12px;color:var(--ink-4);font-family:var(--font-mono);}
+
+  @media(max-width:880px){
+    .boards{grid-template-columns:1fr;} .lens::before{display:none;} .fork{display:none;}
+    .stagebanner::before{display:none;}
+    .auth{grid-template-columns:repeat(2,1fr);} .truth{grid-template-columns:1fr;} .qa ol{grid-template-columns:1fr;}
+    h1{font-size:28px;}
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="tb-brand">ztor · <b>asana board architecture</b> — ai dev workflow v1</div>
+    <div class="tb-date">2026-06-17 · proposal</div>
+  </div>
+
+  <div class="wrap">
+
+    <div class="eyebrow">Operating model</div>
+    <h1>Three boards, one spine</h1>
+    <p class="sub">The feature catalog, the release plan, and the engineering board are <b>three Asana projects</b> sharing one Feature task. The AI dev workflow's 5 stages are <b>not a fourth board</b> — they're a field + a saved view that rides on the Feature Board. Multi-homing + subtasks keep it all in sync with zero duplication.</p>
+
+    <div class="legend">
+      <span class="lg"><span class="dot d-what"></span>What · Feature Board <span style="color:var(--ink-4);font-weight:500">(project)</span></span>
+      <span class="lg"><span class="dot d-when"></span>When · Roadmap <span style="color:var(--ink-4);font-weight:500">(project)</span></span>
+      <span class="lg"><span class="dot d-how"></span>How / who · Dev board <span style="color:var(--ink-4);font-weight:500">(project)</span></span>
+      <span class="lg" style="border-style:dashed"><span class="dot d-where"></span>Where · Stage <span style="color:var(--ink-4);font-weight:500">(field + view, not a board)</span></span>
+    </div>
+
+    <!-- SPINE -->
+    <h2><span class="n">01</span> The spine &amp; the four lenses</h2>
+    <p class="lead">One <b>Feature task</b> is created once and never duplicated. It <b>surfaces</b> in each board with a different grouping. Three boards are separate projects (a task can hold one section in each); the process stage is a shared field; dev work is subtasks.</p>
+
+    <div class="spine-wrap">
+      <div class="spine">
+        <div class="tag">The atomic unit — created once</div>
+        <div class="ttl">⬡ Feature task</div>
+        <div class="desc">e.g. “Crowdfunding Waitlist”</div>
+        <div class="chips">
+          <span class="chip">Stage: field</span>
+          <span class="chip proto">Prototype URL</span>
+          <span class="chip brd">BRD URL</span>
+          <span class="chip">Owner-BA</span>
+        </div>
+      </div>
+
+      <div class="fork f3"></div>
+
+      <div class="boards">
+        <div class="lens what">
+          <div class="axis">What &nbsp;·&nbsp; project 1</div>
+          <div class="name">Feature Board</div>
+          <div class="meta">Sections = <b>product domain</b><br>Crowdfunding · IP Bank · OTT · Shop…</div>
+          <div class="grain">grain: 1 card = 1 feature</div>
+          <span class="mech">membership · project</span>
+          <div class="views">
+            <div class="views-h">two saved views — same cards, one board</div>
+            <span class="vtab active">▦ By Domain <i>(catalog)</i></span>
+            <span class="vtab pipe">⛓ By Stage <i>(the pipeline ↓)</i></span>
+          </div>
+        </div>
+        <div class="lens when">
+          <div class="axis">When &nbsp;·&nbsp; project 2</div>
+          <div class="name">Roadmap&nbsp;–&nbsp;2026</div>
+          <div class="meta">Sections = <b>release window</b><br>1.18 · 2.0 · Aug · Sept · Oct…</div>
+          <div class="grain">grain: same card, scheduled subset</div>
+          <span class="mech">membership · project</span>
+        </div>
+        <div class="lens how">
+          <div class="axis">How / who &nbsp;·&nbsp; project 3</div>
+          <div class="name">Indo Eng board</div>
+          <div class="meta">Sections = <b>execution status</b><br>Todo · In Progress · Done</div>
+          <div class="grain">grain: dev subtasks only</div>
+          <span class="mech">subtasks · multi-homed</span>
+        </div>
+      </div>
+
+      <!-- STAGE = field + view, NOT a board -->
+      <div class="stagebanner">
+        <div class="sb-left">
+          <span class="sb-badge">NOT A BOARD</span>
+          <div class="sb-txt"><b>Stage</b> = a library custom field <span class="sb-arrow">→</span> powers the <b>“By Stage” saved view</b> on the Feature Board above. The 5-stage pipeline is a <b>lens</b>, not a fourth project.</div>
+        </div>
+        <div class="sb-pipe">Discover › Specify › Design › Build › Verify › Shipped</div>
+      </div>
+    </div>
+
+    <!-- PIPELINE -->
+    <h2><span class="n">02</span> The 5-stage gated pipeline <span style="font-family:var(--font-sans);text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink-3)">— a relay, not a free-for-all</span></h2>
+    <p class="lead">The <b>Stage</b> field carries each feature through the relay. BA-led front, designer shepherds the build, formal QA at the end. Two gates force a sign-off before work compounds downstream.</p>
+
+    <div class="pipe">
+      <div class="stage">
+        <div class="sn">Stage 1</div>
+        <div class="st">Discover &amp; Align</div>
+        <span class="owner o-ba">BA</span>
+        <div class="art">Brief → user flow + low-fi clickable prototype.</div>
+      </div>
+      <div class="stage">
+        <div class="sn">Stage 2</div>
+        <div class="st">Specify</div>
+        <span class="owner o-ba">BA</span>
+        <div class="art">Production-fidelity prototype + BRD + acceptance criteria (given/when/then).</div>
+      </div>
+      <div class="stage">
+        <div class="sn">Stage 3</div>
+        <div class="st">Design</div>
+        <span class="owner o-des">Designer</span>
+        <div class="art">Owns component library; polishes prototype; builds HTML scaffolds; shepherds build.</div>
+      </div>
+      <div class="stage">
+        <div class="sn">Stage 4</div>
+        <div class="st">Build</div>
+        <span class="owner o-dev">Dev</span>
+        <div class="art">Implements from prototype + BRD. UI Qs → designer · logic Qs → BA.</div>
+      </div>
+      <div class="stage">
+        <div class="sn">Stage 5</div>
+        <div class="st">Verify</div>
+        <span class="owner o-qa">QA · all roles</span>
+        <div class="art">Four-check gate (below) before ship.</div>
+      </div>
+      <div class="stage ship">
+        <div class="sn">Done</div>
+        <div class="st">Shipped ✓</div>
+        <span class="owner o-dev">Released</span>
+        <div class="art">Stage = Shipped. Lives on as a roadmap record.</div>
+      </div>
+    </div>
+
+    <div class="gate"><span class="pin">🔒</span><span><b>Gate 1 — after Discover:</b> weekly business / ops review approves direction.&nbsp;&nbsp;·&nbsp;&nbsp;<b>Gate 2 — after Specify:</b> spec-freeze, BA + business-owner sign-off. <i>Model both as Asana Approval subtasks.</i></span></div>
+
+    <div class="qa">
+      <div class="h"><span class="b">VERIFY GATE</span> All four must pass before shipping</div>
+      <ol>
+        <li><b>Dev self-test</b> against the BRD checklist</li>
+        <li><b>AI-generated test cases</b> from acceptance criteria, via Playwright</li>
+        <li><b>Designer review</b> — visual / UX fidelity vs. prototype</li>
+        <li><b>BA approval</b> of business-critical flows</li>
+      </ol>
+    </div>
+
+    <!-- TWO SOURCES -->
+    <h2><span class="n">03</span> Two sources of truth — the spec contract</h2>
+    <p class="lead">Pin both as <b>URL custom fields on the Feature task</b> so they travel with the card to every board, and QA tests straight against them. If they live in comments, they get lost.</p>
+    <div class="truth">
+      <div class="src p">
+        <div class="lbl">Prototype URL</div>
+        <div class="t">Authorizes the UI &amp; flow</div>
+        <div class="d">Appearance, screen order, which design-system components. Owned by Designer + BA.</div>
+      </div>
+      <div class="src b">
+        <div class="lbl">BRD URL</div>
+        <div class="t">Authorizes the logic</div>
+        <div class="d">Business rules, permissions, error / loading states, edge cases, acceptance criteria. Owned by BA.</div>
+      </div>
+    </div>
+
+    <!-- SET RULE -->
+    <h2><span class="n">04</span> Feature Board ⊇ Roadmap — the scheduling rule</h2>
+    <div class="setrule">
+      <div class="venn">
+        <div class="vcircle big">
+          <div class="vn">Feature Board</div>
+          <div class="vs">every feature, by domain<br>(incl. “Wishing well”)</div>
+        </div>
+        <span class="supseteq">⊇</span>
+        <div class="vcircle small">
+          <div class="vn">Roadmap</div>
+          <div class="vs">scheduled subset,<br>with a target release</div>
+        </div>
+      </div>
+      <div class="expl">A feature joins a <b>Roadmap release section only when it's scheduled.</b> A card with no roadmap membership = <b>“not yet committed to a release”</b> — a useful signal in itself: promised work vs. wishlist. (This Feature Board ↔ Roadmap sharing is <b>already live today</b> — e.g. “Link IP to a project” sits in both.)</div>
+    </div>
+
+    <!-- WALKTHROUGH -->
+    <h2><span class="n">05</span> One feature, walked through all four lenses</h2>
+    <p class="lead">“<b>Crowdfunding Waitlist</b>” — the same task, surfacing differently as it moves.</p>
+    <table class="tbl">
+      <thead>
+        <tr><th style="width:18%">Stage</th><th>Feature Board <span style="color:var(--what-500)">●</span></th><th>Roadmap <span style="color:var(--when-500)">●</span></th><th>Dev board <span style="color:var(--how-500)">●</span></th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Discover</b><br><span class="pill where">stage: discover</span></td>
+          <td><span class="pill what">Crowdfunding</span> created here</td>
+          <td><span class="pill off">not scheduled yet</span></td>
+          <td><span class="pill off">—</span></td>
+        </tr>
+        <tr>
+          <td><b>Specify</b><br><span class="pill where">stage: specify</span></td>
+          <td>Prototype + BRD fields fill in · <i>spec-freeze gate</i></td>
+          <td>→ added to <span class="pill when">2.0 (Jul 30)</span></td>
+          <td><span class="pill off">—</span></td>
+        </tr>
+        <tr>
+          <td><b>Design</b><br><span class="pill where">stage: design</span></td>
+          <td>prototype polished to prod detail</td>
+          <td><span class="pill when">2.0 (Jul 30)</span></td>
+          <td><span class="pill off">—</span></td>
+        </tr>
+        <tr>
+          <td><b>Build</b><br><span class="pill where">stage: build</span></td>
+          <td>parent shows <b>4/7 subtasks</b> rollup</td>
+          <td><span class="pill when">2.0 (Jul 30)</span></td>
+          <td>subtasks spawn → <span class="pill how">Todo → In&nbsp;Progress</span></td>
+        </tr>
+        <tr>
+          <td><b>Verify → Ship</b><br><span class="pill where">stage: shipped</span></td>
+          <td>4-check QA · <i>ship gate</i></td>
+          <td><span class="pill when">2.0 — delivered</span></td>
+          <td><span class="pill how">Done</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- AUTHORITY -->
+    <h2><span class="n">06</span> One authority per axis — so boards never contradict</h2>
+    <p class="lead">The same task lives in several places. Assign <b>one owning surface per kind of truth</b> and everything else just mirrors it.</p>
+    <div class="auth">
+      <div class="acard what"><div class="ax">What</div><div class="own">Domain</div><div class="dd">owned on the <b>Feature Board</b></div></div>
+      <div class="acard when"><div class="ax">When</div><div class="own">Release / date</div><div class="dd">owned on the <b>Roadmap</b></div></div>
+      <div class="acard where"><div class="ax">Where</div><div class="own">Process stage</div><div class="dd">owned by the <b>Stage field</b></div></div>
+      <div class="acard how"><div class="ax">How</div><div class="own">Daily status</div><div class="dd">owned on the <b>Dev board</b></div></div>
+    </div>
+    <div class="note"><b>Cleanup opportunity:</b> roadmap tasks are still multi-homed into older <code>PENDING / IN PROGRESS / ITEMS-TO-DISCUSS</code> status sections from a legacy board. Once daily status lives on the Dev board, retire those stray memberships or they'll contradict it. The Dev board's own <code>Todo/Done</code> + weekly-sprint double-sectioning is parked for now (your call).</div>
+
+    <div class="foot">Ztor 2.0 · AI Dev Workflow v1 · board architecture proposal · generated 2026-06-17 — structure only, no Asana changes made.</div>
+
+  </div>
+</body>
+</html>
