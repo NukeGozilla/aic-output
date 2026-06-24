@@ -100,7 +100,7 @@
 
   .stagebanner{margin-top:var(--s-4);display:flex;align-items:center;gap:var(--s-5);flex-wrap:wrap;
     background:linear-gradient(180deg,var(--where-tint),#fff);border:1.5px dashed var(--where-500);border-radius:var(--r-lg);padding:var(--s-4) var(--s-5);position:relative;}
-  .stagebanner::before{content:"";position:absolute;top:-15px;left:16.6%;width:2px;height:15px;background:var(--where-500);transform:translateX(-50%);}
+  .stagebanner::before{content:"";position:absolute;top:-15px;left:50%;width:2px;height:15px;background:var(--where-500);transform:translateX(-50%);}
   .sb-left{display:flex;align-items:center;gap:var(--s-3);flex:1;min-width:280px;}
   .sb-badge{flex:none;font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.05em;color:#fff;background:var(--where-500);padding:5px 10px;border-radius:999px;}
   .sb-txt{font-size:13px;color:var(--ink-2);} .sb-txt b{color:var(--ink-1);font-weight:700;} .sb-arrow{color:var(--where-600);font-weight:800;padding:0 2px;}
@@ -193,20 +193,20 @@
 <body>
   <div class="topbar">
     <div class="tb-brand">ztor · <b>asana board architecture</b> — ai dev workflow v1</div>
-    <div class="tb-date">2026-06-17 · proposal</div>
+    <div class="tb-date">2026-06-22 · live · rev5</div>
   </div>
 
   <div class="wrap">
 
     <div class="eyebrow">Operating model</div>
     <h1>Three boards, one spine</h1>
-    <p class="sub">The feature catalog, the release plan, and the engineering board are <b>three Asana projects</b> sharing one Feature task. The AI dev workflow's 5 stages are <b>not a fourth board</b> — they're a field + a saved view that rides on the Feature Board. Multi-homing + subtasks keep it all in sync with zero duplication.</p>
+    <p class="sub">The feature catalog, the release plan, and the engineering board are <b>three Asana projects</b> sharing one Feature task. The AI dev workflow's 5 stages are <b>not a fourth board</b> — they're tracked by the existing <b>Status</b> field on the Roadmap. Multi-homing + subtasks keep it all in sync with zero duplication.</p>
 
     <div class="legend">
       <span class="lg"><span class="dot d-what"></span>What · Feature Board <span style="color:var(--ink-4);font-weight:500">(project)</span></span>
       <span class="lg"><span class="dot d-when"></span>When · Roadmap <span style="color:var(--ink-4);font-weight:500">(project)</span></span>
       <span class="lg"><span class="dot d-how"></span>How / who · Dev board <span style="color:var(--ink-4);font-weight:500">(project)</span></span>
-      <span class="lg" style="border-style:dashed"><span class="dot d-where"></span>Where · Stage <span style="color:var(--ink-4);font-weight:500">(field + view, not a board)</span></span>
+      <span class="lg"><span class="dot d-where"></span>Where · Status <span style="color:var(--ink-4);font-weight:500">(existing field on the Roadmap)</span></span>
     </div>
 
     <!-- SPINE -->
@@ -219,10 +219,11 @@
         <div class="ttl">⬡ Feature task</div>
         <div class="desc">e.g. “Crowdfunding Waitlist”</div>
         <div class="chips">
-          <span class="chip">Stage: field</span>
-          <span class="chip proto">Prototype URL</span>
-          <span class="chip brd">BRD URL</span>
-          <span class="chip">Owner-BA</span>
+          <span class="chip">Status (pipeline)</span>
+          <span class="chip">Assignee = Owner-BA</span>
+          <span class="chip proto">Prototype link</span>
+          <span class="chip brd">BRD link</span>
+          <span class="chip" style="color:var(--ink-4)">↑ links in description</span>
         </div>
       </div>
 
@@ -236,9 +237,8 @@
           <div class="grain">grain: 1 card = 1 feature</div>
           <span class="mech">membership · project</span>
           <div class="views">
-            <div class="views-h">two saved views — same cards, one board</div>
+            <div class="views-h">one job — the catalog</div>
             <span class="vtab active">▦ By Domain <i>(catalog)</i></span>
-            <span class="vtab pipe">⛓ By Stage <i>(the pipeline ↓)</i></span>
           </div>
         </div>
         <div class="lens when">
@@ -247,6 +247,11 @@
           <div class="meta">Sections = <b>release window</b><br>1.18 · 2.0 · Aug · Sept · Oct…</div>
           <div class="grain">grain: same card, scheduled subset</div>
           <span class="mech">membership · project</span>
+          <div class="views">
+            <div class="views-h">two saved views — same cards, one board</div>
+            <span class="vtab active" style="background:var(--when-500);border-color:var(--when-500)">▦ By Release <i style="color:rgba(255,255,255,.82)">(when)</i></span>
+            <span class="vtab pipe">⛓ By Status <i>(pipeline ↓)</i></span>
+          </div>
         </div>
         <div class="lens how">
           <div class="axis">How / who &nbsp;·&nbsp; project 3</div>
@@ -257,19 +262,19 @@
         </div>
       </div>
 
-      <!-- STAGE = field + view, NOT a board -->
+      <!-- STATUS = existing field on the Roadmap, NOT a board -->
       <div class="stagebanner">
         <div class="sb-left">
           <span class="sb-badge">NOT A BOARD</span>
-          <div class="sb-txt"><b>Stage</b> = a library custom field <span class="sb-arrow">→</span> powers the <b>“By Stage” saved view</b> on the Feature Board above. The 5-stage pipeline is a <b>lens</b>, not a fourth project.</div>
+          <div class="sb-txt"><b>Status</b> = the existing Roadmap field <span class="sb-arrow">→</span> powers the <b>“By Status” saved view</b> on the Roadmap above. The pipeline is a <b>lens</b>, not a fourth project — and not a second field. <i>(A dedicated “Stage” field was trialed, then dropped: one pipeline field only.)</i></div>
         </div>
-        <div class="sb-pipe">Discover › Specify › Design › Build › Verify › Shipped</div>
+        <div class="sb-pipe">Pending › Requirement › Design › Development › UAT › Launched</div>
       </div>
     </div>
 
     <!-- PIPELINE -->
     <h2><span class="n">02</span> The 5-stage gated pipeline <span style="font-family:var(--font-sans);text-transform:none;letter-spacing:0;font-weight:600;color:var(--ink-3)">— a relay, not a free-for-all</span></h2>
-    <p class="lead">The <b>Stage</b> field carries each feature through the relay. BA-led front, designer shepherds the build, formal QA at the end. Two gates force a sign-off before work compounds downstream.</p>
+    <p class="lead">The <b>Status</b> field carries each feature through the relay (the Asana value is shown in the strip below). BA-led front, designer shepherds the build, formal QA at the end. Two gates force a sign-off before work compounds downstream.</p>
 
     <div class="pipe">
       <div class="stage">
@@ -306,9 +311,11 @@
         <div class="sn">Done</div>
         <div class="st">Shipped ✓</div>
         <span class="owner o-dev">Released</span>
-        <div class="art">Stage = Shipped. Lives on as a roadmap record.</div>
+        <div class="art">Status = Launched. Lives on as a roadmap record.</div>
       </div>
     </div>
+
+    <div class="gate" style="border-style:solid"><span><b>In Asana = the Status field:</b>&nbsp; Discover / Specify → <b>Requirement</b> · Design → <b>Design / Design Review</b> · Build → <b>Ready For Development → Development</b> · Verify → <b>UAT / Testing</b> · Shipped → <b>Launched</b> &nbsp;·&nbsp; not started → <b>Pending</b></span></div>
 
     <div class="gate"><span class="pin">🔒</span><span><b>Gate 1 — after Discover:</b> weekly business / ops review approves direction.&nbsp;&nbsp;·&nbsp;&nbsp;<b>Gate 2 — after Specify:</b> spec-freeze, BA + business-owner sign-off. <i>Model both as Asana Approval subtasks.</i></span></div>
 
@@ -324,7 +331,7 @@
 
     <!-- TWO SOURCES -->
     <h2><span class="n">03</span> Two sources of truth — the spec contract</h2>
-    <p class="lead">Pin both as <b>URL custom fields on the Feature task</b> so they travel with the card to every board, and QA tests straight against them. If they live in comments, they get lost.</p>
+    <p class="lead">Put both in the <b>Feature task description</b> so they travel with the card to every board, and QA tests straight against them. (Kept out of dedicated fields to keep the field set lean.)</p>
     <div class="truth">
       <div class="src p">
         <div class="lbl">Prototype URL</div>
@@ -360,35 +367,35 @@
     <p class="lead">“<b>Crowdfunding Waitlist</b>” — the same task, surfacing differently as it moves.</p>
     <table class="tbl">
       <thead>
-        <tr><th style="width:18%">Stage</th><th>Feature Board <span style="color:var(--what-500)">●</span></th><th>Roadmap <span style="color:var(--when-500)">●</span></th><th>Dev board <span style="color:var(--how-500)">●</span></th></tr>
+        <tr><th style="width:20%">Workflow step → Status</th><th>Feature Board <span style="color:var(--what-500)">●</span></th><th>Roadmap <span style="color:var(--when-500)">●</span></th><th>Dev board <span style="color:var(--how-500)">●</span></th></tr>
       </thead>
       <tbody>
         <tr>
-          <td><b>Discover</b><br><span class="pill where">stage: discover</span></td>
+          <td><b>Discover</b><br><span class="pill where">status: requirement</span></td>
           <td><span class="pill what">Crowdfunding</span> created here</td>
-          <td><span class="pill off">not scheduled yet</span></td>
+          <td>already on <span class="pill when">2.0 (Jul 30)</span> <i>(planned ahead)</i></td>
           <td><span class="pill off">—</span></td>
         </tr>
         <tr>
-          <td><b>Specify</b><br><span class="pill where">stage: specify</span></td>
-          <td>Prototype + BRD fields fill in · <i>spec-freeze gate</i></td>
-          <td>→ added to <span class="pill when">2.0 (Jul 30)</span></td>
+          <td><b>Specify</b><br><span class="pill where">status: requirement</span></td>
+          <td>Prototype + BRD links added · <i>spec-freeze gate</i></td>
+          <td><span class="pill when">2.0 (Jul 30)</span></td>
           <td><span class="pill off">—</span></td>
         </tr>
         <tr>
-          <td><b>Design</b><br><span class="pill where">stage: design</span></td>
+          <td><b>Design</b><br><span class="pill where">status: design</span></td>
           <td>prototype polished to prod detail</td>
           <td><span class="pill when">2.0 (Jul 30)</span></td>
           <td><span class="pill off">—</span></td>
         </tr>
         <tr>
-          <td><b>Build</b><br><span class="pill where">stage: build</span></td>
+          <td><b>Build</b><br><span class="pill where">status: development</span></td>
           <td>parent shows <b>4/7 subtasks</b> rollup</td>
           <td><span class="pill when">2.0 (Jul 30)</span></td>
           <td>subtasks spawn → <span class="pill how">Todo → In&nbsp;Progress</span></td>
         </tr>
         <tr>
-          <td><b>Verify → Ship</b><br><span class="pill where">stage: shipped</span></td>
+          <td><b>Verify → Ship</b><br><span class="pill where">status: UAT → launched</span></td>
           <td>4-check QA · <i>ship gate</i></td>
           <td><span class="pill when">2.0 — delivered</span></td>
           <td><span class="pill how">Done</span></td>
@@ -402,12 +409,12 @@
     <div class="auth">
       <div class="acard what"><div class="ax">What</div><div class="own">Domain</div><div class="dd">owned on the <b>Feature Board</b></div></div>
       <div class="acard when"><div class="ax">When</div><div class="own">Release / date</div><div class="dd">owned on the <b>Roadmap</b></div></div>
-      <div class="acard where"><div class="ax">Where</div><div class="own">Process stage</div><div class="dd">owned by the <b>Stage field</b></div></div>
+      <div class="acard where"><div class="ax">Where</div><div class="own">Process stage</div><div class="dd">owned by the <b>Status field</b> (on the Roadmap)</div></div>
       <div class="acard how"><div class="ax">How</div><div class="own">Daily status</div><div class="dd">owned on the <b>Dev board</b></div></div>
     </div>
     <div class="note"><b>Cleanup opportunity:</b> roadmap tasks are still multi-homed into older <code>PENDING / IN PROGRESS / ITEMS-TO-DISCUSS</code> status sections from a legacy board. Once daily status lives on the Dev board, retire those stray memberships or they'll contradict it. The Dev board's own <code>Todo/Done</code> + weekly-sprint double-sectioning is parked for now (your call).</div>
 
-    <div class="foot">Ztor 2.0 · AI Dev Workflow v1 · board architecture proposal · generated 2026-06-17 — structure only, no Asana changes made.</div>
+    <div class="foot">Ztor 2.0 · AI Dev Workflow v1 · board architecture · updated 2026-06-22 (rev5) — live: Status is the single pipeline field; the trial Stage field was dropped.</div>
 
   </div>
 </body>
