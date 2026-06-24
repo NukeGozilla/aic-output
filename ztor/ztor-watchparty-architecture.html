@@ -57,6 +57,7 @@
   .layer.backend { border-top: 3px solid #8250df; }
   .layer.ext { border-top: 3px solid #1f883d; }
   .layer.data { border-top: 3px solid #0072c3; }
+  .layer.bo { border-top: 3px solid #b25000; }
   .layer-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-bottom: 4px; }
   .layer-desc { font-size: 12px; color: #666; margin-bottom: 18px; max-width: 900px; line-height: 1.5; }
 
@@ -103,11 +104,13 @@
 <body>
 
 <div class="header">
-  <h1>Ztor Watch Party — Solution Architecture <span class="badge">Build guide · 2026-06-05</span></h1>
-  <p>How to take the working demo to a production Ztor feature. Green = already proven in the demo; amber = what the dev team builds to productionize. The realtime core (Ably + host-authoritative sync) carries over unchanged.</p>
+  <h1>Ztor Watch Party — Solution Architecture <span class="badge">Build guide · v2 · 2026-06-24</span></h1>
+  <p>How to take the working demo to a production Ztor feature. Green = already proven in the demo; amber = what the dev team builds to productionize. The realtime core (Ably + host-authoritative sync) carries over unchanged. <strong>v2 folds in the two 2026-06-22 meetings:</strong> ops-granted hosts only, an ops-assigned content pool the host picks from in-room, a 1,000-seat cap, host-presence handling, confirmation emails, and watch-party orders counted toward total orders.</p>
   <div class="nav">
     <a href="https://ztor-watchparty.vercel.app" target="_blank" class="live">▶ Live demo ↗</a>
+    <a href="#changed">What changed (6-22)</a>
     <a href="#architecture">Architecture</a>
+    <a href="#backoffice">Back office</a>
     <a href="#protocol">Sync protocol</a>
     <a href="#deltas">Demo → Production</a>
     <a href="#interactions">Build checklist</a>
@@ -118,6 +121,18 @@
 
   <div class="principle" id="architecture">
     <strong>Core principle — host-authoritative sync.</strong> Only the host's player emits playback events (play / pause / seek). Every viewer is a passenger that replays them. There is no central media server doing the syncing — Ably is a thin pub/sub bus, and the video bytes come straight from the CDN to each client. This keeps the build small: the "magic" is ~3 channels and a snapshot-on-join handshake, not a streaming backend.
+  </div>
+
+  <div class="principle" id="changed" style="background:#fff7ed;border-color:#fde6c2;border-left-color:#f59e0b;">
+    <strong style="color:#8a5300;">What changed after the 2026-06-22 meetings.</strong> The demo proved the sync mechanism; these decisions reshape the room model and add the back office.
+    <ul style="margin:10px 0 0 18px;line-height:1.7;">
+      <li><strong>Hosts are ops-granted only</strong> — no open self-serve. A back-office capability decides who can host.</li>
+      <li><strong>Video is not fixed per room.</strong> Ops assigns a host a pool of titles + specific episodes; the host picks/switches among them <em>in-room</em> (marathon-friendly). Room record holds the host + allowed pool, not a single hard-coded videoId.</li>
+      <li><strong>Host must stay present</strong> — host controls playback, so a disconnect drops the room into a <code>host_away</code> (paused) state until they return or ops ends it.</li>
+      <li><strong>Capacity</strong> target ~1,000 (advertised ~400–500); enforced atomically before issuing a ticket/token.</li>
+      <li><strong>Tickets</strong> are host-set (free or POPCORN) on the <em>front end</em>; each counts as an <code>Order</code> toward total orders. No replay; refunds are manual (ops marks refunded, CS re-credits).</li>
+      <li><strong>Confirmation emails</strong> on party creation + ticket purchase (+ start reminder). Live chat is ephemeral (not retained after the room ends).</li>
+    </ul>
   </div>
 
   <div class="legend">
@@ -200,12 +215,22 @@
         </div>
         <div class="module">
           <div class="name">Room service</div>
-          <div class="role">create/lookup room → {roomCode, videoId, hostId, status}. Removes the need to pass videoId in the URL and makes codes server-validated, not client-guessed.</div>
+          <div class="role">create/lookup room → {roomCode, hostId, status, currentEpisodeId?}. Video is <strong>not</strong> fixed: the room references the host, who picks/switches the episode in-room from their granted pool. Status spans scheduled → preshow → live → host_away → ended. Codes server-validated.</div>
           <div class="tags"><span class="tag todo">build</span></div>
         </div>
         <div class="module">
           <div class="name">Entitlement resolver</div>
-          <div class="role">Given (user, videoId) returns a signed playback manifest URL — only if the viewer is allowed to watch (subscription / purchase / region). Reuse Ztor's existing playback authz.</div>
+          <div class="role">Two gates. <strong>Host:</strong> may this account host, and is the chosen title/episode in its content grant? <strong>Viewer:</strong> given (user, episodeId) return a signed manifest only if registered + ticketed + region/age-eligible. Reuse Ztor playback authz.</div>
+          <div class="tags"><span class="tag todo">reuse Ztor</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Ticket / Order + cap guard</div>
+          <div class="role">Issues a watch-party ticket as an <code>Order</code> (counts toward total orders). Idempotent (one ticket per user/room); reserves a seat <strong>atomically</strong> so the room never oversells past capacity.</div>
+          <div class="tags"><span class="tag todo">build</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Notifications (email)</div>
+          <div class="role">Confirmation email on party_created (host) + ticket_purchased (buyer) + a start reminder. Reuse Ztor's existing transactional email.</div>
           <div class="tags"><span class="tag todo">reuse Ztor</span></div>
         </div>
         <div class="module">
@@ -217,6 +242,46 @@
           <div class="name">Comment persistence + moderation</div>
           <div class="role">Optional: persist beyond Ably's rewind window for history + ops moderation. Can reuse the crowdfund Comments/Moderation service (BR-19).</div>
           <div class="tags"><span class="tag todo">optional</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↕ &nbsp; ops config + monitor (writes grants / caps; reads rooms, orders)</div>
+
+    <!-- Back office -->
+    <div class="layer bo" id="backoffice">
+      <div class="layer-title">Back office — ops config, monitor &amp; analytics</div>
+      <div class="layer-desc">New in v2. An internal, ops-only surface (the <a href="https://ztor-watchparty.vercel.app/bo" target="_blank" style="color:#b25000;">/bo prototype ↗</a>) that decides who may host and what they may stream, watches live rooms, and reads watch-party orders. Writes the grant/cap records the Room service + Entitlement resolver read.</div>
+      <div class="modules">
+        <div class="module">
+          <div class="name">Host grant</div>
+          <div class="role">Grant / revoke the "can host a watch party" capability per account. Not a user role — an explicit ops toggle. Gates the host action on the front end.</div>
+          <div class="tags"><span class="tag todo">build</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Content grant (title + episode)</div>
+          <div class="role">Assign each host a pool of titles and the specific episodes they may stream. The host picks among these in-room; anything outside the grant is unselectable / 403.</div>
+          <div class="tags"><span class="tag todo">build</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Capacity config</div>
+          <div class="role">Default + per-campaign room cap (target ~1,000) and a separate advertised number (~400–500, display-only). Feeds the cap guard.</div>
+          <div class="tags"><span class="tag todo">build</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Live monitor</div>
+          <div class="role">Every scheduled / live / ended room: status, occupancy vs cap, host_away banner, and an End-room kill switch. Reads room state + Ably presence.</div>
+          <div class="tags"><span class="tag todo">build</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Analytics + manual refund</div>
+          <div class="role">Watch-party orders (counted toward total orders), subscriber-vs-new, chat activity, export. Ops can mark an order refunded (status + audit only; CS re-credits).</div>
+          <div class="tags"><span class="tag todo">build</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Audit log</div>
+          <div class="role">Every grant / assign / cap change / end / refund writes {actor, action, target, before, after, at}. The who-did-what trail for permission + money actions.</div>
+          <div class="tags"><span class="tag todo">build</span></div>
         </div>
       </div>
     </div>
@@ -255,17 +320,32 @@
       <div class="modules">
         <div class="module">
           <div class="name">Rooms</div>
-          <div class="role">roomCode → videoId, hostId, createdAt, status. Source of truth for who may host and what's playing.</div>
+          <div class="role">roomCode → hostId, status, currentEpisodeId?, capacity, ticketsSold, scheduledStartAt. Holds the host + status, <strong>not</strong> a fixed video. Source of truth for who's hosting and what phase the room is in.</div>
           <div class="tags"><span class="tag todo">build</span></div>
         </div>
         <div class="module">
-          <div class="name">Comments (optional)</div>
-          <div class="role">Persisted chat for history/moderation. Skip if Ably rewind is enough for the use case.</div>
-          <div class="tags"><span class="tag todo">optional</span></div>
+          <div class="name">HostGrant / ContentGrant</div>
+          <div class="role">hostGrant{userId, status}; contentGrant{userId, titleId, episodeIds[]}. The capability + allowed pool the back office writes and the resolver reads.</div>
+          <div class="tags"><span class="tag todo">build</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Orders (watch_party_ticket)</div>
+          <div class="role">order{userId, refId=roomId, amountPopcorn, status, idempotencyKey}. Each ticket is an Order — counts toward total orders; refund flips status only.</div>
+          <div class="tags"><span class="tag todo">build</span></div>
+        </div>
+        <div class="module">
+          <div class="name">AuditLog</div>
+          <div class="role">{actorId, action, targetType, targetId, before, after, at} for every ops grant / cap / end / refund. Tax + dispute trail.</div>
+          <div class="tags"><span class="tag todo">build</span></div>
+        </div>
+        <div class="module">
+          <div class="name">Comments</div>
+          <div class="role">Live chat is <strong>ephemeral</strong> — 5-min Ably rewind only, not retained after the room ends (YouTube-live model). Optional persistence/moderation reuses crowdfund Comments (BR-19).</div>
+          <div class="tags"><span class="tag built">built</span><span class="tag todo">optional persist</span></div>
         </div>
         <div class="module">
           <div class="name">Content catalog</div>
-          <div class="role">Existing Ztor titles/manifests — no change, just referenced by videoId.</div>
+          <div class="role">Existing Ztor titles / episodes / manifests — no change, referenced by episodeId. Carries geo + age policy enforced at playback.</div>
           <div class="tags"><span class="tag built">existing</span></div>
         </div>
       </div>
@@ -275,7 +355,7 @@
 
   <!-- Sync protocol -->
   <div class="section-title" id="protocol">Sync protocol — host-authoritative</div>
-  <div class="section-sub">The only non-obvious part of the build. Two flows: live control (left→right propagation of host actions) and late-join catch-up (snapshot handshake). Everything rides the <code>video-{room}</code> channel.</div>
+  <div class="section-sub">The only non-obvious part of the build. Two flows: live control (left→right propagation of host actions) and late-join catch-up (snapshot handshake). Everything rides the <code>video-{room}</code> channel. <strong>v2:</strong> the snapshot's <code>videoId</code> is now an <code>episodeId</code> — when the host switches episodes from the granted pool, the same status handshake re-broadcasts and every viewer adopts the new episode. If the host disconnects, the room goes <code>host_away</code> and playback holds for everyone until they reconnect (only the host emits events).</div>
   <div class="diagram-wrap">
     <pre class="mermaid">
 sequenceDiagram
@@ -327,7 +407,42 @@ sequenceDiagram
         <tr>
           <td><code>Rooms / codes</code></td>
           <td class="demo"><code>Math.random()</code> code, client-only, videoId in URL</td>
-          <td class="prod">Server-created Room records; code validated on join; videoId resolved server-side (not trusted from URL).</td>
+          <td class="prod">Server-created Room records; code validated on join; <span class="must">no fixed video</span> — the room holds host + status, the episode is chosen in-room from the host's pool.</td>
+        </tr>
+        <tr>
+          <td><code>Who can host</code></td>
+          <td class="demo">Anyone with the link can "host"; role is a URL flag</td>
+          <td class="prod"><span class="must">Ops-granted only.</span> Back-office HostGrant gates the host action; no open self-serve, no approve flow.</td>
+        </tr>
+        <tr>
+          <td><code>Content selection</code></td>
+          <td class="demo">3 hard-coded clips; host picks one at create time</td>
+          <td class="prod"><span class="must">Ops assigns a title+episode pool;</span> host picks/switches episodes in-room (marathon-friendly), restricted to the grant.</td>
+        </tr>
+        <tr>
+          <td><code>Capacity</code></td>
+          <td class="demo">Unbounded; whoever has the link joins</td>
+          <td class="prod"><span class="must">Per-room cap (~1,000)</span> enforced atomically before a ticket/token issues; separate advertised number is display-only.</td>
+        </tr>
+        <tr>
+          <td><code>Host presence</code></td>
+          <td class="demo">Host leaving just stops events; no defined state</td>
+          <td class="prod"><span class="must"><code>host_away</code> state</span> pauses playback for all on disconnect; resumes on reconnect; ops can End the room.</td>
+        </tr>
+        <tr>
+          <td><code>Tickets / orders</code></td>
+          <td class="demo">None — free open join</td>
+          <td class="prod">Host sets free/POPCORN price on the front end; each ticket is an idempotent <code>Order</code> counted toward total orders. No replay; refunds manual.</td>
+        </tr>
+        <tr>
+          <td><code>Back office</code></td>
+          <td class="demo">None</td>
+          <td class="prod"><span class="must">New ops surface</span> (<a href="https://ztor-watchparty.vercel.app/bo" target="_blank">/bo</a>): host/content grants, capacity, live monitor, analytics, manual refund, audit log.</td>
+        </tr>
+        <tr>
+          <td><code>Notifications</code></td>
+          <td class="demo">None</td>
+          <td class="prod">Email on party creation + ticket purchase + start reminder. Reuse Ztor transactional email.</td>
         </tr>
         <tr>
           <td><code>Comments</code></td>
@@ -360,8 +475,10 @@ sequenceDiagram
         <tr><td>2</td><td class="prod">Token endpoint with Ztor identity</td><td class="demo">clientId = userId; add per-room capability scoping. The demo's <code>/api/ably-auth</code> is the starting point.</td></tr>
         <tr><td>3</td><td class="prod">Room service + Rooms table</td><td class="demo">create/lookup; assert host; stop trusting videoId/host from the URL.</td></tr>
         <tr><td>4</td><td class="prod">Swap player to HLS + entitlement</td><td class="demo">Resolve signed manifest by videoId; keep the same event hooks so sync code is untouched.</td></tr>
-        <tr><td>5</td><td class="prod">QA the two flows</td><td class="demo">Two-client: live play/pause/seek mirroring; late-join catch-up lands on right video + timestamp. (Demo verified both.)</td></tr>
-        <tr><td>6</td><td class="prod">Optional: persist comments, add voice</td><td class="demo">Only if the product calls for chat history/moderation or talk-while-watching.</td></tr>
+        <tr><td>5</td><td class="prod">Back office — grants, capacity, monitor, analytics</td><td class="demo">HostGrant + ContentGrant (title+episode), capacity config, live monitor + End-room, watch-party orders/analytics, manual refund + audit. Prototyped at <a href="https://ztor-watchparty.vercel.app/bo" target="_blank">/bo</a>.</td></tr>
+        <tr><td>6</td><td class="prod">In-room episode pick + host-presence + tickets</td><td class="demo">Host picks/switches episode from the granted pool; <code>host_away</code> pause/resume; idempotent ticket Order + atomic cap guard; confirmation emails.</td></tr>
+        <tr><td>7</td><td class="prod">QA the flows</td><td class="demo">Two-client sync; late-join catch-up; over-cap rejected (exactly one wins); non-granted host blocked; refund logs an audit row. (Sync verified in demo.)</td></tr>
+        <tr><td>8</td><td class="prod">Optional: persist comments, add voice</td><td class="demo">Only if the product calls for chat history/moderation or talk-while-watching.</td></tr>
       </tbody>
     </table>
   </div>
