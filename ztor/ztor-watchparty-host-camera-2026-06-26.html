@@ -68,8 +68,8 @@
 <body>
 
 <div class="header">
-  <h1>Watch Party — Host Camera Architecture <span class="badge">Dev brief · Amazon IVS · 2026-06-26</span></h1>
-  <p>How we let the <strong>host stream their own camera</strong> alongside the movie — a watch-along face-cam fans see as a picture-in-picture tile. Builds on the shipped Watch Party (Ably sync + host-authoritative playback + chat + presence). <strong>Decision: the camera rides Amazon IVS; Ably is unchanged.</strong></p>
+  <h1>Watch Party — Host Camera Architecture <span class="badge" style="background:#ecfdf3;color:#0a7d33;border-color:#c6f0d4;">Decided · LiveKit · updated 2026-06-29</span></h1>
+  <p>How we let the <strong>host stream their own camera</strong> alongside the movie — a watch-along face-cam fans see as a picture-in-picture tile. Builds on the shipped Watch Party (Ably sync + host-authoritative playback + chat + presence). <strong>Decision (2026-06-28 dev sync): the camera rides LiveKit; Ably is unchanged.</strong></p>
   <div class="nav">
     <a href="https://ztor-watchparty.vercel.app" target="_blank" class="live">▶ Live demo ↗</a>
     <a href="https://ztor-watchparty.vercel.app/brd" target="_blank">BRD</a>
@@ -80,6 +80,10 @@
 
 <div class="canvas">
 
+  <div class="principle green" style="margin-bottom:28px;">
+    <strong>✅ Decision update (2026-06-28 dev sync): LiveKit.</strong> Real-time tech for the host camera is <strong>LiveKit (WebRTC)</strong> — dev already stood up a working demo at <a href="https://stagingdev.ztor.ai/live-demo" target="_blank">stagingdev.ztor.ai/live-demo</a>. <strong>Amazon IVS was evaluated but shelved for launch</strong> (correct long-term, but ~1+ week just for AWS env setup — too slow for the Aug 4 window); short-term Twitch also dropped. This page was the original IVS buy-in brief; it's updated below to reflect the LiveKit decision (the "Ably ≠ video / two-rails" framing still holds — only the media vendor changed).
+  </div>
+
   <div class="section-title">1 · The ask</div>
   <ul class="clean">
     <li>Let the <b>host stream their own camera</b> alongside the movie — a watch-along face-cam.</li>
@@ -89,7 +93,7 @@
 
   <div class="section-title">2 · The reframe</div>
   <div class="principle">
-    Ably never carried video — the movie goes <strong>CDN → browser</strong>; Ably is a thin bus for play/pause/seek, chat, and presence. So the camera is <strong>not</strong> "a layer on Ably" — it's live <strong>media transport</strong>, which is its own service. <strong>Keep Ably. Add IVS for the camera. Replace nothing.</strong>
+    Ably never carried video — the movie goes <strong>CDN → browser</strong>; Ably is a thin bus for play/pause/seek, chat, and presence. So the camera is <strong>not</strong> "a layer on Ably" — it's live <strong>media transport</strong>, which is its own service. <strong>Keep Ably. Add LiveKit for the camera. Replace nothing.</strong>
   </div>
 
   <div class="section-title">3 · Envelope — why the cheap path works</div>
@@ -98,11 +102,11 @@
       <tr><th>Constraint</th><th>Value</th></tr>
       <tr><td>Direction</td><td><b>Host-only</b> (fans never broadcast)</td></tr>
       <tr><td>Scale</td><td>≤ <b>1,000</b> viewers / room</td></tr>
-      <tr><td>Latency</td><td><b>3–5 s</b> acceptable</td></tr>
+      <tr><td>Latency</td><td><b>Sub-second</b> with LiveKit (a few seconds was acceptable, but real-time is better for live reactions)</td></tr>
       <tr><td>Region</td><td><b>Hong Kong</b> only</td></tr>
     </table>
   </div>
-  <div class="section-sub">Host-only + 1,000 + 3–5 s + HK → <b>no WebRTC SFU needed</b>. A managed broadcast service fans out through a CDN.</div>
+  <div class="section-sub">Host-only + ≤1,000 + HK. <b>LiveKit is a WebRTC SFU</b> (one publisher → many subscribers) — real-time, and dev already has it working. <em>(IVS-era note: a managed-HLS/no-SFU path was the original sketch when 3–5 s was the target; superseded.)</em></div>
 
   <div class="section-title">4 · Architecture</div>
   <div class="diagram-wrap">
@@ -110,22 +114,22 @@
 flowchart LR
   subgraph HOST["Host (browser)"]
     HV["Movie playback<br/>host-authoritative"]
-    HC["Webcam capture<br/>IVS Web Broadcast SDK"]
+    HC["Webcam capture<br/>LiveKit JS SDK"]
   end
   subgraph ABLY["Ably — realtime bus (NO video)"]
     SY["video-room<br/>play / pause / seek"]
     CH["comments-room<br/>chat"]
     CM["camera-room<br/>ON / OFF signal"]
   end
-  subgraph IVS["Amazon IVS — managed live video (NEW)"]
-    IV["Ingest + transcode + global delivery<br/>one service · built-in CDN"]
+  subgraph LK["LiveKit — WebRTC SFU (NEW)"]
+    IV["Ingest + fan-out<br/>one publisher → many subscribers"]
   end
   subgraph CDN["Ztor Video CDN (existing)"]
     MOV["Movie HLS manifest"]
   end
   subgraph VIEWER["Fan (browser) — one page, two players"]
     VM["Movie player (main)<br/>hls.js"]
-    VC["Host-cam player (PiP)<br/>IVS playback URL"]
+    VC["Host-cam player (PiP)<br/>LiveKit subscriber"]
   end
   HV -->|"play/pause/seek"| SY
   HC -->|"publish (browser SDK)"| IV
@@ -137,29 +141,30 @@ flowchart LR
     </pre>
   </div>
   <ul class="clean">
-    <li>The host's browser publishes the webcam to <b>Amazon IVS</b> via the <b>IVS Web Broadcast SDK</b> — no OBS, no separate encoder.</li>
-    <li>IVS handles ingest + transcode + low-latency delivery (built-in CDN) and gives a <b>playback URL</b>.</li>
-    <li>The fan page runs <b>two players</b>: the movie (main, <code>hls.js</code>, off Ztor's CDN) + the host cam (PiP, the IVS URL).</li>
+    <li>The host's browser publishes the webcam to <b>LiveKit</b> via its <b>JS SDK</b> — no OBS, no separate encoder.</li>
+    <li>LiveKit (a WebRTC SFU) fans the one host track out to up to 1,000 subscribers in <b>real time</b>.</li>
+    <li>The fan page runs <b>two players</b>: the movie (main, <code>hls.js</code>, off Ztor's CDN) + the host cam (PiP, a LiveKit subscriber).</li>
     <li><b>Ably</b> signals only the camera <b>on/off</b> so the PiP appears/disappears. It never touches video.</li>
-    <li>Movie and camera stay on <b>separate rails</b> — the movie never goes through IVS.</li>
+    <li>Movie and camera stay on <b>separate rails</b> — the movie never goes through LiveKit.</li>
   </ul>
 
-  <div class="section-title">5 · Why IVS</div>
+  <div class="section-title">5 · Why LiveKit (decided 6-28)</div>
   <ul class="clean">
-    <li>Managed live video in one service; the <b>host publishes from the browser</b> (no OBS install).</li>
-    <li><b>Pay while streaming</b> — no per-channel idle-cost trap (the reason we passed on the MediaLive + MediaPackage + CloudFront build).</li>
-    <li>Fastest to ship, lowest ops for a host-only broadcast.</li>
-    <li>A WebRTC SFU (Agora / LiveKit) would be overkill — reserve it only for sub-second host↔chat interactivity (or Agora, if China ever becomes required).</li>
+    <li><b>Dev already has a working demo</b> — <a href="https://stagingdev.ztor.ai/live-demo" target="_blank">stagingdev.ztor.ai/live-demo</a>. Fastest path to the Aug 4 window for this team; no new AWS env to stand up.</li>
+    <li><b>Real-time (WebRTC)</b> — sub-second, so the host's reactions feel live (vs the ~3–5 s of a managed-HLS approach).</li>
+    <li>The <b>host publishes from the browser</b> via LiveKit's JS SDK (no OBS install).</li>
+    <li><b>Open-source / flexible</b> — LiveKit Cloud or self-host; not locked to one cloud vendor.</li>
+    <li><em>Amazon IVS</em> was judged correct long-term but ~1+ week just for env setup — <b>shelved for launch</b>. Short-term Twitch also dropped.</li>
   </ul>
 
   <div class="section-title">6 · What changes in the build (small)</div>
   <div class="panel">
     <table>
       <tr><th style="width:22%">Surface</th><th>Change</th></tr>
-      <tr><td><b>Host page</b></td><td>Webcam capture + the IVS Web Broadcast SDK + a camera <b>on/off toggle</b>.</td></tr>
-      <tr><td><b>Viewer page</b></td><td>A <b>second player</b> in a PiP tile (the IVS URL); show/hide on the Ably signal.</td></tr>
+      <tr><td><b>Host page</b></td><td>Webcam capture + the LiveKit JS SDK (publish) + a camera <b>on/off toggle</b>.</td></tr>
+      <tr><td><b>Viewer page</b></td><td>A <b>second player</b> in a PiP tile (LiveKit subscriber); show/hide on the Ably signal.</td></tr>
       <tr><td><b>Ably</b></td><td>One new <code>camera-{room}</code> channel for the on/off signal.</td></tr>
-      <tr><td><b>Backend</b></td><td>Provision an IVS <b>channel + stream key</b> per party; mint a viewer <b>playback token</b> gated to ticket holders; <b>stop the broadcast on <code>host_away</code> / <code>ended</code></b>.</td></tr>
+      <tr><td><b>Backend</b></td><td>Mint a LiveKit <b>room + access token</b> per party (publish = host only, subscribe = ticket holders); <b>close the room on <code>host_away</code> / <code>ended</code></b>.</td></tr>
       <tr><td><b>Unchanged</b></td><td>Sync engine, chat, presence, tickets, BO grants.</td></tr>
     </table>
   </div>
@@ -172,31 +177,30 @@ flowchart LR
   </ul>
 
   <div class="section-title">8 · Cost</div>
-  <div class="section-sub">IVS bills <b>per host stream-hour + per viewer-hour delivered</b> — no idle-channel cost. Set a billing alarm; otherwise predictable: roughly (host hours) + (attendee watch-hours).</div>
+  <div class="section-sub">LiveKit Cloud bills on <b>participant-minutes / bandwidth</b> (host-only publish keeps the publish side cheap; the cost is fan-out to subscribers). Self-hosting the open-source SFU trades the bill for ops. Either way, scope it to <b>1 host track × ≤1,000 subscribers × session length</b> and set a usage alarm.</div>
 
-  <div class="section-title">9 · Open decision</div>
+  <div class="section-title">9 · Resolved</div>
   <div class="principle">
-    <strong>Host publishing — confirm the IVS Web Broadcast SDK (browser).</strong> Recommended for v1: zero install, instant go-live, ideal for a casual reaction cam.<br><br>
-    <strong>What we give up vs OBS/RTMP</strong> (pro-production only): ~720p ceiling (vs 1080p+), no scene composition / overlays / multi-source, no hardware encoders, slightly weaker bad-network resilience. None of it needed for a face-cam — and IVS <strong>also accepts RTMP</strong>, so OBS can be added later as a power-host fallback without re-architecting.<br><br>
-    <em>Assumed unless flagged:</em> the camera carries the <strong>host's mic</strong>; IVS <strong>Low-Latency</strong> tier (right for 1,000 viewers, not the sub-300 ms Real-Time tier).
+    <strong>Vendor — LiveKit (decided 2026-06-28).</strong> Browser publish via the LiveKit JS SDK (no OBS); dev has a working demo. <br><br>
+    <em>Assumed unless flagged:</em> the camera carries the <strong>host's mic</strong>; LiveKit Cloud for launch (self-host is a later option). Open items for build: LiveKit room/token wiring + the per-party lifecycle (open on go-live, close on host-away/ended).
   </div>
 
-  <div class="section-title">10 · IVS does not replace Ably</div>
-  <div class="section-sub lead"><b>IVS carries the camera's pixels; Ably carries the room's state.</b> Both are needed.</div>
+  <div class="section-title">10 · LiveKit does not replace Ably</div>
+  <div class="section-sub lead"><b>LiveKit carries the camera's pixels; Ably carries the room's state.</b> Both are needed.</div>
   <div class="panel">
     <table>
       <tr><th>Job</th><th style="width:26%">Owner</th></tr>
-      <tr><td>Host-authoritative sync (play / pause / seek)</td><td><span class="owner-ably">Ably</span> — IVS has no such primitive, and the movie isn't on IVS</td></tr>
+      <tr><td>Host-authoritative sync (play / pause / seek)</td><td><span class="owner-ably">Ably</span> — the movie isn't on LiveKit, so there's nothing there to sync to</td></tr>
       <tr><td>Presence (who's watching)</td><td><span class="owner-ably">Ably</span></td></tr>
-      <tr><td>Live chat</td><td><span class="owner-ably">Ably</span> (IVS Chat exists, but no reason to split a 2nd vendor in)</td></tr>
+      <tr><td>Live chat</td><td><span class="owner-ably">Ably</span> (LiveKit has data channels, but no reason to rebuild chat we already have)</td></tr>
       <tr><td>Camera on/off signal</td><td><span class="owner-ably">Ably</span></td></tr>
-      <tr><td>Host camera <b>video</b></td><td><span class="owner-ivs">IVS</span></td></tr>
+      <tr><td>Host camera <b>video</b></td><td><span class="owner-ivs">LiveKit</span></td></tr>
     </table>
   </div>
-  <div class="section-sub">Keep them decoupled — they scale and <b>fail independently</b> (IVS down → sync + chat survive; Ably down → video keeps flowing).</div>
+  <div class="section-sub">Keep them decoupled — they scale and <b>fail independently</b> (LiveKit down → sync + chat survive; Ably down → video keeps flowing).</div>
 
   <div class="principle green">
-    <strong>TL;DR.</strong> Keep Ably for sync / chat / presence / signal. Add the host camera as a host-only stream on <strong>Amazon IVS</strong> — the host publishes from the browser via the IVS SDK (no OBS, no WebRTC server). Two players on the fan page (movie via our CDN + PiP cam via IVS); Ably just signals on/off. Pay-while-streaming, predictable cost. <strong>IVS ≠ Ably</strong> — pixels vs state, decoupled on purpose.
+    <strong>TL;DR.</strong> Keep Ably for sync / chat / presence / signal. Add the host camera as a host-only stream on <strong>LiveKit</strong> (WebRTC SFU) — the host publishes from the browser via the LiveKit SDK (no OBS); dev already has a working demo. Two players on the fan page (movie via our CDN + PiP cam via a LiveKit subscriber); Ably just signals on/off. <strong>LiveKit ≠ Ably</strong> — pixels vs state, decoupled on purpose. <em>(IVS evaluated, shelved for launch.)</em>
   </div>
 
 </div>
@@ -204,7 +208,7 @@ flowchart LR
 <div class="footer">
   Ztor Watch Party · host-camera architecture brief for the dev team · reference demo at
   <a href="https://ztor-watchparty.vercel.app" style="color:#0a7d33">ztor-watchparty.vercel.app</a>.
-  Camera on Amazon IVS; sync/chat/presence on Ably; movie on the Ztor CDN.
+  Camera on LiveKit (decided 6-28); sync/chat/presence on Ably; movie on the Ztor CDN.
 </div>
 
 <script>
