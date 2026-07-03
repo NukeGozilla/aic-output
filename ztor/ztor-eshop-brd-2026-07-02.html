@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor eShop · BRD v2.0 (FE + CS)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3eee2; --paper2:#ece5d4; --card:#fffdf8; --ink:#241f18; --muted:#6f675a;
+    --gold:#b0894f; --gold-soft:#cbb085; --rule:#ddd4c0;
+    --fe:#2563a8; --fe-bg:#e2ecf7; --cs:#7c4bab; --cs-bg:#efe6f6; --sys:#556072; --sys-bg:#e7ebef;
+    --p1:#1f7a4d; --p1-bg:#e4f1e7; --p2:#2563a8; --p2-bg:#e2ecf7; --p3:#8a8073; --p3-bg:#ede8dd;
+    --warn:#b06b14; --warn-bg:#f8ecd4;
+    --shadow:0 1px 0 rgba(0,0,0,.04),0 14px 40px -22px rgba(60,45,20,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Noto Sans TC",system-ui,sans-serif; color:var(--ink); line-height:1.6;
+    background:
+      radial-gradient(120% 80% at 100% -10%, #fbf7ec 0%, transparent 55%),
+      radial-gradient(120% 80% at -10% 110%, #f0e7d3 0%, transparent 50%),
+      var(--paper);
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:44px 26px 100px}
+
+  /* header */
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  h1{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(32px,5vw,54px);line-height:1;letter-spacing:-.015em;margin:.3em 0 .18em;max-width:20ch}
+  h1 em{font-style:italic;color:var(--gold)}
+  .sub{font-size:15px;color:var(--muted);max-width:70ch}
+  .sub b{color:var(--ink)}
+  .meta{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted);margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 18px}
+  .meta b{color:var(--ink);font-weight:700}
+  .goldrule{height:2px;margin:24px 0 0;background:linear-gradient(90deg,var(--gold),transparent 70%)}
+
+  /* references */
+  .refs{margin-top:22px;padding:16px 20px;border:1px solid var(--rule);border-radius:14px;background:var(--card);box-shadow:var(--shadow);font-size:13.5px}
+  .refs h4{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+  .refs ul{list-style:none;display:grid;gap:5px}
+  .refs li{padding-left:16px;position:relative}
+  .refs li::before{content:"→";position:absolute;left:0;color:var(--gold-soft)}
+  .refs a{color:var(--fe);text-decoration:none;border-bottom:1px solid transparent}
+  .refs a:hover{border-bottom-color:var(--fe)}
+  code{font-family:"JetBrains Mono",monospace;font-size:.86em;background:var(--paper2);padding:1px 5px;border-radius:5px;color:#4a4234}
+
+  /* callouts */
+  .callout{margin:22px 0;padding:14px 18px;border-radius:12px;border:1px solid;font-size:14px;display:flex;gap:12px;align-items:flex-start}
+  .callout .ic{font-size:18px;line-height:1.3;flex:none}
+  .callout.warn{background:var(--warn-bg);border-color:#e2c584;color:#6b4a12}
+  .callout.warn a{color:var(--warn);font-weight:700}
+  .callout.key{background:#eef4ef;border-color:#bcd9c5;color:#2a4a35}
+
+  /* section nav */
+  .nav{position:sticky;top:0;z-index:8;margin:26px 0 8px;padding:10px 14px;border:1px solid var(--rule);border-radius:12px;
+    background:rgba(255,253,248,.9);backdrop-filter:blur(10px);box-shadow:var(--shadow);
+    display:flex;flex-wrap:wrap;gap:6px}
+  .nav a{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:999px;transition:.15s;white-space:nowrap}
+  .nav a:hover{background:var(--paper2);color:var(--ink)}
+  .nav a.qa{color:var(--warn);background:var(--warn-bg)}
+
+  /* sections */
+  section{margin-top:34px;scroll-margin-top:70px}
+  h2{font-family:"Fraunces",serif;font-weight:600;font-size:26px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:12px;padding-bottom:8px;border-bottom:1.5px solid var(--rule);margin-bottom:16px}
+  h2 .no{font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:700;color:var(--gold);flex:none}
+  h3{font-family:"Fraunces",serif;font-weight:600;font-size:18px;margin:20px 0 8px;color:#3a3226}
+  p{margin:8px 0}
+  ul.body{list-style:none;display:grid;gap:7px;margin:8px 0}
+  ul.body>li{padding-left:18px;position:relative}
+  ul.body>li::before{content:"·";position:absolute;left:4px;color:var(--gold);font-weight:700}
+  ul.body ul{list-style:none;margin:5px 0 5px 8px;display:grid;gap:5px}
+  ul.body ul li{padding-left:16px;position:relative;font-size:14px}
+  ul.body ul li::before{content:"–";position:absolute;left:0;color:var(--gold-soft)}
+  .note-line{font-size:13.5px;color:var(--muted);margin-top:8px}
+
+  /* tables */
+  .tw{overflow-x:auto;margin:14px 0;border:1px solid var(--rule);border-radius:12px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;background:var(--card);font-size:13.5px;min-width:560px}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);background:#faf6ec;position:sticky;top:0}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--paper2)}
+  td strong,th strong{font-weight:700}
+  .idc{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--gold);white-space:nowrap}
+
+  /* chips */
+  .chip{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:999px;white-space:nowrap;margin:1px 2px 1px 0}
+  .c-fe{background:var(--fe-bg);color:var(--fe)} .c-cs{background:var(--cs-bg);color:var(--cs)} .c-sys{background:var(--sys-bg);color:var(--sys)}
+  .c-p1{background:var(--p1-bg);color:var(--p1)} .c-p2{background:var(--p2-bg);color:var(--p2)} .c-p3{background:var(--p3-bg);color:var(--p3)}
+  .c-must{background:#f3e7d1;color:#8a6416} .c-should{background:#e8ebef;color:#556072} .c-nice{background:#eee9df;color:#8a8073}
+
+  /* mermaid */
+  .flow{margin:14px 0;padding:16px;border:1px solid var(--rule);border-radius:12px;background:var(--card);box-shadow:var(--shadow);overflow-x:auto}
+  .flow .cap{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);margin-bottom:6px}
+  pre.mermaid{text-align:center;min-height:40px}
+
+  /* open questions cards */
+  .oq{display:grid;gap:12px;margin:16px 0}
+  .oqc{border:1px solid #e2c584;border-left:4px solid var(--warn);border-radius:12px;background:#fdf7ea;padding:14px 16px;box-shadow:var(--shadow)}
+  .oqc .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .oqc .oid{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--warn);font-size:13px}
+  .oqc .own{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted)}
+  .oqc .q{font-weight:500;margin:6px 0 4px;font-size:14.5px}
+  .oqc .why{font-size:12.5px;color:var(--muted)}
+
+  /* guardrails */
+  .grid3{display:grid;grid-template-columns:1fr;gap:12px;margin-top:8px}
+  @media(min-width:760px){.grid3{grid-template-columns:1fr 1fr 1fr}}
+  .gcard{border:1px solid var(--rule);border-radius:12px;padding:14px 16px;background:var(--card);box-shadow:var(--shadow);font-size:13.5px}
+  .gcard h4{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+  .gcard.do h4{color:var(--p1)} .gcard.dont h4{color:#b0322c} .gcard.dep h4{color:var(--gold)}
+
+  footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--rule);font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);text-align:center;line-height:1.9}
+
+  @media (max-width:640px){ h2{font-size:22px} .nav{gap:4px} }
+  @media print{ .nav{display:none} body{background:#fff} body::before{display:none} section{break-inside:avoid} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Ztor 2.0 · eShop · Business Requirements</div>
+  <h1>eShop BRD — <em>unified FE + CS</em></h1>
+  <p class="sub">Single source of truth for both build teams. <b>FE</b> = buyer storefront (<code>ztor20/Frontend@L</code>). <b>CS</b> = operator back-office / Creator Studio (<code>ztor20/Creator-Studio</code>). Every requirement is tagged by surface; §7 is the FE↔CS integration contract.</p>
+  <div class="meta">
+    <span><b>Version</b> v2.0</span>
+    <span><b>Date</b> 2026-07-02</span>
+    <span><b>Owner</b> Jeff Yang</span>
+    <span><b>Target</b> end-August MVP1</span>
+    <span>Supersedes buyer v1.2 + operator v1.0</span>
+  </div>
+  <div class="goldrule"></div>
+
+  <div class="refs">
+    <h4>References</h4>
+    <ul>
+      <li>Wireframe v0.4 — <a href="https://aic-output.vercel.app/ztor/ztor-eshop-wireframe-2026-06-11.html">ztor-eshop-wireframe-2026-06-11</a></li>
+      <li><b>FE</b> buyer storefront (final) — <code>ztor20/Frontend@L</code> → <code>features/shop/</code></li>
+      <li><b>CS</b> operator prototype (live) — <a href="https://ztor-v2-creator-studio.vercel.app">ztor-v2-creator-studio.vercel.app</a> · <code>/e-shop</code> · <code>/orders</code> · <code>/earnings</code> · <code>/store-settings</code></li>
+      <li>Feature scope + map — <code>ztor-eshop-feature-scope-2026-06-26</code> (S/O/E/B pillars)</li>
+      <li>Source of truth — Jun 11/12 eShop decisions + Beamco commerce-module ground truth</li>
+    </ul>
+  </div>
+
+  <div class="callout warn">
+    <span class="ic">⚠️</span>
+    <span><b>7 open questions</b> (ops / biz) to close before build — see <a href="#s10">§10</a>. Dev/technical items (commerce API spec, QR-token mechanics) live in the dev version.</span>
+  </div>
+
+  <nav class="nav">
+    <a href="#s1">1 · Why</a>
+    <a href="#s2">2 · Who</a>
+    <a href="#s3">3 · Team split</a>
+    <a href="#s4">4 · Requirements</a>
+    <a href="#s5">5 · FE</a>
+    <a href="#s6">6 · CS</a>
+    <a href="#s7">7 · Integration</a>
+    <a href="#s8">8 · Flows</a>
+    <a href="#s9">9 · Phases</a>
+    <a href="#s10" class="qa">10 · Open Qs</a>
+    <a href="#s11">11 · Guardrails</a>
+  </nav>
+
+  <!-- 1 -->
+  <section id="s1">
+    <h2><span class="no">01</span> Why · Target</h2>
+    <ul class="body">
+      <li>Beamco artists' merch storefronts need a durable home as Beamco 1.0 → maintenance (~80% of eng shifts to Ztor 2.0 Creator Studio).</li>
+      <li>Ztor (film/OTT rental, no commerce today) needs a creator-commerce surface for Creator Studio + the "Follow the Money" vision.</li>
+      <li><b>Approach:</b> wrap the existing Beamco <code>commerce</code> module (multi-tenant; Ztor is a named tenant) as a microservice — <b>reuse, not rebuild</b>.</li>
+      <li><b>Target:</b> <b>end-August MVP1</b> — internal-ready mid-August · launch end-August. <span class="note-line" style="display:inline">(Per the 2026-06-24 MVP1 decision: Phase-1 = end-August.)</span></li>
+    </ul>
+  </section>
+
+  <!-- 2 -->
+  <section id="s2">
+    <h2><span class="no">02</span> Who — roles & permissions</h2>
+    <div class="tw"><table>
+      <thead><tr><th>Group</th><th>Role</th><th>Phase-1 access</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Buyer</strong> (Ztor fan)</td><td>Browses & buys creator merch</td><td>Buyer storefront only — never enters Creator Studio</td></tr>
+        <tr><td><strong>Admin</strong> (ops)</td><td>Onboards creators; operates shops on their behalf in v1</td><td>Sees Creators list; must <b>pick a creator first</b>, then operates that shop. No cross-creator global product view.</td></tr>
+        <tr><td><strong>Creator</strong> (artist)</td><td>Runs own shop</td><td><b>Phase 2</b> (SSO self-serve): own Products / Orders / Earnings only</td></tr>
+        <tr><td><strong>CMS Editor</strong> (ops)</td><td>Curates what surfaces on the storefront</td><td>Content admin (discovery rails, <code>/shops</code>)</td></tr>
+        <tr><td>Commerce microservice · Stripe · POPCORN ledger · QR service</td><td>Payment rails, pickup codes, wrapped Beamco commerce</td><td>Systems</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note-line"><b>Two-POV rule:</b> admin always <b>role-assumes</b> into one creator's scope; the creator (phase 2) sees <b>own shop only</b>. No admin global cross-creator product view.</p>
+  </section>
+
+  <!-- 3 -->
+  <section id="s3">
+    <h2><span class="no">03</span> Surfaces & team split — who builds what</h2>
+    <div class="tw"><table>
+      <thead><tr><th>Surface</th><th>Team</th><th>Owns</th><th>Prototype</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Buyer storefront</strong></td><td><span class="chip c-fe">FE</span></td><td>Shop page, PDP, cart, checkout, payment, order confirmation, pickup-QR <b>display</b>, discovery rails</td><td><code>Frontend@L</code> → <code>features/shop/</code></td></tr>
+        <tr><td><strong>Operator back-office</strong></td><td><span class="chip c-cs">CS</span></td><td>Shop mgmt (products/bundles), Orders + fulfilment, Earnings, Store settings, pickup-QR <b>scanner</b></td><td>ztor-v2-creator-studio.vercel.app</td></tr>
+        <tr><td><strong>Shared backend</strong></td><td><span class="chip c-sys">SYS</span> Beamco team</td><td>Commerce API gateway, order/inventory/ledger, POPCORN ledger, pickup-QR service, identity/creator_profile</td><td>(wrapped Beamco commerce module)</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note-line">Both teams read this whole doc. FE builds §5, CS builds §6, and <b>both</b> own their half of §7 (integration).</p>
+  </section>
+
+  <!-- 4 -->
+  <section id="s4">
+    <h2><span class="no">04</span> What we're building — requirements</h2>
+    <p>Each BR tagged by surface: <span class="chip c-fe">FE</span> buyer · <span class="chip c-cs">CS</span> operator · <span class="chip c-sys">SYS</span> shared backend. Cross-surface items list both.</p>
+    <div class="tw"><table>
+      <thead><tr><th>BR</th><th>Requirement</th><th>Surface</th><th>Priority</th><th>Phase</th></tr></thead>
+      <tbody>
+        <tr><td class="idc">BR-01</td><td>Ztor-owned commerce API gateway, tenant-scoped to the wrapped Beamco module</td><td><span class="chip c-sys">SYS</span></td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p1">P1</span></td></tr>
+        <tr><td class="idc">BR-02</td><td>Creating a creator profile <b>auto-generates</b> their eShop (no separate step)</td><td><span class="chip c-cs">CS</span></td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p1">P1</span></td></tr>
+        <tr><td class="idc">BR-03</td><td>Unique vanity handle → <code>/shop/:handle</code> resolver</td><td><span class="chip c-sys">SYS</span><span class="chip c-fe">FE</span></td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p1">P1</span></td></tr>
+        <tr><td class="idc">BR-04</td><td>Two-POV permissions: admin role-assumes; creator sees <b>own shop only</b></td><td><span class="chip c-cs">CS</span></td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p1">P1</span></td></tr>
+        <tr><td class="idc">BR-05</td><td>Physical <b>product + bundle</b> management, dual price (cash + POPCORN †)</td><td><span class="chip c-cs">CS</span></td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p1">P1</span></td></tr>
+        <tr><td class="idc">BR-06</td><td>Storefront = the creator profile <b>Shop tab</b> (one source, vanity URL)</td><td><span class="chip c-fe">FE</span></td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p1">P1</span></td></tr>
+        <tr><td class="idc">BR-07</td><td>Checkout: card / Apple Pay (Stripe) + <b>Pay-by-POPCORN †</b>, platform on/off per rail</td><td><span class="chip c-fe">FE</span></td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p1">P1</span></td></tr>
+        <tr><td class="idc">BR-08</td><td>Record orders + status lifecycle; creator income settled in cash ‡</td><td><span class="chip c-cs">CS</span><span class="chip c-sys">SYS</span></td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p1">P1</span></td></tr>
+        <tr><td class="idc">BR-09</td><td><b>Pickup QR</b> — buyer sees static QR (email + order); operator <b>scanner</b> 核銷 → 已取貨</td><td><span class="chip c-fe">FE</span> display <span class="chip c-cs">CS</span> scanner</td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p1">P1</span></td></tr>
+        <tr><td class="idc">BR-10</td><td>CMS-curated discovery (home rails + <code>/shops</code>), Published only</td><td><span class="chip c-fe">FE</span> + CMS</td><td><span class="chip c-should">Should</span></td><td><span class="chip c-p2">P2</span></td></tr>
+        <tr><td class="idc">BR-11</td><td><b>Publication gating</b> — Draft never shows on any storefront surface</td><td><span class="chip c-cs">CS</span><span class="chip c-sys">SYS</span></td><td><span class="chip c-must">Must</span></td><td><span class="chip c-p2">P2</span></td></tr>
+        <tr><td class="idc">BR-12</td><td>Product-drop social post (reuses Ztor's existing post feature)</td><td><span class="chip c-cs">CS</span> compose <span class="chip c-fe">FE</span> render</td><td><span class="chip c-nice">Nice</span></td><td><span class="chip c-p2">P2</span></td></tr>
+      </tbody>
+    </table></div>
+    <p class="note-line">† POPCORN-as-tender depends on <b>OQ-1</b>. ‡ revenue → earnings flow is <b>OQ-2</b>.</p>
+    <div class="callout key"><span class="ic">📦</span><span><b>Fulfilment (P1)</b> = <b>QR pickup (primary)</b> + <b>manual shipping</b> (ops pack & ship by hand — no carrier/rate API). Carrier/logistics integration is deferred to <b>September</b> (pending shipping-vendor selection).</span></div>
+  </section>
+
+  <!-- 5 -->
+  <section id="s5">
+    <h2><span class="no">05</span> <span class="chip c-fe">FE</span> Buyer storefront <span style="font-size:13px;color:var(--muted);font-weight:400">(scope IDs B01–B10)</span></h2>
+    <ul class="body">
+      <li><b>B01 Creator shop page</b> — storefront <em>is</em> the creator profile <b>Shop tab</b> (<code>/shop/:handle</code>); tabs for 商品 / 套組 / (拍賣 deferred).</li>
+      <li><b>B02 Product detail (PDP)</b> — gallery, variants/size, qty, add-to-cart, delivery/returns line, related rail. <span class="note-line" style="display:inline">(Built on Frontend@L.)</span></li>
+      <li><b>B03 Cart</b> — slide-over drawer, line items, qty±, subtotal/shipping.</li>
+      <li><b>B04 Checkout</b> — single-screen review (address, shipping method, payment, promo, tax), login-gated.
+        <ul>
+          <li><b>B05</b> Card / Apple Pay via <b>Stripe</b> (fiat).</li>
+          <li><b>B06</b> <b>Pay-by-POPCORN</b> (net-new tender) — <em>gated on OQ-1</em>.</li>
+          <li><b>B07</b> COD — <b>removed</b> from Phase 1.</li>
+        </ul>
+      </li>
+      <li><b>B08 Order confirmation</b> — success + order number + status tracker → <em>My Orders</em>.</li>
+      <li><b>B09 Pickup QR (display)</b> — <b>P1, primary fulfilment.</b> Static QR (email + order detail) for on-site pickup goods. <span class="note-line" style="display:inline">(Today built for tickets — must extend to goods.)</span></li>
+      <li><b>B10 Public discovery rails</b> — <code>/shops</code> + home product rails — <b>P2</b>, CMS-curated, Published only.</li>
+    </ul>
+  </section>
+
+  <!-- 6 -->
+  <section id="s6">
+    <h2><span class="no">06</span> <span class="chip c-cs">CS</span> Operator / Creator Studio <span style="font-size:13px;color:var(--muted);font-weight:400">(scope IDs S/O/E)</span></h2>
+    <h3>6.1 Shop management (S01–S50) — <code>/e-shop</code></h3>
+    <ul class="body">
+      <li>Product list: columns, status filter (Live / Hidden / Low stock / Sold out / Draft), low-stock alert bar, per-row Shop on/off + edit + restock.</li>
+      <li>Create product: media, info, <b>variants</b> (single/multi → SKU/cost matrix), <b>dual price</b> (cash + POPCORN †), inventory (unlimited/limited + threshold), <b>fulfilment = Shipping <em>or</em> on-site QR pickup</b>, purchase limit + tags, preview, Save draft / Start selling.</li>
+      <li>Bundles: ≥2 member products, fixed or %-off price, <b>stock = min(member)</b>.</li>
+      <li>Restock flow (alert / row / detail) → Restocking → Mark received.</li>
+      <li>Product detail: sales summary (read from Earnings), see-as-fan preview.</li>
+    </ul>
+    <h3>6.2 Orders (O01–O24) — <code>/orders</code></h3>
+    <ul class="body">
+      <li>KPIs (To-ship / Pending / Refund-dispute / Completed-30d), search, status filter, export.</li>
+      <li>Order detail: line items, buyer info, <b>amount breakdown read-only — source = Earnings</b> (goods · shipping · platform fee · payment fee · net).</li>
+      <li>Fulfilment: <b>manual shipping</b> (ops enter carrier + tracking → Mark shipped ‡) <em>or</em> <b>QR pickup</b> (<b>O24 · scanner</b> — operator scans buyer's pickup QR → 核銷 → 已取貨). Refunds/disputes deferred (money impact handled in Earnings).</li>
+    </ul>
+    <h3>6.3 Earnings (E01–E24) — the money source of truth — <code>/earnings</code></h3>
+    <ul class="body">
+      <li>Overview: Gross · Net · Pending · Available. Transactions with source filter (<b>eShop tab</b> in scope; other revenue tabs deferred). Export CSV.</li>
+      <li><b>Orders display amounts but never recompute</b> — Earnings owns the numbers.</li>
+      <li>Deferred: revenue-<b>breakdown waterfall</b> (blocked on platform-cut, OQ-4), <b>payout</b>, tax docs, manual entry, charts.</li>
+    </ul>
+    <h3>6.4 Store settings — <code>/store-settings</code></h3>
+    <ul class="body">
+      <li>Identity (name, bio, logo/cover), <b>URL slug</b> <code>ztor.com/shop/{slug}</code>, currency; product display order; <b>Stripe status read-only</b>; shipping defaults (ship-from, free-ship threshold); see-as-fan.</li>
+    </ul>
+    <p class="note-line">† POPCORN-as-tender → OQ-1.  ‡ manual shipping is offline/no-carrier → OQ-3.</p>
+  </section>
+
+  <!-- 7 -->
+  <section id="s7">
+    <h2><span class="no">07</span> Integration — the FE ↔ CS contract</h2>
+    <p>The seams both teams must agree on. Each row is a handoff neither team owns alone.</p>
+    <div class="tw"><table>
+      <thead><tr><th>#</th><th>Seam</th><th>CS side</th><th>FE side</th><th>Backing system</th></tr></thead>
+      <tbody>
+        <tr><td class="idc">I-1</td><td><b>Publish & visibility</b></td><td>CS sets product Published + Shop-visible; Draft never leaves CS</td><td>FE renders only Published + Shop-visible items</td><td>Publication gating (BR-11)</td></tr>
+        <tr><td class="idc">I-2</td><td><b>Order lifecycle</b></td><td>CS Orders reads + fulfils; drives status</td><td>FE checkout <b>creates</b> the order + decrements stock</td><td>Commerce order API (BR-08)</td></tr>
+        <tr><td class="idc">I-3</td><td><b>Money = Earnings</b></td><td>CS Earnings <b>owns</b> all amounts; Orders show read-only</td><td>FE checkout shows price/tax/total at purchase only</td><td>Earnings ledger (OQ-2) — orders <b>display, never recompute</b></td></tr>
+        <tr><td class="idc">I-4</td><td><b>POPCORN tender</b></td><td>CS sets POPCORN price per product (net-new field)</td><td>FE offers Pay-by-POPCORN at checkout, debits balance</td><td>POPCORN ledger (OQ-1)</td></tr>
+        <tr><td class="idc">I-5</td><td><b>Pickup QR</b></td><td>CS <b>scanner</b> 核銷 → 已取貨 (BR-09)</td><td>FE <b>displays</b> static QR (email + order detail)</td><td>Pickup-QR service (blocker)</td></tr>
+        <tr><td class="idc">I-6</td><td><b>Storefront identity</b></td><td>CS Store settings owns slug, identity, display order</td><td>FE resolves <code>/shop/:handle</code> → renders profile Shop tab</td><td>Vanity resolver (BR-03)</td></tr>
+        <tr><td class="idc">I-7</td><td><b>Product-drop post</b></td><td>CS composes the drop post</td><td>FE/feed renders the post card</td><td>Posts service (BR-12)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout key"><span class="ic">🔒</span><span><b>The two non-negotiables:</b> (I-3) Earnings is the single source of truth for money — Orders and checkout <b>display</b> figures, never recompute them. (I-1) Draft/unpublished items must be invisible on every FE surface.</span></div>
+  </section>
+
+  <!-- 8 -->
+  <section id="s8">
+    <h2><span class="no">08</span> Key flows</h2>
+    <div class="flow"><div class="cap">8.1 · Admin onboards a creator → shop goes live (CS)</div>
+<pre class="mermaid">
+flowchart TD
+  A([Admin opens Creator Studio]) --> B[Create creator: name, handle, link Store account]
+  B --> C{Approval needed? · OQ-5}
+  C -->|no| E[eShop auto-generated]
+  C -->|yes| D[Pending approval] --> E
+  E --> F[Pick creator → role-scoped Products / Orders / Earnings]
+  F --> G[Add physical products and bundles&lt;br/&gt;dual price: cash + POPCORN · OQ-1]
+  G --> H[Publish + Shop-visible → live on FE storefront · I-1]
+</pre></div>
+
+    <div class="flow"><div class="cap">8.2 · Buyer: browse → buy → collect (FE, crossing into CS/SYS)</div>
+<pre class="mermaid">
+flowchart TD
+  A([Discover shop: home rail, feed, or profile]) --> B[Storefront = creator profile Shop tab · I-6]
+  B --> C[PDP: variants, price]
+  C --> D[Add to cart → checkout]
+  D --> E{Pay how?}
+  E -->|Card / Apple Pay via Stripe| F[Charge]
+  E -->|POPCORN · OQ-1 · I-4| G[Debit POPCORN]
+  F --> H[Order created + stock decremented · I-2&lt;br/&gt;income settled in cash · I-3/OQ-2]
+  G --> H
+  H --> I{Fulfilment}
+  I -->|QR pickup · I-5| J[Static pickup QR: email + order detail]
+  I -->|Manual shipping · OQ-3| K[Ops pack &amp; ship by hand]
+  J --> L[Buyer shows QR in store → CS operator scans, 核銷 → 已取貨]
+</pre></div>
+
+    <div class="flow"><div class="cap">8.3 · Product publish & visibility states (CS)</div>
+<pre class="mermaid">
+flowchart LR
+  A[Draft] -->|fill required| B[Ready]
+  B -->|Start selling| C[Live]
+  C -->|toggle off| D[Hidden]
+  D -->|toggle on| C
+  C -->|stock ≤ threshold| E[Low stock]
+  E -->|submit restock| F[Restocking]
+  F -->|Mark received| C
+  C -->|stock = 0| G[Sold out]
+  G -->|restock| C
+</pre></div>
+
+    <div class="flow"><div class="cap">8.4 · Earnings settlement (CS / SYS)</div>
+<pre class="mermaid">
+flowchart TD
+  A[Order paid] --> B[Revenue event]
+  B --> C[Transactions — filter by source, eShop tab]
+  B --> D[Overview: Gross / Net / Pending / Available]
+  D --> E[Breakdown waterfall — deferred · OQ-4 platform cut]
+  D --> F[Payout — deferred]
+  B --> G[Refund / dispute freezes Available · OQ-6]
+</pre></div>
+  </section>
+
+  <!-- 9 -->
+  <section id="s9">
+    <h2><span class="no">09</span> Phases — one timeline</h2>
+    <div class="tw"><table>
+      <thead><tr><th>Phase</th><th>Target</th><th>FE</th><th>CS</th><th>Gate</th></tr></thead>
+      <tbody>
+        <tr><td><strong>P1 — Internal ready</strong></td><td><span class="chip c-p1">mid-Aug</span></td><td>Storefront + PDP + cart + checkout (card + POPCORN †) + order confirm + <b>pickup-QR display</b></td><td>S/O/E core loop: create creator → shop → products/bundles → order recorded → Earnings eShop tab · fulfilment = <b>QR pickup + manual ship</b> · <b>O24 QR scanner</b></td><td>BR-01→09; admin-operated</td></tr>
+        <tr><td><strong>P2 — Launch</strong></td><td><span class="chip c-p2">end-Aug</span></td><td>Discovery rails</td><td>Publication gating, product-drop</td><td>BR-10→12</td></tr>
+        <tr><td><strong>P3 — Post-launch</strong></td><td><span class="chip c-p3">Sept+</span></td><td>—</td><td>Creator SSO self-serve · POPCORN payouts · more PSPs · in-system refunds · <b>carrier/logistics integration (shipping vendor)</b> · revenue waterfall</td><td>OQ-4 resolved</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note-line">(CS build-sequence within P1: P0 skeleton — module shells, lists/filters, order list + read-only detail, Earnings KPI + eShop-tx minimum → then product/bundle closure → settings & previews.)</p>
+  </section>
+
+  <!-- 10 -->
+  <section id="s10">
+    <h2><span class="no">10</span> Open Questions <span style="font-size:13px;color:var(--warn);font-weight:400">— the biz decision payload</span></h2>
+    <p>Close with ops / business before the dependent BRs finalize. <span class="note-line" style="display:inline">(Dev/technical open items — QR-generator rotation scope, commerce-module API spec — tracked in the dev version.)</span></p>
+    <div class="oq">
+      <div class="oqc"><div class="top"><span class="oid">OQ-1 · POPCORN scope</span><span class="own">Biz — Alex & Susan; positioning w/ Jesse & Agnes</span></div>
+        <div class="q">What can be bought with POPCORN? merch/bundles? crowdfunding? Do users <b>earn POPCORN or cash</b>? <b>currency or points</b>?</div>
+        <div class="why">Sets checkout tenders + dual pricing (BR-05/07, I-4). <b>v1 can ship all-fiat</b> without blocking launch; POPCORN may reduce legal risk (Alex).</div></div>
+      <div class="oqc"><div class="top"><span class="oid">OQ-2 · Revenue → My Earnings</span><span class="own">Finance / Biz (+ dev)</span></div>
+        <div class="q">How is eShop revenue handled? Lands directly in creator's 「我的收益」, or separate reconciliation? one merged ledger or a separate eShop stream?</div>
+        <div class="why">Settlement + where creators see money (BR-08, I-3). Payouts cash-only in v1 — confirm mechanics with Sam / Finance.</div></div>
+      <div class="oqc"><div class="top"><span class="oid">OQ-3 · Manual-ship handling fee</span><span class="own">Biz / Ops / Finance</span></div>
+        <div class="q">QR pickup = no cost; <b>manual shipping IS in P1</b> (ops ship by hand) — so: flat fee? free-over-threshold? by weight/region? who sets it?</div>
+        <div class="why">Checkout fee + manual-ship workflow (BR-07). Carrier/logistics integration is a separate Sept item. Prototype currently forces 免運 on pickup.</div></div>
+      <div class="oqc"><div class="top"><span class="oid">OQ-4 · Platform revenue cut</span><span class="own">Stakeholders</span></div>
+        <div class="q">0% today vs 60/40 "Follow the Money".</div>
+        <div class="why">Settlement math + the Earnings breakdown waterfall (BR-08, E22) — blocked until this lands.</div></div>
+      <div class="oqc"><div class="top"><span class="oid">OQ-5 · Creator-registration approval</span><span class="own">Biz</span></div>
+        <div class="q">Does sign-up gate on review?</div>
+        <div class="why">Onboarding gate (BR-02).</div></div>
+      <div class="oqc"><div class="top"><span class="oid">OQ-6 · Refunds in v1</span><span class="own">Biz / Ops</span></div>
+        <div class="q">Hide, read-only placeholder, or internal-handling entry? (prototype has a disabled stub)</div>
+        <div class="why">Orders/Earnings refund UX (O18/O23).</div></div>
+      <div class="oqc"><div class="top"><span class="oid">OQ-7 · Earnings scope for v1</span><span class="own">Product / Finance</span></div>
+        <div class="q">Full income module, or just eShop order-reconciliation + transactions + payout minimum?</div>
+        <div class="why">Sizes the CS Earnings build (E section).</div></div>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section id="s11">
+    <h2><span class="no">11</span> Scope guardrails · Dependencies</h2>
+    <div class="grid3">
+      <div class="gcard do"><h4>✓ Do</h4>Reuse Beamco commerce as a tenant (not a fork) · keep <b>cash as price-of-record</b> (POPCORN derived) · reuse the profile/tab + CMS-block patterns · <b>Earnings owns money, Orders display it</b>.</div>
+      <div class="gcard dont"><h4>✕ Don't (v1)</h4>No standalone "create shop" (side-effect of creating a creator) · no Draft on any public surface · no admin global cross-creator view (always role-assume) · no in-system refunds · <b>no carrier/logistics integration</b> (manual ship by hand is fine in P1; carrier API = Sept) · no non-physical SKUs · never present POPCORN as "buying tokens".</div>
+      <div class="gcard dep"><h4>⚙ Depends on</h4>Commerce module wrapped as a microservice (<b>gateway owned by Beamco team</b>) · Ztor identity + creator_profile · Stripe (fiat, phase-1) · POPCORN ledger · pickup-QR service (blocker) · CMS Content Blocks · Posts service · carried-over Beamco shop UAT bugs.</div>
+    </div>
+  </section>
+
+  <footer>
+    Ztor eShop · Unified BRD v2.0 · 2026-07-02 · Owner Jeff Yang<br/>
+    Single source of truth for FE + CS · Machine-readable dev spec (API, data model, acceptance criteria) to follow.
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad:true, securityLevel:'loose',
+    theme:'base',
+    themeVariables:{
+      fontFamily:'"Noto Sans TC", sans-serif', fontSize:'14px',
+      primaryColor:'#fffdf8', primaryBorderColor:'#b0894f', primaryTextColor:'#241f18',
+      lineColor:'#b09468', secondaryColor:'#e4f1e7', tertiaryColor:'#e2ecf7'
+    }
+  });
+</script>
+</body>
+</html>
