@@ -145,6 +145,8 @@
   .row dt { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-helper); padding-top: 2px; }
   .row dd { font-size: 14px; color: var(--text); }
   .row.gate dd { color: var(--blue-70); font-weight: 500; }
+  .row.sla-row dd { color: var(--blue-70); font-weight: 500; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .sla { display: inline-block; font-family: 'IBM Plex Mono', 'IBM Plex Sans TC', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; background: var(--blue); color: #fff; padding: 3px 8px; }
 
   .tags { display: flex; gap: 6px; flex-wrap: wrap; }
   .tag { font-size: 12px; padding: 2px 8px; background: var(--layer-02); border: 1px solid var(--border-subtle); color: var(--text-secondary); }
@@ -262,6 +264,7 @@
             <div class="row"><dt>AI does</dt><dd>Upgrade approved proto onto the design system · draft BRD — rules, states, permissions, edge cases · write acceptance criteria as given / when / then.</dd></div>
             <div class="row"><dt>Artifacts</dt><dd><div class="tags"><span class="tag">Production-fidelity prototype</span><span class="tag">BRD</span></div></dd></div>
             <div class="row gate"><dt>Gate</dt><dd>Spec freeze — BA + biz owner sign off. BA hands off and moves on.</dd></div>
+            <div class="row gate sla-row"><dt>Turnaround</dt><dd><span class="sla">SLA</span>Biz/ops sign-off due by the <b>following Monday</b> after we present.</dd></div>
           </dl>
         </div>
       </div>
@@ -275,6 +278,8 @@
             <div class="row"><dt>Detail polish</dt><dd>Take the BA prototype to final production detail before dev handoff.</dd></div>
             <div class="row"><dt>Big features</dt><dd>For multi-page work (e.g. eShop), build the HTML page scaffolds so dev stays on the rails.</dd></div>
             <div class="row"><dt>Shepherd</dt><dd>Own the feature through build — field detail / UI questions, escalate business ones to BA.</dd></div>
+            <div class="row gate"><dt>Gate</dt><dd>Biz/ops design review — sign off the design output before dev handoff.</dd></div>
+            <div class="row gate sla-row"><dt>Turnaround</dt><dd><span class="sla">SLA</span>Biz/ops sign-off due by the <b>following Monday</b> after we present.</dd></div>
           </dl>
         </div>
       </div>
@@ -318,7 +323,7 @@
           <tr><td><span class="who">BA ×3</span></td><td>Flow · wireframe · prototype · BRD · runs the weekly review</td><td>Escalated <b>business</b> questions only</td></tr>
           <tr><td><span class="who">Designer</span></td><td>Design system · prototype polish · build shepherd · big-page scaffolds · QA review</td><td>Detail / UI / design-system questions</td></tr>
           <tr><td><span class="who">Dev</span></td><td>Implementation from prototype + BRD · self-test</td><td>—</td></tr>
-          <tr><td><span class="who">Biz / Ops</span></td><td>Direction + spec approval</td><td>Weekly review</td></tr>
+          <tr><td><span class="who">Biz / Ops</span></td><td>Direction + spec &amp; design approval</td><td>Weekly review · sign-off due by following Monday</td></tr>
         </tbody>
       </table>
     </section>
@@ -415,6 +420,7 @@
             <div class="row"><dt>AI 負責</dt><dd>將通過的原型升級套用 design system · 撰寫 BRD — 規則、狀態、權限、邊界情況 · 以 given／when／then 撰寫驗收條件。</dd></div>
             <div class="row"><dt>產出</dt><dd><div class="tags"><span class="tag">生產級原型</span><span class="tag">BRD</span></div></dd></div>
             <div class="row gate"><dt>把關</dt><dd>規格凍結 — BA ＋ 業務負責人簽核。BA 交接後即前進下一項。</dd></div>
+            <div class="row gate sla-row"><dt>審查時限</dt><dd><span class="sla">時限</span>業務／營運簽核須於提交後的<b>下週一</b>前完成。</dd></div>
           </dl>
         </div>
       </div>
@@ -428,6 +434,8 @@
             <div class="row"><dt>細節打磨</dt><dd>交接給開發前，將 BA 原型完善到生產級細節。</dd></div>
             <div class="row"><dt>大型功能</dt><dd>多頁面工作（例如 eShop）由設計師建立 HTML 頁面骨架，讓開發不偏離方向。</dd></div>
             <div class="row"><dt>全程跟進</dt><dd>開發期全程跟進該功能 — 回答細節／UI 問題，商業問題則上呈 BA。</dd></div>
+            <div class="row gate"><dt>把關</dt><dd>業務／營運設計審查 — 交接給開發前確認設計產出。</dd></div>
+            <div class="row gate sla-row"><dt>審查時限</dt><dd><span class="sla">時限</span>業務／營運簽核須於提交後的<b>下週一</b>前完成。</dd></div>
           </dl>
         </div>
       </div>
@@ -471,7 +479,7 @@
           <tr><td><span class="who">BA ×3</span></td><td>流程 · wireframe · 原型 · BRD · 主持每週評審</td><td>僅處理上呈的<b>商業</b>問題</td></tr>
           <tr><td><span class="who">設計師</span></td><td>design system · 原型打磨 · 開發跟進 · 大型頁面骨架 · QA 審查</td><td>細節／UI／design system 問題</td></tr>
           <tr><td><span class="who">開發</span></td><td>依原型＋BRD 實作 · 自測</td><td>—</td></tr>
-          <tr><td><span class="who">業務／營運</span></td><td>方向與規格簽核</td><td>每週評審</td></tr>
+          <tr><td><span class="who">業務／營運</span></td><td>方向、規格與設計簽核</td><td>每週評審 · 簽核須於下週一前完成</td></tr>
         </tbody>
       </table>
     </section>
