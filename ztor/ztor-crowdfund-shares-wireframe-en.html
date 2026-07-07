@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crowdfund — Goal × Shares Wireframe (live, EN)</title>
+<style>
+  :root{
+    --bg:#0e0e0e; --surface:#171717; --surface2:#1f1f1f; --line:#2a2a2a;
+    --text:#f7f9fa; --muted:#9ca3af; --accent:#f0b132;
+    --new:#34d399; --chg:#fbbf24; --rm:#f87171; --same:#6b7280;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,"Noto Sans TC",sans-serif;font-size:14px;line-height:1.6;padding:32px 20px 60px}
+  .wrap{max-width:1420px;margin:0 auto}
+  h1{font-size:22px;font-weight:600}
+  h2{font-size:15px;font-weight:600}
+  .sub{color:var(--muted);font-size:12.5px;margin-top:6px}
+  .sub b{color:var(--accent)}
+  .sub a{color:var(--muted)}
+  .mono{font-family:ui-monospace,Consolas,monospace}
+  .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;border-radius:4px;padding:1px 7px;vertical-align:middle}
+  .t-new{background:rgba(52,211,153,.15);color:var(--new);border:1px solid rgba(52,211,153,.4)}
+  .t-chg{background:rgba(251,191,36,.13);color:var(--chg);border:1px solid rgba(251,191,36,.4)}
+  .t-same{background:rgba(107,114,128,.15);color:var(--same);border:1px solid rgba(107,114,128,.4)}
+  .t-rec{background:rgba(240,177,50,.15);color:var(--accent);border:1px solid rgba(240,177,50,.5)}
+  .strike{text-decoration:line-through;color:var(--rm);opacity:.8}
+
+  .why{background:var(--surface);border:1px solid rgba(240,177,50,.45);border-radius:12px;padding:18px 20px;margin:22px 0 0}
+  .why h2{color:var(--accent);margin-bottom:10px}
+  .why ol{list-style:none;counter-reset:w;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px 24px}
+  .why li{counter-increment:w;position:relative;padding-left:30px;font-size:12.5px}
+  .why li::before{content:counter(w);position:absolute;left:0;top:3px;width:20px;height:20px;border:1px solid rgba(240,177,50,.5);border-radius:50%;color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .why b{color:var(--accent)}
+  .why .from{color:var(--muted)}
+
+  .math{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0 14px}
+  .math .box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .math .k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .math .v{font-size:24px;font-weight:700;margin-top:6px}
+  .math .v em{font-style:normal;color:var(--accent)}
+  .math .d{font-size:11.5px;color:var(--muted);margin-top:6px}
+
+  .models{display:grid;grid-template-columns:1fr;gap:14px;margin:0 0 10px}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .mcard.rec{border-color:rgba(240,177,50,.6)}
+  .m-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .m-h .nm{font-weight:700;font-size:14px}
+  .m-h .nm b{color:var(--accent)}
+  .mfrm{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:10px 0;overflow-x:auto}
+  .mfrm div{margin:3px 0;white-space:nowrap}
+  .mfrm .hl{color:var(--accent)}
+  .m-eg{font-size:12px;color:var(--muted)}
+  .m-eg b{color:var(--text)}
+  .rulebar{border:1px solid rgba(240,177,50,.35);background:rgba(240,177,50,.06);border-radius:10px;padding:12px 18px;font-size:13px;margin:0 0 34px;display:flex;gap:18px;flex-wrap:wrap;color:var(--text)}
+  .rulebar span{white-space:nowrap}
+  .rulebar b{color:var(--accent)}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+  @media(max-width:1020px){.cols{grid-template-columns:1fr}}
+  .col-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:2px solid var(--line);padding-bottom:10px;margin-bottom:16px;flex-wrap:wrap}
+  .col-h .who{font-size:11px;color:var(--muted)}
+
+  .wf{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:18px}
+  .wf-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .wf-h h3{font-size:13.5px;font-weight:600}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.frow{grid-template-columns:1fr}}
+  .fld .lb{font-size:10.5px;color:var(--muted);margin-bottom:4px}
+  .fld .in{background:var(--bg);border:1px solid var(--line);border-radius:6px;height:36px;display:flex;align-items:center;padding:0 10px;font-size:13px}
+  input.in{display:block;width:100%;color:var(--text);font-family:ui-monospace,Consolas,monospace;outline:none}
+  input.in:focus{border-color:var(--accent)}
+  input.tin{width:76px;background:var(--bg);border:1px solid var(--line);border-radius:5px;color:var(--text);padding:4px 6px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;outline:none}
+  input.tin:focus{border-color:var(--accent)}
+  .fld .hint{font-size:11px;color:var(--muted);margin-top:4px}
+  .hint-new{color:var(--new)!important}
+  .derived{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .derived .k{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .derived .v{font-family:ui-monospace,Consolas,monospace;color:var(--accent);font-size:17px;margin-top:3px}
+  .derived .hint{font-size:11px;color:var(--muted);margin-top:5px}
+  .lockline{background:rgba(240,177,50,.07);border:1px dashed rgba(240,177,50,.45);border-radius:8px;padding:10px 14px;font-size:12.5px;margin-top:14px}
+  .lockline b{color:var(--accent)}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  .chip{display:inline-block;font-size:10px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--muted)}
+  .chip-warn{border-color:rgba(251,191,36,.5);color:var(--chg)}
+  .invbar{margin-top:14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:12px}
+  .bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-top:8px}
+  .bar>i{display:block;height:100%;background:var(--accent);transition:width .2s}
+  .bar.g>i{background:var(--new)}
+  .bar.warn>i{background:var(--rm)}
+
+  .stat-big{font-size:26px;font-weight:700}
+  .b-row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+  .b-meta{text-align:right;font-size:11.5px;color:var(--muted);line-height:1.9}
+  .unitstrip{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;font-size:12px}
+  .tiercard{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;flex:1;min-width:230px}
+  .tiercard.pop{border-color:var(--accent)}
+  .tc-price{font-size:22px;font-weight:700}
+  .tc-units{margin-top:8px;font-size:12px;color:var(--accent);background:rgba(240,177,50,.08);border:1px solid rgba(240,177,50,.35);border-radius:6px;padding:4px 9px;display:inline-block}
+  .tc-perks{margin-top:12px;list-style:none;font-size:12px;color:var(--muted)}
+  .tc-perks li{padding-left:12px;position:relative;margin:3px 0}
+  .tc-perks li::before{content:"·";color:var(--accent);position:absolute;left:2px}
+  .tc-cta{margin-top:14px;border-radius:6px;height:36px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:600}
+  .cta-gold{background:var(--accent);color:#0e0e0e}
+  .cta-line{border:1px solid var(--line);color:var(--muted)}
+  .tiers-flex{display:flex;gap:14px;flex-wrap:wrap}
+  .kv{display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .kv:last-child{border-bottom:none}
+  .kv .k2{color:var(--muted)}
+
+  .notes{list-style:none;font-size:11.5px;color:var(--muted);margin-top:12px}
+  .notes li{padding-left:14px;position:relative;margin:4px 0}
+  .notes li::before{content:"—";position:absolute;left:0;color:var(--line)}
+  .decisions{margin-top:34px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .d-item{display:flex;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px;align-items:baseline}
+  .d-item:last-child{border-bottom:none}
+  .d-id{font-weight:700;color:var(--accent);flex:none;width:30px}
+  .d-item .to{color:var(--muted);font-size:11.5px;margin-left:8px}
+  footer{margin-top:28px;font-size:10.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;line-height:1.9}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Co-Creation Crowdfund — Goal × Shares Wireframe</h1>
+  <p class="sub">DRAFT · updated 2026-07-06 · <b>Model B decided</b> · pricing = <b>issue price (valuation ÷ total shares, decoupled from goal)</b> · Q5 · Q6 pending ·
+    <span class="tag t-new">🖉 gold-bordered inputs are live-editable (for demos)</span> ·
+    <a href="./ztor-crowdfund-shares-wireframe.html">中文版 →</a></p>
+
+  <!-- ============ WHY ============ -->
+  <div class="why">
+    <h2>Why these changes</h2>
+    <ol>
+      <li><b>The original form's flaw:</b> price/share = goal ÷ total shares, but non-share (donate) tiers also count toward the goal → the derived price was fiction <span class="from">(where this whole discussion started)</span></li>
+      <li><b>One number, one job:</b> goal = funding threshold (all tiers count); <b>valuation</b> = pricing base → donations can never move the issue price</li>
+      <li><b>Model B fixed per-share:</b> each share's % is known at publish, no settlement step — backers understand it in one sentence</li>
+      <li><b>Disclosable issue price (IPO concept):</b> tiers price at a premium (perks in) or discount (creator's offer) freely; paves the way for future share resale</li>
+    </ol>
+  </div>
+
+  <!-- ============ SHARED SETTINGS (live) ============ -->
+  <div class="math">
+    <div class="box">
+      <div class="k">Backer pool</div>
+      <div class="v"><em id="s-pool">30%</em></div>
+      <div class="d">Locked at publish · creator keeps <span id="s-keep">70%</span></div>
+    </div>
+    <div class="box">
+      <div class="k">Total shares</div>
+      <div class="v mono" id="s-shares">1,000</div>
+      <div class="d">Issuance cap (Q5) · only share tiers issue shares</div>
+    </div>
+    <div class="box">
+      <div class="k">Valuation <span class="tag t-new" style="font-size:8.5px">NEW</span></div>
+      <div class="v mono" id="s-val">$60,000</div>
+      <div class="d">Total value of issued shares · independent of goal</div>
+    </div>
+    <div class="box">
+      <div class="k">Issue price / per share</div>
+      <div class="v mono"><em id="s-issue">$60</em> · <em id="s-ps">0.03%</em></div>
+      <div class="d" id="s-psf">= valuation÷1,000 · 30%÷1,000 · fixed</div>
+    </div>
+  </div>
+
+  <!-- ============ MODEL B (DECIDED, live example) ============ -->
+  <div class="models">
+    <div class="mcard rec">
+      <div class="m-h">
+        <span class="nm"><b>Model B</b> — Fixed Per-Share</span>
+        <span><span class="tag t-rec">✅ DECIDED 2026-07-06</span></span>
+      </div>
+      <div class="mfrm">
+        <div>issue price <span class="hl">= valuation ÷ total shares</span> = <span id="m-priceEg">$60,000 ÷ 1,000 = $60</span></div>
+        <div>per-share % <span class="hl">= pool ÷ total shares</span> = <span id="m-psEg">fixed 0.03%</span>　　your % <span class="hl">= your shares × per-share %</span></div>
+      </div>
+      <div class="m-eg" id="m-eg">20 shares = <b>fixed 0.6%</b>, regardless of how many sell · at 500 sold: backers hold <b>15%</b> total, unsold 15% reverts to creator</div>
+      <ul class="notes">
+        <li>Known at publish · no settlement step · public copy says "<b style="color:var(--accent)">up to <span id="m-pool">30%</span></b>" (backers total &lt; pool when undersold)</li>
+        <li style="opacity:.6">Model A (fixed pool · pro-rata across shares sold) dropped 2026-07-06 — see decisions/ ADR</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rulebar">
+    <span><b>Goal</b> = funding threshold · every pledge counts</span>
+    <span><b>Valuation</b> = pricing base · independent of goal</span>
+    <span><b>Shares</b> = share tiers only</span>
+    <span><b>Per share</b> = fixed % · never a human call</span>
+    <span><b>Locked</b> = at publish</span>
+  </div>
+
+  <div class="cols">
+
+    <!-- ================= 1: CREATOR / ADMIN ================= -->
+    <div>
+      <div class="col-h">
+        <h2>① Project settings (Admin)</h2>
+        <span class="who">/admin/projects/new · 🖉 inputs editable</span>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>Funding plan</h3><span class="tag t-chg">CHANGED</span></div>
+        <div class="frow">
+          <div class="fld"><div class="lb">Settlement currency</div><div class="in">USD ▾</div></div>
+          <div class="fld">
+            <div class="lb">Goal 🖉</div><input class="in" id="i-goal" value="60,000" inputmode="numeric">
+            <div class="hint hint-new">+ all tiers count (incl. non-share) · pure threshold, never affects issue price</div>
+          </div>
+          <div class="fld"><div class="lb">Start date</div><div class="in">mm/dd/yyyy</div></div>
+          <div class="fld"><div class="lb">End date</div><div class="in">mm/dd/yyyy</div><div class="hint">30 days max</div></div>
+        </div>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h">
+          <h3>Revenue-share pool &amp; shares <span class="strike" style="font-weight:400;font-size:11px">Shares &amp; equity</span></h3>
+          <span class="tag t-chg">RENAMED</span>
+        </div>
+        <div class="frow">
+          <div class="fld">
+            <div class="lb">Backer pool (%) 🖉</div><input class="in" id="i-pool" value="30" inputmode="numeric">
+            <div class="hint">Creator keeps <span id="a-keep">70%</span> · locked</div>
+          </div>
+          <div class="fld">
+            <div class="lb">Total shares 🖉</div><input class="in" id="i-shares" value="1000" inputmode="numeric">
+            <div class="hint hint-new">+ hard issuance cap (Q5)</div>
+          </div>
+          <div class="fld">
+            <div class="lb">Valuation 🖉 <span class="tag t-new">NEW</span></div><input class="in" id="i-val" value="60,000" inputmode="numeric">
+            <div class="hint hint-new">Total value of issued shares (the pool's worth) · defaults to goal, editable · implies whole-project value <span id="a-implied" class="mono">$200,000</span> (read-only)</div>
+          </div>
+        </div>
+        <div class="frow" style="margin-top:12px">
+          <div class="derived">
+            <div class="k">Issue price / share <span class="tag t-chg">LOCKED</span></div>
+            <div class="v" id="d-issue">$60</div>
+            <div class="hint">= valuation ÷ total shares · disclosable · tiers premium / discount freely · future resale reference</div>
+          </div>
+          <div class="derived">
+            <div class="k">Per share <span class="tag t-chg">CHANGED</span></div>
+            <div class="v" id="d-ps">0.03%</div>
+            <div class="hint">= pool ÷ total shares · fixed · known at publish</div>
+          </div>
+        </div>
+        <div class="lockline">
+          <b>Settlement rule (read-only · locked)</b> fixed <span id="l-ps" class="mono">0.03%</span> per share · unsold shares revert to creator <span class="tag t-new">NEW</span>
+        </div>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>Pledge tiers</h3><span class="tag t-chg">CHANGED · 🖉 editable</span></div>
+        <table>
+          <thead><tr><th>Name</th><th>Price</th><th>Cap</th><th>Shares</th><th>$ / share <span class="tag t-new" style="font-size:8.5px">NEW</span></th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Supporter<br><span class="chip">non-share</span></td>
+              <td class="mono">50</td><td class="mono">∞</td><td class="mono">—</td>
+              <td><span class="chip">counts to goal · 0 shares</span></td>
+            </tr>
+            <tr>
+              <td>Inner Circle<br><span class="chip" style="color:var(--new);border-color:rgba(52,211,153,.5)">share tier</span></td>
+              <td><input class="tin" id="i-tprice" value="385" inputmode="numeric"></td>
+              <td><input class="tin" id="i-tcap" value="50" inputmode="numeric"> <b style="color:var(--chg);font-size:10px">*required</b></td>
+              <td><input class="tin" id="i-tshares" value="20" inputmode="numeric"></td>
+              <td><span class="chip mono" id="t-eff">⚠ $19.25</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <ul class="notes">
+          <li>Share tiers must set a cap (∞ not allowed)</li>
+          <li>±20% off issue price → ⚠ hint only, never blocks (G13 guardrail)</li>
+        </ul>
+        <div class="invbar">
+          <div style="display:flex;justify-content:space-between"><span>Share inventory <span class="tag t-new">NEW</span></span><span class="mono" id="inv-line">20 × 50 = 1,000 / 1,000 ✓</span></div>
+          <div class="bar g" id="inv-bar"><i style="width:100%"></i></div>
+          <div class="hint" style="margin-top:6px;font-size:11px;color:var(--muted)">Over total shares → save blocked (hard validation)</div>
+        </div>
+        <div class="invbar">
+          <div style="display:flex;justify-content:space-between"><span>Goal coverage (G14) <span class="tag t-new">NEW</span></span><span class="mono" id="cov-line">share tiers sold out = $19,250 (32% of goal)</span></div>
+          <div class="bar" id="cov-bar"><i style="width:32%"></i></div>
+          <div class="hint" style="margin-top:6px;font-size:11px;color:var(--muted)">Warns when full sell-out still misses goal (uncapped donate tiers excluded)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 2: BUYER (live preview) ================= -->
+    <div>
+      <div class="col-h">
+        <h2>② What backers see (Frontend)</h2>
+        <span class="who">/crowdfund/[slug] · "equity" / "investment" wording banned · updates live with left-side inputs</span>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>Funding progress</h3><span><span class="tag t-same">UNCHANGED</span> <span class="tag t-new">+ shares row</span></span></div>
+        <div class="b-row">
+          <div>
+            <div class="stat-big mono">US$38,750</div>
+            <div class="hint" style="color:var(--muted);font-size:11.5px">Goal <span id="b-goal">US$60,000</span></div>
+          </div>
+          <div class="b-meta">👤 412 backers<br>⏱ 12 days left</div>
+        </div>
+        <div class="bar" style="margin-top:12px"><i id="b-moneybar" style="width:65%"></i></div>
+        <div class="unitstrip">
+          <div style="display:flex;justify-content:space-between">
+            <span>Revenue shares <span class="tag t-new">NEW</span></span>
+            <span class="mono" id="b-sold">500 / 1,000</span>
+          </div>
+          <div class="bar"><i id="b-sharebar" style="width:50%"></i></div>
+          <div style="margin-top:6px;color:var(--muted);font-size:11.5px" id="b-line">Issue price $60 / share · fixed 0.03% each · <b style="color:var(--accent)">up to 30%</b> total · gone when sold out</div>
+        </div>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>How is revenue share calculated? (collapsible)</h3><span class="tag t-new">NEW</span></div>
+        <ul class="notes" style="margin-top:0;color:var(--text);font-size:12.5px">
+          <li id="e-ps">Each share = <b style="color:var(--accent)">fixed 0.03%</b> of revenue share · known at publish</li>
+          <li id="e-eg">e.g. 20 shares = 0.6%, regardless of how many sell</li>
+          <li id="e-pool">Backers collectively hold up to 30% (at full sell-out)</li>
+          <li>Rules locked at publish · a pledge is not an investment (per T&amp;C)</li>
+        </ul>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>TierCard</h3><span class="tag t-chg">CHANGED (share tiers)</span></div>
+        <div class="tiers-flex">
+          <div class="tiercard">
+            <div class="tc-price mono">US$50</div>
+            <div style="font-size:12.5px;margin-top:4px">Supporter</div>
+            <ul class="tc-perks"><li>Digital poster</li><li>Name in end credits</li></ul>
+            <div class="tc-cta cta-line">Pledge US$50</div>
+          </div>
+          <div class="tiercard pop">
+            <div class="tc-price mono" id="tc-price">US$385</div>
+            <div style="font-size:12.5px;margin-top:4px">Inner Circle</div>
+            <div class="tc-units" id="tc-badge">20 shares · fixed 0.6% revenue share</div>
+            <ul class="tc-perks">
+              <li>Executive Producer credit</li>
+              <li><span class="strike">Film equity allocation</span> Revenue-share allocation</li>
+            </ul>
+            <div class="tc-cta cta-gold" id="tc-cta">Pledge US$385</div>
+          </div>
+        </div>
+        <ul class="notes">
+          <li>Badge shows shares × fixed % · issue price disclosable — discount / premium expressed by tier pricing (G13 display rules TBD)</li>
+          <li>Non-share tiers untouched · CTA states unchanged</li>
+        </ul>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>Pledge review, Step 1</h3><span class="tag t-chg">CHANGED</span></div>
+        <div class="kv"><span class="k2">Tier</span><span>Inner Circle</span></div>
+        <div class="kv"><span class="k2">Amount</span><span class="mono" id="pr-amt">US$385</span></div>
+        <div class="kv"><span class="k2">Shares <span class="tag t-new">NEW</span></span><span id="pr-line">20 shares · fixed 0.6%</span></div>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>After close — My pledge</h3><span class="tag t-new">NEW</span></div>
+        <div class="kv"><span class="k2">Your share</span><span class="mono" style="color:var(--accent)" id="ac-your">20 shares = 0.6% (fixed)</span></div>
+        <div class="kv"><span class="k2">Campaign</span><span class="mono" id="ac-camp">500 / 1,000 sold · backers total 15%</span></div>
+        <ul class="notes">
+          <li>No settlement step (Model B) · payout mechanics = Stage 3</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DECISIONS ============ -->
+  <div class="decisions">
+    <h2 style="margin-bottom:8px">Decisions needed</h2>
+    <div class="d-item"><span class="d-id">D1</span><div>✅ Decided (2026-07-06): <b style="color:var(--accent)">Model B fixed per-share</b><span class="to">→ ADR: decisions/2026-07-06-crowdfund-settlement-model-b-fixed-per-share.md</span></div></div>
+    <div class="d-item"><span class="d-id">D6</span><div>Pricing direction (2026-07-06): <b style="color:var(--accent)">issue price = valuation ÷ total shares</b> (decoupled from goal · disclosable) · tiers premium / discount freely · future resale reference<span class="to">→ public wording to Legal · gaps G13 / G15 / G16 (gap analysis)</span></div></div>
+    <div class="d-item"><span class="d-id">D2</span><div>Q5: project-level hard cap · share tiers must set caps<span class="to">→ recommend adopt</span></div></div>
+    <div class="d-item"><span class="d-id">D3</span><div>Q6: keep pledging until window ends · shares stop when sold out<span class="to">→ recommend adopt</span></div></div>
+    <div class="d-item"><span class="d-id">D4</span><div>Public wording: "share / revenue share" OK · ban "equity" / "investment" · T&amp;C clarifies a share ≠ equity<span class="to">→ incl. mock perk copy fix · Legal confirm</span></div></div>
+    <div class="d-item"><span class="d-id">D5</span><div>Mixed tiers (physical + shares): disclose price attribution in T&amp;C?<span class="to">→ Legal</span></div></div>
+  </div>
+
+  <footer>
+    ztor-crowdfund-proto: admin/projects/new/page.tsx · TierCard.tsx · FundingStatsBar.tsx · types.ts (+1 field: valuation — decoupled from goal)<br>
+    Q2 decided (2026-05-04 / 05-07) · Q5 Q6 open · DRAFT — not a spec until reviewed
+  </footer>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  function num(id){ var v = parseFloat(($(id).value||'').replace(/,/g,'')); return isFinite(v)?v:0; }
+  function fmtM(n){ var r=Math.round(n*100)/100; return r.toLocaleString('en-US',{maximumFractionDigits:2}); }
+  function fmtP(x){ return (parseFloat(x.toFixed(4)))+'%'; }
+  var SOLD = 500; // demo assumption: 500 shares sold
+
+  function recalc(){
+    var goal=num('i-goal'), pool=num('i-pool'), shares=num('i-shares'), val=num('i-val');
+    var tp=num('i-tprice'), tc=num('i-tcap'), ts=num('i-tshares');
+    var issue = shares? val/shares : 0;
+    var ps = shares? pool/shares : 0;
+    var tierPct = ts*ps;
+    var eff = ts? tp/ts : 0;
+    var implied = pool? val/pool*100 : 0;
+    var keep = 100-pool;
+    var sold = Math.min(SOLD, shares);
+
+    $('s-pool').textContent = fmtP(pool);
+    $('s-keep').textContent = fmtP(keep);
+    $('s-shares').textContent = fmtM(shares);
+    $('s-val').textContent = '$'+fmtM(val);
+    $('s-issue').textContent = '$'+fmtM(issue);
+    $('s-ps').textContent = fmtP(ps);
+    $('s-psf').textContent = '= valuation÷'+fmtM(shares)+' · '+fmtP(pool)+'÷'+fmtM(shares)+' · fixed';
+
+    $('m-priceEg').textContent = '$'+fmtM(val)+' ÷ '+fmtM(shares)+' = $'+fmtM(issue);
+    $('m-psEg').textContent = 'fixed '+fmtP(ps);
+    $('m-eg').innerHTML = fmtM(ts)+' shares = <b>fixed '+fmtP(tierPct)+'</b>, regardless of how many sell · at '+fmtM(sold)+' sold: backers hold <b>'+fmtP(sold*ps)+'</b> total, unsold '+fmtP(Math.max(0,(shares-sold))*ps)+' reverts to creator';
+    $('m-pool').textContent = fmtP(pool);
+
+    $('a-keep').textContent = fmtP(keep);
+    $('a-implied').textContent = '$'+fmtM(implied);
+    $('d-issue').textContent = '$'+fmtM(issue);
+    $('d-ps').textContent = fmtP(ps);
+    $('l-ps').textContent = fmtP(ps);
+
+    var dev = issue? Math.abs(eff/issue-1) : 0;
+    var effEl = $('t-eff');
+    effEl.textContent = (dev>0.2?'⚠ ':'')+'$'+fmtM(eff);
+    effEl.className = 'chip mono'+(dev>0.2?' chip-warn':'');
+
+    var alloc = ts*tc, ok = alloc<=shares;
+    $('inv-line').textContent = fmtM(ts)+' × '+fmtM(tc)+' = '+fmtM(alloc)+' / '+fmtM(shares)+(ok?' ✓':' ✗ over cap');
+    var invBar=$('inv-bar');
+    invBar.className='bar '+(ok?'g':'warn');
+    invBar.firstElementChild.style.width = Math.min(100, shares? alloc/shares*100 : 0)+'%';
+
+    var covMax = tp*tc, covPct = goal? covMax/goal*100 : 0;
+    $('cov-line').textContent = 'share tiers sold out = $'+fmtM(covMax)+' ('+Math.round(covPct)+'% of goal)';
+    var covBar=$('cov-bar');
+    covBar.className='bar'+(covPct>=100?' g':'');
+    covBar.firstElementChild.style.width = Math.min(100,covPct)+'%';
+
+    $('b-goal').textContent = 'US$'+fmtM(goal);
+    $('b-sold').textContent = fmtM(sold)+' / '+fmtM(shares);
+    $('b-sharebar').style.width = (shares? Math.min(100,sold/shares*100):0)+'%';
+    $('b-line').innerHTML = 'Issue price $'+fmtM(issue)+' / share · fixed '+fmtP(ps)+' each · <b style="color:var(--accent)">up to '+fmtP(pool)+'</b> total · gone when sold out';
+    $('e-ps').innerHTML = 'Each share = <b style="color:var(--accent)">fixed '+fmtP(ps)+'</b> of revenue share · known at publish';
+    $('e-eg').textContent = 'e.g. '+fmtM(ts)+' shares = '+fmtP(tierPct)+', regardless of how many sell';
+    $('e-pool').textContent = 'Backers collectively hold up to '+fmtP(pool)+' (at full sell-out)';
+    $('tc-price').textContent = 'US$'+fmtM(tp);
+    $('tc-badge').textContent = fmtM(ts)+' shares · fixed '+fmtP(tierPct)+' revenue share';
+    $('tc-cta').textContent = 'Pledge US$'+fmtM(tp);
+    $('pr-amt').textContent = 'US$'+fmtM(tp);
+    $('pr-line').textContent = fmtM(ts)+' shares · fixed '+fmtP(tierPct);
+    $('ac-your').textContent = fmtM(ts)+' shares = '+fmtP(tierPct)+' (fixed)';
+    $('ac-camp').textContent = fmtM(sold)+' / '+fmtM(shares)+' sold · backers total '+fmtP(sold*ps);
+  }
+
+  ['i-goal','i-pool','i-shares','i-val','i-tprice','i-tcap','i-tshares'].forEach(function(id){
+    $(id).addEventListener('input', recalc);
+  });
+  recalc();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crowdfund — Goal × 分潤份額 Wireframe (live)</title>
+<style>
+  :root{
+    --bg:#0e0e0e; --surface:#171717; --surface2:#1f1f1f; --line:#2a2a2a;
+    --text:#f7f9fa; --muted:#9ca3af; --accent:#f0b132;
+    --new:#34d399; --chg:#fbbf24; --rm:#f87171; --same:#6b7280;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,"Noto Sans TC",sans-serif;font-size:14px;line-height:1.6;padding:32px 20px 60px}
+  .wrap{max-width:1420px;margin:0 auto}
+  h1{font-size:22px;font-weight:600}
+  h2{font-size:15px;font-weight:600}
+  .sub{color:var(--muted);font-size:12.5px;margin-top:6px}
+  .sub b{color:var(--accent)}
+  .sub a{color:var(--muted)}
+  .mono{font-family:ui-monospace,Consolas,monospace}
+  .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;border-radius:4px;padding:1px 7px;vertical-align:middle}
+  .t-new{background:rgba(52,211,153,.15);color:var(--new);border:1px solid rgba(52,211,153,.4)}
+  .t-chg{background:rgba(251,191,36,.13);color:var(--chg);border:1px solid rgba(251,191,36,.4)}
+  .t-same{background:rgba(107,114,128,.15);color:var(--same);border:1px solid rgba(107,114,128,.4)}
+  .t-rec{background:rgba(240,177,50,.15);color:var(--accent);border:1px solid rgba(240,177,50,.5)}
+  .strike{text-decoration:line-through;color:var(--rm);opacity:.8}
+
+  /* why panel */
+  .why{background:var(--surface);border:1px solid rgba(240,177,50,.45);border-radius:12px;padding:18px 20px;margin:22px 0 0}
+  .why h2{color:var(--accent);margin-bottom:10px}
+  .why ol{list-style:none;counter-reset:w;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px 24px}
+  .why li{counter-increment:w;position:relative;padding-left:30px;font-size:12.5px}
+  .why li::before{content:counter(w);position:absolute;left:0;top:3px;width:20px;height:20px;border:1px solid rgba(240,177,50,.5);border-radius:50%;color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .why b{color:var(--accent)}
+  .why .from{color:var(--muted)}
+
+  /* math strip */
+  .math{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0 14px}
+  .math .box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+  .math .k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .math .v{font-size:24px;font-weight:700;margin-top:6px}
+  .math .v em{font-style:normal;color:var(--accent)}
+  .math .d{font-size:11.5px;color:var(--muted);margin-top:6px}
+
+  /* model card */
+  .models{display:grid;grid-template-columns:1fr;gap:14px;margin:0 0 10px}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .mcard.rec{border-color:rgba(240,177,50,.6)}
+  .m-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .m-h .nm{font-weight:700;font-size:14px}
+  .m-h .nm b{color:var(--accent)}
+  .mfrm{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:10px 0;overflow-x:auto}
+  .mfrm div{margin:3px 0;white-space:nowrap}
+  .mfrm .hl{color:var(--accent)}
+  .m-eg{font-size:12px;color:var(--muted)}
+  .m-eg b{color:var(--text)}
+  .rulebar{border:1px solid rgba(240,177,50,.35);background:rgba(240,177,50,.06);border-radius:10px;padding:12px 18px;font-size:13px;margin:0 0 34px;display:flex;gap:18px;flex-wrap:wrap;color:var(--text)}
+  .rulebar span{white-space:nowrap}
+  .rulebar b{color:var(--accent)}
+
+  /* columns */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+  @media(max-width:1020px){.cols{grid-template-columns:1fr}}
+  .col-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:2px solid var(--line);padding-bottom:10px;margin-bottom:16px;flex-wrap:wrap}
+  .col-h .who{font-size:11px;color:var(--muted)}
+
+  /* cards */
+  .wf{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:18px}
+  .wf-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .wf-h h3{font-size:13.5px;font-weight:600}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.frow{grid-template-columns:1fr}}
+  .fld .lb{font-size:10.5px;color:var(--muted);margin-bottom:4px}
+  .fld .in{background:var(--bg);border:1px solid var(--line);border-radius:6px;height:36px;display:flex;align-items:center;padding:0 10px;font-size:13px}
+  input.in{display:block;width:100%;color:var(--text);font-family:ui-monospace,Consolas,monospace;outline:none}
+  input.in:focus{border-color:var(--accent)}
+  input.tin{width:76px;background:var(--bg);border:1px solid var(--line);border-radius:5px;color:var(--text);padding:4px 6px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;outline:none}
+  input.tin:focus{border-color:var(--accent)}
+  .fld .hint{font-size:11px;color:var(--muted);margin-top:4px}
+  .hint-new{color:var(--new)!important}
+  .derived{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .derived .k{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .derived .v{font-family:ui-monospace,Consolas,monospace;color:var(--accent);font-size:17px;margin-top:3px}
+  .derived .hint{font-size:11px;color:var(--muted);margin-top:5px}
+  .lockline{background:rgba(240,177,50,.07);border:1px dashed rgba(240,177,50,.45);border-radius:8px;padding:10px 14px;font-size:12.5px;margin-top:14px}
+  .lockline b{color:var(--accent)}
+
+  /* tier table */
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  .chip{display:inline-block;font-size:10px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--muted)}
+  .chip-warn{border-color:rgba(251,191,36,.5);color:var(--chg)}
+  .invbar{margin-top:14px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:12px}
+  .bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-top:8px}
+  .bar>i{display:block;height:100%;background:var(--accent);transition:width .2s}
+  .bar.g>i{background:var(--new)}
+  .bar.warn>i{background:var(--rm)}
+
+  /* buyer mock */
+  .stat-big{font-size:26px;font-weight:700}
+  .b-row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+  .b-meta{text-align:right;font-size:11.5px;color:var(--muted);line-height:1.9}
+  .unitstrip{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;font-size:12px}
+  .tiercard{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;flex:1;min-width:230px}
+  .tiercard.pop{border-color:var(--accent)}
+  .tc-price{font-size:22px;font-weight:700}
+  .tc-units{margin-top:8px;font-size:12px;color:var(--accent);background:rgba(240,177,50,.08);border:1px solid rgba(240,177,50,.35);border-radius:6px;padding:4px 9px;display:inline-block}
+  .tc-perks{margin-top:12px;list-style:none;font-size:12px;color:var(--muted)}
+  .tc-perks li{padding-left:12px;position:relative;margin:3px 0}
+  .tc-perks li::before{content:"·";color:var(--accent);position:absolute;left:2px}
+  .tc-cta{margin-top:14px;border-radius:6px;height:36px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:600}
+  .cta-gold{background:var(--accent);color:#0e0e0e}
+  .cta-line{border:1px solid var(--line);color:var(--muted)}
+  .tiers-flex{display:flex;gap:14px;flex-wrap:wrap}
+  .kv{display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .kv:last-child{border-bottom:none}
+  .kv .k2{color:var(--muted)}
+
+  /* notes + decisions */
+  .notes{list-style:none;font-size:11.5px;color:var(--muted);margin-top:12px}
+  .notes li{padding-left:14px;position:relative;margin:4px 0}
+  .notes li::before{content:"—";position:absolute;left:0;color:var(--line)}
+  .decisions{margin-top:34px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .d-item{display:flex;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px;align-items:baseline}
+  .d-item:last-child{border-bottom:none}
+  .d-id{font-weight:700;color:var(--accent);flex:none;width:30px}
+  .d-item .to{color:var(--muted);font-size:11.5px;margin-left:8px}
+  footer{margin-top:28px;font-size:10.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;line-height:1.9}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>影視共創 — 目標金額 × 分潤份額 Wireframe</h1>
+  <p class="sub">DRAFT · 2026-07-06 更新 · <b>Model B 已定案</b> · 定價 = <b>發行價（估值 ÷ 總份數，與目標解耦）</b> · Q5 · Q6 待拍板 ·
+    <span class="tag t-new">🖉 黃框輸入可即時編輯（demo 用）</span> ·
+    <a href="./ztor-crowdfund-shares-wireframe-en.html">English →</a></p>
+
+  <!-- ============ WHY ============ -->
+  <div class="why">
+    <h2>為什麼這樣改 Why</h2>
+    <ol>
+      <li><b>原表單的問題：</b>每股金額＝目標 ÷ 總股數，但非分潤級距（donate）也計入目標 → 價格失真 <span class="from">（本次討論起點）</span></li>
+      <li><b>一數一責：</b>目標＝募資門檻（所有級距計入）；<b>估值</b>＝定價基礎 → 捐助再多也不影響發行價</li>
+      <li><b>Model B 固定每份：</b>每份 % 發布即確定、無結算步驟 — 贊助者一句話看懂</li>
+      <li><b>發行價可揭露（IPO 概念）：</b>tier 溢價（含贈品）／折價（創作者優惠）自由，為未來二手轉售留路</li>
+    </ol>
+  </div>
+
+  <!-- ============ SHARED SETTINGS (live) ============ -->
+  <div class="math">
+    <div class="box">
+      <div class="k">分潤池 Backer pool</div>
+      <div class="v"><em id="s-pool">30%</em></div>
+      <div class="d">發布後鎖定 · 創作者保留 <span id="s-keep">70%</span></div>
+    </div>
+    <div class="box">
+      <div class="k">總份數 Total shares</div>
+      <div class="v mono" id="s-shares">1,000</div>
+      <div class="d">發行上限（Q5）· 只有分潤級距發份</div>
+    </div>
+    <div class="box">
+      <div class="k">估值 Valuation <span class="tag t-new" style="font-size:8.5px">NEW</span></div>
+      <div class="v mono" id="s-val">$60,000</div>
+      <div class="d">發行份額總值 · 與目標互相獨立</div>
+    </div>
+    <div class="box">
+      <div class="k">發行價 / 每份分潤</div>
+      <div class="v mono"><em id="s-issue">$60</em> · <em id="s-ps">0.03%</em></div>
+      <div class="d" id="s-psf">= 估值÷1,000 · 30%÷1,000 · 固定</div>
+    </div>
+  </div>
+
+  <!-- ============ MODEL B (DECIDED, live example) ============ -->
+  <div class="models">
+    <div class="mcard rec">
+      <div class="m-h">
+        <span class="nm"><b>Model B</b> — 固定每份 Fixed Per-Share</span>
+        <span><span class="tag t-rec">✅ 已定案 2026-07-06</span></span>
+      </div>
+      <div class="mfrm">
+        <div>發行價 <span class="hl">= 估值 ÷ 總份數</span> = <span id="m-priceEg">$60,000 ÷ 1,000 = $60</span></div>
+        <div>每份% <span class="hl">= 30% ÷ 總份數</span> = <span id="m-psEg">固定 0.03%</span>　　你的分潤% <span class="hl">= 你的份數 × 每份%</span></div>
+      </div>
+      <div class="m-eg" id="m-eg">買 20 份 = <b>固定 0.6%</b>，與售出多少無關 · 售出 500 份時：贊助者合計 <b>15%</b>，未售 15% 回歸創作者</div>
+      <ul class="notes">
+        <li>發布即確定 · 無結算步驟 · 對外標示「<b style="color:var(--accent)">最高 <span id="m-pool">30%</span></b>」（未售完時贊助者合計 &lt; 池）</li>
+        <li style="opacity:.6">Model A(固定池 · 按實售均分)已於 2026-07-06 淘汰 — 見 decisions/ ADR</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rulebar">
+    <span><b>目標</b> = 募資門檻 · 全部贊助合計</span>
+    <span><b>估值</b> = 定價基礎 · 與目標無關</span>
+    <span><b>份</b> = 只有分潤級距發</span>
+    <span><b>每份</b> = 固定 % · 非人為決定</span>
+    <span><b>鎖定</b> = 發布時</span>
+  </div>
+
+  <div class="cols">
+
+    <!-- ================= 1: CREATOR / ADMIN ================= -->
+    <div>
+      <div class="col-h">
+        <h2>① 專案設定（後台）</h2>
+        <span class="who">/admin/projects/new · 🖉 輸入框可編輯</span>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>募資計畫 Funding plan</h3><span class="tag t-chg">CHANGED</span></div>
+        <div class="frow">
+          <div class="fld"><div class="lb">結算幣別 Currency</div><div class="in">USD ▾</div></div>
+          <div class="fld">
+            <div class="lb">目標金額 Goal 🖉</div><input class="in" id="i-goal" value="60,000" inputmode="numeric">
+            <div class="hint hint-new">＋ 所有級距皆計入（含非分潤）· 純門檻，不影響發行價</div>
+          </div>
+          <div class="fld"><div class="lb">募資開始 Start</div><div class="in">mm/dd/yyyy</div></div>
+          <div class="fld"><div class="lb">募資結束 End</div><div class="in">mm/dd/yyyy</div><div class="hint">最長 30 天</div></div>
+        </div>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h">
+          <h3>分潤池與份數 <span class="strike" style="font-weight:400;font-size:11px">股權與股數</span></h3>
+          <span class="tag t-chg">RENAMED</span>
+        </div>
+        <div class="frow">
+          <div class="fld">
+            <div class="lb">分潤池 Backer pool (%) 🖉</div><input class="in" id="i-pool" value="30" inputmode="numeric">
+            <div class="hint">創作者保留 <span id="a-keep">70%</span> · 鎖定</div>
+          </div>
+          <div class="fld">
+            <div class="lb">總份數 Total shares 🖉</div><input class="in" id="i-shares" value="1000" inputmode="numeric">
+            <div class="hint hint-new">＋ 硬性發行上限（Q5）</div>
+          </div>
+          <div class="fld">
+            <div class="lb">估值 Valuation 🖉 <span class="tag t-new">NEW</span></div><input class="in" id="i-val" value="60,000" inputmode="numeric">
+            <div class="hint hint-new">發行份額總值（分潤池的價值）· 預設 = 目標，可改 · 隱含全案分潤價值 <span id="a-implied" class="mono">$200,000</span>（唯讀）</div>
+          </div>
+        </div>
+        <div class="frow" style="margin-top:12px">
+          <div class="derived">
+            <div class="k">發行價 / share <span class="tag t-chg">LOCKED</span></div>
+            <div class="v" id="d-issue">$60</div>
+            <div class="hint">= 估值 ÷ 總份數 · 可對外揭露 · tier 溢價 / 折價自由 · 未來轉售參考價</div>
+          </div>
+          <div class="derived">
+            <div class="k">每份分潤 / share <span class="tag t-chg">CHANGED</span></div>
+            <div class="v" id="d-ps">0.03%</div>
+            <div class="hint">= 池 ÷ 總份數 · 固定 · 發布即確定</div>
+          </div>
+        </div>
+        <div class="lockline">
+          <b>結算規則（唯讀 · 鎖定）</b> 每份固定 <span id="l-ps" class="mono">0.03%</span> · 未售份數回歸創作者 <span class="tag t-new">NEW</span>
+        </div>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>贊助級距 Pledge tiers</h3><span class="tag t-chg">CHANGED · 🖉 可編輯</span></div>
+        <table>
+          <thead><tr><th>名稱</th><th>價格</th><th>名額</th><th>分潤份數</th><th>每份單價 <span class="tag t-new" style="font-size:8.5px">NEW</span></th></tr></thead>
+          <tbody>
+            <tr>
+              <td>支持者<br><span class="chip">支持型</span></td>
+              <td class="mono">50</td><td class="mono">∞</td><td class="mono">—</td>
+              <td><span class="chip">計入目標 · 0 份</span></td>
+            </tr>
+            <tr>
+              <td>Inner Circle<br><span class="chip" style="color:var(--new);border-color:rgba(52,211,153,.5)">分潤級</span></td>
+              <td><input class="tin" id="i-tprice" value="385" inputmode="numeric"></td>
+              <td><input class="tin" id="i-tcap" value="50" inputmode="numeric"> <b style="color:var(--chg);font-size:10px">*必填</b></td>
+              <td><input class="tin" id="i-tshares" value="20" inputmode="numeric"></td>
+              <td><span class="chip mono" id="t-eff">⚠ $19.25</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <ul class="notes">
+          <li>分潤級距必須設名額（∞ 不允許）</li>
+          <li>每份單價偏離發行價 ±20% → ⚠ 提示，不阻擋（G13 主要防呆）</li>
+        </ul>
+        <div class="invbar">
+          <div style="display:flex;justify-content:space-between"><span>份數配置 <span class="tag t-new">NEW</span></span><span class="mono" id="inv-line">20 × 50 = 1,000 / 1,000 ✓</span></div>
+          <div class="bar g" id="inv-bar"><i style="width:100%"></i></div>
+          <div class="hint" style="margin-top:6px;font-size:11px;color:var(--muted)">超過總份數 → 擋存檔（硬性驗證）</div>
+        </div>
+        <div class="invbar">
+          <div style="display:flex;justify-content:space-between"><span>目標覆蓋（G14）<span class="tag t-new">NEW</span></span><span class="mono" id="cov-line">分潤級距全售 = $19,250（目標 32%）</span></div>
+          <div class="bar" id="cov-bar"><i style="width:32%"></i></div>
+          <div class="hint" style="margin-top:6px;font-size:11px;color:var(--muted)">全售仍未達標時警示（支持型不設上限，不計入）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 2: BUYER (live preview) ================= -->
+    <div>
+      <div class="col-h">
+        <h2>② 贊助者所見（前台）</h2>
+        <span class="who">/crowdfund/[slug] · 禁用 股權 / 投資 字樣 · 隨左側輸入即時更新</span>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>募資進度</h3><span><span class="tag t-same">UNCHANGED</span> <span class="tag t-new">＋份數列</span></span></div>
+        <div class="b-row">
+          <div>
+            <div class="stat-big mono">US$38,750</div>
+            <div class="hint" style="color:var(--muted);font-size:11.5px">目標 <span id="b-goal">US$60,000</span></div>
+          </div>
+          <div class="b-meta">👤 412 人支持<br>⏱ 倒數 12 天</div>
+        </div>
+        <div class="bar" style="margin-top:12px"><i id="b-moneybar" style="width:65%"></i></div>
+        <div class="unitstrip">
+          <div style="display:flex;justify-content:space-between">
+            <span>分潤份額 <span class="tag t-new">NEW</span></span>
+            <span class="mono" id="b-sold">500 / 1,000 份</span>
+          </div>
+          <div class="bar"><i id="b-sharebar" style="width:50%"></i></div>
+          <div style="margin-top:6px;color:var(--muted);font-size:11.5px" id="b-line">發行價 $60 / 份 · 每份固定 0.03% · 最高共享 <b style="color:var(--accent)">30%</b> · 售完即止</div>
+        </div>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>分潤如何計算？（摺疊卡）</h3><span class="tag t-new">NEW</span></div>
+        <ul class="notes" style="margin-top:0;color:var(--text);font-size:12.5px">
+          <li id="e-ps">每份 = <b style="color:var(--accent)">固定 0.03%</b> 收益分潤 · 發布即確定</li>
+          <li id="e-eg">例：買 20 份 = 0.6%，與售出多少無關</li>
+          <li id="e-pool">全體贊助者最高共享 30%（全數售出時）</li>
+          <li>規則發布時鎖定 · 贊助 ≠ 投資（同 T&amp;C）</li>
+        </ul>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>級距卡 TierCard</h3><span class="tag t-chg">CHANGED（分潤級）</span></div>
+        <div class="tiers-flex">
+          <div class="tiercard">
+            <div class="tc-price mono">US$50</div>
+            <div style="font-size:12.5px;margin-top:4px">支持者 Supporter</div>
+            <ul class="tc-perks"><li>數位海報</li><li>片尾名單致謝</li></ul>
+            <div class="tc-cta cta-line">贊助 US$50</div>
+          </div>
+          <div class="tiercard pop">
+            <div class="tc-price mono" id="tc-price">US$385</div>
+            <div style="font-size:12.5px;margin-top:4px">Inner Circle</div>
+            <div class="tc-units" id="tc-badge">含 20 份 · 固定 0.6% 分潤</div>
+            <ul class="tc-perks">
+              <li>執行製片人署名</li>
+              <li><span class="strike">本片股份配置</span> 收益分潤配置</li>
+            </ul>
+            <div class="tc-cta cta-gold" id="tc-cta">贊助 US$385</div>
+          </div>
+        </div>
+        <ul class="notes">
+          <li>徽章顯示 份數 × 固定% · 發行價可揭露 — 折扣 / 溢價由級距定價呈現（G13 顯示規則待定）</li>
+          <li>非分潤級距不變 · CTA 三態不變</li>
+        </ul>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>贊助確認 Step 1</h3><span class="tag t-chg">CHANGED</span></div>
+        <div class="kv"><span class="k2">級距</span><span>Inner Circle</span></div>
+        <div class="kv"><span class="k2">金額</span><span class="mono" id="pr-amt">US$385</span></div>
+        <div class="kv"><span class="k2">分潤份額 <span class="tag t-new">NEW</span></span><span id="pr-line">20 份 · 固定 0.6%</span></div>
+      </div>
+
+      <div class="wf">
+        <div class="wf-h"><h3>結案後 — 我的贊助</h3><span class="tag t-new">NEW</span></div>
+        <div class="kv"><span class="k2">你的分潤</span><span class="mono" style="color:var(--accent)" id="ac-your">20 份 = 0.6%（固定）</span></div>
+        <div class="kv"><span class="k2">全案</span><span class="mono" id="ac-camp">實售 500 / 1,000 份 · 贊助者合計 15%</span></div>
+        <ul class="notes">
+          <li>無結算步驟（Model B）· 分潤支付機制 = Stage 3</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ DECISIONS ============ -->
+  <div class="decisions">
+    <h2 style="margin-bottom:8px">待拍板 Decisions</h2>
+    <div class="d-item"><span class="d-id">D1</span><div>✅ 已定案（2026-07-06）：<b style="color:var(--accent)">Model B 固定每份</b><span class="to">→ ADR：decisions/2026-07-06-crowdfund-settlement-model-b-fixed-per-share.md</span></div></div>
+    <div class="d-item"><span class="d-id">D6</span><div>定價方向（2026-07-06）：<b style="color:var(--accent)">發行價 = 估值 ÷ 總份數</b>（與目標解耦 · 可揭露）· tier 溢價 / 折價自由 · 未來二手轉售參考<span class="to">→ 對外用語交 Legal · 缺口 G13 / G15 / G16（gap 分析）</span></div></div>
+    <div class="d-item"><span class="d-id">D2</span><div>Q5：專案級硬上限 · 分潤級距必設名額<span class="to">→ 建議採納</span></div></div>
+    <div class="d-item"><span class="d-id">D3</span><div>Q6：達標後續收到視窗結束 · 份數售完即止<span class="to">→ 建議採納</span></div></div>
+    <div class="d-item"><span class="d-id">D4</span><div>對外用語：「分潤份額 / 份 / share」可用 · 禁 股權 / 投資（T&amp;C 註明非股權）<span class="to">→ 含 mock perk 改字 · Legal 確認</span></div></div>
+    <div class="d-item"><span class="d-id">D5</span><div>混搭級距（實體＋份）金額拆分是否入 T&amp;C<span class="to">→ Legal</span></div></div>
+  </div>
+
+  <footer>
+    ztor-crowdfund-proto：admin/projects/new/page.tsx · TierCard.tsx · FundingStatsBar.tsx · types.ts（＋1 欄位：valuation 估值 — 與 goal 解耦）<br>
+    Q2 已決（2026-05-04 / 05-07）· Q5 Q6 開放 · DRAFT — 未經 review 不作 spec
+  </footer>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  function num(id){ var v = parseFloat(($(id).value||'').replace(/,/g,'')); return isFinite(v)?v:0; }
+  function fmtM(n){ var r=Math.round(n*100)/100; return r.toLocaleString('en-US',{maximumFractionDigits:2}); }
+  function fmtP(x){ return (parseFloat(x.toFixed(4)))+'%'; }
+  var SOLD = 500; // demo 固定：已售 500 份
+
+  function recalc(){
+    var goal=num('i-goal'), pool=num('i-pool'), shares=num('i-shares'), val=num('i-val');
+    var tp=num('i-tprice'), tc=num('i-tcap'), ts=num('i-tshares');
+    var issue = shares? val/shares : 0;
+    var ps = shares? pool/shares : 0;           // 每份 %
+    var tierPct = ts*ps;                         // 此級距合計 %
+    var eff = ts? tp/ts : 0;                     // 每份單價
+    var implied = pool? val/pool*100 : 0;        // 隱含全案價值
+    var keep = 100-pool;
+    var sold = Math.min(SOLD, shares);
+
+    // strip
+    $('s-pool').textContent = fmtP(pool);
+    $('s-keep').textContent = fmtP(keep);
+    $('s-shares').textContent = fmtM(shares);
+    $('s-val').textContent = '$'+fmtM(val);
+    $('s-issue').textContent = '$'+fmtM(issue);
+    $('s-ps').textContent = fmtP(ps);
+    $('s-psf').textContent = '= 估值÷'+fmtM(shares)+' · '+fmtP(pool)+'÷'+fmtM(shares)+' · 固定';
+
+    // model card
+    $('m-priceEg').textContent = '$'+fmtM(val)+' ÷ '+fmtM(shares)+' = $'+fmtM(issue);
+    $('m-psEg').textContent = '固定 '+fmtP(ps);
+    $('m-eg').innerHTML = '買 '+fmtM(ts)+' 份 = <b>固定 '+fmtP(tierPct)+'</b>，與售出多少無關 · 售出 '+fmtM(sold)+' 份時：贊助者合計 <b>'+fmtP(sold*ps)+'</b>，未售 '+fmtP(Math.max(0,(shares-sold))*ps)+' 回歸創作者';
+    $('m-pool').textContent = fmtP(pool);
+
+    // admin
+    $('a-keep').textContent = fmtP(keep);
+    $('a-implied').textContent = '$'+fmtM(implied);
+    $('d-issue').textContent = '$'+fmtM(issue);
+    $('d-ps').textContent = fmtP(ps);
+    $('l-ps').textContent = fmtP(ps);
+
+    // tier effective price + warn
+    var dev = issue? Math.abs(eff/issue-1) : 0;
+    var effEl = $('t-eff');
+    effEl.textContent = (dev>0.2?'⚠ ':'')+'$'+fmtM(eff);
+    effEl.className = 'chip mono'+(dev>0.2?' chip-warn':'');
+
+    // inventory
+    var alloc = ts*tc, ok = alloc<=shares;
+    $('inv-line').textContent = fmtM(ts)+' × '+fmtM(tc)+' = '+fmtM(alloc)+' / '+fmtM(shares)+(ok?' ✓':' ✗ 超出');
+    var invBar=$('inv-bar');
+    invBar.className='bar '+(ok?'g':'warn');
+    invBar.firstElementChild.style.width = Math.min(100, shares? alloc/shares*100 : 0)+'%';
+
+    // goal coverage (share tiers only; Supporter ∞ 不計)
+    var covMax = tp*tc, covPct = goal? covMax/goal*100 : 0;
+    $('cov-line').textContent = '分潤級距全售 = $'+fmtM(covMax)+'（目標 '+Math.round(covPct)+'%）';
+    var covBar=$('cov-bar');
+    covBar.className='bar'+(covPct>=100?' g':'');
+    covBar.firstElementChild.style.width = Math.min(100,covPct)+'%';
+
+    // buyer side
+    $('b-goal').textContent = 'US$'+fmtM(goal);
+    $('b-sold').textContent = fmtM(sold)+' / '+fmtM(shares)+' 份';
+    $('b-sharebar').style.width = (shares? Math.min(100,sold/shares*100):0)+'%';
+    $('b-line').innerHTML = '發行價 $'+fmtM(issue)+' / 份 · 每份固定 '+fmtP(ps)+' · 最高共享 <b style="color:var(--accent)">'+fmtP(pool)+'</b> · 售完即止';
+    $('e-ps').innerHTML = '每份 = <b style="color:var(--accent)">固定 '+fmtP(ps)+'</b> 收益分潤 · 發布即確定';
+    $('e-eg').textContent = '例：買 '+fmtM(ts)+' 份 = '+fmtP(tierPct)+'，與售出多少無關';
+    $('e-pool').textContent = '全體贊助者最高共享 '+fmtP(pool)+'（全數售出時）';
+    $('tc-price').textContent = 'US$'+fmtM(tp);
+    $('tc-badge').textContent = '含 '+fmtM(ts)+' 份 · 固定 '+fmtP(tierPct)+' 分潤';
+    $('tc-cta').textContent = '贊助 US$'+fmtM(tp);
+    $('pr-amt').textContent = 'US$'+fmtM(tp);
+    $('pr-line').textContent = fmtM(ts)+' 份 · 固定 '+fmtP(tierPct);
+    $('ac-your').textContent = fmtM(ts)+' 份 = '+fmtP(tierPct)+'（固定）';
+    $('ac-camp').textContent = '實售 '+fmtM(sold)+' / '+fmtM(shares)+' 份 · 贊助者合計 '+fmtP(sold*ps);
+  }
+
+  ['i-goal','i-pool','i-shares','i-val','i-tprice','i-tcap','i-tshares'].forEach(function(id){
+    $(id).addEventListener('input', recalc);
+  });
+  recalc();
+})();
+</script>
+</body>
+</html>
