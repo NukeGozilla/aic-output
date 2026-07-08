@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music on Ztor — Crowdfund Gap Checklist (2026-07-07)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ════════════════════════════════════════════════════════════
+     IBM Carbon Design System — light theme (Gray-10 base)
+     Matches beamco/crowdfund-brd-v1-2026-05-24.html
+     ════════════════════════════════════════════════════════════ */
+  :root {
+    --cds-background: #ffffff;
+    --cds-layer-01: #f4f4f4;
+    --cds-layer-02: #ffffff;
+    --cds-border-subtle: #e0e0e0;
+    --cds-border-strong: #8d8d8d;
+    --cds-text-primary: #161616;
+    --cds-text-secondary: #525252;
+    --cds-text-helper: #6f6f6f;
+    --cds-text-placeholder: #a8a8a8;
+    --cds-text-on-color: #ffffff;
+    --cds-blue-50: #0f62fe;
+    --cds-blue-70: #001141;
+    --cds-green-50: #198038;
+    --cds-red-50: #da1e28;
+    --cds-yellow-30: #d9a900;
+    --cds-purple-60: #6929c4;
+    --cds-purple-50: #8a3ffc;
+    --cds-teal-50: #007d79;
+    --cds-cyan-50: #0072c3;
+    --cds-magenta-50: #d02670;
+    --cds-orange-40: #eb6200;
+    --cds-cool-gray-50: #8d8d8d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cds-background); color: var(--cds-text-primary);
+    font-size: 14px; line-height: 1.5; letter-spacing: 0.16px;
+  }
+  code, .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  a { color: var(--cds-blue-50); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ─── UI Shell ─── */
+  .ui-shell {
+    background: var(--cds-layer-01);
+    border-bottom: 1px solid var(--cds-border-subtle);
+    padding: 16px 32px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .ui-shell-inner { max-width: 1280px; margin: 0 auto; }
+  .ui-shell h1 { font-size: 24px; font-weight: 300; color: var(--cds-text-primary); line-height: 1.25; }
+  .ui-shell h1 .tag {
+    display: inline-block; background: var(--cds-blue-70); color: var(--cds-text-on-color);
+    font-size: 11px; font-weight: 500; padding: 2px 8px;
+    border-radius: 12px; margin-left: 10px; vertical-align: middle; letter-spacing: 0.32px;
+  }
+  .ui-shell .subtitle { font-size: 13.5px; color: var(--cds-text-secondary); margin-top: 4px; }
+  .ui-shell .subtitle .dot { color: var(--cds-text-placeholder); margin: 0 8px; }
+  .breadcrumb { display: flex; gap: 0; align-items: center; margin-top: 12px; font-size: 12px; flex-wrap: wrap; }
+  .breadcrumb a {
+    color: var(--cds-text-secondary); text-decoration: none;
+    padding: 6px 12px; border-bottom: 2px solid transparent; transition: all 0.11s;
+  }
+  .breadcrumb a:hover { color: var(--cds-text-primary); background: var(--cds-layer-02); }
+  .breadcrumb a.ext { color: var(--cds-cyan-50); }
+  .breadcrumb a.ext::after { content: " ↗"; opacity: 0.7; }
+  .breadcrumb a.sheet { color: var(--cds-green-50); font-weight: 500; }
+  .breadcrumb-divider { color: var(--cds-text-placeholder); padding: 0 6px; font-size: 12px; }
+
+  /* ─── Layout & typography ─── */
+  .canvas { max-width: 1280px; margin: 0 auto; padding: 32px; }
+  .section { margin-bottom: 44px; scroll-margin-top: 120px; }
+  .productive-heading-02 {
+    font-size: 16px; font-weight: 600; line-height: 1.375;
+    color: var(--cds-text-primary); margin: 0 0 12px 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .productive-heading-02::before { content: ""; width: 4px; height: 18px; background: var(--cds-blue-50); }
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--cds-text-helper); letter-spacing: 0.4px; margin-bottom: 6px; text-transform: uppercase;
+  }
+  .helper-text { font-size: 12px; color: var(--cds-text-helper); margin-bottom: 16px; letter-spacing: 0.32px; }
+
+  /* ─── Notification (TL;DR) ─── */
+  .notification {
+    background: var(--cds-layer-01); border-left: 3px solid var(--cds-blue-50);
+    padding: 16px; margin-bottom: 24px; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .notification .icon { color: var(--cds-blue-50); font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .notification .body { font-size: 14px; color: var(--cds-text-primary); line-height: 1.5; }
+  .notification .body .lbl {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    color: var(--cds-blue-50); letter-spacing: 0.4px; text-transform: uppercase;
+    display: block; margin-bottom: 4px;
+  }
+  .notification .body strong { font-weight: 600; }
+
+  /* ─── Triage stats banner ─── */
+  .build-banner {
+    background: linear-gradient(135deg, rgba(15,98,254,0.06), rgba(105,41,196,0.04));
+    border-left: 3px solid var(--cds-blue-50);
+    padding: 14px 20px; margin-bottom: 32px;
+  }
+  .build-stats { display: flex; gap: 24px; flex-wrap: wrap; font-size: 13px; }
+  .build-stats .stat { display: inline-flex; align-items: center; gap: 6px; color: var(--cds-text-secondary); }
+  .build-stats .stat strong { font-size: 18px; font-weight: 600; }
+  .build-stats .stat.in strong { color: var(--cds-green-50); }
+  .build-stats .stat.open strong { color: var(--cds-orange-40); }
+  .build-stats .stat.cut strong { color: var(--cds-cool-gray-50); }
+  .build-stats .stat.tbd strong { color: var(--cds-yellow-30); }
+  .build-stats .stat.dec strong { color: var(--cds-blue-50); }
+
+  /* ─── Context blocks (settled ground) ─── */
+  .q-block { display: flex; flex-direction: column; gap: 8px; }
+  .q {
+    background: var(--cds-layer-01); padding: 12px 14px; position: relative;
+    font-size: 13px; line-height: 1.5; border-left: 3px solid var(--cds-green-50);
+  }
+  .q.assumed { border-left-color: var(--cds-green-50); background: rgba(25,128,56,0.06); }
+  .q.sop { border-left-color: var(--cds-cool-gray-50); background: rgba(141,141,141,0.07); }
+  .q.legal { border-left-color: var(--cds-purple-60); background: rgba(105,41,196,0.05); }
+  .q .q-cat {
+    display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase; padding: 1px 6px; border-radius: 3px;
+    margin-right: 8px; vertical-align: middle;
+  }
+  .q.assumed .q-cat { background: rgba(25,128,56,0.18); color: var(--cds-green-50); border: 1px solid var(--cds-green-50); }
+  .q.sop .q-cat { background: rgba(141,141,141,0.18); color: var(--cds-text-helper); border: 1px solid var(--cds-cool-gray-50); }
+  .q.legal .q-cat { background: rgba(105,41,196,0.12); color: var(--cds-purple-60); border: 1px solid var(--cds-purple-60); }
+  .q strong { color: var(--cds-text-primary); font-weight: 600; }
+  .q .det { color: var(--cds-text-secondary); font-size: 12.5px; margin-top: 2px; }
+
+  /* ─── Data table ─── */
+  .cds-data-table {
+    background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle);
+    width: 100%; border-collapse: collapse; margin-bottom: 8px;
+  }
+  .cds-data-table thead { background: var(--cds-layer-02); }
+  .cds-data-table th {
+    text-align: left; padding: 12px 14px; font-size: 12px; font-weight: 600;
+    color: var(--cds-text-primary); border-bottom: 1px solid var(--cds-border-subtle);
+    text-transform: uppercase; letter-spacing: 0.32px;
+  }
+  .cds-data-table td {
+    padding: 11px 14px; font-size: 13.5px; color: var(--cds-text-primary);
+    border-bottom: 1px solid var(--cds-border-subtle); line-height: 1.45; vertical-align: top;
+  }
+  .cds-data-table tr:last-child td { border-bottom: none; }
+  .cds-data-table tr:hover td { background: var(--cds-layer-02); }
+  .cds-data-table .cell-mono {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;
+    color: var(--cds-blue-50); font-weight: 500; white-space: nowrap;
+  }
+  .cds-data-table th.col-id { width: 60px; }
+  .cds-data-table th.col-pri { width: 130px; }
+  .cds-data-table th.col-status { width: 100px; }
+  .cds-data-table th.col-remark { width: 300px; }
+  .cds-data-table strong { color: var(--cds-text-primary); font-weight: 600; }
+  .cds-data-table .cell-desc { color: var(--cds-text-secondary); }
+  .cds-data-table .cell-desc strong { color: var(--cds-text-primary); }
+  .cds-data-table .cell-remark { color: var(--cds-text-secondary); font-size: 12.5px; }
+  .row-cut td { opacity: 0.55; }
+  .row-cut:hover td { opacity: 0.85; }
+  .row-cut .cell-desc strong { text-decoration: line-through; }
+
+  /* ─── Tag pills ─── */
+  .tag-pill {
+    display: inline-block; font-size: 11px; font-weight: 400; padding: 2px 8px;
+    border-radius: 12px; letter-spacing: 0.32px; line-height: 1.36; white-space: nowrap;
+  }
+  .pri-p0 { background: rgba(250,77,86,0.15); color: var(--cds-red-50); }
+  .pri-p1 { background: rgba(241,194,27,0.15); color: var(--cds-yellow-30); }
+  .pri-p2 { background: rgba(141,141,141,0.2); color: var(--cds-text-helper); }
+  .st-in { background: rgba(36,161,72,0.18); color: var(--cds-green-50); font-weight: 500; }
+  .st-open-item { background: rgba(255,131,43,0.16); color: var(--cds-orange-40); font-weight: 500; }
+  .st-tbd { background: rgba(241,194,27,0.18); color: var(--cds-yellow-30); font-weight: 500; }
+  .st-cut { background: rgba(141,141,141,0.2); color: var(--cds-text-helper); font-weight: 500; }
+  .st-decided { background: rgba(36,161,72,0.14); color: var(--cds-green-50); border: 1px solid var(--cds-green-50); font-weight: 500; }
+  .st-open { background: rgba(241,194,27,0.14); color: var(--cds-yellow-30); border: 1px solid var(--cds-yellow-30); font-weight: 500; }
+  .md-link {
+    display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    padding: 1px 6px; border-radius: 10px;
+    background: rgba(15,98,254,0.1); color: var(--cds-blue-50);
+    text-decoration: none; font-weight: 500;
+  }
+  .md-link:hover { background: rgba(15,98,254,0.2); text-decoration: none; }
+
+  /* ─── Open / TBD chip queue ─── */
+  .chip-list { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip-list a {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    padding: 4px 10px; border-radius: 3px;
+    color: var(--cds-text-primary); text-decoration: none;
+  }
+  .chip-list a.c-open { background: rgba(255,131,43,0.1); border: 1px solid rgba(235,98,0,0.5); }
+  .chip-list a.c-open:hover { background: rgba(255,131,43,0.22); }
+  .chip-list a.c-open .cid { color: var(--cds-orange-40); font-weight: 600; margin-right: 6px; }
+  .chip-list a.c-tbd { background: rgba(241,194,27,0.12); border: 1px solid rgba(217,169,0,0.5); }
+  .chip-list a.c-tbd:hover { background: rgba(241,194,27,0.25); }
+  .chip-list a.c-tbd .cid { color: var(--cds-yellow-30); font-weight: 600; margin-right: 6px; }
+  .queue-sub { font-size: 12px; color: var(--cds-text-helper); margin: 14px 0 6px 0; letter-spacing: 0.32px; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; }
+
+  /* ─── Footer ─── */
+  .footer {
+    margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--cds-border-subtle);
+    font-size: 12px; color: var(--cds-text-helper); display: flex;
+    justify-content: space-between; flex-wrap: wrap; gap: 6px;
+  }
+
+  tr[id] { scroll-margin-top: 130px; }
+  tr.highlight-flash td { animation: flash-bg 1.6s ease-out; }
+  @keyframes flash-bg {
+    0% { background: rgba(241,194,27,0.25); }
+    100% { background: transparent; }
+  }
+
+  @media (max-width: 920px) {
+    .ui-shell { padding: 16px 20px; }
+    .canvas { padding: 24px 20px; }
+    .cds-data-table { font-size: 12.5px; }
+    .cds-data-table th.col-remark { width: auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="ui-shell">
+  <div class="ui-shell-inner">
+    <h1>Music on Ztor — Crowdfund Gap Checklist <span class="tag">REV 5</span></h1>
+    <div class="subtitle">
+      2026-07-07 · team-triaged (sheet ingested)
+      <span class="dot">·</span>
+      what 影視共創 (Ztor crowdfund) needs to host Beamco-style music projects
+      <span class="dot">·</span>
+      feeds the Oct 1 unified crowdfund service (1 service · 2 brands)
+    </div>
+    <nav class="breadcrumb">
+      <a href="#context">Settled ground</a>
+      <a href="#bo">BO / Admin</a>
+      <a href="#fe">Frontend</a>
+      <a href="#decisions">Decisions</a>
+      <a href="#queue">Open / TBD queue</a>
+      <span class="breadcrumb-divider" aria-hidden="true">·</span>
+      <a class="ext sheet" href="https://docs.google.com/spreadsheets/d/1v1oEXDDMGLjxpEDDCytY18fPHteftD1r7Oi2HuQd3bc/edit?gid=70575639#gid=70575639" target="_blank" rel="noopener noreferrer">Google Sheet (collab)</a>
+    </nav>
+  </div>
+</header>
+
+<main class="canvas">
+
+  <div class="notification">
+    <div class="icon">ⓘ</div>
+    <div class="body">
+      <span class="lbl">TL;DR</span>
+      Beamco team agreed (2026-07-07) to adopt Ztor's <strong>amount-based goal</strong> — music projects run on the Ztor crowdfund engine as-is for goal, states, payment, recovery and pricing.
+      This page lists <strong>only what still changes</strong>, triaged with the team in the collab sheet: build items by surface (BO / FE) and open decisions.
+    </div>
+  </div>
+
+  <div class="build-banner">
+    <div class="build-stats">
+      <span class="stat in"><strong>9</strong> in scope</span>
+      <span class="stat open"><strong>7</strong> open</span>
+      <span class="stat tbd"><strong>3</strong> TBD</span>
+      <span class="stat cut"><strong>1</strong> cut</span>
+      <span class="stat dec"><strong>2</strong> decided · <strong>2</strong> open decisions</span>
+    </div>
+  </div>
+
+  <!-- ──────── Settled ground ──────── -->
+  <section class="section" id="context">
+    <div class="section-tag">SETTLED GROUND — NO FURTHER DISCUSSION</div>
+    <h2 class="productive-heading-02">What music adopts from Ztor as-is</h2>
+    <div class="q-block">
+      <div class="q assumed">
+        <span class="q-cat">Adopted as-is</span>
+        <strong>Amount-based goal · all-or-nothing · Ztor state machine · save-card payment (no auth hold) · 7-day grace + 2 retries recovery · equity % issued in the tier package</strong>
+        <div class="det">Beamco's share-based goal, Minimum Met status and auth-hold batch capture are dropped with the share model. Waitlist will exist — scoped separately, outside this checklist.</div>
+      </div>
+      <div class="q assumed">
+        <span class="q-cat">Already covered</span>
+        <strong>Tier qty caps · multi-pledge · shipping address · eligibility gate mechanics · ops-configured projects · per-pledge share ledger</strong>
+        <div class="det">No creator portal needed for launch — ops-configured matches how both products actually operate today.</div>
+      </div>
+      <div class="q sop">
+        <span class="q-cat">No-build · ops SOP</span>
+        <strong>Perks fulfillment = manual (physical merch) · creator-side contract = offline</strong>
+        <div class="det">Operational flows, not product builds.</div>
+      </div>
+      <div class="q legal">
+        <span class="q-cat">Parallel · legal track</span>
+        <strong>Compliance copy pack · contract content (Sam) · SG/US securities review (O6)</strong>
+        <div class="det">Blocks launch but runs alongside the build — feeds B-4 (validation rules), B-8 / F-4 (contract), and all public wording.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────── BO / Admin ──────── -->
+  <section class="section" id="bo">
+    <div class="section-tag">BUILD ITEMS · BACK OFFICE</div>
+    <h2 class="productive-heading-02">BO / Admin side</h2>
+    <div class="helper-text">P0 = blocks music launch · P1 = before revenue / scale · P2 = nice-to-have | In scope = build it · Open = under discussion · TBD = parked · Cut = dropped</div>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Item &amp; details</th><th class="col-pri">Priority</th><th class="col-status">Status</th><th class="col-remark">Remark</th></tr></thead>
+      <tbody>
+        <tr id="b-1"><td class="cell-mono">B-1</td><td class="cell-desc"><strong>CF <code>music</code> project category.</strong> New enum: <code>category = film | music</code> — picked first in the admin form, locked after publish. Pure switch — everything music-specific keys off it: metadata form (<a class="md-link" href="#b-2">B-2</a>) · reward template (redeem codes vs merch perks) · Released trigger (<a class="md-link" href="#b-7">B-7</a>) · fan CTA (<a class="md-link" href="#f-3">F-3</a>) · contract set (<a class="md-link" href="#b-8">B-8</a>/<a class="md-link" href="#f-4">F-4</a>) · listing badge (<a class="md-link" href="#f-1">F-1</a>/<a class="md-link" href="#f-2">F-2</a>) · fee / validation lookup (<a class="md-link" href="#b-4">B-4</a>/<a class="md-link" href="#md-3">MD-3</a>).</td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-in">In scope</span></td><td class="cell-remark">Schema + admin form; existing projects default <code>film</code>.</td></tr>
+        <tr id="b-2"><td class="cell-mono">B-2</td><td class="cell-desc"><strong>CF music metadata fields.</strong> Required at create: artist name · release type (single / EP / album) · audio/video demo …etc. Streaming links required before Released (<a class="md-link" href="#b-7">B-7</a>'s deliverable) · ISRC optional (only matters at royalty phase, <a class="md-link" href="#f-7">F-7</a>).</td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-in">In scope</span></td><td class="cell-remark">Field list finalizes during form design.</td></tr>
+        <tr id="b-3"><td class="cell-mono">B-3</td><td class="cell-desc"><strong>SGD / USD currency support.</strong> Stripe + settlement rule (→ <a class="md-link" href="#md-4">MD-4</a>).</td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-in">In scope</span></td><td class="cell-remark">Ztor has HKD / TWD only today — adds both SGD and USD.</td></tr>
+        <tr id="b-4"><td class="cell-mono">B-4</td><td class="cell-desc"><strong>Crowdfund funding validations — min pool &amp; max cap.</strong> Min pool %: Beamco enforces "Royalties Offered ≥ 10%" · max raise cap: Beamco enforces SGD 20,000.</td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-open-item">Open</span></td><td class="cell-remark">Whether either rule applies to Ztor's entity rides with the Legal track.</td></tr>
+        <tr id="b-5"><td class="cell-mono">B-5</td><td class="cell-desc"><strong>Fee config + payout breakdown panel.</strong> Fee value itself moved to <a class="md-link" href="#md-3">MD-3</a>.</td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-open-item">Open</span></td><td class="cell-remark">Back on the table (was cut in rev 4) — decide once MD-3's fee value lands.</td></tr>
+        <tr id="b-6"><td class="cell-mono">B-6</td><td class="cell-desc"><strong>Escrow 80/20 tranches + "Release Fund" ops flow.</strong> Money movement manual for MVP; BO tracks tranche state.</td><td><span class="tag-pill pri-p1">P1 · before revenue</span></td><td><span class="tag-pill st-open-item">Open</span></td><td class="cell-remark">Mirrors Beamco BR-35 two-step (URL → Release Fund button).</td></tr>
+        <tr id="b-7"><td class="cell-mono">B-7</td><td class="cell-desc"><strong>Deliverable URL field → music Released trigger.</strong> Replaces the on-platform 已上架 trigger for music.</td><td><span class="tag-pill pri-p2">P2 · nice-to-have</span></td><td><span class="tag-pill st-open-item">Open</span></td><td class="cell-remark">Ops submits streaming URL; Released flips on submission.</td></tr>
+        <tr id="b-8"><td class="cell-mono">B-8</td><td class="cell-desc"><strong>Fans music contract template + lock-at-publish snapshot.</strong></td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-in">In scope</span></td><td class="cell-remark">Contract content pending Legal (Sam).</td></tr>
+        <tr id="b-9"><td class="cell-mono">B-9</td><td class="cell-desc"><strong>Shipping-address CSV export from BO</strong> (pledge audit).</td><td><span class="tag-pill pri-p2">P2 · nice-to-have</span></td><td><span class="tag-pill st-open-item">Open</span></td><td class="cell-remark">Supports the manual merch-fulfillment SOP.</td></tr>
+        <tr id="b-10" class="row-cut"><td class="cell-mono">B-10</td><td class="cell-desc"><strong>"KYC verified" flag on creator record.</strong></td><td><span class="tag-pill pri-p2">P2 · nice-to-have</span></td><td><span class="tag-pill st-cut">Cut</span></td><td class="cell-remark">KYC stays fully offline with the artist — no in-product trace.</td></tr>
+        <tr id="b-11"><td class="cell-mono">B-11</td><td class="cell-desc"><strong>Email templates (music-project-specific content).</strong> Music Released (listen now) · no redeem-code mails.</td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-in">In scope</span></td><td class="cell-remark">Small delta — Beamco already mapped its taxonomy from Ztor §5.2.</td></tr>
+        <tr id="b-12"><td class="cell-mono">B-12</td><td class="cell-desc"><strong>Contract download on pledge detail (BO).</strong></td><td><span class="tag-pill pri-p1">P1 · before revenue</span></td><td><span class="tag-pill st-tbd">TBD</span></td><td class="cell-remark">Moved from the FE list (rev 4's F-6) — pairs with <a class="md-link" href="#b-8">B-8</a>'s snapshot.</td></tr>
+        <tr id="b-13"><td class="cell-mono">B-13</td><td class="cell-desc"><strong>Ztor acct ⇄ CF project linking by Ops.</strong> Creator sets up a Ztor account; Ops team links the CF project to it.</td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-in">In scope</span></td><td class="cell-remark">Replaces the unified-user-DB dependency for launch — identity infra rides the 2.0 track separately.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ──────── Frontend ──────── -->
+  <section class="section" id="fe">
+    <div class="section-tag">BUILD ITEMS · FANS SITE</div>
+    <h2 class="productive-heading-02">Frontend side</h2>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Item &amp; details</th><th class="col-pri">Priority</th><th class="col-status">Status</th><th class="col-remark">Remark</th></tr></thead>
+      <tbody>
+        <tr id="f-1"><td class="cell-mono">F-1</td><td class="cell-desc"><strong>Music crowdfund entry.</strong> Filter / tab or dedicated section on <code>/crowdfund</code>.</td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-in">In scope</span></td><td class="cell-remark">Placement to align with the 2.0 redesign team.</td></tr>
+        <tr id="f-2"><td class="cell-mono">F-2</td><td class="cell-desc"><strong>Music project page treatment.</strong> Category badge · metadata block · streaming badges · audio preview (optional).</td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-in">In scope</span></td><td class="cell-remark">Copy pack per Legal wording rules.</td></tr>
+        <tr id="f-3"><td class="cell-mono">F-3</td><td class="cell-desc"><strong>Released CTA = external listen link.</strong> No redeem-code UI for music.</td><td><span class="tag-pill pri-p2">P2 · nice-to-have</span></td><td><span class="tag-pill st-tbd">TBD</span></td><td class="cell-remark">BO trigger (<a class="md-link" href="#b-7">B-7</a>) carries the mechanics — this is the fan-facing presentation.</td></tr>
+        <tr id="f-4"><td class="cell-mono">F-4</td><td class="cell-desc"><strong>Fans contract accept step in pledge flow.</strong></td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-in">In scope</span></td><td class="cell-remark">Creator-side contract handled offline.</td></tr>
+        <tr id="f-5"><td class="cell-mono">F-5</td><td class="cell-desc"><strong>SGD display + FX 參考價格 preview.</strong></td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-open-item">Open</span></td><td class="cell-remark">B-3 is in scope, so minimum SGD price rendering is implied either way.</td></tr>
+        <tr id="f-6"><td class="cell-mono">F-6</td><td class="cell-desc"><strong>Backer-only visibility for creator project status updates.</strong></td><td><span class="tag-pill pri-p0">P0 · blocks launch</span></td><td><span class="tag-pill st-open-item">Open</span></td><td class="cell-remark">Else keep Ztor post-mention as-is.</td></tr>
+        <tr id="f-7"><td class="cell-mono">F-7</td><td class="cell-desc"><strong>Royalty payout + fan wallet.</strong></td><td><span class="tag-pill pri-p2">P2 · nice-to-have</span></td><td><span class="tag-pill st-tbd">TBD</span></td><td class="cell-remark">Ztor is already equipped with a withdraw feature.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ──────── Decisions ──────── -->
+  <section class="section" id="decisions">
+    <div class="section-tag">DECISIONS</div>
+    <h2 class="productive-heading-02">Decided · open</h2>
+    <table class="cds-data-table">
+      <thead><tr><th class="col-id">ID</th><th>Decision</th><th class="col-status">Status</th><th class="col-remark">Remark</th></tr></thead>
+      <tbody>
+        <tr id="md-1"><td class="cell-mono">MD-1</td><td class="cell-desc"><strong>Eligibility = follow the creator</strong> to join a project.</td><td><span class="tag-pill st-decided">Decided</span></td><td class="cell-remark">No LP-engine port — matches Ztor's existing gate.</td></tr>
+        <tr id="md-2"><td class="cell-mono">MD-2</td><td class="cell-desc"><strong>Shares defined at package (tier) level.</strong></td><td><span class="tag-pill st-decided">Decided</span></td><td class="cell-remark">Matches current Ztor tier model — <code>shareUnits</code> per tier, tier price set freely.</td></tr>
+        <tr id="md-3"><td class="cell-mono">MD-3</td><td class="cell-desc"><strong>Platform fee for music = ?</strong></td><td><span class="tag-pill st-open">Open</span></td><td class="cell-remark">Pick a value, reuse the existing fee schema — pairs with <a class="md-link" href="#b-5">B-5</a>.</td></tr>
+        <tr id="md-4"><td class="cell-mono">MD-4</td><td class="cell-desc"><strong>SGD settlement — creator paid in which currency?</strong></td><td><span class="tag-pill st-open">Open</span></td><td class="cell-remark">Direction: follow current Ztor logic (registered-user IP based).</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ──────── Open / TBD queue ──────── -->
+  <section class="section" id="queue">
+    <div class="section-tag">NEXT REVIEW</div>
+    <h2 class="productive-heading-02">Open / TBD queue</h2>
+    <div class="queue-sub">Open — under discussion</div>
+    <div class="chip-list">
+      <a class="c-open" href="#b-4"><span class="cid">B-4</span>funding validations</a>
+      <a class="c-open" href="#b-5"><span class="cid">B-5</span>fee config / breakdown</a>
+      <a class="c-open" href="#b-6"><span class="cid">B-6</span>escrow / release flow</a>
+      <a class="c-open" href="#b-7"><span class="cid">B-7</span>Released trigger</a>
+      <a class="c-open" href="#b-9"><span class="cid">B-9</span>shipping CSV</a>
+      <a class="c-open" href="#f-5"><span class="cid">F-5</span>SGD display</a>
+      <a class="c-open" href="#f-6"><span class="cid">F-6</span>backer-only updates</a>
+      <a class="c-open" href="#md-3"><span class="cid">MD-3</span>fee value</a>
+      <a class="c-open" href="#md-4"><span class="cid">MD-4</span>SGD settlement</a>
+    </div>
+    <div class="queue-sub">TBD — parked</div>
+    <div class="chip-list">
+      <a class="c-tbd" href="#b-12"><span class="cid">B-12</span>contract download (BO)</a>
+      <a class="c-tbd" href="#f-3"><span class="cid">F-3</span>listen CTA</a>
+      <a class="c-tbd" href="#f-7"><span class="cid">F-7</span>royalty / wallet</a>
+    </div>
+  </section>
+
+  <div class="footer">
+    <span>Music on Ztor — Crowdfund Gap Checklist · rev 5 · 2026-07-07</span>
+    <span class="mono">source: ztor-docs/outputs/specs/crowdfund-music-on-ztor-gap-analysis-2026-07-07.md · 9 in scope / 7 open / 3 TBD / 1 cut · collab: Google Sheet ↗</span>
+  </div>
+</main>
+
+<script>
+  // flash a table row when jumped to via a #hash (chips + MD links)
+  function flashTarget() {
+    const el = document.querySelector(window.location.hash || '#none');
+    if (!el || el.tagName !== 'TR') return;
+    el.classList.remove('highlight-flash');
+    void el.offsetWidth;
+    el.classList.add('highlight-flash');
+  }
+  window.addEventListener('hashchange', flashTarget);
+  window.addEventListener('load', flashTarget);
+</script>
+</body>
+</html>
