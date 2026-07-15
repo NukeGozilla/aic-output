@@ -369,6 +369,12 @@
         </div>
         <div class="hint">Pick an existing Ztor user (links instantly), or type an email/phone to invite someone new.</div>
       </div>
+
+      <!-- forward-only / audit warning (G1) -->
+      <div class="invite-banner show" style="background:#241d13;border-color:var(--gold-line);color:#e0cba6">
+        <span>⚠️</span>
+        <div><b>Forward-only:</b> saving applies from today — already-settled periods are never recalculated. Every add, edit and remove is recorded in the audit log. <span class="faint">(Effective-dating rule pending finance sign-off)</span></div>
+      </div>
     </div>
     <footer>
       <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
@@ -619,7 +625,7 @@ document.getElementById('bank-rows').addEventListener('click', e=>{
   const owner = rowToRemove.querySelector('.owner-cell')?.textContent.trim() || 'this owner';
   const pct = rowToRemove.querySelector('.pct')?.textContent || '';
   document.getElementById('confirm-msg').innerHTML =
-    `<b>${owner}</b> holds an accrued balance (${pct} share). Removing them affects downstream settlement and can’t be undone here.`;
+    `<b>${owner}</b> holds an accrued balance (${pct} share). Removing them affects downstream settlement and can’t be undone here. Removal applies <b>forward-only</b> — already-settled periods stay unchanged — and is recorded in the audit log.`;
   lastFocus = document.activeElement;
   confirmScrim.classList.add('show');
   document.getElementById('confirm-cancel').focus();

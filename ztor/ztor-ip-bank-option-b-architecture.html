@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor — IP Bank · Option B Service Architecture</title>
+<style>
+  :root{
+    --bg:#f7f6f3; --panel:#ffffff; --line:#e2dfd8; --txt:#26231e; --muted:#847f74; --faint:#a6a196;
+    --gold:#a97b2f; --gold-bg:#faf3e4;
+    --teal:#2e7d5f; --teal-bg:#eaf5ef;
+    --violet:#7a5ba6; --violet-bg:#f4effa;
+    --blue:#3d6c8f; --blue-bg:#eef4f9; --blue-ln:#c8dcea;
+    --r:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",sans-serif;font-size:14px;line-height:1.4}
+  .wrap{max-width:1140px;margin:0 auto;padding:34px 26px 60px}
+
+  header.page{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+  header.page h1{font-size:21px;margin:0 0 4px;letter-spacing:-.2px}
+  header.page h1 b{color:var(--gold)}
+  .meta{color:var(--faint);font-size:11.5px}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);align-items:center;padding-top:6px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:10px;height:10px;border-radius:3px;border:1.5px solid}
+  .sw.gold{background:var(--gold-bg);border-color:var(--gold)}
+  .sw.teal{background:var(--teal-bg);border-color:var(--teal)}
+  .sw.violet{background:var(--violet-bg);border-color:var(--violet);border-style:dashed}
+  .sw.blue{background:var(--blue-bg);border-color:var(--blue)}
+
+  .lbl{color:var(--faint);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;margin:0 0 8px}
+
+  /* ===== two-column layout: new build | flows | existing platform ===== */
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 132px minmax(280px,340px);align-items:stretch}
+  .colL{display:flex;flex-direction:column}
+  .colR{display:flex;flex-direction:column}
+
+  .box{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:0 1px 3px rgba(40,35,25,.05)}
+  .box h3{margin:0;font-size:14px}
+  .box .one{color:var(--muted);font-size:11.5px;margin-top:3px}
+  .box.gold{border-color:var(--gold);background:linear-gradient(180deg,var(--gold-bg),#fff 65%)}
+
+  .portal .roles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .role{border-radius:9px;padding:11px 13px;border:1.5px solid}
+  .role h4{margin:0;font-size:13px}
+  .role .one{font-size:11px;margin-top:2px}
+  .role.gold{background:var(--gold-bg);border-color:var(--gold)}
+  .role.gold h4{color:var(--gold)}
+  .role.violet{background:var(--violet-bg);border-color:var(--violet);border-style:dashed}
+  .role.violet h4{color:var(--violet)}
+
+  .mods{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .mod{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600;flex:1;text-align:center;white-space:nowrap}
+  .mod.pend{border-color:var(--gold);color:var(--gold);background:var(--gold-bg)}
+
+  /* vertical connectors */
+  .vrow{display:grid;grid-template-columns:1fr 1fr}
+  .conn{display:flex;flex-direction:column;align-items:center;padding:3px 0;min-height:46px}
+  .conn .stem{width:0;height:15px;border-left:2px solid var(--muted);position:relative}
+  .conn .stem::after{content:"";position:absolute;left:-5px;bottom:-7px;border:5px solid transparent;border-top:7px solid var(--muted)}
+  .conn small{color:var(--muted);font-size:10.5px;margin-top:8px;text-align:center;line-height:1.4}
+  .conn.gold .stem{border-color:var(--gold)} .conn.gold .stem::after{border-top-color:var(--gold)} .conn.gold small{color:var(--gold)}
+  .conn.teal .stem{border-color:var(--teal)} .conn.teal .stem::after{border-top-color:var(--teal)} .conn.teal small{color:var(--teal)}
+  .conn.violet .stem{border-left-style:dashed;border-color:var(--violet)} .conn.violet .stem::after{border-top-color:var(--violet)} .conn.violet small{color:var(--violet)}
+
+  /* horizontal flow connectors (middle column) */
+  .flows{display:flex;flex-direction:column;justify-content:flex-end;padding:0 10px 30px}
+  .hconn{margin:12px 0}
+  .hstem{display:block;border-top:2px solid var(--blue);position:relative}
+  .hconn.toR .hstem::after{content:"";position:absolute;right:-1px;top:-6px;border:5px solid transparent;border-left:7px solid var(--blue)}
+  .hconn.toL .hstem::after{content:"";position:absolute;left:-1px;top:-6px;border:5px solid transparent;border-right:7px solid var(--blue)}
+  .hconn small{display:block;color:var(--muted);font-size:10px;text-align:center;margin-top:5px;line-height:1.35}
+  .hconn.teal .hstem{border-color:var(--teal)} .hconn.teal.toR .hstem::after{border-left-color:var(--teal)} .hconn.teal.toL .hstem::after{border-right-color:var(--teal)} .hconn.teal small{color:var(--teal)}
+  .flows .gap{flex:1}
+
+  /* right container: existing Ztor platform */
+  .platform{border:1.5px solid var(--blue-ln);border-radius:var(--r);background:linear-gradient(180deg,var(--blue-bg),#fdfdfc 30%);padding:14px;display:flex;flex-direction:column;flex:1}
+  .platform > h3{margin:0;font-size:14px;color:var(--blue)}
+  .platform > .one{color:var(--muted);font-size:11.5px;margin:3px 0 12px}
+  .pcard{background:#fff;border:1.5px solid var(--blue-ln);border-radius:9px;padding:10px 13px}
+  .pcard h4{margin:0;font-size:12.5px;color:var(--blue)}
+  .pcard .one{font-size:11px;margin-top:2px;color:var(--muted)}
+  .pcard.teal{border-color:var(--teal)}
+  .pcard.teal h4{color:var(--teal)}
+  .pconn{display:flex;flex-direction:column;align-items:center;padding:2px 0}
+  .pconn .stem{width:0;height:11px;border-left:2px solid var(--teal);position:relative}
+  .pconn .stem::after{content:"";position:absolute;left:-5px;bottom:-7px;border:5px solid transparent;border-top:7px solid var(--teal)}
+  .pconn small{color:var(--teal);font-size:10px;margin-top:7px}
+  .pdiv{color:var(--faint);font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;margin:14px 2px 8px}
+  .pstack{display:flex;flex-direction:column;gap:9px;margin-top:auto}
+
+  .tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.4px;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:2px}
+  .tag.gold{color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold)}
+  .tag.teal{color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal)}
+
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr}
+    .flows{flex-direction:row;justify-content:center;gap:18px;padding:16px 0}
+    .hconn{flex:1;max-width:170px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <div>
+      <h1><b>ztor.</b> IP Bank — Option B Service Architecture</h1>
+      <div class="meta">v3 · 2026-07-14 · build Jul 31 – Aug 17 · release 2.1 (Aug 31)</div>
+    </div>
+    <div class="legend">
+      <span><span class="sw gold"></span> Beamco dev</span>
+      <span><span class="sw teal"></span> Ztor FE dev</span>
+      <span><span class="sw violet"></span> later release</span>
+      <span><span class="sw blue"></span> existing</span>
+      <span>⏳ pending</span>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- ================= LEFT: NEW BUILD ================= -->
+    <div class="colL">
+      <p class="lbl">New build</p>
+
+      <div class="box portal">
+        <h3>Creator Studio Portal</h3>
+        <div class="one">one portal · role-based views</div>
+        <div class="roles">
+          <div class="role gold">
+            <h4>Admin view <span style="font-weight:400">· this release</span></h4>
+            <div class="one">IP Bank setup + reporting</div>
+          </div>
+          <div class="role violet">
+            <h4>Creator "My IP" · later</h4>
+            <div class="one">own IP + earnings</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vrow">
+        <div class="conn gold"><span class="stem"></span><small>admin role</small></div>
+        <div class="conn violet"><span class="stem"></span><small>creator role · later</small></div>
+      </div>
+
+      <div class="box gold">
+        <h3>Admin BFF / API Gateway <span class="tag gold">Beamco</span></h3>
+        <div class="one">admin scope now · creator scope in contract · reused by Creator Studio</div>
+      </div>
+
+      <div class="vrow"><div class="conn gold" style="grid-column:span 2"><span class="stem"></span></div></div>
+
+      <div class="box gold" style="margin-top:auto">
+        <h3>IP Bank Service <span class="tag gold">Beamco · standalone (eShop pattern)</span></h3>
+        <div class="mods">
+          <div class="mod">IP Registry</div>
+          <div class="mod pend">Payout Config ⏳</div>
+          <div class="mod">Invitation &amp; Claim</div>
+          <div class="mod pend">Report Computation ⏳</div>
+          <div class="mod">Audit Log</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MIDDLE: DATA FLOWS ================= -->
+    <div class="flows">
+      <div class="hconn teal toL"><span class="hstem"></span><small>own-IP reads</small></div>
+      <div class="hconn toL"><span class="hstem"></span><small>gross revenue in ⏳</small></div>
+      <div class="hconn toR"><span class="hstem"></span><small>share payouts only</small></div>
+      <div class="hconn toR"><span class="hstem"></span><small>IP cost line</small></div>
+    </div>
+
+    <!-- ================= RIGHT: EXISTING ZTOR PLATFORM ================= -->
+    <div class="colR">
+      <p class="lbl">Existing Ztor platform</p>
+
+      <div class="platform">
+        <h3>Ztor Frontend <span class="tag teal">Ztor FE dev</span></h3>
+        <div class="one">hosts the fans site + existing services</div>
+
+        <div class="pcard teal">
+          <h4>Fans site</h4>
+          <div class="one">invitation claim · profit claim · movie report</div>
+        </div>
+        <div class="pconn"><span class="stem"></span><small>owner scope</small></div>
+        <div class="pcard teal">
+          <h4>Ztor FE BFF / API</h4>
+          <div class="one">owner-scoped only</div>
+        </div>
+
+        <div class="pdiv">Existing services</div>
+        <div class="pstack">
+          <div class="pcard">
+            <h4>PPV · Film Owner Report</h4>
+            <div class="one">revenue source · must reconcile</div>
+          </div>
+          <div class="pcard">
+            <h4>Settlement &amp; Withdraw</h4>
+            <div class="one">reused as-is · flat fee + MG record-only ⏳</div>
+          </div>
+          <div class="pcard">
+            <h4>Ztor Movie Report <span class="tag teal">retrofit</span></h4>
+            <div class="one">IP share = cost off gross · all movies</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
