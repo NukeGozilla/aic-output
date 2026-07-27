@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verified Artist — prototype</title>
+<style>
+:root{
+  --bg:#141210; --panel:#1c1a18; --panel2:#232020; --line:#2e2b28;
+  /* --muted / --dim sit above WCAG AA on both panel tints */
+  --ink:#e8e4df; --muted:#9d968a; --dim:#8a8378;
+  --tan:#b8935a; --tan-dim:#6b563c; --tan-ink:#1a1512;
+  --green:#7dc99f; --green-bg:#22372c;
+  --blue:#4a9eda;
+}
+*{box-sizing:border-box}
+/* author display rules (flex/grid) beat the UA [hidden] rule — this must win over all of them */
+[hidden]{display:none !important}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.proto-banner{background:repeating-linear-gradient(45deg,#2a2114,#2a2114 10px,#241c11 10px,#241c11 20px);
+  color:var(--tan);font:12px/1.4 ui-monospace,Menlo,monospace;padding:8px 14px;border-bottom:1px solid var(--tan-dim)}
+.slate{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:#100e0d;border-bottom:2px solid var(--tan-dim);position:sticky;top:0;z-index:40}
+.slate .lbl{font:11px ui-monospace,monospace;color:var(--dim);letter-spacing:.1em;margin-right:4px}
+.slate button{background:var(--panel2);border:1px solid var(--line);color:var(--muted);
+  font:12px ui-monospace,monospace;padding:6px 12px;border-radius:4px;cursor:pointer}
+.slate button:hover{color:var(--ink);border-color:var(--tan-dim)}
+.slate button.on{background:var(--tan);border-color:var(--tan);color:var(--tan-ink);font-weight:600}
+.slate .sep{width:1px;height:20px;background:var(--line);margin:0 6px}
+main{padding:22px 18px 60px;max-width:1500px;margin:0 auto}
+
+/* ---------- BO chrome ---------- */
+.crumbs{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:13px;margin-bottom:12px}
+.crumbs b{color:var(--ink);font-weight:500}
+.tabsbar{display:flex;gap:6px;margin-bottom:16px}
+.tabsbar span{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:4px 10px;font-size:12px;color:var(--muted)}
+.tabsbar span.on{color:var(--ink);border-color:var(--tan-dim)}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:12px 14px;border-bottom:1px solid var(--line);background:#191716}
+td{padding:14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:13px}
+tr:last-child td{border-bottom:0}
+.uname{display:flex;align-items:center;gap:6px;font-weight:500}
+.uid{color:var(--dim);font-size:12px;font-family:ui-monospace,monospace;margin-top:3px}
+.urole{color:var(--muted);font-size:12px;margin-top:3px}
+.chip-en{background:var(--green-bg);color:var(--green);border-radius:3px;padding:3px 10px;font-size:12px}
+.btn{background:var(--tan-dim);border:1px solid var(--tan-dim);color:#e9dcc8;border-radius:3px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--tan);color:var(--tan-ink)}
+.btn.primary{background:var(--tan);border-color:var(--tan);color:var(--tan-ink);font-weight:600}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.sm{padding:4px 10px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+.vcheck{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;
+  background:var(--blue);color:#fff;font-size:10px;line-height:1;flex:none}
+.vcheck.lg{width:22px;height:22px;font-size:13px}
+
+/* ---------- modal ---------- */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.66);display:flex;align-items:flex-start;justify-content:center;padding-top:8vh;z-index:50}
+.modal{background:var(--panel2);border:1px solid var(--line);border-radius:6px;width:580px;max-width:94vw;box-shadow:0 18px 60px rgba(0,0,0,.6)}
+.modal header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.modal header h3{margin:0;font-size:15px;letter-spacing:.08em;font-weight:600}
+.modal .x{background:none;border:0;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;min-width:32px;min-height:32px}
+.modal .body{padding:20px}
+.frow{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center;margin-bottom:14px}
+.frow.top{align-items:start}
+.frow>label{color:var(--muted);font-size:13px}
+.frow input,.frow select{background:var(--panel);border:1px solid var(--line);border-radius:4px;color:var(--ink);
+  padding:9px 11px;width:100%;font:13px inherit}
+.frow input:focus-visible,.frow select:focus-visible{outline:2px solid var(--tan);outline-offset:1px}
+.frow input::placeholder{color:var(--dim)}
+.newmark{border-left:2px solid var(--tan);padding-left:12px;margin-left:-14px}
+.divider{height:1px;background:var(--line);margin:18px 0}
+.modal .acts{display:flex;justify-content:flex-end;gap:10px;padding:0 20px 20px}
+/* instructional copy, not decoration — uses --muted (5.51:1) not --dim (4.31:1) */
+.hint{grid-column:2;color:var(--muted);font-size:12px;margin-top:-8px}
+.err{grid-column:2;color:#e08a7a;font-size:12px;margin-top:-8px}
+
+/* ---------- Movie DB actor search ---------- */
+.search{position:relative}
+.results{list-style:none;margin:6px 0 0;padding:4px;background:var(--panel);border:1px solid var(--tan-dim);
+  border-radius:4px;max-height:190px;overflow:auto;position:absolute;left:0;right:0;z-index:5}
+.results li{padding:8px 10px;border-radius:3px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.results li:hover,.results li[aria-selected="true"]{background:var(--panel2)}
+.results li .nm{font-size:13px}
+.results li .id{font:11px ui-monospace,monospace;color:var(--dim)}
+.results .none{color:var(--muted);font-style:italic;cursor:default}
+.results .none:hover{background:transparent}
+.picked{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:9px 11px}
+.picked .nm{font-size:13px}
+.picked .id{font:11px ui-monospace,monospace;color:var(--dim);margin-left:8px}
+
+/* toggle */
+.tog{width:46px;height:24px;border-radius:12px;background:#443f3a;border:0;position:relative;cursor:pointer;flex:none;transition:background .15s}
+.tog::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#e8e4df;transition:left .15s}
+.tog.on{background:var(--tan)}
+.tog.on::after{left:25px}
+.togwrap{display:flex;align-items:center;gap:11px}
+.togwrap .st{font-size:12px;color:var(--muted)}
+
+/* ---------- FE profile ---------- */
+.fe{background:#000;border:1px solid #1e1e1e;border-radius:8px;padding:38px 34px;max-width:960px;margin:0 auto}
+.fehead{display:flex;gap:34px;align-items:flex-start}
+.avatar{width:120px;height:120px;border-radius:50%;flex:none;
+  background:linear-gradient(150deg,#6b5847,#3a2f27);display:flex;align-items:center;justify-content:center;
+  color:#d8c4a8;font-size:30px;font-weight:600}
+.fename{display:flex;align-items:center;gap:9px;font-size:27px;font-weight:700;margin:0 0 14px}
+.festats{display:flex;gap:26px;color:#bdb8b2;font-size:14px;margin-bottom:10px}
+.festats b{color:#fff}
+.feonline{color:#8f8a84;font-size:13px}
+.feworks{margin-top:12px}
+.feworks a{color:var(--tan);font-size:14px;text-decoration:none;border-bottom:1px solid var(--tan-dim);padding-bottom:2px}
+.feworks a:hover{color:#d9b276}
+.febtns{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0 4px}
+.febtn{background:#151515;border:1px solid #232323;border-radius:8px;padding:16px;text-align:center}
+.febtn .k{font-size:12px;letter-spacing:.09em;color:#c9c4bd;font-weight:600}
+.febtn .v{font-size:14px;color:#9d968a;margin-top:6px}
+.fetabs{display:flex;gap:28px;border-bottom:1px solid #1e1e1e;margin-top:28px}
+.fetabs span{padding-bottom:11px;color:#9d968a;font-size:15px}
+.fetabs span.on{color:var(--tan);border-bottom:2px solid var(--tan);font-weight:600}
+
+/* ---------- audit ---------- */
+.audit-note{background:var(--panel);border:1px dashed var(--tan-dim);border-radius:6px;padding:16px 18px;margin-top:26px}
+.audit-note h4{margin:0 0 4px;font-size:13px;color:var(--tan);letter-spacing:.05em}
+.audit-note p{margin:0 0 12px;color:var(--muted);font-size:12px}
+.audit-note table{background:transparent;border:0}
+.audit-note th{background:transparent;padding:7px 10px;font-size:11px}
+.audit-note td{padding:7px 10px;font-family:ui-monospace,monospace;font-size:12px;color:var(--muted)}
+.audit-note .a{color:var(--tan)}
+.empty{color:var(--dim);font-style:italic;padding:10px}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);
+  border:1px solid var(--tan);border-radius:6px;padding:11px 20px;font-size:13px;max-width:90vw;
+  opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}
+.toast.on{opacity:1}
+h2.sec{font-size:12px;letter-spacing:.1em;color:var(--muted);margin:0 0 12px;font-weight:600}
+
+@media (max-width:820px){
+  .frow{grid-template-columns:1fr;gap:6px}
+  .hint,.err{grid-column:1}
+  table,thead,tbody,tr,td,th{display:block}
+  thead{display:none}
+  td{border-bottom:0;padding:4px 14px}
+  tr{border-bottom:1px solid var(--line);padding:10px 0}
+  .febtns{grid-template-columns:repeat(2,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<div class="proto-banner">PROTOTYPE — this mock is the behavioural source of truth for Verified Artist. Surfaces mirror production: BO User List / Edit User (store-admin) and creator profile (store-frontend-web).<br>⏳ FE visual design PENDING (Dolly) — the check placement and “View Works” treatment below are one workable arrangement, not the design. Behaviour is settled; visuals are not.</div>
+
+<div class="slate" role="toolbar" aria-label="Prototype switcher">
+  <span class="lbl">SURFACE ▸</span>
+  <button data-surface="bo" class="on" aria-pressed="true">BO · User List + Edit</button>
+  <button data-surface="fe" aria-pressed="false">FE · Creator profile</button>
+  <span class="sep"></span>
+  <span class="lbl">STATE ▸</span>
+  <button data-state="off" class="on" aria-pressed="true">unverified</button>
+  <button data-state="on-nolink" aria-pressed="false">verified · no profile</button>
+  <button data-state="on-link" aria-pressed="false">verified · linked</button>
+</div>
+
+<main>
+
+<!-- ============ BO SURFACE ============ -->
+<section id="boSurface">
+  <h1 class="sr-only">User List — Back Office</h1>
+  <div class="crumbs">Home <span>/</span> User <span>/</span> <b>User List</b></div>
+  <div class="tabsbar"><span>Home</span><span>Issuing Company</span><span class="on">● User List</span></div>
+
+  <table>
+    <thead><tr>
+      <th style="width:30%">User</th><th style="width:26%">Contact</th>
+      <th style="width:20%">Register Location</th><th style="width:12%">Status</th><th style="width:12%">Operation</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="uname"><span>ZooeyOnZtor</span><span class="vcheck" id="rowCheck" hidden role="img" aria-label="Verified Artist">✓</span></div>
+          <div class="uid">u-c0a41edc2bb34656ac3dc52b0c793503</div>
+          <div class="urole">Tastemaker</div>
+        </td>
+        <td>zooey@example.com<div class="uid" style="margin-top:6px">—</div></td>
+        <td>Hong Kong<div class="uid" style="margin-top:6px">Hong Kong,</div></td>
+        <td><span class="chip-en">Enable</span></td>
+        <td><button class="btn" id="openEdit">Edit<span class="sr-only"> ZooeyOnZtor</span></button></td>
+      </tr>
+      <tr>
+        <td><div class="uname"><span>s1mplyamazing</span></div>
+          <div class="uid">u-a7095a593d5846abb34205542c38b38e</div><div class="urole">Tastemaker</div></td>
+        <td>s1mplyamazing@proton.me<div class="uid" style="margin-top:6px">—</div></td>
+        <td>Canada,Ontario<div class="uid" style="margin-top:6px">Canada,Ontario</div></td>
+        <td><span class="chip-en">Enable</span></td>
+        <td><button class="btn">Edit<span class="sr-only"> s1mplyamazing</span></button></td>
+      </tr>
+      <tr>
+        <td><div class="uname"><span>Demo Creator</span></div>
+          <div class="uid">u-a51d854a5c8d4dea952c0deb1ddc0027</div><div class="urole">Creator</div></td>
+        <td>ztoruser.demo+creator@gmail.com<div class="uid" style="margin-top:6px">—</div></td>
+        <td>Hong Kong<div class="uid" style="margin-top:6px">Hong Kong,</div></td>
+        <td><span class="chip-en">Enable</span></td>
+        <td><button class="btn">Edit<span class="sr-only"> Demo Creator</span></button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="audit-note">
+    <h4>user_verification_audit — separate table, append-only</h4>
+    <p>Written on every verify / unverify / profile link change. Not a BO panel in V1 — shown here to make the recorded shape explicit.</p>
+    <table>
+      <thead><tr><th>action</th><th>actor</th><th>at</th><th>detail</th></tr></thead>
+      <tbody id="auditBody"><tr><td colspan="4" class="empty">No verification events yet.</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ FE SURFACE ============ -->
+<section id="feSurface" hidden>
+  <h2 class="sec">CREATOR PROFILE — store-frontend-web</h2>
+  <div class="fe">
+    <div class="fehead">
+      <div class="avatar">ZO</div>
+      <div style="flex:1">
+        <h1 class="fename">ZooeyOnZtor <span class="vcheck lg" id="feCheck" hidden role="img" aria-label="Verified Artist">✓</span></h1>
+        <div class="festats"><span><b>4</b> posts</span><span><b>1</b> followers</span><span><b>2</b> following</span></div>
+        <div class="feonline">○ Online in 11 hours</div>
+        <div class="feworks" id="feWorks" hidden><a id="feWorksLink" href="#" target="_blank" rel="noopener noreferrer">🎬 View Works — Movie DB profile ↗</a></div>
+      </div>
+    </div>
+    <div class="febtns">
+      <div class="febtn"><div class="k">POPCORN</div><div class="v">0 🍿</div></div>
+      <div class="febtn"><div class="k">EARNINGS</div><div class="v">HKD 0</div></div>
+      <div class="febtn"><div class="k">STATS</div><div class="v">&nbsp;</div></div>
+      <div class="febtn"><div class="k">REDEEM</div><div class="v">&nbsp;</div></div>
+    </div>
+    <div class="fetabs"><span class="on">Posts</span><span>Likes</span><span>Collected</span><span>Drafts</span></div>
+  </div>
+
+  <div class="audit-note" style="max-width:960px;margin-left:auto;margin-right:auto">
+    <h4>Public payload — the entire FE contract</h4>
+    <p>Nothing else crosses to the client. No reason, no actor, no KYC, no audit.</p>
+    <table><tbody><tr><td id="fePayload" style="color:var(--ink)">{ "verified": false, "view_works_url": null }</td></tr></tbody></table>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ EDIT USER MODAL ============ -->
+<div class="scrim" id="scrim" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <header><h3 id="mTitle">EDIT USER</h3><button class="x" id="mClose" aria-label="Close">×</button></header>
+    <div class="body">
+      <div class="frow"><label for="fNick">Nickname</label><input id="fNick" type="text" value="ZooeyOnZtor"></div>
+      <div class="frow"><label for="fMail">Email Address</label><input id="fMail" type="text" value="zooey@example.com"></div>
+      <div class="frow"><label for="fPhone">Phone</label><input id="fPhone" type="text"></div>
+      <div class="frow"><label for="fRole">Role</label>
+        <select id="fRole"><option>Tastemaker</option><option>Creator</option></select></div>
+      <div class="frow"><label for="fStatus">Status</label>
+        <select id="fStatus"><option>Enable</option><option>Disable</option></select></div>
+
+      <div class="divider"></div>
+
+      <div class="frow newmark"><label id="mTogLbl">Verified Artist</label>
+        <div class="togwrap"><button class="tog" id="mTog" role="switch" aria-checked="false"
+            aria-labelledby="mTogLbl" aria-describedby="mTogHint"></button>
+          <span class="st" id="mTogSt">off</span></div></div>
+      <div class="hint" id="mTogHint">Drives the blue check on the public profile. With a Movie DB profile linked, also drives “View Works”.</div>
+
+      <div class="frow newmark top" style="margin-top:14px"><label for="mSearch">Movie DB Profile</label>
+        <div class="search">
+          <div class="picked" id="mPicked" hidden>
+            <span><span class="nm" id="mPickedNm"></span><span class="id" id="mPickedId"></span></span>
+            <button class="btn ghost sm" id="mUnpick">Remove</button>
+          </div>
+          <input id="mSearch" type="search" role="combobox" aria-expanded="false" aria-controls="mResults"
+                 aria-autocomplete="list" autocomplete="off" placeholder="Search actor name in Movie DB…"
+                 aria-describedby="mSearchHint">
+          <ul class="results" id="mResults" role="listbox" aria-label="Movie DB actor results" hidden></ul>
+        </div></div>
+      <div class="hint" id="mSearchHint">Search the Movie DB actor index and pick a profile. Manual only — no auto-matching.</div>
+
+      <div class="frow newmark" id="reasonRow" hidden style="margin-top:14px"><label for="mReason">Reason</label>
+        <input id="mReason" type="text" placeholder="Required to remove verification" aria-describedby="reasonErr"></div>
+      <div class="err" id="reasonErr" hidden>Reason is required when removing verification.</div>
+    </div>
+    <div class="acts">
+      <button class="btn ghost" id="mCancel">Cancel</button>
+      <button class="btn primary" id="mConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+/* Mock Movie DB actor index. In production this is a search endpoint on the Movie DB service. */
+const MOVIEDB_ACTORS=[
+  {id:"mdb-a-2041", name:"Zooey Deschanel"},
+  {id:"mdb-a-3312", name:"Zoe Saldaña"},
+  {id:"mdb-a-1180", name:"Golden Sin 金辛"},
+  {id:"mdb-a-0042", name:"Chow Yun-fat 周潤發"},
+  {id:"mdb-a-0777", name:"Brad Pitt"},
+];
+const actorUrl=id=>`https://moviedb.ztor.com/actor/${id}`;
+
+/* committed state */
+let verified=false, actor=null, audits=[];
+/* modal working copy */
+let wVerified=false, wActor=null;
+
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),3600)}
+
+function addAudit(action,detail){
+  audits.unshift({action,actor:"admin",at:"2026-07-26 21:5"+(audits.length%6)+":04",detail});
+  renderAudit();
+}
+function renderAudit(){
+  const b=$("#auditBody");
+  if(!audits.length){b.innerHTML='<tr><td colspan="4" class="empty">No verification events yet.</td></tr>';return}
+  b.innerHTML=audits.map(a=>`<tr><td class="a">${a.action}</td><td>${a.actor}</td><td>${a.at}</td><td>${a.detail}</td></tr>`).join("");
+}
+
+function render(){
+  const worksUrl = (verified && actor) ? actorUrl(actor.id) : null;
+  $("#rowCheck").hidden = !verified;
+  $("#feCheck").hidden  = !verified;
+  $("#feWorks").hidden  = !worksUrl;
+  $("#feWorksLink").href = worksUrl || "#";
+  $("#fePayload").textContent =
+    `{ "verified": ${verified}, "view_works_url": ${worksUrl?JSON.stringify(worksUrl):"null"} }`;
+}
+
+/* ---- surface + state switcher ---- */
+$$(".slate button[data-surface]").forEach(b=>b.onclick=()=>{
+  $$(".slate button[data-surface]").forEach(x=>{x.classList.remove("on");x.setAttribute("aria-pressed","false")});
+  b.classList.add("on");b.setAttribute("aria-pressed","true");
+  const fe=b.dataset.surface==="fe";
+  $("#boSurface").hidden=fe; $("#feSurface").hidden=!fe;
+  closeEdit();
+});
+$$(".slate button[data-state]").forEach(b=>b.onclick=()=>{
+  $$(".slate button[data-state]").forEach(x=>{x.classList.remove("on");x.setAttribute("aria-pressed","false")});
+  b.classList.add("on");b.setAttribute("aria-pressed","true");
+  const s=b.dataset.state;
+  verified = (s==="on-nolink"||s==="on-link");
+  actor = s==="on-link" ? MOVIEDB_ACTORS[0] : null;
+  audits=[]; renderAudit(); render(); closeEdit();
+});
+
+/* ---- Movie DB actor search (combobox) ---- */
+function renderPicked(){
+  $("#mPicked").hidden = !wActor;
+  $("#mSearch").hidden = !!wActor;      /* one control at a time — pick replaces the search box */
+  if(wActor){ $("#mPickedNm").textContent=wActor.name; $("#mPickedId").textContent=wActor.id; }
+  closeResults();
+}
+function closeResults(){ $("#mResults").hidden=true; $("#mResults").innerHTML=""; $("#mSearch").setAttribute("aria-expanded","false"); }
+function runSearch(){
+  const q=$("#mSearch").value.trim().toLowerCase();
+  if(!q){ closeResults(); return }
+  const hits=MOVIEDB_ACTORS.filter(a=>a.name.toLowerCase().includes(q));
+  const ul=$("#mResults");
+  ul.innerHTML = hits.length
+    ? hits.map(a=>`<li role="option" tabindex="-1" data-id="${a.id}"><span class="nm">${a.name}</span><span class="id">${a.id}</span></li>`).join("")
+    : '<li class="none" role="option" aria-disabled="true">No actor profiles found.</li>';
+  ul.hidden=false; $("#mSearch").setAttribute("aria-expanded","true");
+  ul.querySelectorAll("li[data-id]").forEach(li=>li.onclick=()=>{
+    wActor = MOVIEDB_ACTORS.find(a=>a.id===li.dataset.id);
+    $("#mSearch").value=""; renderPicked();
+  });
+}
+$("#mSearch").addEventListener("input",runSearch);
+$("#mUnpick").onclick=()=>{ wActor=null; renderPicked(); $("#mSearch").focus(); };
+
+/* ---- modal ---- */
+let lastTrigger=null;
+function tabbables(){return [...$("#scrim").querySelectorAll('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])')]
+  .filter(e=>!e.disabled && e.offsetParent!==null)}
+
+function openEdit(e){
+  lastTrigger = e && e.currentTarget ? e.currentTarget : document.activeElement;
+  wVerified=verified; wActor=actor;
+  $("#mTog").classList.toggle("on",wVerified);
+  $("#mTog").setAttribute("aria-checked",wVerified);
+  $("#mTogSt").textContent=wVerified?"on":"off";
+  $("#mSearch").value=""; renderPicked();
+  $("#mReason").value=""; $("#mReason").removeAttribute("aria-invalid");
+  $("#reasonRow").hidden=true; $("#reasonErr").hidden=true;
+  $("#scrim").hidden=false;
+  $("#fNick").focus();
+}
+function closeEdit(){
+  if($("#scrim").hidden) return;
+  $("#scrim").hidden=true; closeResults();
+  if(lastTrigger && document.contains(lastTrigger)) lastTrigger.focus();
+  lastTrigger=null;
+}
+/* focus trap + Escape — what native <dialog>.showModal() would have given us */
+document.addEventListener("keydown",ev=>{
+  if($("#scrim").hidden) return;
+  if(ev.key==="Escape"){ev.preventDefault(); if(!$("#mResults").hidden){closeResults();return} closeEdit();return}
+  if(ev.key!=="Tab") return;
+  const f=tabbables(); if(!f.length) return;
+  const first=f[0], last=f[f.length-1];
+  if(ev.shiftKey && document.activeElement===first){ev.preventDefault();last.focus()}
+  else if(!ev.shiftKey && document.activeElement===last){ev.preventDefault();first.focus()}
+  else if(!$("#scrim").contains(document.activeElement)){ev.preventDefault();first.focus()}
+});
+$("#scrim").addEventListener("mousedown",ev=>{if(ev.target===$("#scrim"))closeEdit()});
+
+$("#openEdit").onclick=openEdit;
+$("#mClose").onclick=closeEdit;
+$("#mCancel").onclick=closeEdit;
+
+$("#mTog").onclick=()=>{
+  wVerified=!wVerified;
+  $("#mTog").classList.toggle("on",wVerified);
+  $("#mTog").setAttribute("aria-checked",wVerified);
+  $("#mTogSt").textContent=wVerified?"on":"off";
+  const removing = verified && !wVerified;
+  $("#reasonRow").hidden=!removing;
+  if(!removing){$("#reasonErr").hidden=true; $("#mReason").removeAttribute("aria-invalid")}
+};
+
+$("#mConfirm").onclick=()=>{
+  const removing = verified && !wVerified;
+  const reason = $("#mReason").value.trim();
+  if(removing && !reason){
+    $("#reasonErr").hidden=false; $("#mReason").setAttribute("aria-invalid","true"); $("#mReason").focus(); return;
+  }
+  $("#mReason").removeAttribute("aria-invalid");
+
+  if(wVerified && !verified) addAudit("verify","status unverified → verified");
+  if(!wVerified && verified) addAudit("unverify",`status verified → unverified · reason: ${reason}`);
+  const before = actor ? actor.id : null, after = wActor ? wActor.id : null;
+  if(before!==after){
+    if(after && !before)      addAudit("link_set",`${wActor.name} · ${after}`);
+    else if(!after && before) addAudit("link_clear",`was ${before}`);
+    else                      addAudit("link_change",`${before} → ${after}`);
+  }
+
+  verified=wVerified; actor=wActor;
+  closeEdit(); render();
+
+  const worksUrl=(verified&&actor)?actorUrl(actor.id):null;
+  toast(verified
+    ? (worksUrl ? "Saved. Blue check + View Works live on the profile within ≤ 5 min."
+                : "Saved. Blue check live. View Works stays hidden until a Movie DB profile is linked.")
+    : "Saved. Blue check and View Works removed from the profile within ≤ 5 min.");
+};
+
+renderAudit(); render();
+</script>
+</body>
+</html>
