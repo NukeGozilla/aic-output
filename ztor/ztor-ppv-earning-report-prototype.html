@@ -114,27 +114,9 @@ tr:last-child td{border-bottom:0}
 .picked .nm{font-size:13px}
 .picked .id{font:11px ui-monospace,monospace;color:var(--dim);margin-left:8px}
 
-/* ---------- FE creator earnings ---------- */
-.fe{background:#000;border:1px solid #1e1e1e;border-radius:8px;padding:38px 34px;max-width:960px;margin:0 auto}
-.fehead{display:flex;gap:26px;align-items:center;margin-bottom:26px}
-.avatar{width:84px;height:84px;border-radius:50%;flex:none;
-  background:linear-gradient(150deg,#6b5847,#3a2f27);display:flex;align-items:center;justify-content:center;
-  color:#d8c4a8;font-size:24px;font-weight:600}
-.fename{font-size:24px;font-weight:700;margin:0}
-.febtn{background:#151515;border:1px solid #232323;border-radius:8px;padding:16px 22px;text-align:center;min-width:180px}
-.febtn .k{font-size:12px;letter-spacing:.09em;color:#c9c4bd;font-weight:600}
-.febtn .v{font-size:17px;color:var(--tan);margin-top:6px;font-weight:600}
-.febtn .n{font-size:11px;color:#8f8a84;margin-top:4px}
-.fetabs{display:flex;gap:28px;border-bottom:1px solid #1e1e1e;margin:6px 0 18px}
-.fetabs span{padding-bottom:11px;color:#9d968a;font-size:15px}
-.fetabs span.on{color:var(--tan);border-bottom:2px solid var(--tan);font-weight:600}
-.fe table{background:#0d0d0d;border-color:#1e1e1e}
-.fe th{background:#121212;border-color:#1e1e1e}
-.fe td{border-color:#1e1e1e}
-.badge{display:inline-block;border-radius:3px;padding:2px 8px;font-size:11px;white-space:nowrap}
-.badge.cr{background:var(--green-bg);color:var(--green)}
-.badge.pre{background:#2a2620;color:var(--muted)}
-.fenote{color:#8f8a84;font-size:12px;margin-top:10px}
+/* backdate choice (link modal) */
+.radio{display:flex;gap:9px;align-items:flex-start;color:var(--ink);font-size:13px;margin:7px 0;cursor:pointer}
+.radio input{accent-color:var(--tan);margin-top:3px;flex:none}
 
 /* ---------- audit ---------- */
 .audit-note{background:var(--panel);border:1px dashed var(--tan-dim);border-radius:6px;padding:16px 18px;margin-top:26px}
@@ -149,11 +131,9 @@ tr:last-child td{border-bottom:0}
   border:1px solid var(--tan);border-radius:6px;padding:11px 20px;font-size:13px;max-width:90vw;
   opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}
 .toast.on{opacity:1}
-h2.sec{font-size:12px;letter-spacing:.1em;color:var(--muted);margin:0 0 12px;font-weight:600}
 
 @media (max-width:900px){
   .toolbar input{width:100%}
-  .fehead{flex-wrap:wrap}
   main{padding:16px 10px 60px}
   th,td{padding:10px 8px}
 }
@@ -164,12 +144,10 @@ h2.sec{font-size:12px;letter-spacing:.1em;color:var(--muted);margin:0 0 12px;fon
 </head>
 <body>
 
-<div class="proto-banner">PROTOTYPE — this mock is the behavioural source of truth for PPV Earning Report (link to creator). Surfaces mirror production: BO Master Settings › Issuing Company (store-admin) and creator earnings / Listed tab (store-frontend-web).<br>The Listed-tab visual design belongs to the crowdfund-reporting feature — figures and rules here are binding, layout is not. Fee math: <b>ott.ppv 40% all-in via Order.feeSnapshot · payment fee literal 0 · HKD</b>.</div>
+<div class="proto-banner">PROTOTYPE — this mock is the behavioural source of truth for PPV Earning Report (link to creator), <b>BO surface only</b>. Mirrors production: BO Master Settings › Issuing Company (store-admin). FE reference: the designer's prototype (URL TBD), bounded by the spec's data rules.<br>Fee math: <b>ott.ppv 40% all-in via Order.feeSnapshot · payment fee literal 0 · HKD · PPV sales final (no refunds)</b>.</div>
 
 <div class="slate" role="toolbar" aria-label="Prototype switcher">
-  <span class="lbl">SURFACE ▸</span>
-  <button data-surface="bo" class="on" aria-pressed="true">BO · Issuing Company</button>
-  <button data-surface="fe" aria-pressed="false">FE · Creator earnings</button>
+  <span class="lbl">BO · ISSUING COMPANY</span>
   <span class="sep"></span>
   <span class="lbl">STATE ▸</span>
   <button data-state="owners" class="on" aria-pressed="true">not linked · owner accounts</button>
@@ -269,50 +247,6 @@ h2.sec{font-size:12px;letter-spacing:.1em;color:var(--muted);margin:0 0 12px;fon
   </div>
 </section>
 
-<!-- ============ FE SURFACE ============ -->
-<section id="feSurface" hidden>
-  <h2 class="sec">CREATOR EARNINGS — store-frontend-web (Listed tab · design owned by crowdfund-reporting)</h2>
-  <div class="fe">
-    <div class="fehead">
-      <div class="avatar" id="feAvatar">GS</div>
-      <div style="flex:1"><h1 class="fename" id="feName">Golden Sin 金辛</h1>
-        <div class="fenote"><span id="feUid">u-golden-sin-7f21</span> · linked issuing company: <span id="feCo">—</span></div></div>
-      <div class="febtn"><div class="k">EARNINGS</div><div class="v" id="feWallet">HKD 0.00</div>
-        <div class="n">existing wallet — withdraw as usual</div></div>
-    </div>
-
-    <div class="fetabs"><span>Crowdfund 專案</span><span class="on">Listed 已上架</span></div>
-
-    <div id="feEmpty" class="empty" style="padding:30px 6px">No listed films yet. 尚無已上架影片 — when BO links an issuing company to this account, its films and reports appear here.</div>
-
-    <div id="feReport" hidden>
-      <table>
-        <thead><tr><th>影片 Film</th><th>月份 Month</th><th>銷量 Sales</th><th>總額 Gross</th><th>平台費 Platform fee (40% all-in)</th><th>支付費 Payment fee</th><th>淨額 Net</th><th></th></tr></thead>
-        <tbody>
-          <tr>
-            <td>我要衝線<div class="mono">Doubtful Brothers · PPV HK$80.00</div></td>
-            <td>2026-07</td><td>250</td><td>HK$20,000.00</td><td>HK$8,000.00</td><td>HK$0.00</td><td><b>HK$12,000.00</b></td>
-            <td><span class="badge cr" id="julyBadge">credited to wallet</span></td>
-          </tr>
-          <tr>
-            <td>我要衝線<div class="mono">Doubtful Brothers · PPV HK$80.00</div></td>
-            <td>2026-06</td><td>180</td><td>HK$14,400.00</td><td>HK$5,760.00</td><td>HK$0.00</td><td><b>HK$8,640.00</b></td>
-            <td><span class="badge pre">pre-link · history only</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="fenote">1 self-purchase excluded (own account order — never credited). 已排除 1 筆自購訂單。</div>
-      <div class="fenote">Closed months never change — refunds/late orders post as adjustments in the current open month. 已結月份不變動，退款於當前月份入帳調整。</div>
-      <div class="fenote">A month straddling the link date credits per order (paid at ≥ linked_at) — the row shows full film history; the badge shows what credited. 跨關聯日的月份按訂單入帳。</div>
-    </div>
-  </div>
-
-  <div class="audit-note" style="max-width:960px;margin-left:auto;margin-right:auto">
-    <h4>FE boundary — the entire creator-facing contract</h4>
-    <p>Own report + own wallet only. Wallet credits run from <b>linked_at</b> forward (pre-link months are visible history, never credited — assumption A1 in the spec). Nothing about portal accounts, contracts, or audit crosses to the client. Creator A requesting creator B's report → rejected.</p>
-  </div>
-</section>
-
 </main>
 
 <!-- ============ LINK TO CREATOR MODAL ============ -->
@@ -340,6 +274,13 @@ h2.sec{font-size:12px;letter-spacing:.1em;color:var(--muted);margin:0 0 12px;fon
         <ul class="results" id="mResults" role="listbox" aria-label="Creator account results" hidden></ul>
       </div>
       <p class="hint" id="mSearchHint" style="margin:6px 0 0">Type to search; pick a result. Manual only — no auto-matching.</p>
+
+      <p class="flabel" style="margin:18px 0 4px">既往收益 Pre-link income</p>
+      <label class="radio"><input type="radio" name="bd" id="bdOff" checked>
+        <span>僅自關聯時起 <b>Forward-only</b>（預設 default）— pre-link income stays where it was</span></label>
+      <label class="radio"><input type="radio" name="bd" id="bdOn">
+        <span>回溯未結算收益 <b>Backdate unsettled income</b> — credit pre-link income not yet paid out to a film owner</span></label>
+      <p class="hint">已結算／已支付的收益永不可回溯（伺服器強制）；選擇會記入稽核。 Already-paid-out income can never be backdated (server-enforced); the choice is audited.</p>
 
       <p class="hint" id="mSummary" style="margin:16px 0 0" hidden>關聯後，<b>懷疑兄弟影視文化有限公司</b> 旗下所有影片的 PPV 收益自此刻起歸 <b id="mSumName"></b>，報表顯示於其前台 Listed 分頁。 From the moment of linking, all films under this company accrue to this creator; the report appears on their Listed tab.</p>
     </div>
@@ -404,7 +345,7 @@ function render(){
   $("#linkCard").hidden=!link;
   if(link){
     $("#lcName").textContent=link.name; $("#lcId").textContent=link.id;
-    $("#lcMeta").textContent=`linked ${link.at} · by admin · status active`;
+    $("#lcMeta").textContent=`linked ${link.at} · by admin · status active · pre-link income: ${link.backdate?"backdated (unsettled)":"not backdated"}`;
   }
   $("#addUser").disabled=!!link;
   $("#addUserHint").hidden=!link;
@@ -420,42 +361,16 @@ function render(){
         <td><button class="btn sm" disabled>編輯</button> <button class="btn ghost sm" disabled>重置密碼</button> <button class="btn ghost sm" disabled>Delete</button></td>
       </tr>`).join("")
     : '<tr><td colspan="5" class="empty">尚無用戶 No film-owner accounts.</td></tr>';
-
-  /* FE surface — identity follows the linked creator (default persona when not linked) */
-  const feWho = link || CREATORS[0];
-  $("#feName").textContent = feWho.name;
-  $("#feUid").textContent = feWho.id;
-  const initials=(feWho.name.replace(/[^A-Za-z ]/g,"").trim().split(/\s+/).map(w=>w[0]).join("").slice(0,2)||"GS").toUpperCase();
-  $("#feAvatar").textContent = initials;
-  $("#feCo").textContent = link ? "懷疑兄弟影視文化有限公司 Doubtful Brothers" : "—";
-  $("#feEmpty").hidden = !!link;
-  $("#feReport").hidden = !link;
-  if(link){
-    /* credit is per order (paid_at >= linked_at): a link stamped inside July credits only July's post-link sales */
-    const fullJuly = link.at < "2026-07";
-    $("#feWallet").textContent = fullJuly ? "HKD 12,000.00" : "HKD 480.00";
-    $("#julyBadge").textContent = fullJuly ? "credited to wallet"
-      : "partial — credits from 2026-07-26: 10 sales · HK$480.00";
-  } else {
-    $("#feWallet").textContent = "HKD 0.00";
-  }
 }
 
-/* ---- surface + state switcher ---- */
-$$(".slate button[data-surface]").forEach(b=>b.onclick=()=>{
-  $$(".slate button[data-surface]").forEach(x=>{x.classList.remove("on");x.setAttribute("aria-pressed","false")});
-  b.classList.add("on");b.setAttribute("aria-pressed","true");
-  const fe=b.dataset.surface==="fe";
-  $("#boSurface").hidden=fe; $("#feSurface").hidden=!fe;
-  closeLink(); closeUnlink();
-});
+/* ---- state switcher ---- */
 $$(".slate button[data-state]").forEach(b=>b.onclick=()=>{
   $$(".slate button[data-state]").forEach(x=>{x.classList.remove("on");x.setAttribute("aria-pressed","false")});
   b.classList.add("on");b.setAttribute("aria-pressed","true");
   const s=b.dataset.state;
   if(s==="owners"){owners=[{...OWNER_SEED}]; link=null;}
   if(s==="clean"){owners=[]; link=null;}
-  if(s==="linked"){owners=[{...OWNER_SEED,enabled:false}]; link={...CREATORS[0],at:"2026-06-30 23:58:02"};}
+  if(s==="linked"){owners=[{...OWNER_SEED,enabled:false}]; link={...CREATORS[0],at:"2026-06-30 23:58:02",backdate:false};}
   audits=[]; renderAudit(); render(); closeLink(); closeUnlink();
 });
 
@@ -515,7 +430,7 @@ $("#mUnpick").onclick=()=>{ wCreator=null; renderPicked(); gateSearch(); if(!$("
 let lastTrigger=null;
 function openLink(e){
   lastTrigger=e&&e.currentTarget?e.currentTarget:document.activeElement;
-  wCreator=null; $("#mSearch").value="";
+  wCreator=null; $("#mSearch").value=""; $("#bdOff").checked=true;
   renderOwnStep(); renderPicked(); gateSearch(); gateConfirm();
   $("#scrim").hidden=false;
   (enabledOwners().length? $("#ownList").querySelector("button") : $("#mSearch"))?.focus();
@@ -531,10 +446,13 @@ $("#mClose").onclick=closeLink;
 $("#mCancel").onclick=closeLink;
 $("#mConfirm").onclick=()=>{
   if(!wCreator||enabledOwners().length) return;
-  link={...wCreator,at:"2026-07-26 22:05:11"};
-  addAudit("link",`${link.name} · ${link.id} · all company films accrue from now`);
+  const backdate=$("#bdOn").checked;
+  link={...wCreator,at:"2026-07-26 22:05:11",backdate};
+  addAudit("link",`${link.name} · ${link.id} · pre-link income: ${backdate?"backdated (unsettled)":"not backdated"}`);
   closeLink(); render();
-  toast(`Linked. PPV earnings accrue to ${link.name} from now; report on their Listed tab. 已關聯，收益自此刻起入其錢包。`);
+  toast(backdate
+    ? `Linked. Unsettled pre-link income + all future PPV earnings credit ${link.name}'s wallet. 已關聯並回溯未結算收益。`
+    : `Linked. PPV earnings accrue to ${link.name} from now. 已關聯，收益自此刻起入其錢包。`);
 };
 
 /* ---- de-link modal ---- */
