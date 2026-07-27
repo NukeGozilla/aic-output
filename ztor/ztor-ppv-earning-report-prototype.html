@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPV Earning Report — BO prototype</title>
+<style>
+:root{
+  --canvas:#101418; --panel:#171D24; --panel2:#1D242D; --line:#232B34;
+  --ink:#E8EDF2; --muted:#8A97A5; --accent:#E8B34B; --accent-ink:#1A1204;
+  --green:#4CC38A; --amber:#E8B34B; --red:#E5645F; --slate:#5C6B7A; --blue:#4B9BE8;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0}
+body{background:var(--canvas);color:var(--ink);font:14px/1.5 "Segoe UI",system-ui,sans-serif;padding-bottom:60px}
+.proto-banner{background:repeating-linear-gradient(45deg,#2A2113,#2A2113 12px,#1C1710 12px,#1C1710 24px);color:var(--accent);font:600 12px/1.4 var(--mono);padding:8px 16px;border-bottom:1px solid #3A2F17}
+.slate{display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:#0A0D10;border-bottom:2px solid var(--accent);padding:10px 16px;position:sticky;top:0;z-index:50}
+.slate .lbl{font:700 11px var(--mono);color:var(--muted);letter-spacing:.12em;margin-right:6px}
+.slate button{background:var(--panel);border:1px solid var(--line);color:var(--muted);font:600 12px var(--mono);padding:5px 12px;border-radius:3px;cursor:pointer;transition:all .15s}
+.slate button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.slate button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{max-width:1080px;margin:24px auto;padding:0 20px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.tabs button{background:none;border:none;color:var(--muted);font:600 13px "Segoe UI",system-ui;padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:16px}
+h1{font-size:19px;font-weight:650}
+h2{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.idrow{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#3A4654,#232B34);display:grid;place-items:center;font-weight:700;color:var(--accent)}
+.chip{display:inline-block;font:600 11px var(--mono);padding:2px 9px;border-radius:20px;border:1px solid}
+.chip.listed{color:var(--green);border-color:var(--green)}
+.chip.unlisted{color:var(--red);border-color:var(--red)}
+.chip.active{color:var(--blue);border-color:var(--blue)}
+.chip.unlinked{color:var(--slate);border-color:var(--slate)}
+.chip.accruing{color:var(--slate);border-color:var(--slate)}
+.chip.pending{color:var(--amber);border-color:var(--amber)}
+.chip.settled{color:var(--green);border-color:var(--green)}
+.chip.warn{color:var(--red);border-color:var(--red)}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:4px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:12px 16px;min-width:180px;flex:1}
+.stat .k{font:600 11px var(--mono);color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.stat .v{font:650 20px var(--mono);margin-top:4px}
+.stat .v small{font-size:11px;color:var(--muted);font-weight:600}
+table{width:100%;border-collapse:collapse}
+th{font:700 11px var(--mono);color:var(--muted);text-align:left;letter-spacing:.08em;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.num,th.num{text-align:right;font-family:var(--mono)}
+tr.exp td{background:var(--panel2);font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.btn{background:var(--accent);color:var(--accent-ink);border:none;font:650 13px "Segoe UI",system-ui;padding:8px 16px;border-radius:4px;cursor:pointer}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.btn.sm{font-size:12px;padding:4px 10px}
+.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lock{font-size:11px;color:var(--muted)}
+.empty{text-align:center;padding:44px 20px;color:var(--muted)}
+.empty .big{font-size:15px;color:var(--ink);margin-bottom:6px}
+.err{border:1px solid var(--red);background:#241416;border-radius:6px;padding:14px 16px;color:#F2B8B5;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.skel{height:14px;border-radius:3px;background:linear-gradient(90deg,var(--panel2) 25%,#242E38 50%,var(--panel2) 75%);background-size:200% 100%;animation:sh 1.4s infinite;margin:10px 0}
+@keyframes sh{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}.slate button{transition:none}}
+dialog{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:22px;max-width:460px;width:92%}
+dialog::backdrop{background:rgba(4,6,8,.72)}
+dialog h3{font-size:15px;margin-bottom:10px}
+dialog p{color:var(--muted);font-size:13px;margin-bottom:12px}
+dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+input[type=text],input[type=search]{background:var(--canvas);border:1px solid var(--line);border-radius:4px;color:var(--ink);padding:8px 10px;width:100%;font:13px "Segoe UI",system-ui}
+input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:4px;margin-top:8px}
+.mrow.dis{opacity:.45}
+.drawer{border-top:1px dashed var(--line);margin-top:12px;padding-top:10px;font-size:12.5px}
+.drawer summary{cursor:pointer;color:var(--muted);font:600 12px var(--mono)}
+.audit li{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font:12.5px var(--mono);color:var(--muted)}
+.audit .a{color:var(--accent);min-width:56px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--accent);color:var(--ink);padding:10px 18px;border-radius:6px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+.note{font-size:12px;color:var(--muted);margin-top:8px}
+.hkd{font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="proto-banner">PROTOTYPE — illustrative; the .md is authoritative (ppv-earning-report/BO/requirements-en.md). Standalone BO mock — not anchored to any repo.</div>
+
+<div class="slate" role="toolbar" aria-label="Prototype state switcher">
+  <span class="lbl">STATE ▸</span>
+  <button data-s="default" class="on">default</button>
+  <button data-s="loading">loading</button>
+  <button data-s="empty">empty</button>
+  <button data-s="error">error</button>
+  <button data-s="denied">permission-denied</button>
+  <span class="lbl" style="margin-left:14px">SCENARIO ▸</span>
+  <button data-s="settled">settled period</button>
+  <button data-s="variance">variance</button>
+</div>
+
+<main>
+  <div class="idrow">
+    <div class="avatar">GS</div>
+    <div>
+      <h1>Golden Sin <span class="chip active" id="linkCount">2 linked titles</span></h1>
+      <div class="note">creator_id c-88f2 · viewing as <b id="roleName">bo-finance</b></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="on" data-t="titles">Titles</button>
+    <button data-t="earnings">Earnings</button>
+    <button data-t="settle">PPV Settlement</button>
+  </div>
+
+  <!-- ============ TITLES TAB ============ -->
+  <section id="tab-titles">
+    <div class="stats">
+      <div class="stat"><div class="k">Lifetime net (settled)</div><div class="v hkd">HK$412,480.00</div></div>
+      <div class="stat"><div class="k">2026-08 accrued net</div><div class="v hkd">HK$12,000.00 <small>unsettled · excludes 1 pending adjustment</small></div></div>
+      <div class="stat"><div class="k">Last settled period</div><div class="v hkd">2026-07</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h2 style="margin:0">Linked titles</h2>
+        <span><button class="btn sm mut" id="btnLink">Link title</button> <span class="lock mut-lock" hidden>🔒 bo-finance only</span></span>
+      </div>
+      <div id="titlesBody">
+        <table>
+          <thead><tr><th>Title</th><th>Listed</th><th class="num">PPV price</th><th>Link</th><th>Linked by</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><a href="#" style="color:var(--ink)">我要衝線 (I Am Speed)</a></td><td><span class="chip listed">listed</span></td><td class="num">HK$80.00</td><td><span class="chip active">active</span></td><td class="hkd">jhy · 07-02</td><td><button class="btn ghost sm mut" data-unlink>Unlink</button></td></tr>
+            <tr><td><a href="#" style="color:var(--ink)">夜市風雲</a></td><td><span class="chip listed">listed</span></td><td class="num">HK$60.00</td><td><span class="chip active">active</span></td><td class="hkd">jhy · 07-10</td><td><button class="btn ghost sm mut" data-unlink>Unlink</button></td></tr>
+            <tr><td><a href="#" style="color:var(--ink)">舊作:回聲</a></td><td><span class="chip unlisted">unlisted</span></td><td class="num">HK$45.00</td><td><span class="chip unlinked">unlinked</span></td><td class="hkd">eric · 06-20</td><td><button class="btn ghost sm mut" data-relink>Re-link</button></td></tr>
+          </tbody>
+        </table>
+        <details class="drawer"><summary>Audit trail (link / unlink / adjust)</summary>
+          <ul class="audit" style="list-style:none;margin-top:8px">
+            <li><span class="a">link</span><span>jhy · 2026-07-10 14:02 · 夜市風雲 → c-88f2</span></li>
+            <li><span class="a">unlink</span><span>eric · 2026-07-08 09:41 · 舊作:回聲 · reason: wrong account</span></li>
+            <li><span class="a">link</span><span>jhy · 2026-07-02 11:15 · 我要衝線 → c-88f2</span></li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EARNINGS TAB ============ -->
+  <section id="tab-earnings" hidden>
+    <div class="card">
+      <h2>Current period — 2026-08 <span class="chip accruing">accruing</span> <span class="chip pending" style="border-style:dashed">unsettled</span></h2>
+      <table>
+        <thead><tr><th>Title</th><th class="num">Sales</th><th class="num">Gross</th><th class="num">Platform fee (40% all-in)</th><th class="num">Payment fee</th><th class="num">Net</th></tr></thead>
+        <tbody>
+          <tr><td>我要衝線</td><td class="num">250</td><td class="num">20,000.00</td><td class="num">8,000.00</td><td class="num">0.00</td><td class="num">12,000.00</td></tr>
+          <tr><td>夜市風雲</td><td class="num">0</td><td class="num" colspan="4" style="color:var(--muted)">no sales this period — no statement row will be created</td></tr>
+          <tr><td>refund_adjustment — ord-4402 (from settled 2026-06)</td><td class="num">—</td><td class="num">−80.00</td><td class="num" colspan="2" style="color:var(--muted)">fee return pending policy — Susan (BO-TC-08)</td><td class="num">—</td></tr>
+        </tbody>
+      </table>
+      <details class="drawer"><summary>Excluded self-purchases (1)</summary>
+        <div class="note">ord-5511 · HK$80.00 · buyer fan account belongs to linked creator — excluded from accrual (abuse guard)</div>
+      </details>
+      <div class="note">Figures may lag real time ≤ 60s. payment fee is literal 0.00 for ott.ppv (40% all-in — never add 3.4% + HK$2.40).</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h2 style="margin:0">Monthly statements (HKD)</h2><button class="btn ghost sm" id="btnCsv">Export CSV</button>
+      </div>
+      <table>
+        <thead><tr><th>Period</th><th class="num">Gross</th><th class="num">Platform fee</th><th class="num">Payment fee</th><th class="num">Net</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr data-exp="e1"><td class="hkd">2026-07</td><td class="num">20,000.00</td><td class="num">8,000.00</td><td class="num">0.00</td><td class="num">12,000.00</td><td><span class="chip pending" id="julyChip">pending_settlement</span> <span class="chip warn" id="varChip" hidden>variance</span></td><td><button class="btn ghost sm" data-exp-btn>▾</button></td></tr>
+          <tr class="exp" id="e1" hidden><td colspan="7">我要衝線 · 250 sales · 20,000.00 / 8,000.00 / 0.00 / 12,000.00 &nbsp;·&nbsp; refund_adjustment: none</td></tr>
+          <tr><td class="hkd">2026-06</td><td class="num">31,200.00</td><td class="num">12,480.00</td><td class="num">0.00</td><td class="num">18,720.00</td><td><span class="chip settled">settled</span> <span class="note">07-01 by jhy</span></td><td><button class="btn ghost sm" data-exp-btn2>▾</button></td></tr>
+          <tr class="exp" id="e2" hidden><td colspan="7">我要衝線 · 390 sales · 31,200.00 / 12,480.00 / 0.00 / 18,720.00 &nbsp;·&nbsp; refund_adjustment −80.00 (ord-4402, refunded 08-02 → posted to the open period 2026-08)</td></tr>
+        </tbody>
+      </table>
+      <div class="note">Zero-sales months have no row (never fabricate 0.00). Pagination appears beyond 50 rows.</div>
+    </div>
+  </section>
+
+  <!-- ============ SETTLEMENT TAB ============ -->
+  <section id="tab-settle" hidden>
+    <div class="card">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+        <h2 style="margin:0">PPV Settlement</h2>
+        <select id="period" style="background:var(--canvas);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 10px;font:600 13px var(--mono)">
+          <option>2026-07</option><option>2026-06</option>
+        </select>
+        <span class="note">closed periods only — the open month never appears · shown as a tab in this mock; ships as its own page /bo/settlement/ppv?period=YYYY-MM</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="k">Statements</div><div class="v">3</div></div>
+        <div class="stat"><div class="k">Gross</div><div class="v hkd">HK$58,400.00</div></div>
+        <div class="stat"><div class="k">Fees</div><div class="v hkd">HK$23,360.00</div></div>
+        <div class="stat"><div class="k">Net</div><div class="v hkd">HK$35,040.00</div></div>
+      </div>
+      <table style="margin-top:10px">
+        <thead><tr><th>Creator</th><th class="num">Gross</th><th class="num">Fee</th><th class="num">Net</th><th>Status</th></tr></thead>
+        <tbody id="settleRows">
+          <tr><td>Golden Sin</td><td class="num">20,000.00</td><td class="num">8,000.00</td><td class="num">12,000.00</td><td><span class="chip pending">pending_settlement</span></td></tr>
+          <tr><td>Aria Chen</td><td class="num">26,000.00</td><td class="num">10,400.00</td><td class="num">15,600.00</td><td><span class="chip pending">pending_settlement</span></td></tr>
+          <tr><td>Studio Nova</td><td class="num">12,400.00</td><td class="num">4,960.00</td><td class="num">7,440.00</td><td><span class="chip pending">pending_settlement</span> <span class="chip warn varOnly" hidden>variance</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+        <button class="btn mut" id="btnRun">Run settlement</button>
+        <span class="lock mut-lock" hidden>🔒 bo-finance only</span>
+        <span class="note" id="runNote"></span>
+      </div>
+      <div class="note" id="runRecord" hidden>SettlementRun sr-2026-07 · triggered_by jhy · 2026-08-01 10:12 HKT · 3 statements · net HK$35,040.00 · <a href="#" style="color:var(--accent)">audit</a></div>
+    </div>
+  </section>
+
+  <!-- shared alt-states -->
+  <section id="stateLoading" hidden>
+    <div class="card"><div class="skel" style="width:40%"></div><div class="skel"></div><div class="skel"></div><div class="skel" style="width:70%"></div></div>
+  </section>
+  <section id="stateEmpty" hidden>
+    <div class="card"><div class="empty"><div class="big">No linked titles</div>This creator has no PPV titles yet. The Earnings tab shows "No PPV earnings yet" — no rows exist, and none are fabricated.<br><br><button class="btn mut" id="btnLink2">Link title</button></div></div>
+  </section>
+  <section id="stateError" hidden>
+    <div class="err"><span>Couldn't load PPV report data. Nothing was changed — a link either exists or it doesn't.</span><button class="btn ghost sm">Retry</button></div>
+  </section>
+</main>
+
+<!-- Link modal -->
+<dialog id="dlgLink">
+  <h3>Link a Movie DB title</h3>
+  <input type="search" placeholder="Search Movie DB…" id="mdbSearch" value="風雲">
+  <div id="mdbResults">
+    <div class="mrow"><span>夜市風雲 2 <span class="chip listed">listed</span></span><button class="btn sm" id="mdbPick">Link</button></div>
+    <div class="mrow dis"><span>風雲賽道 <span class="chip listed">listed</span> — linked to Aria Chen</span><button class="btn sm" disabled>Link</button></div>
+    <div class="mrow dis"><span>風雲前傳 <span class="chip unlisted">unlisted</span> — unlisted titles cannot accrue</span><button class="btn sm" disabled>Link</button></div>
+  </div>
+  <p id="mdbNone" hidden style="margin-top:10px">No titles found.</p>
+  <div class="row"><button class="btn ghost" data-close>Cancel</button></div>
+</dialog>
+
+<!-- Unlink confirm -->
+<dialog id="dlgUnlink">
+  <h3>Unlink 我要衝線 from Golden Sin?</h3>
+  <p>Accrual stops now. Settled months and already-accrued entries stay with this creator — history never moves.</p>
+  <input type="text" id="unlinkReason" placeholder="Reason (required)">
+  <div class="row"><button class="btn ghost" data-close>Cancel</button><button class="btn" id="unlinkGo" disabled>Unlink</button></div>
+</dialog>
+
+<!-- Settle confirm -->
+<dialog id="dlgRun">
+  <h3>Run settlement for 2026-07?</h3>
+  <p>3 statements · net <b class="hkd">HK$35,040.00</b> will lock as <b>settled</b>. This is idempotent — a retry or a second admin returns this same run.</p>
+  <p class="varOnly" hidden style="color:var(--red)">⚠ Studio Nova has a reconciliation variance — see nightly job log before confirming.</p>
+  <div class="row"><button class="btn ghost" data-close>Cancel</button><button class="btn" id="runGo">Confirm — settle 2026-07</button></div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let state="default";
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2600)}
+/* tabs */
+$$(".tabs button").forEach(b=>b.onclick=()=>{$$(".tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+ ["titles","earnings","settle"].forEach(t=>$("#tab-"+t).hidden=(b.dataset.t!==t||state!=="default"&&state!=="settled"&&state!=="variance"));});
+/* state switcher */
+$$(".slate button").forEach(b=>b.onclick=()=>{ $$(".slate button").forEach(x=>x.classList.remove("on"));b.classList.add("on");state=b.dataset.s;
+ const def=(state==="default"||state==="settled"||state==="variance");
+ const cur=$$(".tabs button").find(x=>x.classList.contains("on")).dataset.t;
+ ["titles","earnings","settle"].forEach(t=>$("#tab-"+t).hidden=!(def&&t===cur));
+ $("#stateLoading").hidden=state!=="loading"; $("#stateEmpty").hidden=state!=="empty"; $("#stateError").hidden=state!=="error";
+ const denied=state==="denied";
+ $$(".mut").forEach(x=>x.disabled=denied); $$(".mut-lock").forEach(x=>x.hidden=!denied);
+ $("#roleName").textContent=denied?"BO role without bo-finance (read-only)":"bo-finance";
+ if(denied){["titles","earnings","settle"].forEach(t=>$("#tab-"+t).hidden=t!==cur)}
+ /* settled scenario */
+ const settled=state==="settled";
+ $("#julyChip").className=settled?"chip settled":"chip pending"; $("#julyChip").textContent=settled?"settled":"pending_settlement";
+ $("#btnRun").hidden=settled; $("#runRecord").hidden=!settled;
+ $("#runNote").textContent=settled?"Settled on 2026-08-01 by jhy":"";
+ $$(".varOnly").forEach(x=>x.hidden=state!=="variance");
+ $("#varChip").hidden=state!=="variance";
+});
+/* dialogs */
+$("#btnLink").onclick=()=>$("#dlgLink").showModal();
+$("#btnLink2").onclick=()=>$("#dlgLink").showModal();
+$$( "[data-unlink]").forEach(b=>b.onclick=()=>$("#dlgUnlink").showModal());
+$$("[data-relink]").forEach(b=>b.onclick=()=>toast("Re-linked 舊作:回聲 → active (no other active link existed). Audit: link."));
+$$("dialog [data-close]").forEach(b=>b.onclick=()=>b.closest("dialog").close());
+$("#mdbSearch").oninput=e=>{const none=e.target.value.trim()==="zzz";$("#mdbResults").hidden=none;$("#mdbNone").hidden=!none};
+$("#mdbPick").onclick=()=>{$("#dlgLink").close();toast("TitleLink created (active). Accrual starts now. Audit: link. A race on the same title → 409 'Already linked'.")};
+const rz=$("#unlinkReason");rz.oninput=()=>$("#unlinkGo").disabled=!rz.value.trim();
+$("#unlinkGo").onclick=()=>{$("#dlgUnlink").close();toast("Unlinked. active → unlinked · accrual stopped at unlinked_at · history untouched · audit: unlink ("+rz.value+")")};
+$("#btnRun").onclick=()=>$("#dlgRun").showModal();
+let ran=false;
+$("#runGo").onclick=()=>{$("#dlgRun").close();
+ if(ran){toast("Existing run sr-2026-07 returned — idempotent by period, nothing settled twice.");return}
+ ran=true;$("#runRecord").hidden=false;$("#btnRun").textContent="Run settlement (already settled — returns existing run)";
+ $$("#settleRows .chip.pending").forEach(c=>{c.className="chip settled";c.textContent="settled"});
+ toast("SettlementRun sr-2026-07 created · 3 statements settled · audit rows written · creators notified (in-app + email)");};
+$("#btnCsv").onclick=()=>toast("CSV exported (HKD, minor-unit precision). Read-only — no audit row.");
+$$("[data-exp-btn]").forEach(b=>b.onclick=()=>$("#e1").hidden=!$("#e1").hidden);
+$$("[data-exp-btn2]").forEach(b=>b.onclick=()=>$("#e2").hidden=!$("#e2").hidden);
+</script>
+</body>
+</html>
