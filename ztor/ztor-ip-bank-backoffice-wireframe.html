@@ -295,7 +295,12 @@
             <tbody id="rep-rows"></tbody>
           </table>
         </div>
-        <p class="note">Owed = film net revenue × share %. Withdrawals reuse the existing Profile withdraw flow (not configured here). Pending owners accrue but cannot withdraw until they claim. “Net revenue” definition and the settlement/calculation engine are out of scope for this phase — figures shown are illustrative.</p>
+        <div class="invite-banner" id="rep-retro" style="background:#1a1424;border-color:#4a3a5d;color:#cfc0e6">
+          <span>↩</span>
+          <div id="rep-retro-msg"></div>
+        </div>
+
+        <p class="note">Owed = film net revenue × share %. Withdrawals reuse the existing Profile withdraw flow (not configured here). Pending owners accrue but cannot withdraw until they claim. Backdated shares are paid as one-time adjustments in the current month and never change a closed month. “Net revenue” definition and the settlement/calculation engine are out of scope for this phase — figures shown are illustrative.</p>
       </section>
 
     </main>
@@ -370,10 +375,29 @@
         <div class="hint">Pick an existing Ztor user (links instantly), or type an email/phone to invite someone new.</div>
       </div>
 
-      <!-- forward-only / audit warning (G1) -->
+      <!-- effective dating (G1 revised): default forward-only, ops may backdate via retro adjustment -->
+      <div class="field">
+        <label for="f-from">Applies from <span class="req">*</span></label>
+        <select class="inp" id="f-from">
+          <option value="2026-06" selected>Current month (2026-06) · default</option>
+          <option value="2026-05">2026-05 · backdate (ops)</option>
+          <option value="2026-04">2026-04 · backdate (ops)</option>
+          <option value="2026-03">2026-03 · backdate (ops)</option>
+          <option value="2026-02">2026-02 · backdate (ops)</option>
+          <option value="2026-01">2026-01 · backdate (ops)</option>
+        </select>
+        <div class="hint">Entries normally start from the current month. Ops can pick an earlier month to backdate.</div>
+      </div>
+
+      <!-- retro adjustment preview (shown when a past month is selected) -->
+      <div class="invite-banner" id="retro-banner" style="background:#1a1424;border-color:#4a3a5d;color:#cfc0e6">
+        <span>↩</span>
+        <div id="retro-msg"></div>
+      </div>
+
       <div class="invite-banner show" style="background:#241d13;border-color:var(--gold-line);color:#e0cba6">
         <span>⚠️</span>
-        <div><b>Forward-only:</b> saving applies from today — already-settled periods are never recalculated. Every add, edit and remove is recorded in the audit log. <span class="faint">(Effective-dating rule pending finance sign-off)</span></div>
+        <div><b>Backdating:</b> an entry normally starts from today. Ops can pick an earlier month in <b>Applies from</b> — closed months are never changed; the missed share is paid as a one-time adjustment in the current month, from the platform's share. <span class="faint">(Pending finance sign-off)</span></div>
       </div>
     </div>
     <footer>
@@ -423,6 +447,16 @@ const REPORTS = {
     {ip:"Bruce Lee likeness", owner:"Lee Estate (B. Lee)", status:"linked", pct:50, withdrawn:18000},
   ]},
 };
+// per-film monthly net revenue (NT$) for settled months; 2026-06 is the current open period
+const OPEN_PERIOD = "2026-06";
+const SETTLED = ["2026-01","2026-02","2026-03","2026-04","2026-05"];
+const MONTHLY_NET = {
+  pirate:{"2026-01":38200,"2026-02":45100,"2026-03":52400,"2026-04":61800,"2026-05":79300},
+  fury:{"2026-01":98000,"2026-02":112500,"2026-03":120300,"2026-04":131700,"2026-05":142000},
+  tableread:{}, clock:{}
+};
+// retro adjustments posted this open period: {movie, ip, owner, pct, from, amount}
+const RETRO_ADJ = [];
 const fmt = n => "NT$ " + n.toLocaleString("en-US");
 
 /* ---------------- nav ---------------- */
@@ -462,15 +496,43 @@ const F = id => document.getElementById(id);
 
 function resetForm(){
   F('f-movie').value=''; F('f-title').value=''; F('f-type').value=''; F('f-pct').value='';
+  F('f-from').value=OPEN_PERIOD;
   owner=null; renderOwnerField(); F('movie-meta').classList.remove('show');
   F('pct-err').style.display='none'; F('pct-hint').textContent=''; F('f-pct').classList.remove('err');
   F('invite-banner').classList.remove('show');
+  updateRetro();
   validate();
 }
 
 /* movie meta + allocation hint */
-F('f-movie').addEventListener('change', ()=>{ updateMovieMeta(); checkPct(); validate(); });
-F('f-pct').addEventListener('input', ()=>{ checkPct(); validate(); });
+F('f-movie').addEventListener('change', ()=>{ updateMovieMeta(); checkPct(); updateRetro(); validate(); });
+F('f-pct').addEventListener('input', ()=>{ checkPct(); updateRetro(); validate(); });
+F('f-from').addEventListener('change', ()=>{ updateRetro(); validate(); });
+
+/* ---------------- retro adjustment preview ---------------- */
+function backdatedMonths(){ return SETTLED.filter(m => m >= F('f-from').value); }
+function computeRetro(mv, pct){
+  return backdatedMonths().reduce((s,m)=> s + Math.round((MONTHLY_NET[mv]?.[m]||0) * pct/100), 0);
+}
+function updateRetro(){
+  const banner=F('retro-banner'), msg=F('retro-msg'), save=F('modal-save');
+  const backdated = F('f-from').value < OPEN_PERIOD;
+  banner.classList.toggle('show', backdated);
+  save.textContent = backdated ? 'Add + backdate' : 'Add entry';
+  if(!backdated) return;
+  const mv=F('f-movie').value, pct=parseFloat(F('f-pct').value||'0');
+  const months=backdatedMonths(), span = months.length>1 ? `${months[0]} → ${months[months.length-1]}` : months[0];
+  if(!mv || !pct){
+    msg.innerHTML = `Backdating <b>${months.length}</b> closed month${months.length>1?'s':''} (${span}). Pick content and a revenue-share % to see the amount.`;
+    return;
+  }
+  const amt = computeRetro(mv, pct);
+  if(!amt){
+    msg.innerHTML = `No revenue for <b>${MOVIE_NAME[mv]}</b> in ${span} — nothing to pay back; the share simply starts from ${F('f-from').value}.`;
+    return;
+  }
+  msg.innerHTML = `Backdates <b>${months.length}</b> closed month${months.length>1?'s':''} (${span}) · missed share <b>${fmt(amt)}</b> — paid as a one-time adjustment in <b>${OPEN_PERIOD}</b>, from the platform's share. Other owners are not affected.`;
+}
 
 function updateMovieMeta(){
   const v = F('f-movie').value;
@@ -579,8 +641,16 @@ F('modal-save').onclick = ()=>{
     <td class="num"><button class="btn btn-sm btn-ghost">Edit</button></td>`;
   tb.appendChild(tr);
   MOVIE_ALLOC[mv]+=pct; // keep allocation live
+  const backdated = F('f-from').value < OPEN_PERIOD;
+  if(backdated){
+    const amt = computeRetro(mv, pct);
+    if(amt) RETRO_ADJ.push({movie:mv, ip:title, owner:owner.name, pct, from:F('f-from').value, amount:amt});
+  }
   closeModal();
-  toast(owner.invite ? 'Entry added · invite sent' : 'IP entry added');
+  const bits=['IP entry added'];
+  if(owner.invite) bits.push('invite sent');
+  if(backdated) bits.push('retro adjustment posted');
+  toast(bits.join(' · '));
 };
 
 function toast(msg){
@@ -612,6 +682,16 @@ function renderReport(){
   const pr=document.createElement('tr'); pr.className='platform-row';
   pr.innerHTML=`<td><b>Platform</b></td><td>—</td><td>—</td><td class="num"><span class="pct">${(100-allocPct).toFixed(2)}%</span></td><td class="num">${fmt(plat)}</td><td class="num">—</td><td class="num">—</td>`;
   tb.appendChild(pr);
+
+  // retro adjustments posted this open period (ops backdates) — shown outside the closed month
+  const adj = RETRO_ADJ.filter(a=>a.movie===mv);
+  const box=F('rep-retro');
+  box.classList.toggle('show', adj.length>0);
+  if(adj.length){
+    F('rep-retro-msg').innerHTML = `<b>One-time adjustments coming in ${OPEN_PERIOD}:</b> ` +
+      adj.map(a=>`${fmt(a.amount)} → ${a.owner} <span class="faint">(${a.ip}, backdated ${a.from} → ${SETTLED[SETTLED.length-1]})</span>`).join(' · ') +
+      ` <span class="faint">Paid from the platform's share — past months above are unchanged.</span>`;
+  }
 }
 F('rep-movie').addEventListener('change', renderReport);
 renderReport();
@@ -625,7 +705,7 @@ document.getElementById('bank-rows').addEventListener('click', e=>{
   const owner = rowToRemove.querySelector('.owner-cell')?.textContent.trim() || 'this owner';
   const pct = rowToRemove.querySelector('.pct')?.textContent || '';
   document.getElementById('confirm-msg').innerHTML =
-    `<b>${owner}</b> holds an accrued balance (${pct} share). Removing them affects downstream settlement and can’t be undone here. Removal applies <b>forward-only</b> — already-settled periods stay unchanged — and is recorded in the audit log.`;
+    `<b>${owner}</b> holds an accrued balance (${pct} share). Removing them affects downstream settlement and can’t be undone here. Removal applies <b>from today</b> — past months stay unchanged.`;
   lastFocus = document.activeElement;
   confirmScrim.classList.add('show');
   document.getElementById('confirm-cancel').focus();
