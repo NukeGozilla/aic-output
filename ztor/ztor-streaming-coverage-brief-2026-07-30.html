@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Streaming Availability Pipeline — Engineering Brief · 2026-07-30</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3eee2; --paper2:#ece5d4; --card:#fffdf8; --ink:#241f18; --muted:#6f675a;
+    --gold:#b0894f; --gold-soft:#cbb085; --rule:#ddd4c0;
+    --p1:#2563a8; --p1-bg:#e2ecf7;      /* Path 1 — TMDB/JustWatch */
+    --p2:#7c4bab; --p2-bg:#efe6f6;      /* Path 2 — on-site search */
+    --ok:#1f7a4d; --ok-bg:#e4f1e7;
+    --warn:#b06b14; --warn-bg:#f8ecd4;
+    --bad:#a83232; --bad-bg:#f7e4e2;
+    --sys:#556072; --sys-bg:#e7ebef;
+    --shadow:0 1px 0 rgba(0,0,0,.04),0 14px 40px -22px rgba(60,45,20,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Noto Sans TC",system-ui,sans-serif; color:var(--ink); line-height:1.62;
+    background:
+      radial-gradient(120% 80% at 100% -10%, #fbf7ec 0%, transparent 55%),
+      radial-gradient(120% 80% at -10% 110%, #f0e7d3 0%, transparent 50%),
+      var(--paper);
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:44px 26px 100px}
+
+  /* ---------- language switch ---------- */
+  html[lang="en"] .zh{display:none !important}
+  html[lang="zh-Hant"] .en{display:none !important}
+  .langsw{position:fixed;top:14px;right:14px;z-index:40;display:flex;gap:2px;padding:3px;
+    border:1px solid var(--rule);border-radius:999px;background:rgba(255,253,248,.94);
+    backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+  .langsw button{font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:700;
+    border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:999px;cursor:pointer;transition:.15s}
+  .langsw button:hover{color:var(--ink)}
+  .langsw button.on{background:var(--gold);color:#fff}
+
+  /* ---------- header ---------- */
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  h1{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(30px,4.6vw,50px);line-height:1.03;letter-spacing:-.015em;margin:.3em 0 .18em;max-width:22ch}
+  h1 em{font-style:italic;color:var(--gold)}
+  .sub{font-size:15px;color:var(--muted);max-width:74ch}
+  .sub b{color:var(--ink)}
+  .meta{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted);margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 18px}
+  .meta b{color:var(--ink);font-weight:700}
+  .goldrule{height:2px;margin:24px 0 0;background:linear-gradient(90deg,var(--gold),transparent 70%)}
+
+  /* ---------- callouts ---------- */
+  .callout{margin:20px 0;padding:14px 18px;border-radius:12px;border:1px solid;font-size:14px;display:flex;gap:12px;align-items:flex-start}
+  .callout .ic{font-size:17px;line-height:1.4;flex:none}
+  .callout.warn{background:var(--warn-bg);border-color:#e2c584;color:#6b4a12}
+  .callout.bad{background:var(--bad-bg);border-color:#e0b4ae;color:#7a2723}
+  .callout.key{background:#eef4ef;border-color:#bcd9c5;color:#2a4a35}
+  .callout.info{background:var(--p1-bg);border-color:#b6cee6;color:#1c4570}
+  .callout b{font-weight:700}
+
+  /* provenance legend */
+  .prov{display:grid;gap:6px;margin-top:8px;font-size:13px}
+  .tag{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap;margin-right:6px}
+  .t-m{background:var(--ok-bg);color:var(--ok)}
+  .t-s{background:var(--bad-bg);color:var(--bad)}
+  .t-i{background:var(--sys-bg);color:var(--sys)}
+
+  /* ---------- nav ---------- */
+  .nav{position:sticky;top:0;z-index:8;margin:26px 0 8px;padding:10px 14px;border:1px solid var(--rule);border-radius:12px;
+    background:rgba(255,253,248,.92);backdrop-filter:blur(10px);box-shadow:var(--shadow);
+    display:flex;flex-wrap:wrap;gap:6px}
+  .nav a{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:999px;transition:.15s;white-space:nowrap}
+  .nav a:hover{background:var(--paper2);color:var(--ink)}
+  .nav a.hot{color:var(--warn);background:var(--warn-bg)}
+
+  /* ---------- sections ---------- */
+  section{margin-top:36px;scroll-margin-top:74px}
+  h2{font-family:"Fraunces",serif;font-weight:600;font-size:26px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:12px;padding-bottom:8px;border-bottom:1.5px solid var(--rule);margin-bottom:16px}
+  h2 .no{font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:700;color:var(--gold);flex:none}
+  h3{font-family:"Fraunces",serif;font-weight:600;font-size:18.5px;margin:22px 0 8px;color:#3a3226}
+  h4{font-family:"Fraunces",serif;font-weight:600;font-size:15.5px;margin:16px 0 6px;color:#3a3226}
+  p{margin:9px 0}
+  ul.body{list-style:none;display:grid;gap:8px;margin:10px 0}
+  ul.body>li{padding-left:18px;position:relative}
+  ul.body>li::before{content:"·";position:absolute;left:4px;color:var(--gold);font-weight:700}
+  ol.body{margin:10px 0 10px 22px;display:grid;gap:8px}
+  ol.body li::marker{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--gold)}
+  .note-line{font-size:13.5px;color:var(--muted);margin-top:8px}
+  code{font-family:"JetBrains Mono",monospace;font-size:.86em;background:var(--paper2);padding:1px 5px;border-radius:5px;color:#4a4234}
+  .lead{font-size:16px}
+  .lead b{color:var(--ink)}
+
+  /* ---------- stat tiles ---------- */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}
+  .st{border:1px solid var(--rule);border-radius:12px;background:var(--card);padding:13px 15px;box-shadow:var(--shadow)}
+  .st .v{font-family:"Fraunces",serif;font-weight:900;font-size:27px;line-height:1.1;letter-spacing:-.02em}
+  .st .k{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+  .st.a .v{color:var(--gold)} .st.b .v{color:var(--p1)} .st.c .v{color:var(--p2)} .st.d .v{color:var(--ok)}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto;margin:14px 0;border:1px solid var(--rule);border-radius:12px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;background:var(--card);font-size:13.5px;min-width:520px}
+  th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);background:#faf6ec}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--paper2)}
+  .num{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:nowrap}
+  .idc{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--gold);white-space:nowrap}
+  tr.hl td{background:#fbf5e6}
+  tr.hl:hover td{background:#f7efdd}
+
+  /* ---------- chips ---------- */
+  .chip{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:999px;white-space:nowrap;margin:1px 2px 1px 0}
+  .c-p1{background:var(--p1-bg);color:var(--p1)} .c-p2{background:var(--p2-bg);color:var(--p2)}
+  .c-ok{background:var(--ok-bg);color:var(--ok)} .c-warn{background:var(--warn-bg);color:var(--warn)}
+  .c-bad{background:var(--bad-bg);color:var(--bad)} .c-sys{background:var(--sys-bg);color:var(--sys)}
+
+  /* ---------- pipeline diagram ---------- */
+  .pipe{margin:18px 0;padding:20px 18px;border:1px solid var(--rule);border-radius:14px;background:var(--card);box-shadow:var(--shadow)}
+  .node{border:1px solid var(--rule);border-radius:10px;background:#fbf7ee;padding:11px 14px}
+  .node .t{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+  .node .m{font-size:13.5px;margin-top:4px}
+  .node .s{font-size:12px;color:var(--muted);margin-top:3px}
+  .arrow{text-align:center;color:var(--gold-soft);font-size:19px;line-height:1;margin:8px 0}
+  .paths{display:grid;grid-template-columns:1fr;gap:12px;margin:4px 0}
+  @media(min-width:780px){.paths{grid-template-columns:1fr 1fr}}
+  .pathbox{border-radius:12px;padding:13px 15px;border:1px solid}
+  .pathbox.one{background:var(--p1-bg);border-color:#b6cee6}
+  .pathbox.two{background:var(--p2-bg);border-color:#cdb6e0}
+  .pathbox .h{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .pathbox.one .h{color:var(--p1)} .pathbox.two .h{color:var(--p2)}
+  .pathbox .plat{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:#4a4234;margin:7px 0;line-height:1.7}
+  .pathbox .line{font-size:13px;margin-top:5px}
+  .pathbox .flag{font-size:12.5px;font-weight:700;margin-top:7px}
+  .pathbox.one .flag{color:var(--p1)} .pathbox.two .flag{color:var(--p2)}
+  .gate{border:1px dashed var(--warn);background:var(--warn-bg);border-radius:10px;padding:11px 14px;color:#6b4a12}
+  .gate .t{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+  .gate .m{font-family:"JetBrains Mono",monospace;font-size:12.5px;margin-top:4px}
+
+  /* ---------- cards ---------- */
+  .cards{display:grid;gap:12px;margin:16px 0}
+  @media(min-width:800px){.cards.two{grid-template-columns:1fr 1fr}}
+  .card{border:1px solid var(--rule);border-radius:12px;background:var(--card);padding:14px 16px;box-shadow:var(--shadow);font-size:14px}
+  .card .n{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.08em}
+  .card .ti{font-weight:700;margin:5px 0 5px;font-size:15px}
+  .card .bd{color:#453d31;font-size:13.5px}
+  .card.flagged{border-left:4px solid var(--warn);background:#fdf7ea;border-color:#e2c584}
+  .card.danger{border-left:4px solid var(--bad);background:#fdf1ef;border-color:#e0b4ae}
+
+  /* checks list */
+  .checks{display:grid;gap:6px;margin:12px 0;font-family:"JetBrains Mono",monospace;font-size:12.5px}
+  .checks li{list-style:none;padding:8px 12px;border:1px solid var(--rule);border-radius:9px;background:var(--card);
+    display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+  .checks .ok{color:var(--ok);font-weight:700;flex:none}
+
+  /* batches */
+  .batch{margin:18px 0}
+  .batch .bh{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .batch .bt{font-family:"Fraunces",serif;font-weight:600;font-size:17px}
+  .batch .bs{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted)}
+
+  /* Q list */
+  .qs{display:grid;gap:9px;margin:14px 0}
+  .q{border:1px solid var(--rule);border-left:3px solid var(--gold-soft);border-radius:10px;background:var(--card);padding:11px 14px;font-size:13.5px;box-shadow:var(--shadow)}
+  .q .qn{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--gold);font-size:12px;margin-right:7px}
+  .q .ref{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted)}
+
+  /* options */
+  .opts{display:grid;gap:10px;margin:14px 0}
+  @media(min-width:800px){.opts{grid-template-columns:repeat(3,1fr)}}
+  .opt{border:1px solid var(--rule);border-radius:12px;background:var(--card);padding:13px 15px;font-size:13.5px;box-shadow:var(--shadow)}
+  .opt .ol{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.08em}
+  .opt.pick{border-color:#bcd9c5;background:#f4faf5}
+  .opt.pick .ol{color:var(--ok)}
+
+  footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--rule);font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);text-align:center;line-height:1.9}
+</style>
+</head>
+<body>
+
+<div class="langsw">
+  <button id="btn-en" class="on" onclick="setLang('en')">EN</button>
+  <button id="btn-zh" onclick="setLang('zh-Hant')">中文</button>
+</div>
+
+<div class="wrap">
+
+  <!-- ================= HEADER ================= -->
+  <header>
+    <div class="eyebrow">Ztor · Movie Data Pipeline · 2026-07-30</div>
+    <h1>
+      <span class="en">Streaming Availability Pipeline — <em>Engineering Brief</em></span>
+      <span class="zh">串流可觀看性管線 — <em>工程簡報</em></span>
+    </h1>
+    <p class="sub">
+      <span class="en">Review of the contractor coverage study <code>yh_vod → vod_streaming</code>. Data measured <b>2026-07-24</b> by direct read-only <code>SELECT</code> against production <code>ztorlivedb</code>. <b>Status: brief for discussion — no decisions taken yet.</b></span>
+      <span class="zh">外包團隊覆蓋率研究 <code>yh_vod → vod_streaming</code> 的審閱。數據於 <b>2026-07-24</b> 以唯讀 <code>SELECT</code> 直接查詢正式環境 <code>ztorlivedb</code> 所得。<b>狀態：討論用簡報 — 尚未做出任何決策。</b></span>
+    </p>
+    <div class="meta">
+      <span><span class="en">Audience</span><span class="zh">對象</span>: <b><span class="en">Ztor core dev team</span><span class="zh">Ztor 核心開發團隊</span></b></span>
+      <span><span class="en">Measured</span><span class="zh">量測日</span>: <b>2026-07-24</b></span>
+      <span><span class="en">Brief date</span><span class="zh">簡報日期</span>: <b>2026-07-30</b></span>
+      <span><span class="en">Source</span><span class="zh">來源</span>: <b><span class="en">contractor one-pager (Traditional Chinese)</span><span class="zh">外包團隊單頁報告（繁體中文）</span></b></span>
+    </div>
+    <div class="goldrule"></div>
+
+    <div class="callout info">
+      <div class="ic">📌</div>
+      <div>
+        <p><b><span class="en">Read this first.</span><span class="zh">請先閱讀。</span></b>
+        <span class="en">The source artifact is entirely in Traditional Chinese. Everything here is translated and re-derived so this doc stands alone — nobody needs the original to follow the argument.</span>
+        <span class="zh">原始文件全為繁體中文。本文件已完整翻譯並獨立重新推導，因此可單獨閱讀 — 不需要原稿也能理解全部論證。</span></p>
+        <p style="margin-top:8px"><b><span class="en">Provenance matters in this study.</span><span class="zh">本研究的數據來源標註很重要。</span></b>
+        <span class="en">The contractor is disciplined about separating what they measured from what they're quoting. So are we:</span>
+        <span class="zh">外包團隊嚴謹地區分「實際量測」與「引用舊值」。我們也照做：</span></p>
+        <div class="prov">
+          <div><span class="tag t-m">measured</span><span class="en">2026-07-24 direct production query. Trustworthy.</span><span class="zh">2026-07-24 正式環境直接查詢。可信。</span></div>
+          <div><span class="tag t-s">stale</span><span class="en">From earlier reports (06-10 diagnostic, 07-05 coverage survey), <b>not re-measured</b>. Do not quote externally.</span><span class="zh">來自舊報告（06-10 診斷、07-05 覆蓋率調查），<b>未重新量測</b>。請勿對外引用。</span></div>
+          <div><span class="tag t-i">inferred</span><span class="en">The contractor's interpretation, labelled as such by them.</span><span class="zh">外包團隊的詮釋，由其自行標註。</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= NAV ================= -->
+  <nav class="nav">
+    <a href="#s1">1 · <span class="en">TL;DR</span><span class="zh">摘要</span></a>
+    <a href="#s2">2 · <span class="en">Pipeline</span><span class="zh">管線</span></a>
+    <a href="#s3">3 · <span class="en">Numbers</span><span class="zh">數據</span></a>
+    <a href="#s4">4 · <span class="en">Arithmetic</span><span class="zh">算術驗證</span></a>
+    <a href="#s5" class="hot">5 · <span class="en">Architectural read</span><span class="zh">架構解讀</span></a>
+    <a href="#s6" class="hot">6 · <span class="en">Change the metric</span><span class="zh">先改指標</span></a>
+    <a href="#s7">7 · <span class="en">Sequence</span><span class="zh">執行順序</span></a>
+    <a href="#s8">8 · <span class="en">Open questions</span><span class="zh">待答問題</span></a>
+    <a href="#s9" class="hot">9 · <span class="en">Needs Jeff / BD</span><span class="zh">需 Jeff / BD 決策</span></a>
+    <a href="#s10">10 · <span class="en">Bottom line</span><span class="zh">結論</span></a>
+  </nav>
+
+  <!-- ================= 1 TL;DR ================= -->
+  <section id="s1">
+    <h2><span class="no">01</span><span class="en">TL;DR</span><span class="zh">摘要</span></h2>
+
+    <p class="lead">
+      <b><span class="en">10% coverage is mostly a licensing ceiling, not a scraping failure.</span><span class="zh">10% 覆蓋率主要是授權天花板，而非抓取失敗。</span></b>
+      <span class="en"> That framing is well-supported and we should accept it.</span>
+      <span class="zh"> 這個定調證據充分，我們應予接受。</span>
+    </p>
+
+    <div class="stats">
+      <div class="st a"><div class="v">10.0%</div><div class="k"><span class="en">catalog coverage</span><span class="zh">全庫覆蓋率</span></div></div>
+      <div class="st"><div class="v">47,711</div><div class="k"><span class="en">of 477,800 titles</span><span class="zh">／ 477,800 部</span></div></div>
+      <div class="st"><div class="v">138,197</div><div class="k"><span class="en">valid rows</span><span class="zh">有效資料列</span></div></div>
+      <div class="st d"><div class="v">2.9</div><div class="k"><span class="en">offers per covered title</span><span class="zh">每部平均可觀看筆數</span></div></div>
+      <div class="st c"><div class="v">29%</div><div class="k"><span class="en">path 2 exclusive</span><span class="zh">僅路徑 2 取得</span></div></div>
+      <div class="st c"><div class="v">91%</div><div class="k"><span class="en">of 15-day growth</span><span class="zh">近 15 日新增佔比</span></div></div>
+    </div>
+
+    <p><span class="en">Four things for this team:</span><span class="zh">給團隊的四個重點：</span></p>
+
+    <div class="cards two">
+      <div class="card">
+        <div class="n">01</div>
+        <div class="ti"><span class="en">The study is arithmetically sound.</span><span class="zh">研究的算術是站得住腳的。</span></div>
+        <div class="bd"><span class="en">Independently reconciled — see §4. You can use the segment table for prioritization decisions.</span><span class="zh">我們已獨立核對 — 見 §4。分群表可安全用於排定優先順序。</span></div>
+      </div>
+      <div class="card flagged">
+        <div class="n">02</div>
+        <div class="ti"><span class="en">Do <em>not</em> "cut the long tail."</span><span class="zh">不要「砍長尾」。</span></div>
+        <div class="bd"><span class="en">The 93.1% low-yield cohort holds <b>82% of all titles we actually cover</b>. The segment table invites exactly the wrong conclusion. See §5.1.</span><span class="zh">93.1% 的低命中率群組，涵蓋了<b>我們實際覆蓋片單的 82%</b>。分群表很容易引導出完全錯誤的結論。見 §5.1。</span></div>
+      </div>
+      <div class="card danger">
+        <div class="n">03</div>
+        <div class="ti"><span class="en">Match precision has never been measured — and it sits on top of the growth path.</span><span class="zh">比對準確率從未被量測 — 而它正壓在成長路徑之上。</span></div>
+        <div class="bd"><span class="en">The fuzzy-matching half of the pipeline is 29% exclusive and 91% of recent growth. A false match ships a wrong "watch on X" link to a user. See §5.2.</span><span class="zh">管線中做模糊比對的那一半，貢獻 29% 的獨家覆蓋與 91% 的近期成長。一次錯誤比對，就是把錯的「可於 X 觀看」連結送到使用者面前。見 §5.2。</span></div>
+      </div>
+      <div class="card flagged">
+        <div class="n">04</div>
+        <div class="ti"><span class="en">Full-catalog coverage % is the wrong north-star.</span><span class="zh">全庫覆蓋率是錯的北極星指標。</span></div>
+        <div class="bd"><span class="en">We're measuring ourselves against TMDB's global archive, which is not our product. Measure against what users search on ztor.com. See §6.</span><span class="zh">我們是拿自己跟 TMDB 的全球片庫比，但那不是我們的產品。應該用使用者在 ztor.com 實際搜尋的內容來衡量。見 §6。</span></div>
+      </div>
+    </div>
+
+    <div class="callout key">
+      <div class="ic">✅</div>
+      <div><span class="en">Highest-value next moves are all <b>cheap queries against data we already hold</b>, not engineering projects. See §7.</span>
+      <span class="zh">價值最高的下一步，全都是<b>對現有資料的低成本查詢</b>，而不是工程專案。見 §7。</span></div>
+    </div>
+  </section>
+
+  <!-- ================= 2 PIPELINE ================= -->
+  <section id="s2">
+    <h2><span class="no">02</span><span class="en">The pipeline as built</span><span class="zh">現行管線架構</span></h2>
+
+    <p><span class="en">Daily Cloud Run Job <code>check-streaming</code> — <b>02:00 TW / 03:00 HK</b>. Batched, resume-from-checkpoint, <code>--skip-fresh-within 168h</code> (only re-query titles stale &gt; 7 days).</span>
+    <span class="zh">每日 Cloud Run Job <code>check-streaming</code> — <b>台灣 02:00 / 香港 03:00</b>。分批執行、支援檢查點續跑，<code>--skip-fresh-within 168h</code>（只重查超過 7 天未更新的片目）。</span></p>
+
+    <div class="pipe">
+      <div class="node">
+        <div class="t">yh_vod</div>
+        <div class="m"><b>477,800</b> <span class="en">searchable titles (state 1/4, not deleted)</span><span class="zh">可搜尋片目（state 1/4、未刪除）</span></div>
+        <div class="s"><span class="en">≈ mirror of TMDB's GLOBAL catalog · 99.99% have <code>tmdbid</code> (only 24 missing)</span><span class="zh">≈ TMDB 全球片庫的鏡像 · 99.99% 具備 <code>tmdbid</code>（僅 24 筆缺漏）</span></div>
+      </div>
+      <div class="arrow">↓ <span style="font-family:'JetBrains Mono',monospace;font-size:11px"><span class="en">batch scan</span><span class="zh">分批掃描</span></span></div>
+      <div class="node">
+        <div class="t">check-streaming</div>
+        <div class="m"><span class="en">Cloud Run Job — daily</span><span class="zh">Cloud Run Job — 每日執行</span></div>
+      </div>
+      <div class="arrow">↓</div>
+
+      <div class="paths">
+        <div class="pathbox one">
+          <div class="h"><span class="en">Path 1 — key: tmdbid</span><span class="zh">路徑 1 — 鍵值：tmdbid</span></div>
+          <div class="line"><span class="en">TMDB / JustWatch watch-provider API</span><span class="zh">TMDB / JustWatch 觀看平台 API</span></div>
+          <div class="plat">netflix · disn · aptv · hbom<br>catchplay · gplay · primev · linetv</div>
+          <div class="line"><span class="en">Reaches</span><span class="zh">觸及</span> <b>33,897</b> <span class="en">titles</span><span class="zh">部</span></div>
+          <div class="flag"><span class="en">NEAR SATURATION · deterministic ID join → no match risk</span><span class="zh">接近飽和 · 以 ID 精準比對 → 無比對風險</span></div>
+        </div>
+        <div class="pathbox two">
+          <div class="h"><span class="en">Path 2 — key: TITLE STRING</span><span class="zh">路徑 2 — 鍵值：片名字串</span></div>
+          <div class="line"><span class="en">On-site search ("local searchers")</span><span class="zh">站內搜尋（「在地搜尋器」）</span></div>
+          <div class="plat">TW: friDay · LiTV · MyVideo · myTV · iQIYI · Hami<br>HK: Viu</div>
+          <div class="line"><span class="en">Reaches</span><span class="zh">觸及</span> <b>22,337</b> — <b>13,815</b> <span class="en">found by NO other path</span><span class="zh">部為其他路徑完全找不到</span></div>
+          <div class="flag"><span class="en">Fuzzy string match → ALL match risk lives here · failures → cooldown → resume</span><span class="zh">模糊字串比對 → 所有比對風險都在這裡 · 連續失敗 → 冷卻 → 續跑</span></div>
+        </div>
+      </div>
+
+      <div class="arrow">↓</div>
+      <div class="gate">
+        <div class="t"><span class="en">Match gate</span><span class="zh">比對閘</span></div>
+        <div class="m"><span class="en">normalized title · Dice similarity ≥ 0.82 · media type must agree</span><span class="zh">正規化片名 · Dice 相似度 ≥ 0.82 · 媒體類型須一致</span></div>
+        <div class="m" style="color:var(--bad)">⚠ <span class="en">no release-year check</span><span class="zh">未做上映年份檢查</span></div>
+      </div>
+      <div class="arrow">↓ <span style="font-family:'JetBrains Mono',monospace;font-size:11px">upsert</span></div>
+      <div class="node">
+        <div class="t">vod_streaming</div>
+        <div class="m"><b>138,197</b> <span class="en">valid rows</span><span class="zh">有效資料列</span> · <b>47,711 / 477,800 = 10.0%</b></div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="node">
+        <div class="t">ztor.com</div>
+        <div class="m"><span class="en">Search card — "available platforms"</span><span class="zh">搜尋結果卡 — 「可觀看平台」</span></div>
+      </div>
+    </div>
+
+    <div class="callout key">
+      <div class="ic">🔑</div>
+      <div><b><span class="en">Why two paths exist:</span><span class="zh">為何需要兩條路徑：</span></b>
+      <span class="en"> JustWatch has effectively zero coverage of TW/HK-local platforms. Path 2 is not redundancy — it is the <b>only</b> source for roughly a third of our data. Removing it drops coverage to ~7%.</span>
+      <span class="zh"> JustWatch 對台港在地平台的覆蓋幾乎為零。路徑 2 不是備援 — 它是我們約三分之一資料的<b>唯一</b>來源。移除它，覆蓋率會掉到約 7%。</span></div>
+    </div>
+  </section>
+
+  <!-- ================= 3 NUMBERS ================= -->
+  <section id="s3">
+    <h2><span class="no">03</span><span class="en">The numbers</span><span class="zh">數據</span></h2>
+
+    <h3><span class="en">Headline — all</span><span class="zh">主要指標 — 全部為</span> <span class="tag t-m">measured</span></h3>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th><span class="en">Metric</span><span class="zh">指標</span></th>
+          <th><span class="en">Value</span><span class="zh">數值</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span class="en">Searchable <code>yh_vod</code> titles (denominator)</span><span class="zh">可搜尋的 <code>yh_vod</code> 片目（分母）</span></td><td class="num">477,800</td></tr>
+          <tr class="hl"><td><span class="en">Titles with ≥ 1 streaming source</span><span class="zh">至少有 1 個串流來源的片目</span></td><td class="num">47,711 (<b>10.0%</b>)</td></tr>
+          <tr><td><span class="en">Valid <code>vod_streaming</code> rows</span><span class="zh">有效的 <code>vod_streaming</code> 資料列</span></td><td class="num">138,197</td></tr>
+          <tr class="hl"><td><b><span class="en">Offers per covered title</span><span class="zh">每部已覆蓋片目的可觀看筆數</span></b> <span class="note-line" style="display:inline">→ §5.3</span></td><td class="num"><b>2.9</b></td></tr>
+          <tr><td><span class="chip c-p1">PATH 1</span> <span class="en">Reached via TMDB / JustWatch</span><span class="zh">透過 TMDB / JustWatch 取得</span></td><td class="num">33,897</td></tr>
+          <tr><td><span class="chip c-p2">PATH 2</span> <span class="en">Reached via on-site search</span><span class="zh">透過站內搜尋取得</span></td><td class="num">22,337 — <b>13,815 <span class="en">exclusive</span><span class="zh">獨家</span></b> (29%)</td></tr>
+          <tr><td><span class="en">Last 15 days — gross rows added</span><span class="zh">近 15 日 — 新增資料列（毛數）</span></td><td class="num">+23,459 (88% <span class="en">from Path 2</span><span class="zh">來自路徑 2</span>)</td></tr>
+          <tr class="hl"><td><b><span class="en">Last 15 days — net new titles covered</span><span class="zh">近 15 日 — 淨新增已覆蓋片目</span></b></td><td class="num"><b>+5,221</b> (8.9% → 10.0%)</td></tr>
+          <tr><td><span class="en">Last 15 days — first-time ingested titles</span><span class="zh">近 15 日 — 首次入庫片目</span></td><td class="num">9,655 → <b>8,804 <span class="chip c-p2">P2</span> (91%)</b>, 728 <span class="chip c-p1">P1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warn">
+      <div class="ic">⚠️</div>
+      <div><b><span class="en">Gross ≠ net.</span><span class="zh">毛增 ≠ 淨增。</span></b>
+      <span class="en"> +23,459 rows produced only +5,221 newly-covered titles — a <b>~4.5× inflation factor</b>. The contractor flags this explicitly. Anyone reporting row growth as coverage growth is wrong by that multiple.</span>
+      <span class="zh"> 新增 23,459 列，只換來 5,221 部新覆蓋片目 — <b>約 4.5 倍的膨脹係數</b>。外包團隊有明確標示這點。任何把「資料列成長」講成「覆蓋率成長」的人，都錯了這個倍數。</span></div>
+    </div>
+
+    <h3><span class="en">Coverage by segment — all</span><span class="zh">分群覆蓋率 — 全部為</span> <span class="tag t-m">measured</span></h3>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th><span class="en">Segment</span><span class="zh">分群</span></th>
+          <th><span class="en">Share of catalog</span><span class="zh">佔全庫比例</span></th>
+          <th><span class="en">Coverage</span><span class="zh">覆蓋率</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><b><span class="en">Movies</span><span class="zh">電影</span></b></td><td class="num">75.5%</td><td class="num"><b>7.2%</b></td></tr>
+          <tr><td><b><span class="en">TV series</span><span class="zh">影集</span></b></td><td class="num">24.5%</td><td class="num"><b>18.7%</b> <span class="chip c-ok">2.6×</span></td></tr>
+          <tr><td><span class="en">No rating</span><span class="zh">無評分</span></td><td class="num">62.6%</td><td class="num">4.8%</td></tr>
+          <tr><td><span class="en">Rated 7–8</span><span class="zh">評分 7–8</span></td><td class="num">—</td><td class="num">27% <span class="chip c-ok"><span class="en">peak</span><span class="zh">最高</span></span></td></tr>
+          <tr><td><span class="en">Rated 8+</span><span class="zh">評分 8 以上</span></td><td class="num">—</td><td class="num">20.1%</td></tr>
+          <tr><td><span class="en">No language tag</span><span class="zh">無語言標記</span></td><td class="num">~60%</td><td class="num">6.8%</td></tr>
+          <tr><td><span class="en">Major languages (zh / en / ja / ko)</span><span class="zh">主要語言（中 / 英 / 日 / 韓）</span></td><td class="num">—</td><td class="num">13–15%</td></tr>
+          <tr><td><span class="en">US-origin</span><span class="zh">美國出品</span></td><td class="num">71%</td><td class="num">7.4%</td></tr>
+          <tr><td><span class="en">HK/Macau · TW · JP · KR</span><span class="zh">港澳 · 台 · 日 · 韓</span></td><td class="num">—</td><td class="num">24.2% · 15.1% · 12.6% · 12.1%</td></tr>
+          <tr><td><span class="en">Pre-1950</span><span class="zh">1950 年前</span></td><td class="num">—</td><td class="num">2.6% <span class="chip c-bad"><span class="en">lowest</span><span class="zh">最低</span></span></td></tr>
+          <tr><td><span class="en">2000s</span><span class="zh">2000 年代</span></td><td class="num">—</td><td class="num">5.6%</td></tr>
+          <tr><td><span class="en">1980–99</span><span class="zh">1980–99</span></td><td class="num">—</td><td class="num">18.6%</td></tr>
+          <tr><td><span class="en">2020s</span><span class="zh">2020 年代</span></td><td class="num">—</td><td class="num">13.1%</td></tr>
+          <tr class="hl"><td><b><span class="en">Union: obscure + unrated + no-language</span><span class="zh">聯集：冷門 + 無評分 + 無語言</span></b></td><td class="num"><b>93.1%</b> (444,685)</td><td class="num"><b>8.8%</b></td></tr>
+          <tr class="hl"><td><b><span class="en">"Clean" titles (rated + language + not obscure)</span><span class="zh">「乾淨」片目（有評分 + 有語言 + 非冷門）</span></b></td><td class="num"><b>6.9%</b> (33,115)</td><td class="num"><b>25.4%</b></td></tr>
+          <tr class="hl"><td><b><span class="en">High-rated TV (TV + rating ≥ 7) — best cohort</span><span class="zh">高評分影集（影集 + 評分 ≥ 7）— 最佳群組</span></b></td><td class="num">—</td><td class="num"><b>31.9%</b> <span class="chip c-ok"><span class="en">practical ceiling</span><span class="zh">實務天花板</span></span></td></tr>
+          <tr><td><span class="en">TV released 2024+</span><span class="zh">2024 年後上架影集</span></td><td class="num">—</td><td class="num">26.8%</td></tr>
+          <tr><td><span class="en">Rating ≥ 6</span><span class="zh">評分 ≥ 6</span></td><td class="num">—</td><td class="num">24.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="en">Three caveats the contractor raises and we endorse</span><span class="zh">外包團隊提出、我們認同的三點注意事項</span></h4>
+    <ul class="body">
+      <li><b><span class="en">The three "bad signal" cohorts are the same titles.</span><span class="zh">三個「訊號不良」群組其實是同一批片。</span></b>
+        <span class="en"> Obscure (71%), unrated (63%), no-language (60%) overlap heavily. <b>Do not sum or multiply them.</b> Their union is 93.1% at 8.8%, vs 25.4% for the clean 6.9% — a ~3× spread, not a 10× one.</span>
+        <span class="zh"> 冷門（71%）、無評分（63%）、無語言（60%）高度重疊。<b>不要相加或相乘。</b>其聯集為 93.1%、覆蓋 8.8%，對比乾淨群組 6.9%、覆蓋 25.4% — 差距約 3 倍，不是 10 倍。</span></li>
+      <li><b><span class="en">Small-language percentages are noise.</span><span class="zh">小語種的百分比是雜訊。</span></b>
+        <span class="en"> French 49%, Thai 65% — a few hundred titles each. Not signal.</span>
+        <span class="zh"> 法語 49%、泰語 65% — 各自只有幾百部。不是訊號。</span></li>
+      <li><b><span class="en">The <code>area</code> field is dirty</span><span class="zh"><code>area</code> 欄位是髒的</span></b>
+        <span class="en"> (free-text). Blank <code>area</code> shows 76% coverage, which tells you the field is unreliable, not that blank is good. Don't build on <code>area</code>.</span>
+        <span class="zh">（自由文字）。空白 <code>area</code> 顯示 76% 覆蓋率，這說明的是欄位不可靠，而不是空白比較好。不要拿 <code>area</code> 當基礎。</span></li>
+      <li><b><span class="en">Age is not the driver</span><span class="zh">年份不是主因</span></b>
+        <span class="en"> — 1980–99 (18.6%) beats the 2000s (5.6%). The contractor's read, labelled <span class="tag t-i">inferred</span>: what matters is notability and licensing, not age. Agreed — and the non-monotonicity kills the intuitive "old = unfindable" model.</span>
+        <span class="zh"> — 1980–99（18.6%）高於 2000 年代（5.6%）。外包團隊的解讀，標註為 <span class="tag t-i">inferred</span>：關鍵在知名度與授權，而非年份。同意 — 這種非單調性也推翻了直覺上「越舊越找不到」的模型。</span></li>
+    </ul>
+
+    <h3><span class="en">External corroboration</span><span class="zh">外部佐證</span></h3>
+    <div class="callout key">
+      <div class="ic">🌐</div>
+      <div><span class="en">Industry tracking (Reelgood, 2025-11): mainstream platforms carry only <b>~12%</b> of the in-release film catalog, and <b>45% of films / 48% of series have no watch option at all in the US</b>. TW/HK are far smaller licensing markets. <b>A ~10% figure is roughly what the market structure predicts.</b></span>
+      <span class="zh">產業追蹤（Reelgood，2025-11）：主流平台僅涵蓋在映片庫的 <b>約 12%</b>，且在美國 <b>45% 的電影 / 48% 的影集完全沒有任何觀看管道</b>。台港的授權市場規模又小得多。<b>約 10% 這個數字，大致就是市場結構會預測出來的值。</b></span></div>
+    </div>
+  </section>
+
+  <!-- ================= 4 ARITHMETIC ================= -->
+  <section id="s4">
+    <h2><span class="no">04</span><span class="en">Why you can trust the arithmetic</span><span class="zh">為何算術可信</span></h2>
+
+    <p><span class="en">We re-derived the study's numbers independently from the source. They close:</span>
+    <span class="zh">我們依原始資料獨立重新推導了研究中的數字，全部吻合：</span></p>
+
+    <ul class="checks">
+      <li><span><span class="en">Media-type split → headline</span><span class="zh">媒體類型拆分 → 主指標</span>: <code>0.755 × 7.2% + 0.245 × 18.7% = 10.02%</code></span><span class="ok">✓</span></li>
+      <li><span><span class="en">Cohort split is exhaustive</span><span class="zh">群組拆分無遺漏</span>: <code>444,685 + 33,115 = 477,800</code></span><span class="ok">✓</span></li>
+      <li><span><span class="en">Cohort split → headline</span><span class="zh">群組拆分 → 主指標</span>: <code>0.931 × 8.8% + 0.069 × 25.4% = 9.94%</code></span><span class="ok">✓</span></li>
+      <li><span><span class="en">Net-growth check</span><span class="zh">淨成長檢查</span>: <code>8.9% × 477,800 + 5,221 ≈ 47,745</code> vs 47,711</span><span class="ok">✓</span></li>
+      <li><span><span class="en">Path attribution</span><span class="zh">路徑歸因</span>: <code>8,804 + 728 = 9,532</code> / 9,655</span><span class="ok">✓</span></li>
+      <li><span><span class="en">OTT cross-check</span><span class="zh">OTT 交叉驗證</span>: <code>19% × 7,320 ≈ 1,390</code> vs 1,397</span><span class="ok">✓</span></li>
+    </ul>
+
+    <p><span class="en">Segment tables usually don't survive this treatment. <b>Practical consequence:</b> the segment table is safe to prioritize against, even though the study also carries several <span class="tag t-s">stale</span> numbers. Treat the two classes differently — don't discard the good work because of the stale figures, and don't quote the stale figures because the rest is good.</span>
+    <span class="zh">分群表通常撐不過這種檢驗。<b>實務含意：</b>即使研究中同時夾帶數個 <span class="tag t-s">stale</span> 數字，分群表仍可安全用於排定優先順序。請分開對待這兩類 — 不要因為有舊數字就否定好的工作，也不要因為其他部分可靠就引用那些舊數字。</span></p>
+
+    <h3><span class="en">Independent evidence for the ceiling claim — the strongest thing in the study</span><span class="zh">天花板論點的獨立證據 — 全研究最強的一點</span></h3>
+    <div class="callout key">
+      <div class="ic">🎯</div>
+      <div><span class="en">A <b>separate, non-JustWatch OTT chart crawler</b> (table <code>vod_availability_details</code>) independently confirmed 7,320 titles as genuinely available. <b>We already had 81% of them.</b> <span class="tag t-m">measured</span></span>
+      <span class="zh">一個<b>獨立於 JustWatch 的 OTT 排行榜爬蟲</b>（資料表 <code>vod_availability_details</code>）獨立確認了 7,320 部確實可觀看的片目。<b>其中 81% 我們早已收錄。</b> <span class="tag t-m">measured</span></span></div>
+    </div>
+    <p><span class="en">That's a real falsification test, and the pipeline passed it. The contractor immediately volunteers the limitation: <b>that sample skews popular, so it cannot speak for the long tail.</b> This is the single most important caveat in the entire study — the ceiling thesis is well-evidenced <em>for popular titles</em> and effectively unmeasured for the tail. §8 has the fix.</span>
+    <span class="zh">這是一次真正的否證測試，而管線通過了。外包團隊也主動說明限制：<b>該樣本偏向熱門片，因此無法代表長尾。</b>這是整份研究中最重要的一點但書 — 天花板論點<em>對熱門片</em>證據充分，但對長尾實際上完全未經量測。§8 有補救方式。</span></p>
+
+    <h3><span class="en">Numbers flagged</span><span class="zh">被標註為</span> <span class="tag t-s">stale</span> — <span class="en">do not quote</span><span class="zh">的數字 — 請勿引用</span></h3>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th><span class="en">Figure</span><span class="zh">數字</span></th>
+          <th><span class="en">Why it's suspect</span><span class="zh">為何可疑</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="idc">93.4%<br><span style="font-weight:400;color:var(--muted);font-size:11px"><span class="en">"no active offer"</span><span class="zh">「無有效可觀看來源」</span></span></td>
+            <td><span class="en">Contractor's own words: self-inconsistent. Its implied 6.6% ceiling is <em>below</em> our measured 10%, which is impossible. Needs re-measurement against <code>yh_vod</code> on TW/HK JustWatch, not TMDB global. <b>Nobody may use 93.4% to argue "we're at the ceiling, stop investing."</b></span>
+            <span class="zh">外包團隊自己說了：這個數字自相矛盾。它隱含的 6.6% 天花板<em>低於</em>我們實測的 10%，這不可能。必須改用台港 JustWatch 對 <code>yh_vod</code> 重新量測，而非 TMDB 全球。<b>任何人都不得用 93.4% 來主張「已到天花板、停止投入」。</b></span></td></tr>
+          <tr><td class="idc">friDay<br>196 vs 5,868</td>
+            <td><span class="en">Fallout of a fixed URL double-encoding bug. Unclear which is the corrected figure.</span>
+            <span class="zh">URL 雙重編碼 bug 修復後的副作用。不清楚哪一個才是修正後的數字。</span></td></tr>
+          <tr><td class="idc">MyVideo / iQIYI<br>22,393→435<br>25,779→565</td>
+            <td><span class="en"><b>Per-round failure counts, not coverage.</b> Exactly the kind of number that gets misquoted as a coverage win.</span>
+            <span class="zh"><b>是單輪失敗次數，不是覆蓋率。</b>正是那種很容易被誤引為「覆蓋率大勝」的數字。</span></td></tr>
+          <tr><td class="idc">Viu 4–5 <span class="en">wks/round</span><span class="zh">週/輪</span><br>LiTV ~20 RPM</td>
+            <td><span class="en">Throughput figures from the old report.</span><span class="zh">來自舊報告的吞吐量數字。</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= 5 ARCHITECTURAL READ ================= -->
+  <section id="s5">
+    <h2><span class="no">05</span><span class="en">Architectural read</span><span class="zh">架構解讀</span></h2>
+    <p class="note-line"><span class="en">This section is our analysis, not the contractor's.</span><span class="zh">本節為我們的分析，非外包團隊內容。</span></p>
+
+    <h3>5.1 · <span class="en">The segment table invites a harmful conclusion</span><span class="zh">分群表會誘導出有害的結論</span></h3>
+    <p><span class="en">"93.1% of the catalog at 8.8% coverage" reads like dead weight. Multiply it out:</span>
+    <span class="zh">「93.1% 的片庫只有 8.8% 覆蓋率」聽起來像是沉重包袱。但把它乘開來看：</span></p>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th><span class="en">Cohort</span><span class="zh">群組</span></th>
+          <th><span class="en">Titles</span><span class="zh">片目數</span></th>
+          <th><span class="en">Coverage</span><span class="zh">覆蓋率</span></th>
+          <th><span class="en">Covered titles</span><span class="zh">已覆蓋片目</span></th>
+        </tr></thead>
+        <tbody>
+          <tr class="hl"><td><span class="en">Long tail (93.1%)</span><span class="zh">長尾（93.1%）</span></td><td class="num">444,685</td><td class="num">8.8%</td><td class="num"><b>~39,100 — 82%</b></td></tr>
+          <tr><td><span class="en">Clean (6.9%)</span><span class="zh">乾淨群組（6.9%）</span></td><td class="num">33,115</td><td class="num">25.4%</td><td class="num">~8,400 — 18%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout bad">
+      <div class="ic">🚫</div>
+      <div><b><span class="en">The low-yield cohort holds 82% of the titles we actually cover.</span><span class="zh">低命中率群組，涵蓋了我們實際覆蓋片目的 82%。</span></b>
+      <span class="en"> It's low-yield <em>per title</em> and dominant <em>in absolute terms</em> because it's 13× bigger. Deprioritizing it by hit rate would cut the branch we're standing on.</span>
+      <span class="zh"> 它<em>單片命中率</em>低，但<em>絕對數量</em>佔壓倒性多數，因為它大了 13 倍。若照命中率把它降級，等於鋸掉自己坐的那根樹枝。</span></div>
+    </div>
+    <p><b><span class="en">Consequence for contractor recommendation ② (reorder scan queue by cohort hit rate):</span><span class="zh">對外包團隊建議 ②（依群組命中率重排掃描佇列）的影響：</span></b>
+    <span class="en"> it is worth either a lot or nothing, and we can't tell which. If the nightly job completes a full pass over everything due, reordering changes only <em>which titles are fresh first</em> — total coverage is unchanged, exactly as the contractor states (「覆蓋率一點都不會少」). It converts to real gain <b>only if the queue is backlogged and titles are being starved.</b></span>
+    <span class="zh"> 它要嘛價值很高、要嘛完全沒價值，而我們現在無法判斷是哪一種。如果每晚的任務都能跑完所有到期片目，重排只改變<em>哪些片先被更新</em> — 總覆蓋率不變，正如外包團隊所說（「覆蓋率一點都不會少」）。它<b>只有在佇列積壓、部分片目被餓死時</b>才會轉化為真實收益。</span></p>
+    <div class="callout warn">
+      <div class="ic">📊</div>
+      <div><b><span class="en">The missing number is scan-cycle completion rate and queue depth.</span><span class="zh">缺少的關鍵數字是：掃描週期完成率與佇列深度。</span></b>
+      <span class="en"> It's not in the study. It decides whether ② is a real item. Measure it before building it.</span>
+      <span class="zh"> 研究裡沒有。它決定 ② 是不是一個真的待辦。先量測，再開發。</span></div>
+    </div>
+    <p><span class="en">The defensible version of ② is <b>tiering by volatility, not by yield</b>: an obscure 1974 film's availability changes rarely, so re-check the tail on a 60–90 day cycle and the demand head far more often than 168h. That reallocates the same budget without starving anything.</span>
+    <span class="zh">② 站得住腳的版本是<b>依變動性分層，而非依命中率</b>：一部冷門的 1974 年電影，其可觀看狀態極少變動，所以長尾可以 60–90 天為一輪重查，而高需求的頭部則遠比 168 小時更頻繁地更新。這是在同樣預算下重新配置，且不會餓死任何一群。</span></p>
+
+    <h3>5.2 · <span class="en">Precision risk sits exactly on top of the growth — highest-priority gap</span><span class="zh">準確率風險正好壓在成長之上 — 最高優先的缺口</span></h3>
+    <p><span class="en">The two paths have fundamentally different correctness properties:</span>
+    <span class="zh">兩條路徑的正確性性質根本不同：</span></p>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th></th>
+          <th><span class="chip c-p1">PATH 1</span> TMDB / JustWatch</th>
+          <th><span class="chip c-p2">PATH 2</span> <span class="en">on-site search</span><span class="zh">站內搜尋</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><span class="en">Join key</span><span class="zh">比對鍵值</span></td><td><code>tmdbid</code> — <span class="en">deterministic</span><span class="zh">確定性</span></td><td><b><span class="en">normalized title string — fuzzy</span><span class="zh">正規化片名字串 — 模糊</span></b></td></tr>
+          <tr><td><span class="en">Match risk</span><span class="zh">比對風險</span></td><td><span class="en">none</span><span class="zh">無</span></td><td><b><span class="en">all of it</span><span class="zh">全部在此</span></b></td></tr>
+          <tr><td><span class="en">Exclusive coverage</span><span class="zh">獨家覆蓋</span></td><td>—</td><td class="num"><b>13,815 (29%)</b></td></tr>
+          <tr><td><span class="en">Share of 15-day first-time ingests</span><span class="zh">近 15 日首次入庫佔比</span></td><td class="num">8%</td><td class="num"><b>91%</b></td></tr>
+          <tr><td><span class="en">Trend</span><span class="zh">趨勢</span></td><td><span class="en">saturated</span><span class="zh">已飽和</span></td><td><b><span class="en">the entire growth story</span><span class="zh">成長的全部來源</span></b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout bad">
+      <div class="ic">🔺</div>
+      <div><b><span class="en">The only half of the pipeline with unverified correctness is the half carrying all the growth — and every cycle compounds it.</span>
+      <span class="zh">管線中唯一「正確性未經驗證」的那一半，正是承載全部成長的那一半 — 而且每跑一輪就複利累積一次。</span></b></div>
+    </div>
+    <p><span class="en">The gate is normalized-title Dice ≥ 0.82 + media-type agreement, with <b>no release-year check</b>. That will collide on remakes and common titles — "The Killer", "Alone", most two-character Chinese titles. A false positive is a user-facing trust bug: we tell someone a film is on LiTV, they click, it isn't there. <b>We have no false-positive rate, per-platform or overall.</b></span>
+    <span class="zh">比對閘是「正規化片名 Dice ≥ 0.82 + 媒體類型一致」，<b>沒有上映年份檢查</b>。這在重拍片與常見片名上一定會撞車 —《The Killer》、《Alone》、大多數兩個字的中文片名。誤判是直接面向使用者的信任問題：我們告訴使用者某片在 LiTV，他點進去，卻沒有。<b>我們沒有任何誤判率數據，不論是各平台別或整體。</b></span></p>
+    <div class="callout key">
+      <div class="ic">🛠</div>
+      <div><span class="en"><code>yh_vod</code> mirrors TMDB, so <code>release_date</code> is already present. <b>A year-proximity gate is nearly free to add.</b> At minimum, log the year delta on every match so this becomes auditable retroactively.</span>
+      <span class="zh"><code>yh_vod</code> 是 TMDB 的鏡像，<code>release_date</code> 早就存在。<b>加一道年份接近度檢查幾乎是零成本。</b>至少也該在每次比對時記錄年份差，讓這件事日後可回溯稽核。</span></div>
+    </div>
+
+    <h3>5.3 · <span class="en">One query that materially strengthens or weakens the ceiling thesis</span><span class="zh">一個能實質強化或削弱天花板論點的查詢</span></h3>
+    <p class="lead"><b>138,197 ÷ 47,711 = 2.9</b> <span class="en">offers per covered title.</span><span class="zh">每部已覆蓋片目的可觀看筆數。</span></p>
+    <p><span class="en">The interpretation is load-bearing and we can't resolve it from the source:</span>
+    <span class="zh">這個數字的詮釋是承重結構，而我們無法從原始資料判定：</span></p>
+    <div class="cards two">
+      <div class="card">
+        <div class="n">A</div>
+        <div class="ti"><span class="en">If ~3 distinct platforms</span><span class="zh">若為約 3 個不同平台</span></div>
+        <div class="bd"><span class="en">Coverage is close to <b>binary</b>. A title is either inside the TW/HK licensing universe (and then broadly licensed) or outside it. That strongly corroborates the ceiling thesis.</span>
+        <span class="zh">覆蓋接近<b>二元</b>：一部片要嘛在台港授權範圍內（且被廣泛授權），要嘛就在範圍外。這強力佐證天花板論點。</span></div>
+      </div>
+      <div class="card">
+        <div class="n">B</div>
+        <div class="ti"><span class="en">If mostly 1 platform × 3 offer types</span><span class="zh">若多為 1 個平台 × 3 種方案</span></div>
+        <div class="bd"><span class="en">(flatrate / rent / buy) — the ceiling story is <b>materially weaker</b> and there is real per-platform gap left to close.</span>
+        <span class="zh">（訂閱制 / 租 / 買）— 天花板論點<b>會明顯變弱</b>，代表各平台之間仍有真實可補的缺口。</span></div>
+      </div>
+    </div>
+    <div class="callout key">
+      <div class="ic">⚡</div>
+      <div><span class="en">One <code>GROUP BY</code> over distinct <code>platform_code</code> per <code>vid</code> settles it. If the distribution is bimodal (0 or 3+), the ceiling argument is close to proven. If it's mostly exactly 1, we should keep investing in breadth. <b>High information, near-zero cost — do this in the first batch.</b></span>
+      <span class="zh">一句對每個 <code>vid</code> 的 distinct <code>platform_code</code> 做 <code>GROUP BY</code> 就能定案。若分布為雙峰（0 或 3+），天花板論點接近證實；若大多恰為 1，我們就該繼續投資廣度。<b>資訊量高、成本近乎零 — 放進第一批。</b></span></div>
+    </div>
+
+    <h3>5.4 · <span class="en">Operational gaps</span><span class="zh">維運面缺口</span></h3>
+    <div class="cards">
+      <div class="card flagged">
+        <div class="ti"><span class="en">No de-provisioning / staleness policy</span><span class="zh">沒有下架 / 過期政策</span></div>
+        <div class="bd"><span class="en"><code>--skip-fresh-within 168h</code> means offers are up to 7 days stale by design; Viu reportedly takes 4–5 weeks per full round <span class="tag t-s">stale</span>. What happens when a title is <em>removed</em> from a platform — does the row get flagged inactive, or linger forever? "138,197 <b>valid</b> rows" implies a validity concept, but no decay policy is described. Titles silently rotating off Netflix / LiTV are a steady accumulation of wrong data pointed straight at users — same failure mode as §5.2, different cause.</span>
+        <span class="zh"><code>--skip-fresh-within 168h</code> 代表資料在設計上最多可過期 7 天；Viu 據稱每完整一輪要 4–5 週 <span class="tag t-s">stale</span>。當一部片被平台<em>下架</em>時會怎樣 — 該筆資料會被標記為無效，還是永遠留著？「138,197 筆<b>有效</b>資料列」暗示存在有效性的概念，但沒有描述任何衰減政策。悄悄從 Netflix / LiTV 輪替下架的片，會持續累積成直接指向使用者的錯誤資料 — 與 §5.2 相同的失效模式，不同成因。</span></div>
+      </div>
+      <div class="card flagged">
+        <div class="ti"><span class="en">Third-party relay in the critical path</span><span class="zh">關鍵路徑上的第三方中繼</span></div>
+        <div class="bd"><span class="en">LiTV is fetched via <code>r.jina.ai</code>. Our primary growth lever depends on an external proxy with no SLA, no contract, and its own ToS. If it blocks us or disappears, ~29% of coverage stops refreshing. Needs a contingency or an owned egress path.</span>
+        <span class="zh">LiTV 是透過 <code>r.jina.ai</code> 抓取。我們主要的成長槓桿，依賴一個沒有 SLA、沒有合約、有自己服務條款的外部代理。若它封鎖我們或消失，約 29% 的覆蓋將停止更新。需要備援方案或自有出口路徑。</span></div>
+      </div>
+      <div class="card">
+        <div class="ti"><span class="en">Denominator not reconciled with the frontend</span><span class="zh">分母未與前端對齊</span></div>
+        <div class="bd"><span class="en">Coverage uses <code>state 1/4, not deleted</code>. Is that byte-identical to what ztor.com search actually surfaces? If the frontend filters more tightly, user-visible coverage is mechanically higher than 10% — <b>the cheapest possible correction to the headline, with zero engineering.</b></span>
+        <span class="zh">覆蓋率用的是 <code>state 1/4、未刪除</code>。這跟 ztor.com 搜尋實際呈現的範圍完全一致嗎？如果前端篩選更嚴格，使用者看到的覆蓋率在數學上就會高於 10% — <b>這是修正主指標最便宜的方式，零工程成本。</b></span></div>
+      </div>
+      <div class="card">
+        <div class="ti"><span class="en">Bus factor</span><span class="zh">單點人員風險</span></div>
+        <div class="bd"><span class="en">Pipeline knowledge, production DB access, and the analysis all sit with one external contractor. Who on this team can operate, debug, and re-run <code>check-streaming</code> next quarter? Naming this because it's the risk a technical review usually omits.</span>
+        <span class="zh">管線知識、正式環境 DB 存取權、以及分析能力，全部集中在一個外部團隊身上。下一季，我們團隊裡有誰能操作、除錯並重跑 <code>check-streaming</code>？特別點名，是因為這正是技術審閱通常會漏掉的風險。</span></div>
+      </div>
+      <div class="card danger">
+        <div class="ti"><span class="en">Production writes need a process</span><span class="zh">正式環境寫入需要流程</span></div>
+        <div class="bd"><span class="en">The study was read-only — good discipline. But recommendations ③ (backfill 1,397 rows) and ⑥b (purge 5,868 foreign-offer rows) are <b>writes to production <code>vod_streaming</code></b>. Each needs: reviewed script, staging run, backup, rollback plan, named owner on our side. For the purge specifically — <b>soft-flag first, verify the 69 affected titles, delete later.</b></span>
+        <span class="zh">本研究為唯讀 — 紀律良好。但建議 ③（回補 1,397 列）與 ⑥b（清除 5,868 列境外可觀看資料）都是<b>對正式環境 <code>vod_streaming</code> 的寫入</b>。每一項都需要：經審閱的腳本、預備環境試跑、備份、回滾計畫、以及我方指定負責人。清除作業尤其要 — <b>先軟標記、驗證受影響的 69 部片、之後再刪除。</b></span></div>
+      </div>
+    </div>
+
+    <h3>5.5 · <span class="en">Not an engineering call</span><span class="zh">這不是工程決策</span></h3>
+    <div class="callout warn">
+      <div class="ic">🤝</div>
+      <div><span class="en">Contractor recommendation ④ includes rotating egress IPs and raising relay concurrency against platforms that are actively blocking us. Several of those platforms — friDay, LiTV, MyVideo, Viu, Hami — are plausible future <em>partners</em>. Escalating an evasion arms race against a company BD may want to sign is <b>Jeff's call, not the contractor's and not ours.</b> Flagging, not blocking. See §9.</span>
+      <span class="zh">外包團隊建議 ④ 包含輪替出口 IP、並對正在封鎖我們的平台提高中繼併發數。其中數個平台 — friDay、LiTV、MyVideo、Viu、Hami — 都可能是未來的<em>合作夥伴</em>。對一家 BD 可能想簽約的公司升高規避戰，<b>是 Jeff 的決策，不是外包團隊的，也不是我們的。</b>這裡只標示，不阻擋。見 §9。</span></div>
+    </div>
+  </section>
+
+  <!-- ================= 6 METRIC ================= -->
+  <section id="s6">
+    <h2><span class="no">06</span><span class="en">Change the metric first</span><span class="zh">先改指標</span></h2>
+
+    <p class="lead"><b><span class="en">Full-catalog coverage % measures us against TMDB's global archive. That archive is not our product.</span>
+    <span class="zh">全庫覆蓋率是拿我們跟 TMDB 的全球典藏比。那個典藏不是我們的產品。</span></b></p>
+
+    <p><span class="en">Nobody at Ztor cares whether we have watch links for 477,800 titles including every unrated 1960s regional film that TMDB happens to list. What matters is whether a user searching ztor.com finds a watch link.</span>
+    <span class="zh">Ztor 沒有人在乎我們是否對 477,800 部片（包含 TMDB 剛好收錄的每一部無評分 1960 年代地方電影）都有觀看連結。真正重要的是：在 ztor.com 上搜尋的使用者，能不能找到觀看連結。</span></p>
+
+    <div class="callout key">
+      <div class="ic">🎯</div>
+      <div><b><span class="en">Replace the north-star with demand-weighted coverage:</span><span class="zh">把北極星指標換成需求加權覆蓋率：</span></b>
+      <span class="en"> coverage across the top N titles actually searched on ztor.com over the last 30 / 90 days. <b>We have the search logs. It is a query, not a project.</b></span>
+      <span class="zh"> 即近 30 / 90 天內在 ztor.com 實際被搜尋的前 N 部片的覆蓋率。<b>搜尋日誌我們已經有了。這是一句查詢，不是一個專案。</b></span></div>
+    </div>
+
+    <p><span class="en">This changes decisions, not just reporting:</span><span class="zh">這改變的是決策，不只是報表：</span></p>
+    <ul class="body">
+      <li><span class="en">It answers whether users are hitting these gaps <b>at all</b></span><span class="zh">它回答了使用者<b>究竟有沒有</b>撞上這些缺口</span></li>
+      <li><span class="en">It converts the scan queue's sort key from "cohort hit rate" to "user demand" — strictly better prioritization, and it subsumes contractor ②</span><span class="zh">它把掃描佇列的排序鍵從「群組命中率」換成「使用者需求」 — 嚴格來說是更好的優先排序，並且直接涵蓋了外包建議 ②</span></li>
+      <li><span class="en">It gives BD a defensible number for platform conversations</span><span class="zh">它給 BD 一個在平台談判中站得住腳的數字</span></li>
+    </ul>
+
+    <div class="callout warn">
+      <div class="ic">📈</div>
+      <div><b><span class="en">Expectation:</span><span class="zh">預期：</span></b>
+      <span class="en"> demand-weighted coverage is dramatically higher than 10%, because search demand concentrates on exactly the titles we cover best (recent, rated, TV). <b>If it isn't — that is a far more urgent finding than anything else in this study, and it inverts the whole roadmap.</b></span>
+      <span class="zh"> 需求加權覆蓋率會遠高於 10%，因為搜尋需求正好集中在我們覆蓋最好的片目（新片、有評分、影集）。<b>如果不是 — 那會是這份研究裡最緊急的發現，並會徹底翻轉整個路線圖。</b></span></div>
+    </div>
+
+    <p><b><span class="en">On the 15.5% figure:</span><span class="zh">關於 15.5% 這個數字：</span></b>
+    <span class="en"> the contractor is right that it's circular. 15.5% comes from excluding a cohort (pre-1930 / no-dialogue / unrated US films) that was itself <em>defined by</em> low-coverage characteristics. Their recommendation ⑤ — report 10% and 15.5% together with exclusions stated — is honest. §6 is the better version: report demand-weighted coverage plus cohort coverage (high-rated TV 32%, post-2024 TV 27%), which is what users actually experience.</span>
+    <span class="zh"> 外包團隊說得對，它是循環論證。15.5% 來自排除某個群組（1930 年前 / 無對白 / 無評分美國片），而那個群組本身就是<em>用低覆蓋特徵定義出來的</em>。他們的建議 ⑤ — 同時報告 10% 與 15.5% 並註明排除條件 — 是誠實的做法。§6 是更好的版本：報告需求加權覆蓋率，加上群組覆蓋率（高評分影集 32%、2024 年後影集 27%），那才是使用者實際體驗到的。</span></p>
+  </section>
+
+  <!-- ================= 7 SEQUENCE ================= -->
+  <section id="s7">
+    <h2><span class="no">07</span><span class="en">Recommended sequence</span><span class="zh">建議執行順序</span></h2>
+    <p class="note-line"><span class="en">Reordered from the contractor's list with cost and risk factored in.</span><span class="zh">在外包團隊清單的基礎上，納入成本與風險後重新排序。</span></p>
+
+    <div class="batch">
+      <div class="bh">
+        <div class="bt"><span class="chip c-ok">BATCH 1</span> <span class="en">Cheap queries, no engineering — do this week</span><span class="zh">低成本查詢、無需工程 — 本週執行</span></div>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr>
+            <th>#</th>
+            <th><span class="en">Action</span><span class="zh">行動</span></th>
+            <th><span class="en">Why</span><span class="zh">理由</span></th>
+            <th><span class="en">Effort</span><span class="zh">工時</span></th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="idc">1</td>
+              <td><b><span class="en">Demand-weighted coverage</span><span class="zh">需求加權覆蓋率</span></b> <span class="en">from ztor.com search logs</span><span class="zh">（取自 ztor.com 搜尋日誌）</span> <span class="ref">§6</span></td>
+              <td><span class="en">Tells us if the problem is even real. Gates everything below.</span><span class="zh">告訴我們問題到底存不存在。是以下所有事項的前置條件。</span></td>
+              <td class="num">~1d</td></tr>
+            <tr><td class="idc">2</td>
+              <td><b><span class="en">Match precision audit</span><span class="zh">比對準確率稽核</span></b> — <span class="en">hand-check ~200 randomly sampled matched rows, per-platform false-match rate</span><span class="zh">人工檢查隨機抽樣的約 200 筆比對結果，計算各平台誤判率</span> <span class="ref">§5.2</span></td>
+              <td><span class="en">No point expanding a pipeline whose accuracy is unknown</span><span class="zh">在準確率未知的情況下擴張管線沒有意義</span></td>
+              <td class="num">~1d</td></tr>
+            <tr><td class="idc">3</td>
+              <td><b><span class="en">Distinct platforms per covered title</span><span class="zh">每部已覆蓋片目的不重複平台數</span></b> <span class="ref">§5.3</span></td>
+              <td><span class="en">Confirms or breaks the ceiling thesis</span><span class="zh">證實或推翻天花板論點</span></td>
+              <td class="num">~1h</td></tr>
+            <tr><td class="idc">4</td>
+              <td><b><span class="en">Scan-cycle completion rate + queue depth</span><span class="zh">掃描週期完成率 + 佇列深度</span></b> <span class="ref">§5.1</span></td>
+              <td><span class="en">Decides whether contractor ② is real or a no-op</span><span class="zh">決定外包建議 ② 是真待辦還是空操作</span></td>
+              <td class="num">~1h</td></tr>
+            <tr><td class="idc">5</td>
+              <td><b><span class="en">Reconcile denominator against the frontend filter</span><span class="zh">將分母與前端篩選條件對齊</span></b> <span class="ref">§5.4</span></td>
+              <td><span class="en">May correct the headline for free</span><span class="zh">可能零成本修正主指標</span></td>
+              <td class="num">~1h</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="batch">
+      <div class="bh">
+        <div class="bt"><span class="chip c-warn">BATCH 2</span> <span class="en">Small, safe, user-visible</span><span class="zh">小、安全、使用者看得到</span></div>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr>
+            <th>#</th>
+            <th><span class="en">Action</span><span class="zh">行動</span></th>
+            <th><span class="en">Why</span><span class="zh">理由</span></th>
+            <th><span class="en">Effort</span><span class="zh">工時</span></th>
+          </tr></thead>
+          <tbody>
+            <tr class="hl"><td class="idc">6</td>
+              <td><b><span class="en">Fix the <code>platform_code</code> gap</span><span class="zh">修正 <code>platform_code</code> 缺口</span></b> — <span class="en">1,502 rows are empty because Crunchyroll / Mubi / Tubi have no code mapping (contractor ⑥a)</span><span class="zh">1,502 列為空，因為 Crunchyroll / Mubi / Tubi 沒有代碼對照（外包建議 ⑥a）</span></td>
+              <td><b><span class="en">The data is already in the DB and simply doesn't render.</span><span class="zh">資料早就在 DB 裡，只是沒被顯示出來。</span></b> <span class="en">The only unambiguous "just do it" in the study.</span><span class="zh">是整份研究裡唯一毫無爭議的「直接做」。</span></td>
+              <td class="num"><span class="en">hours</span><span class="zh">數小時</span></td></tr>
+            <tr><td class="idc">7</td>
+              <td><b><span class="en">Add release-year proximity to the match gate</span><span class="zh">在比對閘加入上映年份接近度</span></b> — <span class="en">or at minimum log year delta</span><span class="zh">或至少記錄年份差</span> <span class="ref">§5.2</span></td>
+              <td><span class="en">Nearly free; <code>release_date</code> already present</span><span class="zh">幾乎零成本；<code>release_date</code> 早已存在</span></td>
+              <td class="num"><span class="en">small</span><span class="zh">小</span></td></tr>
+            <tr><td class="idc">8</td>
+              <td><b><span class="en">Define the de-provisioning / row-validity policy</span><span class="zh">定義下架 / 資料列有效性政策</span></b> <span class="ref">§5.4</span></td>
+              <td><span class="en">Stops silent accumulation of wrong data</span><span class="zh">停止錯誤資料無聲累積</span></td>
+              <td class="num"><span class="en">design first</span><span class="zh">先設計</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="batch">
+      <div class="bh">
+        <div class="bt"><span class="chip c-sys">BATCH 3</span> <span class="en">Conditional on Batch 1</span><span class="zh">視第一批結果而定</span></div>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr>
+            <th>#</th>
+            <th><span class="en">Action</span><span class="zh">行動</span></th>
+            <th><span class="en">Condition</span><span class="zh">條件</span></th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="idc">9</td>
+              <td><b><span class="en">Ingest OTT chart / spotlight feed as a trusted source</span><span class="zh">將 OTT 排行 / 焦點內容來源納為可信來源</span></b> <span class="en">(contractor ③) — backfills the 1,397 known misses, adds near-real-time new-release pickup. Correctly positioned by the contractor as a gap-filler; charts can't see the tail.</span><span class="zh">（外包建議 ③）— 回補已知遺漏的 1,397 筆，並增加近即時的新片捕捉。外包團隊正確地將其定位為補洞工具；排行榜看不到長尾。</span></td>
+              <td><span class="en">Follow the production-write process in §5.4</span><span class="zh">依循 §5.4 的正式環境寫入流程</span></td></tr>
+            <tr><td class="idc">10</td>
+              <td><b><span class="en">Reorder / tier the scan queue</span><span class="zh">重排 / 分層掃描佇列</span></b> <span class="en">(contractor ②, reframed per §5.1)</span><span class="zh">（外包建議 ②，依 §5.1 重新框定）</span></td>
+              <td><span class="en">Only if #4 shows a real backlog. Tier by volatility, not yield. Sort key from #1.</span><span class="zh">僅在 #4 顯示確有積壓時執行。依變動性分層，而非命中率。排序鍵取自 #1。</span></td></tr>
+            <tr><td class="idc">11</td>
+              <td><b><span class="en">Harden the local searchers</span><span class="zh">強化在地搜尋器</span></b> <span class="en">(contractor ④) — the genuine growth lever</span><span class="zh">（外包建議 ④）— 真正的成長槓桿</span></td>
+              <td><span class="en">Blocked on cost figures (§8) <b>and</b> the §9 policy call</span><span class="zh">卡在成本數字（§8）<b>以及</b> §9 的政策決定</span></td></tr>
+            <tr><td class="idc">12</td>
+              <td><b><span class="en">Purge 5,868 foreign-offer rows</span><span class="zh">清除 5,868 列境外可觀看資料</span></b> <span class="en">(contractor ⑥b)</span><span class="zh">（外包建議 ⑥b）</span></td>
+              <td><span class="en">Soft-flag first, verify the 69 affected titles, delete in a later pass</span><span class="zh">先軟標記、驗證受影響的 69 部片、之後再刪除</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h4><span class="en">Deferred</span><span class="zh">暫緩</span></h4>
+    <ul class="body">
+      <li><code>area</code> <span class="en">normalization (contractor ⑥c) — affects area reports only, no user impact, and the field is dirty anyway</span><span class="zh">正規化（外包建議 ⑥c）— 只影響地區報表、對使用者無影響，且該欄位本來就是髒的</span></li>
+      <li><span class="en">The 24 <code>yh_vod</code> rows missing <code>tmdbid</code> — ignore</span><span class="zh">缺少 <code>tmdbid</code> 的 24 列 <code>yh_vod</code> — 忽略</span></li>
+    </ul>
+  </section>
+
+  <!-- ================= 8 OPEN QUESTIONS ================= -->
+  <section id="s8">
+    <h2><span class="no">08</span><span class="en">Open questions for the contractor</span><span class="zh">給外包團隊的待答問題</span></h2>
+
+    <h3><span class="en">Engineering</span><span class="zh">工程面</span></h3>
+    <div class="qs">
+      <div class="q"><span class="qn">Q1</span><b><span class="en">False-match rate on the Dice ≥ 0.82 gate — has it ever been sampled? Why no year check?</span><span class="zh">Dice ≥ 0.82 比對閘的誤判率 — 曾經抽樣過嗎？為何沒有年份檢查？</span></b> <span class="ref">§5.2</span></div>
+      <div class="q"><span class="qn">Q2</span><b><span class="en">What is the de-provisioning path when a title leaves a platform? What makes a <code>vod_streaming</code> row "invalid"?</span><span class="zh">當一部片從平台下架時，下架處理路徑是什麼？什麼情況會讓一筆 <code>vod_streaming</code> 變成「無效」？</span></b> <span class="ref">§5.4</span></div>
+      <div class="q"><span class="qn">Q3</span><b><span class="en">Distinct <code>platform_code</code> values per covered title</span><span class="zh">每部已覆蓋片目的不重複 <code>platform_code</code> 值</span></b> — <span class="en">distribution, not just the mean.</span><span class="zh">要分布，不只是平均值。</span> <span class="ref">§5.3</span></div>
+      <div class="q"><span class="qn">Q4</span><b><span class="en">Scan-cycle completion rate and queue backlog depth.</span><span class="zh">掃描週期完成率與佇列積壓深度。</span></b> <span class="ref">§5.1</span></div>
+      <div class="q"><span class="qn">Q5</span><b><span class="en">Per-platform coverage contribution and per-platform round-completion time.</span><span class="zh">各平台的覆蓋貢獻度，以及各平台單輪完成時間。</span></b> <span class="en"> We know local-vs-JustWatch; we don't know which individual searcher earns its keep — needed before hardening any specific scraper.</span><span class="zh"> 我們知道在地 vs JustWatch 的差別，但不知道個別搜尋器是否值得維護 — 在強化任何特定爬蟲之前必須先知道。</span></div>
+      <div class="q"><span class="qn">Q6</span><b><span class="en">Actual cost</span><span class="zh">實際成本</span></b>: <span class="en">API quota consumed, Cloud Run spend / runtime, relay cost. The roadmap is ranked by "coverage gain ÷ cost" with <b>no cost figures given anywhere</b> — we can't validate the ranking or approve #11 without them.</span><span class="zh">API 配額消耗、Cloud Run 花費 / 執行時間、中繼成本。整份路線圖是依「覆蓋率增益 ÷ 成本」排序，但<b>從頭到尾沒有給任何成本數字</b> — 沒有這些就無法驗證排序，也無法核准第 11 項。</span></div>
+      <div class="q"><span class="qn">Q7</span><b><span class="en">Fallback if <code>r.jina.ai</code> blocks us or goes down?</span><span class="zh">若 <code>r.jina.ai</code> 封鎖我們或掛掉，備援是什麼？</span></b> <span class="ref">§5.4</span></div>
+      <div class="q"><span class="qn">Q8</span><b><span class="en">Does <code>state 1/4, not deleted</code> match the frontend search filter exactly?</span><span class="zh"><code>state 1/4、未刪除</code> 是否與前端搜尋篩選條件完全一致？</span></b> <span class="ref">§5.4</span></div>
+      <div class="q"><span class="qn">Q9</span><b>friDay</b>: <span class="en">after the URL double-encoding fix, full-table catch was 196 titles vs 5,868 before. Which is the corrected number, and what is friDay's real contribution?</span><span class="zh">URL 雙重編碼修復後，全表抓取為 196 部，先前為 5,868 部。哪一個是修正後的數字？friDay 真正的貢獻是多少？</span></div>
+      <div class="q"><span class="qn">Q10</span><b><span class="en">Confirm</span><span class="zh">確認</span></b> <span class="en">MyVideo / iQIYI <code>22,393→435</code> / <code>25,779→565</code> are per-round failure counts, not coverage. The diagram says so; it's the kind of number that gets misquoted.</span><span class="zh">MyVideo / iQIYI 的 <code>22,393→435</code> / <code>25,779→565</code> 是單輪失敗次數而非覆蓋率。圖上是這樣寫的；但這正是容易被誤引的那類數字。</span></div>
+    </div>
+
+    <h3><span class="en">Re-measurements that would harden the ceiling claim</span><span class="zh">能強化天花板論點的重新量測</span></h3>
+    <p class="note-line"><span class="en">The contractor's own list, which we endorse.</span><span class="zh">外包團隊自己列出的清單，我們表示認同。</span></p>
+    <div class="qs">
+      <div class="q" style="border-left-color:var(--warn)"><span class="qn" style="color:var(--warn)">Q11</span><b><span class="en">Stratified manual sample of the uncovered long tail</span><span class="zh">對未覆蓋長尾做分層人工抽樣</span></b> <span class="en">(not the popular chart cohort) to settle "genuinely unlicensed" vs "unreachable by us." <b>This is the one gap that decides how much headroom exists</b>, and it's the study's own stated blind spot.</span><span class="zh">（不是熱門排行群組），以判定是「真的沒授權」還是「我們抓不到」。<b>這是唯一能決定還有多少成長空間的缺口</b>，也是研究自己承認的盲點。</span></div>
+      <div class="q"><span class="qn">Q12</span><b><span class="en">Re-measure "no active offer" against <code>yh_vod</code></span><span class="zh">以 <code>yh_vod</code> 重新量測「無有效可觀看來源」</span></b> <span class="en">on TW/HK JustWatch, to replace the broken 93.4%.</span><span class="zh">（使用台港 JustWatch），以取代錯誤的 93.4%。</span></div>
+      <div class="q"><span class="qn">Q13</span><b><span class="en">Split last-15-day distinct new vids into Path 1 vs Path 2</span><span class="zh">將近 15 日的不重複新片依路徑 1 / 路徑 2 拆分</span></b> <span class="en">(currently gross row counts only) to actually confirm JustWatch saturation.</span><span class="zh">（目前只有毛資料列數），以真正確認 JustWatch 是否飽和。</span></div>
+    </div>
+  </section>
+
+  <!-- ================= 9 JEFF / BD ================= -->
+  <section id="s9">
+    <h2><span class="no">09</span><span class="en">Needs a call from Jeff / BD — not from engineering</span><span class="zh">需要 Jeff / BD 決策 — 不是工程決策</span></h2>
+
+    <p><b><span class="en">Anti-blocking escalation against TW/HK platforms</span><span class="zh">對台港平台升高反封鎖手段</span></b> <span class="ref">§5.5</span>.
+    <span class="en"> Recommendation ④ proposes rotating egress IPs and raising relay concurrency against friDay, LiTV, MyVideo, Viu, Hami — several of which are plausible future partners. Engineering can build it; whether we <em>should</em> is a relationship decision.</span>
+    <span class="zh"> 建議 ④ 提議輪替出口 IP、並對 friDay、LiTV、MyVideo、Viu、Hami 提高中繼併發 — 其中數家都可能成為未來夥伴。工程做得出來；但我們<em>該不該做</em>，是一個關係決策。</span></p>
+
+    <div class="opts">
+      <div class="opt">
+        <div class="ol">OPTION A</div>
+        <p><span class="en">Escalate as proposed.</span><span class="zh">照提議升高手段。</span></p>
+      </div>
+      <div class="opt">
+        <div class="ol">OPTION B</div>
+        <p><span class="en">Hold at current volumes and accept slower growth.</span><span class="zh">維持現有量能，接受較慢的成長。</span></p>
+      </div>
+      <div class="opt pick">
+        <div class="ol">OPTION C ★</div>
+        <p><span class="en"><b>Open partner / API conversations</b> with the two or three highest-value platforms and get sanctioned access instead. Slower, but converts a fragility into an asset — and if §6 shows demand-weighted coverage is already healthy, we have the luxury of choosing it.</span>
+        <span class="zh"><b>與價值最高的兩三家平台展開合作 / API 對話</b>，改以獲得授權存取。較慢，但把一個脆弱點轉成資產 — 而且如果 §6 顯示需求加權覆蓋率已經健康，我們就有餘裕選這條路。</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 10 BOTTOM LINE ================= -->
+  <section id="s10">
+    <h2><span class="no">10</span><span class="en">Bottom line</span><span class="zh">結論</span></h2>
+
+    <p class="lead"><span class="en">The contractor has done careful, honest work and reached a defensible conclusion: <b>we are much closer to the licensing ceiling than a raw 10% suggests.</b> They volunteer the weaknesses in their own numbers rather than burying them, and the arithmetic holds under independent check. <b>Accept the framing.</b></span>
+    <span class="zh">外包團隊做了細緻而誠實的工作，並得出一個站得住腳的結論：<b>我們離授權天花板，比裸的 10% 所暗示的要近得多。</b>他們主動揭露自己數字的弱點而非掩蓋，且算術通過了獨立檢驗。<b>接受這個定調。</b></span></p>
+
+    <div class="callout key">
+      <div class="ic">🧭</div>
+      <div><span class="en">But before spending engineering effort raising coverage, spend <b>two days answering cheaper questions</b>: do our users actually hit these gaps (§6), is what we already ship correct (§5.2), and is coverage binary (§5.3). All three are queries against data we already have.</span>
+      <span class="zh">但在投入工程資源提高覆蓋率之前，先花<b>兩天回答更便宜的問題</b>：使用者真的會撞到這些缺口嗎（§6）、我們現在出的資料正確嗎（§5.2）、覆蓋是不是二元的（§5.3）。這三個都只是對既有資料的查詢。</span></div>
+    </div>
+
+    <p><span class="en">They may well show that the highest-value work here is the <b>1,502-row <code>platform_code</code> fix — and nothing else.</b></span>
+    <span class="zh">結果很可能會顯示：這裡價值最高的工作，就是<b>那 1,502 列的 <code>platform_code</code> 修正 — 其他都不用做。</b></span></p>
+  </section>
+
+  <footer>
+    <div>Ztor · <span class="en">Streaming Availability Pipeline — Engineering Brief</span><span class="zh">串流可觀看性管線 — 工程簡報</span> · 2026-07-30</div>
+    <div><span class="en">Source data measured 2026-07-24 · read-only production query · brief for discussion, no decisions taken</span><span class="zh">來源數據量測於 2026-07-24 · 唯讀正式環境查詢 · 討論用簡報，尚未做出決策</span></div>
+    <div>ztor-docs/outputs/research/streaming-availability-pipeline-brief-2026-07-30.md</div>
+  </footer>
+</div>
+
+<script>
+  function setLang(l){
+    document.documentElement.lang = l;
+    document.getElementById('btn-en').classList.toggle('on', l === 'en');
+    document.getElementById('btn-zh').classList.toggle('on', l !== 'en');
+    try{ localStorage.setItem('ztor-brief-lang', l); }catch(e){}
+  }
+  (function(){
+    var saved = null;
+    try{ saved = localStorage.getItem('ztor-brief-lang'); }catch(e){}
+    if(!saved){ saved = (navigator.language||'').toLowerCase().indexOf('zh') === 0 ? 'zh-Hant' : 'en'; }
+    setLang(saved);
+  })();
+</script>
+</body>
+</html>
