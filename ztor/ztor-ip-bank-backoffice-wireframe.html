@@ -279,14 +279,14 @@
             <option value="pirate">海上霸姬 - 鄭一嫂</option>
             <option value="fury">Fist Of Fury</option>
           </select>
-          <span class="muted" style="font-size:12.5px">· Period: <b style="color:var(--txt)">2026-05 (monthly close)</b></span>
+          <span class="muted" style="font-size:12.5px">· As of <b style="color:var(--txt)">2026-06-15</b> <span class="faint">(running total — no period close)</span></span>
         </div>
 
         <div class="stats">
           <div class="card stat"><div class="k">Film net revenue</div><div class="v" id="rep-net">NT$ 79,300</div></div>
           <div class="card stat"><div class="k">Allocated to owners</div><div class="v gold" id="rep-alloc">NT$ 55,510</div></div>
           <div class="card stat"><div class="k">Platform remainder</div><div class="v" id="rep-plat">NT$ 23,790</div></div>
-          <div class="card stat"><div class="k">Refresh cadence</div><div class="v sm">Monthly close <span class="faint">(assumed)</span></div></div>
+          <div class="card stat"><div class="k">Settlement boundary</div><div class="v sm">Per-party withdrawal <span class="faint">(no period close)</span></div></div>
         </div>
 
         <div class="card tablecard">
@@ -300,7 +300,7 @@
           <div id="rep-retro-msg"></div>
         </div>
 
-        <p class="note">Owed = film net revenue × share %. Withdrawals reuse the existing Profile withdraw flow (not configured here). Pending owners accrue but cannot withdraw until they claim. Backdated shares are paid as one-time adjustments in the current month and never change a closed month. “Net revenue” definition and the settlement/calculation engine are out of scope for this phase — figures shown are illustrative.</p>
+        <p class="note">Owed = film net revenue × share %. Withdrawals reuse the existing Profile withdraw flow (not configured here). Pending owners accrue but cannot withdraw until they claim. <b>Ztor has no universal settlement period</b> — withdrawal is the only event that makes money final, so a backdated entry genuinely recalculates every un-withdrawn balance and posts a reasoned transaction line on each side (ADR 2026-08-04). Revenue is attributed by date, so a mid-month start resolves exactly. “Net revenue” definition and the settlement/calculation engine are out of scope for this phase — figures shown are illustrative.</p>
       </section>
 
     </main>
@@ -375,29 +375,24 @@
         <div class="hint">Pick an existing Ztor user (links instantly), or type an email/phone to invite someone new.</div>
       </div>
 
-      <!-- effective dating (G1 revised): default forward-only, ops may backdate via retro adjustment -->
+      <!-- effective dating (ADR 2026-08-04, refined 08-05): DATE, floored at the
+           day after the latest withdrawal among the parties this entry DEBITS. -->
       <div class="field">
         <label for="f-from">Applies from <span class="req">*</span></label>
-        <select class="inp" id="f-from">
-          <option value="2026-06" selected>Current month (2026-06) · default</option>
-          <option value="2026-05">2026-05 · backdate (ops)</option>
-          <option value="2026-04">2026-04 · backdate (ops)</option>
-          <option value="2026-03">2026-03 · backdate (ops)</option>
-          <option value="2026-02">2026-02 · backdate (ops)</option>
-          <option value="2026-01">2026-01 · backdate (ops)</option>
-        </select>
-        <div class="hint">Entries normally start from the current month. Ops can pick an earlier month to backdate.</div>
+        <input class="inp" id="f-from" type="date" disabled>
+        <div class="errline" id="from-err" style="display:none">⛔ <span></span></div>
+        <div class="hint" id="from-hint">Select content first — the earliest allowed date depends on who has already withdrawn.</div>
       </div>
 
-      <!-- retro adjustment preview (shown when a past month is selected) -->
-      <div class="invite-banner" id="retro-banner" style="background:#1a1424;border-color:#4a3a5d;color:#cfc0e6">
-        <span>↩</span>
+      <!-- recalculation-impact preview (shown when an earlier date is picked) -->
+      <div class="invite-banner" id="retro-banner" style="background:#241313;border-color:var(--red-line);color:#e6bcbc">
+        <span>⚠️</span>
         <div id="retro-msg"></div>
       </div>
 
       <div class="invite-banner show" style="background:#241d13;border-color:var(--gold-line);color:#e0cba6">
-        <span>⚠️</span>
-        <div><b>Backdating:</b> an entry normally starts from today. Ops can pick an earlier month in <b>Applies from</b> — closed months are never changed; the missed share is paid as a one-time adjustment in the current month, from the platform's share. <span class="faint">(Pending finance sign-off)</span></div>
+        <span>🔒</span>
+        <div><b>Withdrawal is the settlement boundary.</b> An entry starts today by default. Ops may pick an earlier date, but never on or before a date the debited party has already withdrawn against — that money is paid out and final. <span class="faint">Backdating past that point is not offered.</span></div>
       </div>
     </div>
     <footer>
@@ -447,15 +442,77 @@ const REPORTS = {
     {ip:"Bruce Lee likeness", owner:"Lee Estate (B. Lee)", status:"linked", pct:50, withdrawn:18000},
   ]},
 };
-// per-film monthly net revenue (NT$) for settled months; 2026-06 is the current open period
-const OPEN_PERIOD = "2026-06";
-const SETTLED = ["2026-01","2026-02","2026-03","2026-04","2026-05"];
-const MONTHLY_NET = {
-  pirate:{"2026-01":38200,"2026-02":45100,"2026-03":52400,"2026-04":61800,"2026-05":79300},
-  fury:{"2026-01":98000,"2026-02":112500,"2026-03":120300,"2026-04":131700,"2026-05":142000},
-  tableread:{}, clock:{}
+const TODAY = "2026-06-15"; // wireframe "now"
+
+// ── Revenue is DATE-GRANULAR (Jeff ruling 2026-08-05) ───────────────────────
+// There is no monthly close and no "open period" on Ztor — those were artefacts
+// of the superseded period model (ADR 2026-07-30). Revenue is held as daily
+// bands, so a mid-month floor like 2026-03-25 resolves exactly: no pro-rating,
+// no snapping up to a month boundary.
+const DAILY_NET = {
+  pirate:[
+    {from:"2026-01-01", to:"2026-01-31", perDay:1232},
+    {from:"2026-02-01", to:"2026-02-28", perDay:1611},
+    {from:"2026-03-01", to:"2026-03-31", perDay:1690},
+    {from:"2026-04-01", to:"2026-04-30", perDay:2060},
+    {from:"2026-05-01", to:"2026-05-31", perDay:2558},
+    {from:"2026-06-01", to:"2026-06-15", perDay:2705},
+  ],
+  fury:[
+    {from:"2026-01-01", to:"2026-01-31", perDay:3161},
+    {from:"2026-02-01", to:"2026-02-28", perDay:4018},
+    {from:"2026-03-01", to:"2026-03-31", perDay:3881},
+    {from:"2026-04-01", to:"2026-04-30", perDay:4390},
+    {from:"2026-05-01", to:"2026-05-31", perDay:4581},
+    {from:"2026-06-01", to:"2026-06-15", perDay:4720},
+  ],
+  tableread:[], clock:[],
 };
-// retro adjustments posted this open period: {movie, ip, owner, pct, from, amount}
+// First date each film recognised revenue — the backdate floor when nobody has withdrawn.
+const REVENUE_START = {pirate:"2026-01-01", fury:"2026-01-01", tableread:null, clock:null};
+
+// ── Parties this film's revenue is DEBITED from when an IP share is added ────
+// An IP share is a cost against film net, so backdating reduces THESE parties'
+// historical earnings. The incoming IP owner is credited, never debited, so
+// their own withdrawal history is irrelevant to the floor.
+const DEBITED_PARTIES = {
+  pirate:[
+    {role:"Film owner",  name:"Onn Mah",      lastWithdraw:"2026-03-24"},
+    {role:"Tastemaker",  name:"Robert Li",    lastWithdraw:"2026-02-10"},
+  ],
+  fury:[
+    {role:"Film owner",  name:"Gary Thomas",  lastWithdraw:null},
+  ],
+  tableread:[{role:"Film owner", name:"Onn Mah", lastWithdraw:null}],
+  clock:[{role:"Film owner", name:"Robert Li", lastWithdraw:null}],
+};
+
+/** Floor = day after the LATEST withdrawal among debited parties (most
+ *  restrictive wins). No withdrawals → the film's first revenue date. */
+function backdateFloor(mv){
+  const parties = DEBITED_PARTIES[mv] || [];
+  const withdrawn = parties.filter(p=>p.lastWithdraw).map(p=>p.lastWithdraw).sort();
+  if(!withdrawn.length) return REVENUE_START[mv] || TODAY;
+  return addDay(withdrawn[withdrawn.length-1]);
+}
+/** The party that sets the floor — named in the UI so ops knows why. */
+function floorParty(mv){
+  const parties = (DEBITED_PARTIES[mv]||[]).filter(p=>p.lastWithdraw);
+  if(!parties.length) return null;
+  return parties.slice().sort((a,b)=>a.lastWithdraw<b.lastWithdraw?1:-1)[0];
+}
+function addDay(d){ const x=new Date(d+"T00:00:00Z"); x.setUTCDate(x.getUTCDate()+1); return x.toISOString().slice(0,10); }
+function daysBetween(a,b){ return Math.round((new Date(b+"T00:00:00Z")-new Date(a+"T00:00:00Z"))/86400000)+1; }
+/** Exact net revenue for [from, TODAY] — date-granular, no approximation. */
+function netSince(mv, from){
+  return (DAILY_NET[mv]||[]).reduce((sum,band)=>{
+    const s = band.from > from ? band.from : from;
+    const e = band.to   < TODAY ? band.to   : TODAY;
+    return e < s ? sum : sum + band.perDay * daysBetween(s,e);
+  },0);
+}
+
+// retro adjustments recorded by ops backdates: {movie, ip, owner, pct, from, amount, debits:[]}
 const RETRO_ADJ = [];
 const fmt = n => "NT$ " + n.toLocaleString("en-US");
 
@@ -496,42 +553,77 @@ const F = id => document.getElementById(id);
 
 function resetForm(){
   F('f-movie').value=''; F('f-title').value=''; F('f-type').value=''; F('f-pct').value='';
-  F('f-from').value=OPEN_PERIOD;
   owner=null; renderOwnerField(); F('movie-meta').classList.remove('show');
   F('pct-err').style.display='none'; F('pct-hint').textContent=''; F('f-pct').classList.remove('err');
   F('invite-banner').classList.remove('show');
+  updateFromWindow();
   updateRetro();
   validate();
 }
 
 /* movie meta + allocation hint */
-F('f-movie').addEventListener('change', ()=>{ updateMovieMeta(); checkPct(); updateRetro(); validate(); });
+F('f-movie').addEventListener('change', ()=>{ updateMovieMeta(); checkPct(); updateFromWindow(); updateRetro(); validate(); });
 F('f-pct').addEventListener('input', ()=>{ checkPct(); updateRetro(); validate(); });
 F('f-from').addEventListener('change', ()=>{ updateRetro(); validate(); });
 
-/* ---------------- retro adjustment preview ---------------- */
-function backdatedMonths(){ return SETTLED.filter(m => m >= F('f-from').value); }
-function computeRetro(mv, pct){
-  return backdatedMonths().reduce((s,m)=> s + Math.round((MONTHLY_NET[mv]?.[m]||0) * pct/100), 0);
+/* ---------------- backdate window + recalculation preview ---------------- */
+/** Re-floor the date input whenever content changes. */
+function updateFromWindow(){
+  const mv=F('f-movie').value, inp=F('f-from'), hint=F('from-hint');
+  if(!mv){
+    inp.disabled = true; inp.value = ''; inp.removeAttribute('min'); inp.removeAttribute('max');
+    hint.innerHTML = 'Select content first — the earliest allowed date depends on who has already withdrawn.';
+    return;
+  }
+  const floor = backdateFloor(mv), party = floorParty(mv);
+  inp.disabled = false; inp.max = TODAY; inp.value = TODAY;
+  if(floor > TODAY){
+    // Everything up to now is already paid out — no backdate is possible at all.
+    inp.min = TODAY;
+    hint.innerHTML = `<b>No backdate available.</b> ${party.role} <b>${party.name}</b> withdrew on <b>${party.lastWithdraw}</b>, so every day up to today is settled. This entry can only start today.`;
+    return;
+  }
+  inp.min = floor;
+  hint.innerHTML = party
+    ? `Earliest <b>${floor}</b> — the day after ${party.role.toLowerCase()} <b>${party.name}</b> withdrew (${party.lastWithdraw}). Anything on or before that is paid out and final.`
+    : `Earliest <b>${floor}</b> — this film's first revenue date. No debited party has withdrawn yet.`;
 }
+
 function updateRetro(){
-  const banner=F('retro-banner'), msg=F('retro-msg'), save=F('modal-save');
-  const backdated = F('f-from').value < OPEN_PERIOD;
+  const banner=F('retro-banner'), msg=F('retro-msg'), save=F('modal-save'), err=F('from-err');
+  const mv=F('f-movie').value, from=F('f-from').value;
+  const backdated = !!(mv && from && from < TODAY);
+  err.style.display='none';
   banner.classList.toggle('show', backdated);
-  save.textContent = backdated ? 'Add + backdate' : 'Add entry';
+  save.textContent = backdated ? 'Add + recalculate' : 'Add entry';
+  if(!mv || !from) return;
+
+  // hard gate — the floor is a rule, not a suggestion
+  const floor = backdateFloor(mv);
+  if(from < floor){
+    const party = floorParty(mv);
+    err.querySelector('span').textContent = party
+      ? `${from} is on or before ${party.name}'s withdrawal (${party.lastWithdraw}). Earliest allowed is ${floor}.`
+      : `Earliest allowed is ${floor}.`;
+    err.style.display='flex';
+    banner.classList.remove('show');
+    return;
+  }
   if(!backdated) return;
-  const mv=F('f-movie').value, pct=parseFloat(F('f-pct').value||'0');
-  const months=backdatedMonths(), span = months.length>1 ? `${months[0]} → ${months[months.length-1]}` : months[0];
-  if(!mv || !pct){
-    msg.innerHTML = `Backdating <b>${months.length}</b> closed month${months.length>1?'s':''} (${span}). Pick content and a revenue-share % to see the amount.`;
+
+  const pct=parseFloat(F('f-pct').value||'0');
+  const days = daysBetween(from, TODAY);
+  const debits = (DEBITED_PARTIES[mv]||[]).map(p=>p.name).join(' · ');
+  if(!pct){
+    msg.innerHTML = `Backdating <b>${days}</b> day${days>1?'s':''} (${from} → ${TODAY}). Enter a revenue-share % to see the impact.`;
     return;
   }
-  const amt = computeRetro(mv, pct);
+  const amt = Math.round(netSince(mv, from) * pct/100);
   if(!amt){
-    msg.innerHTML = `No revenue for <b>${MOVIE_NAME[mv]}</b> in ${span} — nothing to pay back; the share simply starts from ${F('f-from').value}.`;
+    msg.innerHTML = `No revenue for <b>${MOVIE_NAME[mv]}</b> since ${from} — nothing to recalculate; the share simply starts from ${from}.`;
     return;
   }
-  msg.innerHTML = `Backdates <b>${months.length}</b> closed month${months.length>1?'s':''} (${span}) · missed share <b>${fmt(amt)}</b> — paid as a one-time adjustment in <b>${OPEN_PERIOD}</b>, from the platform's share. Other owners are not affected.`;
+  msg.innerHTML = `<b>This rewrites historical figures.</b> ${fmt(amt)} over <b>${days}</b> day${days>1?'s':''} (${from} → ${TODAY}) moves to the new owner, <b>reducing ${debits}</b>. Their balances and reports will change, and each gets a transaction line stating the reason.`;
 }
 
 function updateMovieMeta(){
@@ -621,7 +713,9 @@ document.addEventListener('click', e=>{ if(!combo.contains(e.target)) closePop()
 
 /* ---------------- validation + save ---------------- */
 function validate(){
-  const ok = F('f-movie').value && F('f-title').value.trim() && F('f-type').value && F('f-pct').value && owner && checkPct();
+  const mv=F('f-movie').value, from=F('f-from').value;
+  const dateOk = mv && from && from >= backdateFloor(mv) && from <= TODAY;
+  const ok = mv && F('f-title').value.trim() && F('f-type').value && F('f-pct').value && owner && checkPct() && dateOk;
   F('modal-save').disabled = !ok;
 }
 ['f-title'].forEach(id=>F(id).addEventListener('input', validate));
@@ -641,15 +735,19 @@ F('modal-save').onclick = ()=>{
     <td class="num"><button class="btn btn-sm btn-ghost">Edit</button></td>`;
   tb.appendChild(tr);
   MOVIE_ALLOC[mv]+=pct; // keep allocation live
-  const backdated = F('f-from').value < OPEN_PERIOD;
+  const from = F('f-from').value;
+  const backdated = from < TODAY;
   if(backdated){
-    const amt = computeRetro(mv, pct);
-    if(amt) RETRO_ADJ.push({movie:mv, ip:title, owner:owner.name, pct, from:F('f-from').value, amount:amt});
+    const amt = Math.round(netSince(mv, from) * pct/100);
+    if(amt) RETRO_ADJ.push({
+      movie:mv, ip:title, owner:owner.name, pct, from, amount:amt,
+      debits:(DEBITED_PARTIES[mv]||[]).map(p=>p.name),
+    });
   }
   closeModal();
   const bits=['IP entry added'];
   if(owner.invite) bits.push('invite sent');
-  if(backdated) bits.push('retro adjustment posted');
+  if(backdated) bits.push('balances recalculated');
   toast(bits.join(' · '));
 };
 
@@ -683,14 +781,20 @@ function renderReport(){
   pr.innerHTML=`<td><b>Platform</b></td><td>—</td><td>—</td><td class="num"><span class="pct">${(100-allocPct).toFixed(2)}%</span></td><td class="num">${fmt(plat)}</td><td class="num">—</td><td class="num">—</td>`;
   tb.appendChild(pr);
 
-  // retro adjustments posted this open period (ops backdates) — shown outside the closed month
+  // Backdates recalculate history. Every affected party gets a transaction line
+  // stating WHY their balance moved (ADR 2026-08-04 guardrail 2).
   const adj = RETRO_ADJ.filter(a=>a.movie===mv);
   const box=F('rep-retro');
   box.classList.toggle('show', adj.length>0);
   if(adj.length){
-    F('rep-retro-msg').innerHTML = `<b>One-time adjustments coming in ${OPEN_PERIOD}:</b> ` +
-      adj.map(a=>`${fmt(a.amount)} → ${a.owner} <span class="faint">(${a.ip}, backdated ${a.from} → ${SETTLED[SETTLED.length-1]})</span>`).join(' · ') +
-      ` <span class="faint">Paid from the platform's share — past months above are unchanged.</span>`;
+    F('rep-retro-msg').innerHTML = `<b>Historical figures recalculated — transaction lines posted:</b><br>` +
+      adj.map(a=>
+        `<span style="display:block;margin-top:4px">`+
+        `+${fmt(a.amount)} → <b>${a.owner}</b> <span class="faint">「${a.ip} 分潤自 ${a.from} 起追溯計算」</span><br>`+
+        `<span style="padding-left:12px">−${fmt(a.amount)} → <b>${a.debits.join(' / ')}</b> <span class="faint">「新增 ${a.ip} IP 分潤 ${a.pct}%,收益減少」</span></span>`+
+        `</span>`
+      ).join('') +
+      `<span class="faint" style="display:block;margin-top:6px">Balances above already reflect these. Nothing on or before each party's last withdrawal was touched.</span>`;
   }
 }
 F('rep-movie').addEventListener('change', renderReport);
