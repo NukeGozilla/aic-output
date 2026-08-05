@@ -130,6 +130,17 @@
   .two > *{flex:1}
   .hint{color:var(--faint);font-size:11.5px;margin-top:7px;line-height:1.5}
   .errline{color:var(--red);font-size:12px;margin-top:7px;display:flex;align-items:center;gap:6px}
+  /* two-choice effective dating — ops picks a rule, never types a date */
+  .choices{display:flex;flex-direction:column;gap:8px}
+  .choice{display:flex;gap:11px;align-items:flex-start;padding:12px 13px;border:1px solid var(--line2);border-radius:var(--r-sm);background:#0a0a0b;cursor:pointer}
+  .choice:hover{border-color:var(--line2);background:#101012}
+  .choice input{margin:2px 0 0;accent-color:var(--gold);width:15px;height:15px;flex:0 0 auto;cursor:pointer}
+  .choice .lbl{font-size:13.5px;color:var(--txt);line-height:1.45}
+  .choice .sub{display:block;color:var(--faint);font-size:11.5px;margin-top:3px;line-height:1.5}
+  .choice:has(input:checked){border-color:var(--gold-line);background:var(--gold-d)}
+  .choice:has(input:checked) .lbl{color:var(--gold)}
+  .choice:has(input:disabled){opacity:.45;cursor:not-allowed}
+  .choice:focus-within{outline:2px solid var(--gold);outline-offset:2px}
   .movie-meta{margin-top:8px;font-size:11.5px;color:var(--muted);display:none}
   .movie-meta.show{display:block}
   .movie-meta b{color:var(--gold)}
@@ -378,10 +389,17 @@
       <!-- effective dating (ADR 2026-08-04, refined 08-05): DATE, floored at the
            day after the latest withdrawal among the parties this entry DEBITS. -->
       <div class="field">
-        <label for="f-from">Applies from <span class="req">*</span></label>
-        <input class="inp" id="f-from" type="date" disabled>
-        <div class="errline" id="from-err" style="display:none">⛔ <span></span></div>
-        <div class="hint" id="from-hint">Select content first — the earliest allowed date depends on who has already withdrawn.</div>
+        <label>Applies from <span class="req">*</span></label>
+        <div class="choices" id="from-choices" role="radiogroup" aria-label="Applies from">
+          <label class="choice" id="choice-back">
+            <input type="radio" name="from" value="backdate" disabled>
+            <span class="lbl" id="lbl-back">Backdate<span class="sub" id="sub-back">Select content first.</span></span>
+          </label>
+          <label class="choice" id="choice-today">
+            <input type="radio" name="from" value="today" checked>
+            <span class="lbl">Start from today<span class="sub" id="sub-today">Earns from 2026-06-15 onward. Nothing historical changes.</span></span>
+          </label>
+        </div>
       </div>
 
       <!-- recalculation-impact preview (shown when an earlier date is picked) -->
@@ -392,7 +410,7 @@
 
       <div class="invite-banner show" style="background:#241d13;border-color:var(--gold-line);color:#e0cba6">
         <span>🔒</span>
-        <div><b>Withdrawal is the settlement boundary.</b> An entry starts today by default. Ops may pick an earlier date, but never on or before a date the debited party has already withdrawn against — that money is paid out and final. <span class="faint">Backdating past that point is not offered.</span></div>
+        <div><b>Withdrawal is the settlement boundary.</b> Backdating reaches back to the last settled point and no further — that date is computed from who has already withdrawn, not chosen. Anything on or before it is paid out and final. <span class="faint">There is no third option by design.</span></div>
       </div>
     </div>
     <footer>
@@ -564,51 +582,59 @@ function resetForm(){
 /* movie meta + allocation hint */
 F('f-movie').addEventListener('change', ()=>{ updateMovieMeta(); checkPct(); updateFromWindow(); updateRetro(); validate(); });
 F('f-pct').addEventListener('input', ()=>{ checkPct(); updateRetro(); validate(); });
-F('f-from').addEventListener('change', ()=>{ updateRetro(); validate(); });
+document.querySelectorAll('input[name="from"]').forEach(r=>
+  r.addEventListener('change', ()=>{ updateRetro(); validate(); }));
 
-/* ---------------- backdate window + recalculation preview ---------------- */
-/** Re-floor the date input whenever content changes. */
+/* ---------------- effective dating: two choices, never a typed date -------- */
+/** Ops picks a RULE, not a date. Option 1's date is computed and shown; there
+ *  is no free date entry, so no invalid state to guard against. */
+const fromRadio = () => document.querySelector('input[name="from"]:checked')?.value || 'today';
+/** The resolved start date for whichever option is selected. */
+function selectedFrom(){
+  const mv=F('f-movie').value;
+  return (mv && fromRadio()==='backdate') ? backdateFloor(mv) : TODAY;
+}
+
 function updateFromWindow(){
-  const mv=F('f-movie').value, inp=F('f-from'), hint=F('from-hint');
+  const mv=F('f-movie').value;
+  const radio=F('choice-back').querySelector('input'), lbl=F('lbl-back'), sub=F('sub-back');
+  const setLabel = (title, subtitle) => {
+    lbl.childNodes[0].nodeValue = title;
+    sub.innerHTML = subtitle;
+  };
   if(!mv){
-    inp.disabled = true; inp.value = ''; inp.removeAttribute('min'); inp.removeAttribute('max');
-    hint.innerHTML = 'Select content first — the earliest allowed date depends on who has already withdrawn.';
+    radio.disabled = true; radio.checked = false;
+    F('choice-today').querySelector('input').checked = true;
+    setLabel('Backdate', 'Select content first.');
     return;
   }
-  const floor = backdateFloor(mv), party = floorParty(mv);
-  inp.disabled = false; inp.max = TODAY; inp.value = TODAY;
+  const floor = backdateFloor(mv), party = floorParty(mv), hasRevenue = (DAILY_NET[mv]||[]).length>0;
+
+  if(!hasRevenue){
+    radio.disabled = true; radio.checked = false;
+    F('choice-today').querySelector('input').checked = true;
+    setLabel('Backdate', `<b>${MOVIE_NAME[mv]}</b> has no revenue yet — there is nothing to backdate.`);
+    return;
+  }
   if(floor > TODAY){
-    // Everything up to now is already paid out — no backdate is possible at all.
-    inp.min = TODAY;
-    hint.innerHTML = `<b>No backdate available.</b> ${party.role} <b>${party.name}</b> withdrew on <b>${party.lastWithdraw}</b>, so every day up to today is settled. This entry can only start today.`;
+    // Everything up to now is already withdrawn against — backdating is impossible.
+    radio.disabled = true; radio.checked = false;
+    F('choice-today').querySelector('input').checked = true;
+    setLabel('Backdate', `Unavailable — ${party.role.toLowerCase()} <b>${party.name}</b> withdrew on <b>${party.lastWithdraw}</b>, so every day up to today is already settled.`);
     return;
   }
-  inp.min = floor;
-  hint.innerHTML = party
-    ? `Earliest <b>${floor}</b> — the day after ${party.role.toLowerCase()} <b>${party.name}</b> withdrew (${party.lastWithdraw}). Anything on or before that is paid out and final.`
-    : `Earliest <b>${floor}</b> — this film's first revenue date. No debited party has withdrawn yet.`;
+  radio.disabled = false;
+  setLabel(`Backdate from ${floor}`, party
+    ? `The day after ${party.role.toLowerCase()} <b>${party.name}</b> last withdrew (${party.lastWithdraw}) — the earliest point that isn't already paid out.`
+    : `<b>${MOVIE_NAME[mv]}</b>'s first revenue date. No party has withdrawn against this film yet.`);
 }
 
 function updateRetro(){
-  const banner=F('retro-banner'), msg=F('retro-msg'), save=F('modal-save'), err=F('from-err');
-  const mv=F('f-movie').value, from=F('f-from').value;
-  const backdated = !!(mv && from && from < TODAY);
-  err.style.display='none';
+  const banner=F('retro-banner'), msg=F('retro-msg'), save=F('modal-save');
+  const mv=F('f-movie').value, from=selectedFrom();
+  const backdated = !!(mv && fromRadio()==='backdate' && from < TODAY);
   banner.classList.toggle('show', backdated);
   save.textContent = backdated ? 'Add + recalculate' : 'Add entry';
-  if(!mv || !from) return;
-
-  // hard gate — the floor is a rule, not a suggestion
-  const floor = backdateFloor(mv);
-  if(from < floor){
-    const party = floorParty(mv);
-    err.querySelector('span').textContent = party
-      ? `${from} is on or before ${party.name}'s withdrawal (${party.lastWithdraw}). Earliest allowed is ${floor}.`
-      : `Earliest allowed is ${floor}.`;
-    err.style.display='flex';
-    banner.classList.remove('show');
-    return;
-  }
   if(!backdated) return;
 
   const pct=parseFloat(F('f-pct').value||'0');
@@ -713,9 +739,9 @@ document.addEventListener('click', e=>{ if(!combo.contains(e.target)) closePop()
 
 /* ---------------- validation + save ---------------- */
 function validate(){
-  const mv=F('f-movie').value, from=F('f-from').value;
-  const dateOk = mv && from && from >= backdateFloor(mv) && from <= TODAY;
-  const ok = mv && F('f-title').value.trim() && F('f-type').value && F('f-pct').value && owner && checkPct() && dateOk;
+  // No free date entry any more — both options are always valid by construction.
+  const mv=F('f-movie').value;
+  const ok = mv && F('f-title').value.trim() && F('f-type').value && F('f-pct').value && owner && checkPct();
   F('modal-save').disabled = !ok;
 }
 ['f-title'].forEach(id=>F(id).addEventListener('input', validate));
@@ -735,8 +761,8 @@ F('modal-save').onclick = ()=>{
     <td class="num"><button class="btn btn-sm btn-ghost">Edit</button></td>`;
   tb.appendChild(tr);
   MOVIE_ALLOC[mv]+=pct; // keep allocation live
-  const from = F('f-from').value;
-  const backdated = from < TODAY;
+  const from = selectedFrom();
+  const backdated = fromRadio()==='backdate' && from < TODAY;
   if(backdated){
     const amt = Math.round(netSince(mv, from) * pct/100);
     if(amt) RETRO_ADJ.push({
