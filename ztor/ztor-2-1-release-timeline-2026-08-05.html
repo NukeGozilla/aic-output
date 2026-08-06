@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor 2.1 Release Timeline — Aug 31 · handoff gates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3eee2; --paper2:#ece5d4; --card:#fffdf8; --ink:#241f18; --muted:#6f675a;
+    --gold:#b0894f; --gold-soft:#cbb085; --rule:#ddd4c0;
+    --bc:#7c4bab; --bc-bg:#efe6f6; --bc-ln:#c9aede;   /* Beamco / Jarax */
+    --zt:#2563a8; --zt-bg:#e2ecf7; --zt-ln:#a8c6e4;   /* Ztor / Eric */
+    --jt:#1f7a4d; --jt-bg:#e4f1e7; --jt-ln:#a9d0b8;   /* Joint / release */
+    --warn:#b06b14; --warn-bg:#f8ecd4;
+    --bad:#a83232; --bad-bg:#f7e4e2;
+    --shadow:0 1px 0 rgba(0,0,0,.04),0 14px 40px -22px rgba(60,45,20,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Noto Sans TC",system-ui,sans-serif; color:var(--ink); line-height:1.6;
+    background:
+      radial-gradient(120% 80% at 100% -10%, #fbf7ec 0%, transparent 55%),
+      radial-gradient(120% 80% at -10% 110%, #f0e7d3 0%, transparent 50%),
+      var(--paper);
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");}
+  .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:44px 26px 90px}
+
+  html[lang="en"] .zh{display:none !important}
+  html[lang="zh-Hant"] .en{display:none !important}
+  .langsw{position:fixed;top:14px;right:14px;z-index:40;display:flex;gap:2px;padding:3px;
+    border:1px solid var(--rule);border-radius:999px;background:rgba(255,253,248,.94);
+    backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+  .langsw button{font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:700;
+    border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:999px;cursor:pointer;transition:.15s}
+  .langsw button:hover{color:var(--ink)}
+  .langsw button.on{background:var(--gold);color:#fff}
+
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  h1{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(30px,4.4vw,48px);line-height:1.04;letter-spacing:-.015em;margin:.3em 0 .2em;max-width:20ch}
+  h1 em{font-style:italic;color:var(--gold)}
+  .sub{font-size:15px;color:var(--muted);max-width:78ch}
+  .sub b{color:var(--ink)}
+  .meta{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted);margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 18px}
+  .meta b{color:var(--ink);font-weight:700}
+  .goldrule{height:2px;margin:22px 0 0;background:linear-gradient(90deg,var(--gold),transparent 70%)}
+
+  h2{font-family:"Fraunces",serif;font-weight:700;font-size:23px;letter-spacing:-.01em;margin:46px 0 6px}
+  h2 .num{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--gold);font-weight:700;margin-right:10px;vertical-align:3px}
+  .lede{font-size:14px;color:var(--muted);margin-bottom:18px;max-width:80ch}
+
+  /* ---------- headline answer ---------- */
+  .answer{margin:26px 0 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:820px){ .answer{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:520px){ .answer{grid-template-columns:1fr} }
+  .acard{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .acard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+  .acard.bc::before{background:var(--bc)} .acard.zt::before{background:var(--zt)}
+  .acard.jt::before{background:var(--jt)} .acard.rl::before{background:var(--gold)}
+  .acard .d{font-family:"JetBrains Mono",monospace;font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .acard .dow{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-top:5px}
+  .acard .who{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:11px}
+  .acard.bc .who{color:var(--bc)} .acard.zt .who{color:var(--zt)}
+  .acard.jt .who{color:var(--jt)} .acard.rl .who{color:var(--gold)}
+  .acard .w{font-size:13.5px;margin-top:3px;line-height:1.45}
+
+  /* ---------- gantt ---------- */
+  .scroller{overflow-x:auto;margin-top:8px;padding-bottom:6px}
+  .gantt{min-width:1090px;background:var(--card);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:16px 18px 20px}
+  .grid{position:relative;display:grid;grid-template-columns:196px repeat(19,1fr);align-items:center}
+  /* vertical rules, absolutely placed so they never disturb grid auto-flow.
+     left = label col + (day index / 19) of the remaining track width */
+  .vline{position:absolute;top:46px;bottom:4px;border-left:2px dashed;pointer-events:none;z-index:4}
+  .vline.frz{border-color:var(--bad);left:calc(196px + (100% - 196px) * 11 / 19)}
+  .vline.rel{border-color:var(--gold);left:calc(196px + (100% - 196px) * 18 / 19)}
+  .wk{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);text-align:center;padding:2px 0 6px;border-left:1px solid var(--rule)}
+  .day{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);text-align:center;padding-bottom:8px;line-height:1.25}
+  .day b{display:block;font-size:12.5px;color:var(--ink);font-weight:700}
+  .day.today{color:var(--gold)} .day.today b{color:var(--gold)}
+  .day.rel b{color:var(--gold)}
+
+  .lanehead{font-size:12px;font-weight:700;padding:9px 12px 9px 0;line-height:1.3}
+  .lanehead span{display:block;font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:500;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+  .lanehead.bc{color:var(--bc)} .lanehead.zt{color:var(--zt)} .lanehead.jt{color:var(--jt)}
+
+  .bar{grid-row:auto;height:29px;border-radius:7px;display:flex;align-items:center;padding:0 10px;
+    font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    border:1px solid;margin:3px 2px}
+  .bar.bc{background:var(--bc-bg);border-color:var(--bc-ln);color:#4a2b6c}
+  .bar.zt{background:var(--zt-bg);border-color:var(--zt-ln);color:#1c4570}
+  .bar.jt{background:var(--jt-bg);border-color:var(--jt-ln);color:#155f3a}
+  .bar.solid{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:700;justify-content:center;padding:0 6px}
+  .bar.uat{background:repeating-linear-gradient(45deg,var(--jt-bg),var(--jt-bg) 7px,#d9ecdf 7px,#d9ecdf 14px);font-weight:700}
+  .bar.alt{background:transparent;border-style:dashed;border-color:#c9c0ab;color:var(--muted);font-size:10.5px}
+  .bar.dim{opacity:.62;font-weight:400}
+
+  .gaterow{grid-column:2 / -1;grid-row:auto;display:grid;grid-template-columns:repeat(19,1fr);
+    border-top:1px dashed var(--rule);margin-top:6px;padding-top:7px}
+  .gate{font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;text-align:center;
+    color:var(--gold);letter-spacing:.04em;line-height:1.2}
+  .gate i{display:block;font-style:normal;font-size:13px;margin-bottom:1px}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:16px;font-size:12px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:7px}
+  .sw{display:inline-block;flex:none;width:15px;height:11px;border-radius:3px;border:1px solid}
+  .sw.bc{background:var(--bc-bg);border-color:var(--bc-ln)}
+  .sw.zt{background:var(--zt-bg);border-color:var(--zt-ln)}
+  .sw.jt{background:var(--jt-bg);border-color:var(--jt-ln)}
+  .sw.gd{background:var(--gold);border-color:var(--gold)}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--rule);
+    border-radius:14px;overflow:hidden;box-shadow:var(--shadow);font-size:13.5px}
+  th{background:var(--paper2);text-align:left;padding:11px 14px;font-size:10.5px;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--rule)}
+  td{padding:11px 14px;border-bottom:1px solid #efe9db;vertical-align:top;line-height:1.5}
+  tr:last-child td{border-bottom:0}
+  td.dt{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:nowrap;font-size:13px}
+  .pill{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;
+    padding:2px 8px;border-radius:5px;letter-spacing:.06em;white-space:nowrap}
+  .pill.bc{background:var(--bc-bg);color:var(--bc)}
+  .pill.zt{background:var(--zt-bg);color:var(--zt)}
+  .pill.jt{background:var(--jt-bg);color:var(--jt)}
+  .pill.rl{background:#f3e6cf;color:#8a6624}
+
+  .callout{margin:16px 0;padding:14px 18px;border-radius:12px;border:1px solid;font-size:13.5px;display:flex;gap:12px;align-items:flex-start;line-height:1.55}
+  .callout .ic{font-size:17px;line-height:1.35;flex:none}
+  .callout.warn{background:var(--warn-bg);border-color:#e2c584;color:#6b4a12}
+  .callout.bad{background:var(--bad-bg);border-color:#e0b4ae;color:#7a2723}
+  .callout.key{background:var(--jt-bg);border-color:#bcd9c5;color:#2a4a35}
+  .callout b{font-weight:700}
+
+  .foot{margin-top:52px;padding-top:18px;border-top:1px solid var(--rule);
+    font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);line-height:1.7}
+  .foot b{color:var(--ink)}
+
+  @media(max-width:640px){ .wrap{padding:34px 16px 70px} }
+</style>
+</head>
+<body>
+
+<div class="langsw">
+  <button id="b-en" class="on" onclick="setLang('en')">EN</button>
+  <button id="b-zh" onclick="setLang('zh-Hant')">中文</button>
+</div>
+
+<div class="wrap">
+
+  <div class="eyebrow">Ztor 2.1 · IP Bank + Crowdfund</div>
+  <h1><span class="en">Release <em>Aug 31</em> — who hands off when</span><span class="zh">8/31 <em>上線</em> — 交付順序與時間點</span></h1>
+  <p class="sub">
+    <span class="en">Working backwards from a <b>Mon Aug 31</b> release with <b>7 working days of UAT + debugging</b>. The binding constraint is not Eric's build — it is the date Jarax's Creator Studio work and service APIs land, because Eric's Ztor frontend consumes them.</span>
+    <span class="zh">以 <b>8/31（一）</b>上線、<b>UAT ＋除錯 7 個工作天</b>回推。真正的關鍵路徑不是 Eric 的開發，而是 Jarax 團隊的 Creator Studio 與 service API 何時交付 —— Ztor 前端要接的就是這些。</span>
+  </p>
+  <div class="meta">
+    <span><b>Release</b> 2026-08-31 (Mon)</span>
+    <span><b>UAT</b> Aug 20–28 · 7 wd</span>
+    <span><b>Code freeze</b> Aug 19</span>
+    <span><b>Drafted</b> 2026-08-05</span>
+    <span><b>Source</b> Asana 2.1 section · dev meeting 08-05</span>
+  </div>
+  <div class="goldrule"></div>
+
+  <!-- ============ ANSWER ============ -->
+  <h2><span class="num">01</span><span class="en">The dates Jarax needs to hit</span><span class="zh">Jarax 團隊要守住的日期</span></h2>
+  <p class="lede">
+    <span class="en">Three handoffs, not one. Splitting the contract from the running service is what buys Eric his build time — he can code against a frozen interface a week before the endpoints exist.</span>
+    <span class="zh">交付要拆成三段，而不是一次給完。先凍結接口規格、再交可用服務，Eric 才能提早一週用 stub 開發，不必空等。</span>
+  </p>
+
+  <div class="answer">
+    <div class="acard bc">
+      <div class="d">Aug 7</div><div class="dow">Friday</div>
+      <div class="who"><span class="en">Jarax → Eric</span><span class="zh">Jarax → Eric</span></div>
+      <div class="w"><span class="en"><b>API contract frozen.</b> Interface docs + CS staging/UAT domains.</span><span class="zh"><b>接口文件定版。</b>含 CS staging／UAT 域名。</span></div>
+    </div>
+    <div class="acard bc">
+      <div class="d">Aug 12</div><div class="dow">Wednesday</div>
+      <div class="who"><span class="en">Jarax → UAT</span><span class="zh">Jarax → UAT</span></div>
+      <div class="w"><span class="en"><b>Service APIs callable</b> on UAT — real endpoints, real data.</span><span class="zh"><b>Service API 上 UAT 可調用</b> —— 真實端點與資料。</span></div>
+    </div>
+    <div class="acard bc">
+      <div class="d">Aug 14</div><div class="dow">Friday</div>
+      <div class="who"><span class="en">Jarax done</span><span class="zh">Jarax 完成</span></div>
+      <div class="w"><span class="en"><b>Creator Studio feature-complete.</b> Fee config, IP Bank, royalty import.</span><span class="zh"><b>Creator Studio 功能完成。</b>費率設定、IP Bank、版稅匯入。</span></div>
+    </div>
+    <div class="acard zt">
+      <div class="d">Aug 17</div><div class="dow">Monday</div>
+      <div class="who"><span class="en">Eric done</span><span class="zh">Eric 完成</span></div>
+      <div class="w"><span class="en"><b>Ztor FE + BO dev complete.</b> Matches the Aug 17 Asana due dates.</span><span class="zh"><b>Ztor 前端＋BO 開發完成。</b>與 Asana 上 8/17 到期日一致。</span></div>
+    </div>
+    <div class="acard jt">
+      <div class="d">Aug 19</div><div class="dow">Wednesday</div>
+      <div class="who"><span class="en">Code freeze</span><span class="zh">Code freeze</span></div>
+      <div class="w"><span class="en">Integrated build on UAT. No new features after this.</span><span class="zh">整合版本部署 UAT，之後不再進新功能。</span></div>
+    </div>
+    <div class="acard rl">
+      <div class="d">Aug 31</div><div class="dow">Monday</div>
+      <div class="who"><span class="en">2.1 Release</span><span class="zh">2.1 上線</span></div>
+      <div class="w"><span class="en">Preceded by UAT Aug 20–28 (7 working days).</span><span class="zh">前置 UAT 8/20–8/28（7 個工作天）。</span></div>
+    </div>
+  </div>
+
+  <!-- ============ GANTT ============ -->
+  <h2><span class="num">02</span><span class="en">The 19 working days</span><span class="zh">19 個工作天</span></h2>
+  <p class="lede">
+    <span class="en">Aug 5 → Aug 31. Weekends removed. Red line = code freeze · gold line = release.</span>
+    <span class="zh">8/5 → 8/31，已扣除週末。紅線＝code freeze，金線＝上線。</span>
+  </p>
+
+  <div class="scroller">
+  <div class="gantt">
+    <div class="grid">
+
+      <!-- week header -->
+      <div></div>
+      <div class="wk" style="grid-column:2/5">Aug 3</div>
+      <div class="wk" style="grid-column:5/10">Aug 10</div>
+      <div class="wk" style="grid-column:10/15">Aug 17</div>
+      <div class="wk" style="grid-column:15/20">Aug 24</div>
+      <div class="wk" style="grid-column:20/21">Aug 31</div>
+
+      <!-- day header -->
+      <div></div>
+      <div class="day today"><b>5</b>Wed</div><div class="day"><b>6</b>Thu</div><div class="day"><b>7</b>Fri</div>
+      <div class="day"><b>10</b>Mon</div><div class="day"><b>11</b>Tue</div><div class="day"><b>12</b>Wed</div><div class="day"><b>13</b>Thu</div><div class="day"><b>14</b>Fri</div>
+      <div class="day"><b>17</b>Mon</div><div class="day"><b>18</b>Tue</div><div class="day"><b>19</b>Wed</div><div class="day"><b>20</b>Thu</div><div class="day"><b>21</b>Fri</div>
+      <div class="day"><b>24</b>Mon</div><div class="day"><b>25</b>Tue</div><div class="day"><b>26</b>Wed</div><div class="day"><b>27</b>Thu</div><div class="day"><b>28</b>Fri</div>
+      <div class="day rel"><b>31</b>Mon</div>
+
+      <!-- vertical rules (absolute — see .vline) -->
+      <div class="vline frz"></div>
+      <div class="vline rel"></div>
+
+      <!-- LANE A — Jarax -->
+      <div class="lanehead bc"><span class="en">Beamco / Jarax<span>Creator Studio + service API</span></span><span class="zh">Beamco / Jarax<span>Creator Studio ＋ service API</span></span></div>
+      <div class="bar bc" style="grid-column:2/5"><span class="en">API contract → Eric</span><span class="zh">接口文件定版</span></div>
+      <div style="grid-column:5/21"></div>
+
+      <div></div>
+      <div class="bar bc" style="grid-column:2/5"><span class="en">CS staging / UAT env</span><span class="zh">CS staging／UAT 環境</span></div>
+      <div style="grid-column:5/21"></div>
+
+      <div></div>
+      <div class="bar bc" style="grid-column:2/8"><span class="en">Service API build → deploy to UAT</span><span class="zh">Service API 開發 → 部署 UAT</span></div>
+      <div style="grid-column:8/21"></div>
+
+      <div></div>
+      <div class="bar bc" style="grid-column:2/10"><span class="en">Creator Studio: fee config · IP Bank · royalty import</span><span class="zh">Creator Studio：費率設定 · IP Bank · 版稅匯入</span></div>
+      <div style="grid-column:10/21"></div>
+
+      <div></div>
+      <div style="grid-column:2/10"></div>
+      <div class="bar bc dim" style="grid-column:10/21"><span class="en">On-call: integration + UAT bug support</span><span class="zh">待命支援：串接與 UAT 修錯</span></div>
+
+      <!-- LANE B — Eric -->
+      <div class="lanehead zt" style="padding-top:16px"><span class="en">Ztor / Eric<span>frontend + back-office</span></span><span class="zh">Ztor / Eric<span>前端 ＋ 後台</span></span></div>
+      <div class="bar zt" style="grid-column:2/5;margin-top:16px"><span class="en">IP backdate API → CS</span><span class="zh">IP backdate 接口 → CS</span></div>
+      <div style="grid-column:5/21"></div>
+
+      <div></div>
+      <div style="grid-column:2/4"></div>
+      <div class="bar zt" style="grid-column:4/10"><span class="en">FE / BO build against frozen contract (stubs)</span><span class="zh">依定版接口以 stub 開發 FE／BO</span></div>
+      <div style="grid-column:10/21"></div>
+
+      <div></div>
+      <div style="grid-column:2/8"></div>
+      <div class="bar zt" style="grid-column:8/13"><span class="en">Wire up live APIs</span><span class="zh">串接 live API</span></div>
+      <div style="grid-column:13/21"></div>
+
+      <div></div>
+      <div style="grid-column:2/13"></div>
+      <div class="bar zt dim" style="grid-column:13/21"><span class="en">Bug fixes only</span><span class="zh">只修 bug</span></div>
+
+      <!-- LANE C — joint -->
+      <div class="lanehead jt" style="padding-top:16px"><span class="en">Joint / release<span>integration · UAT · go-live</span></span><span class="zh">整合 / 上線<span>串接 · UAT · go-live</span></span></div>
+      <div style="grid-column:2/10;margin-top:16px"></div>
+      <div class="bar jt" style="grid-column:10/13;margin-top:16px"><span class="en">E2E + smoke on UAT</span><span class="zh">E2E 整合＋冒煙測試</span></div>
+      <div style="grid-column:13/21"></div>
+
+      <div></div>
+      <div style="grid-column:2/13"></div>
+      <div class="bar jt uat" style="grid-column:13/20"><span class="en">UAT + debugging · 7 working days</span><span class="zh">UAT ＋除錯 · 7 個工作天</span></div>
+      <div class="bar solid" style="grid-column:20/21">2.1</div>
+
+      <div></div>
+      <div style="grid-column:2/15"></div>
+      <div class="bar alt" style="grid-column:15/20"><span class="en">fallback: 5-day UAT (freeze Aug 21)</span><span class="zh">備案：5 天 UAT（freeze 8/21）</span></div>
+
+      <!-- gates -->
+      <div></div>
+      <div class="gaterow">
+        <div></div><div></div>
+        <div class="gate"><i>◆</i>contract</div>
+        <div></div><div></div>
+        <div class="gate"><i>◆</i>API live</div>
+        <div></div>
+        <div class="gate"><i>◆</i>CS done</div>
+        <div class="gate"><i>◆</i>Eric done</div>
+        <div></div>
+        <div class="gate" style="color:var(--bad)"><i>■</i>freeze</div>
+        <div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        <div class="gate"><i>★</i>release</div>
+      </div>
+
+    </div>
+
+    <div class="legend">
+      <span><i class="sw bc"></i><span class="en">Beamco / Jarax</span><span class="zh">Beamco / Jarax</span></span>
+      <span><i class="sw zt"></i><span class="en">Ztor / Eric</span><span class="zh">Ztor / Eric</span></span>
+      <span><i class="sw jt"></i><span class="en">Joint</span><span class="zh">雙方</span></span>
+      <span><i class="sw gd"></i><span class="en">Release</span><span class="zh">上線</span></span>
+    </div>
+  </div>
+  </div>
+
+  <!-- ============ GATES ============ -->
+  <h2><span class="num">03</span><span class="en">Gates — and what breaks if one slips</span><span class="zh">關卡 —— 沒守住會斷在哪</span></h2>
+  <p class="lede">
+    <span class="en">Each gate is a handoff between teams. A slip here does not cost a day; it costs the whole downstream chain.</span>
+    <span class="zh">每個關卡都是跨團隊交接。延一天不是只延一天，是整條下游一起延。</span>
+  </p>
+
+  <table>
+    <thead><tr>
+      <th style="width:92px"><span class="en">Date</span><span class="zh">日期</span></th>
+      <th style="width:110px"><span class="en">Owner</span><span class="zh">負責</span></th>
+      <th><span class="en">Gate</span><span class="zh">交付內容</span></th>
+      <th style="width:34%"><span class="en">Breaks if late</span><span class="zh">延誤影響</span></th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td class="dt">Aug 7<br><span style="font-weight:400;color:var(--muted);font-size:11px">Fri</span></td>
+        <td><span class="pill bc">JARAX</span></td>
+        <td><b><span class="en">API contract frozen + sent to Eric</span><span class="zh">接口文件定版並發給 Eric</span></b><br>
+          <span class="en">Endpoint list, payload shapes, auth. Plus Creator Studio staging / UAT / prod domains confirmed with Jeff + Eric.</span>
+          <span class="zh">端點清單、payload 格式、驗證方式。另需與 Jeff／Eric 確認 Creator Studio staging／UAT／prod 域名。</span><br>
+          <span style="font-size:11.5px;color:var(--muted)">08-05 meeting action: 超明團隊 將接口文件發送給 Eric</span></td>
+        <td><span class="en">Eric cannot start stub development. Every day lost here is a day lost at the end — there is no way to compress it later.</span>
+          <span class="zh">Eric 無法開始 stub 開發。這裡延一天，尾端就少一天，後面沒有壓縮空間。</span></td>
+      </tr>
+      <tr>
+        <td class="dt">Aug 7<br><span style="font-weight:400;color:var(--muted);font-size:11px">Fri</span></td>
+        <td><span class="pill zt">ERIC</span></td>
+        <td><b><span class="en">IP backdate calculation API → Jarax</span><span class="zh">IP backdate 計算接口 → 超明</span></b><br>
+          <span class="en">Reverse dependency — Jarax calls this on every backdate trigger to recompute revenue shares.</span>
+          <span class="zh">反向依賴 —— 每次觸發 backdate，超明端要調用此接口重算分潤。</span></td>
+        <td><span class="en">Jarax's IP Bank build stalls. This is the one dependency running the other way; easy to forget.</span>
+          <span class="zh">Jarax 的 IP Bank 開發卡住。這是唯一反向依賴，最容易被漏掉。</span></td>
+      </tr>
+      <tr>
+        <td class="dt">Aug 12<br><span style="font-weight:400;color:var(--muted);font-size:11px">Wed</span></td>
+        <td><span class="pill bc">JARAX</span></td>
+        <td><b><span class="en">Service APIs callable on UAT</span><span class="zh">Service API 於 UAT 可調用</span></b><br>
+          <span class="en">Platform fee (Asana due Aug 12), IP Bank revenue-sharing, music royalty. Real endpoints, not mocks. DB migration to the shared server must be done.</span>
+          <span class="zh">平台費率（Asana 到期日 8/12）、IP Bank 分潤、音樂版稅。真實端點，非 mock。共用伺服器的資料庫遷移須先完成。</span></td>
+        <td><span class="en">Eric loses his 5-day live-integration window and hits code freeze with untested wiring.</span>
+          <span class="zh">Eric 失去 5 天的實接時間，帶著未驗證的串接進 code freeze。</span></td>
+      </tr>
+      <tr>
+        <td class="dt">Aug 14<br><span style="font-weight:400;color:var(--muted);font-size:11px">Fri</span></td>
+        <td><span class="pill bc">JARAX</span></td>
+        <td><b><span class="en">Creator Studio feature-complete</span><span class="zh">Creator Studio 功能完成</span></b><br>
+          <span class="en">Every surface Ztor reads: platform-fee config, IP Bank onboarding + invite emails, royalty import.</span>
+          <span class="zh">所有 Ztor 端要讀的介面：平台費率設定、IP Bank 開通與邀請信、版稅匯入。</span></td>
+        <td><span class="en">Ztor BO is a read-consumer of the fee schema — no schema, no fee display, no crowdfund settlement.</span>
+          <span class="zh">Ztor BO 是費率設定的讀取方 —— 沒有 schema 就沒有費用顯示，共創結算也無法驗。</span></td>
+      </tr>
+      <tr>
+        <td class="dt">Aug 17<br><span style="font-weight:400;color:var(--muted);font-size:11px">Mon</span></td>
+        <td><span class="pill zt">ERIC</span></td>
+        <td><b><span class="en">Ztor FE + BO dev complete</span><span class="zh">Ztor 前端＋BO 開發完成</span></b><br>
+          <span class="en">Crowdfund BO, waitlist, perks, shipping, music features, IP earnings + finance reports. Already the Asana due date on six 2.1 tickets.</span>
+          <span class="zh">共創 BO、候補、回饋、寄送、音樂功能、IP 收益與財務報表。Asana 上已有六張 2.1 票是這個到期日。</span></td>
+        <td><span class="en">Integration slides into UAT week and the two overlap — the classic way a 7-day UAT becomes 3.</span>
+          <span class="zh">串接壓進 UAT 週，兩者重疊 —— 7 天 UAT 變 3 天的典型路徑。</span></td>
+      </tr>
+      <tr>
+        <td class="dt">Aug 19<br><span style="font-weight:400;color:var(--muted);font-size:11px">Wed</span></td>
+        <td><span class="pill jt">BOTH</span></td>
+        <td><b><span class="en">Code freeze — integrated build on UAT</span><span class="zh">Code freeze —— 整合版本上 UAT</span></b><br>
+          <span class="en">E2E smoke passed across both systems. After this: bug fixes only, no new scope.</span>
+          <span class="zh">跨系統 E2E 冒煙測試通過。之後只修 bug，不再進新範圍。</span></td>
+        <td><span class="en">This is the real deadline. Everything above exists to protect it.</span>
+          <span class="zh">這才是真正的死線，上面所有日期都是為了守住它。</span></td>
+      </tr>
+      <tr>
+        <td class="dt">Aug 20–28<br><span style="font-weight:400;color:var(--muted);font-size:11px">7 wd</span></td>
+        <td><span class="pill jt">QA</span></td>
+        <td><b><span class="en">UAT + debugging</span><span class="zh">UAT ＋除錯</span></b><br>
+          <span class="en">Both teams on call. Fix-verify cycles run inside the window, not after it.</span>
+          <span class="zh">雙方待命。修正與回歸驗證都在此區間內完成，不外溢。</span></td>
+        <td><span class="en">Compressing to 5 days (Aug 24–28) is survivable but leaves no buffer for a re-test cycle.</span>
+          <span class="zh">壓到 5 天（8/24–28）勉強可行，但完全沒有回歸重測的緩衝。</span></td>
+      </tr>
+      <tr>
+        <td class="dt">Aug 31<br><span style="font-weight:400;color:var(--muted);font-size:11px">Mon</span></td>
+        <td><span class="pill rl">RELEASE</span></td>
+        <td><b><span class="en">2.1 — IP Bank simple version + Crowdfund</span><span class="zh">2.1 —— IP Bank 簡版 ＋ 共創募資</span></b></td>
+        <td><span class="en">Monday release: Fri Aug 28 stays clean as the last verification day.</span>
+          <span class="zh">週一上線，8/28（五）保留為最後驗證日。</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============ RISKS ============ -->
+  <h2><span class="num">04</span><span class="en">Three things that will make this slip</span><span class="zh">三個最可能讓它延期的因素</span></h2>
+
+  <div class="callout bad">
+    <div class="ic">⚠</div>
+    <div><b><span class="en">Eric's team ships 2.0 Redesign + Watch Party on Aug 17 — the same day 2.1 dev is due.</span><span class="zh">Eric 團隊 8/17 要上 2.0 改版＋Watch Party —— 與 2.1 開發完成同一天。</span></b><br>
+      <span class="en">That release currently carries several overdue tickets (Ztor 2.0 main site redesign, Ztor CMS 2.0, Watch Party). Assume Eric loses most of Aug 13–17 to it, which means his 2.1 build has to be substantially done <b>before</b> that week — reinforcing why Jarax's contract must land Aug 7, not later.</span>
+      <span class="zh">該版目前仍有數張逾期票（2.0 主站改版、Ztor CMS 2.0、Watch Party）。應假設 Eric 在 8/13–17 大半時間被佔用，代表 2.1 的開發必須在那週<b>之前</b>大致完成 —— 這正是接口文件必須 8/7 交付、不能再晚的原因。</span></div>
+  </div>
+
+  <div class="callout warn">
+    <div class="ic">◔</div>
+    <div><b><span class="en">Only two days of slack exist in the whole plan.</span><span class="zh">整個計畫只有兩天的鬆動空間。</span></b><br>
+      <span class="en">Code freeze Aug 19 → UAT Aug 20. If freeze slips to Fri Aug 21, UAT compresses to 5 working days with zero re-test buffer. Past Aug 21, Aug 31 is not real — decide then whether to cut scope or move the date.</span>
+      <span class="zh">8/19 freeze → 8/20 進 UAT。若 freeze 延到 8/21（五），UAT 只剩 5 個工作天且無回歸緩衝。一旦超過 8/21，8/31 就不成立 —— 屆時要決定砍範圍還是改日期。</span></div>
+  </div>
+
+  <div class="callout key">
+    <div class="ic">✓</div>
+    <div><b><span class="en">Scope items still open on Aug 5 should be cut now, not on Aug 20.</span><span class="zh">8/5 仍未收斂的範圍，現在就砍，不要拖到 8/20。</span></b><br>
+      <span class="en">Live candidates: royalty-report share semantics (biz — wrong answer means wrong royalties, not missing ones), Antom network-tokenisation confirmation, and the fan-follower API feasibility already on hold pending Jesse. None of these need to ride 2.1.</span>
+      <span class="zh">目前候選：版稅報表的 share 定義（biz —— 答錯是算錯金額，不是少算）、Antom network tokenisation 確認、已 hold 待 Jesse 確認的粉絲數 API。這三項都不必綁在 2.1。</span></div>
+  </div>
+
+  <div class="foot">
+    <b>Ztor 2.1 release timeline</b> · drafted 2026-08-05 · Jeff Yang<br>
+    <span class="en">Sources — Asana section “2.1 IP bank - simple version + Crowdfund (Aug 31th)” (18 tickets) · Ztor 2.0 dev meeting 2026-08-05 · Ztor dev sync 2026-08-02 change list.</span>
+    <span class="zh">資料來源 —— Asana「2.1 IP bank - simple version + Crowdfund (Aug 31th)」區段（18 張票）· 2026-08-05 Ztor 2.0 dev meeting · 2026-08-02 dev sync change list。</span><br>
+    <span class="en">Dates Aug 7 / 12 / 14 are proposed, not agreed — they are the latest dates that still leave 7 working days of UAT. Confirm with Jarax before circulating.</span>
+    <span class="zh">8/7、8/12、8/14 為建議日期，尚未與 Jarax 確認 —— 這是仍能保住 7 天 UAT 的最晚時點，發出前請先與 Jarax 對齊。</span>
+  </div>
+
+</div>
+
+<script>
+function setLang(l){
+  document.documentElement.lang=l;
+  document.getElementById('b-en').classList.toggle('on',l==='en');
+  document.getElementById('b-zh').classList.toggle('on',l==='zh-Hant');
+}
+</script>
+</body>
+</html>
