@@ -123,6 +123,11 @@
   .whycard.good b{color:var(--teal)}
   .whycard.warn{border-color:var(--gold);background:var(--gold-bg)}
   .whycard.warn b{color:var(--gold)}
+  .opth{font-size:12.5px;font-weight:800;margin:16px 0 8px}
+  .opth .ob{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-right:8px;border:1.5px solid;vertical-align:1px}
+  .opth .ob.o1{color:var(--coral);background:var(--coral-bg);border-color:var(--coral)}
+  .opth .ob.o2{color:var(--teal);background:var(--teal-bg);border-color:var(--teal)}
+  .opth small{font-weight:400;color:var(--muted);font-size:11px}
 
   /* bundle fork */
   .fork{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
@@ -185,8 +190,8 @@
   </header>
 
   <div class="stance">
-    <h2>Proposed stance — “Redirect for scale, native for exclusives”</h2>
-    <p><b>Standalone tickets → redirect to Bookyay checkout</b> (spike traffic stays on queue-protected rails) · <b>Bundles → native Ztor checkout</b> from allocated ticket blocks. Bundles force Ztor-side payment + settlement machinery anyway — the only real question is where standalone volume flows. Kickoff confirms via gates G1–G5 below.</p>
+    <h2>Framing — bundles are native by necessity · standalone checkout is the open question (G1)</h2>
+    <p><b>Bundles → native Ztor checkout</b> from allocated ticket blocks — one combined payment forces Ztor-side payment + settlement machinery regardless. <b>Standalone tickets → two options for group discussion (G1):</b> <b>Opt 1 — redirect</b> to Bookyay checkout · <b>Opt 2 — native</b> on Ztor. Side-by-side comparison in S3a; kickoff decides via gates G1–G5 below.</p>
   </div>
 
   <!-- ================= S1 ================= -->
@@ -200,17 +205,17 @@
       </div>
       <div class="box coral">
         <h3>Bookyay FE + Checkout <span class="tag blue">no change</span></h3>
-        <div class="one">Existing sales channel · QueueIt protection · purchase limits · accepts Ztor redirect + attribution tag</div>
+        <div class="one">Existing sales channel · QueueIt protection · purchase limits · handles Ztor-referred sales under G1 Opt 1 (redirect + attribution tag)</div>
       </div>
       <div class="box coral">
         <h3>Bookyay API <span class="tag teal">extended</span></h3>
-        <div class="one">Integration touchpoint — catalogue out · ticket allocation · issuance · order status. Depth unknown → <span class="p">P1 dev audit this week</span></div>
+        <div class="one">Integration touchpoint — catalogue out · ticket allocation · issuance · order status · + real-time inventory hold if G1 = native. Depth unknown → <span class="p">P1 dev audit this week</span></div>
       </div>
     </div>
 
     <div class="sysflows">
       <div class="hconn toR teal"><span class="hstem"></span><small>curated event catalogue sync</small></div>
-      <div class="hconn toL coral"><span class="hstem"></span><small>standalone redirect<br>+ attribution tag</small></div>
+      <div class="hconn toL coral"><span class="hstem"></span><small>standalone sale — G1 open<br>Opt 1 redirect · Opt 2 native via API</small></div>
       <div class="hconn toL teal"><span class="hstem"></span><small>bundle ticket issuance<br>from allocated block · async OK</small></div>
       <div class="hconn toL gold"><span class="hstem"></span><small>settlement — ticket portion<br>(G5 · contract)</small></div>
     </div>
@@ -221,7 +226,7 @@
         <h3>Ztor Frontend <span class="tag teal">new</span></h3>
         <div class="one">New ticketing entrance on the Ztor site</div>
         <div class="subs">
-          <div class="sub coral">Event pages<small>discover → redirect out</small></div>
+          <div class="sub coral">Event pages<small>standalone sales · G1: redirect / native</small></div>
           <div class="sub teal">Bundle sales<small>native checkout · fiat only</small></div>
         </div>
       </div>
@@ -235,7 +240,7 @@
       </div>
     </div>
   </div>
-  <div class="phase-note"><b>Phase boundary:</b> Phase 1 = sales integration only. Future phase migrates event creation &amp; management into Creator Studio — today's API contracts (catalogue / allocation / issuance) become internal seams then. Keep them clean; keep the redirect flow cheap.</div>
+  <div class="phase-note"><b>Phase boundary:</b> Phase 1 = sales integration only. Future phase migrates event creation &amp; management into Creator Studio — today's API contracts (catalogue / allocation / issuance) become internal seams then. Keep them clean; keep Phase-1-only plumbing cheap.</div>
 
   <!-- ================= S2 ================= -->
   <div class="lbl">S2 · Operational Workflow — Phase 1 operating model</div>
@@ -270,7 +275,9 @@
   </table></div>
 
   <!-- ================= S3 ================= -->
-  <div class="lbl">S3a · Buyer Flow — standalone ticket · proposed Option A redirect (G1)</div>
+  <div class="lbl">S3a · Buyer Flow — standalone ticket · G1 for discussion: two options</div>
+
+  <div class="opth"><span class="ob o1">Option 1</span>Redirect to Bookyay checkout <small>· Bookyay rails unchanged</small></div>
   <div class="chain">
     <div class="cnode teal">Browse event on Ztor<small>new entrance · discovery</small></div>
     <div class="carrow"><span class="shaft"></span></div>
@@ -278,12 +285,29 @@
     <div class="carrow"><span class="shaft"></span></div>
     <div class="cnode coral">Bookyay checkout<small>QueueIt · purchase limits · payment — all as today</small></div>
     <div class="carrow"><span class="shaft"></span></div>
-    <div class="cnode coral">E-ticket in Bookyay account<small>order visible on Bookyay only (Phase 1)</small></div>
+    <div class="cnode coral">E-ticket in Bookyay account<small>order lives on Bookyay</small></div>
   </div>
-  <div class="why">
-    <div class="whycard good"><b>Why A:</b> bundles already force Ztor-native payment machinery — B only buys UX consistency, at the cost of putting on-sale spikes on rails with no queue protection and reopening the full gateway contract. A keeps standalone as robust as today and <b>drops QueueIt off the Phase 1 critical path</b> (P2).</div>
-    <div class="whycard warn"><b>Trade-off to disclose:</b> standalone purchases won't show in Ztor "my orders" without account linking (future). Option B (native standalone checkout) remains the future-phase direction once migration starts.</div>
+
+  <div class="opth"><span class="ob o2">Option 2</span>Native checkout on Ztor <small>· same rails as bundles</small></div>
+  <div class="chain">
+    <div class="cnode teal">Browse event on Ztor<small>new entrance · discovery</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode gold">Ztor checkout<small>Ztor gateway — same rails as bundles</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode coral">Bookyay API<small>real-time inventory hold + issuance</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">E-ticket delivered<small>channel per G4 · order on both sides</small></div>
   </div>
+
+  <div class="tblwrap" style="margin-top:14px"><table>
+    <tr><th style="width:22%">Dimension</th><th>Opt 1 — Redirect</th><th>Opt 2 — Native</th></tr>
+    <tr><td><b>Buyer UX</b></td><td>Hops to Bookyay mid-journey</td><td>Single-site · consistent with bundles</td></tr>
+    <tr><td><b>On-sale spike protection</b></td><td>QueueIt rails unchanged — protected as today</td><td>Ztor needs queue / limit protection (QueueIt contract — <span class="p">P2</span>)</td></tr>
+    <tr><td><b>Ztor "my orders"</b></td><td><span class="no">✗</span> without account linking (future)</td><td><span class="yes">✓</span></td></tr>
+    <tr><td><b>Bookyay API depth</b></td><td>Catalogue + attribution only</td><td>+ real-time inventory hold &amp; commit</td></tr>
+    <tr><td><b>Contract scope</b></td><td>Standalone money stays on Bookyay · fee via attribution (<span class="p">P4</span>)</td><td>Gateway / MoR contract extends to standalone</td></tr>
+    <tr><td><b>Build size for Oct</b></td><td>Lighter</td><td>Heavier</td></tr>
+  </table></div>
 
   <div class="lbl">S3b · Buyer Flow — bundle · Ztor-native by necessity</div>
   <div class="chain">
@@ -301,7 +325,8 @@
   <div class="lbl">S3c · Where does the buyer see their transaction?</div>
   <div class="tblwrap"><table>
     <tr><th>Purchase</th><th class="c">Ztor "my orders"</th><th class="c">Bookyay "my orders"</th></tr>
-    <tr><td><b>Standalone</b> (redirect)</td><td class="c"><span class="no">✗</span> Phase 1 <span style="color:var(--muted)">— needs account linking (future)</span></td><td class="c"><span class="yes">✓</span> full order + e-ticket</td></tr>
+    <tr><td><b>Standalone — Opt 1</b> (redirect)</td><td class="c"><span class="no">✗</span> <span style="color:var(--muted)">needs account linking (future)</span></td><td class="c"><span class="yes">✓</span> full order + e-ticket</td></tr>
+    <tr><td><b>Standalone — Opt 2</b> (native)</td><td class="c"><span class="yes">✓</span> full order</td><td class="c"><span class="yes">✓</span> ticket record + e-ticket</td></tr>
     <tr><td><b>Bundle</b></td><td class="c"><span class="yes">✓</span> full bundle + merch status</td><td class="c"><span class="yes">✓</span> ticket component + e-ticket</td></tr>
   </table></div>
   <div class="phase-note" style="margin-top:10px"><b>Feeding G4:</b> Bookyay account required to receive the ticket — auto-provision at bundle purchase? · PII consent wording (P6) · e-ticket surfaced inside Ztor order page or Bookyay only? · venue entry validation unchanged (Bookyay ticket = Bookyay validation) — confirm.</div>
@@ -330,8 +355,8 @@
     <div class="gate-card">
       <span class="gid">G1</span>
       <h4>Standalone checkout model</h4>
-      <div class="def"><b>Proposed</b>Option A — redirect to Bookyay + attribution tag. Option B = future phase.</div>
-      <div class="trade"><b>Trade-off:</b> standalone orders invisible in Ztor "my orders" Phase 1</div>
+      <div class="def"><b>For discussion — two options</b>Opt 1 — redirect to Bookyay (+ attribution tag) · Opt 2 — native on Ztor via Bookyay API. Comparison in S3a.</div>
+      <div class="trade"><b>Axis:</b> spike protection + lighter build (Opt 1) vs single-site UX + order visibility (Opt 2)</div>
     </div>
     <div class="gate-card">
       <span class="gid">G2</span>
@@ -363,7 +388,7 @@
   <div class="tblwrap"><table>
     <tr><th style="width:44px">#</th><th>Item</th><th style="width:190px">Suggested owner</th></tr>
     <tr><td class="p">P1</td><td><b>Bookyay API audit</b> — catalogue / allocation / issuance / refund hooks / order status · <b>runs this week, parallel to ops track</b></td><td>Eric's team</td></tr>
-    <tr><td class="p">P2</td><td>QueueIt cross-platform contract — off Phase 1 critical path under G1=A · revisit at migration</td><td>Jeff</td></tr>
+    <tr><td class="p">P2</td><td>QueueIt cross-platform contract — <b>required for Phase 1 if G1 = native</b> · off critical path if redirect</td><td>Jeff</td></tr>
     <tr><td class="p">P3</td><td>Platform fee / rev-share values — standalone (attributed) + bundle (ticket vs merch portion)</td><td>Biz + Agnes/Jessie</td></tr>
     <tr><td class="p">P4</td><td>Attribution mechanism spec (redirect param → Bookyay order record) — fee uncomputable without it</td><td>Eric's team + Bookyay</td></tr>
     <tr><td class="p">P5</td><td>Promoter / pricing-parity permissions — is bundling (effective ticket discount) allowed per event contract? Feeds eligibility checklist</td><td>Bookyay Ops + legal</td></tr>
@@ -388,7 +413,7 @@
   <div class="tlpar">∥ parallel this week: <b>P1 Bookyay API audit</b> — don't serialize behind ops conclusions or September slips</div>
 
   <footer>
-    Companion docs: <b>ztor-docs/outputs/specs/ztor-bookyay-integration-kickoff-material-2026-08-06.md</b> (full material) · <b>ztor-docs/outputs/architecture/solution-arch-2026-08-06-ztor-bookyay-integration.md</b> (SA review) · gate stance: “redirect for scale, native for exclusives”
+    Companion docs: <b>ztor-docs/outputs/specs/ztor-bookyay-integration-kickoff-material-2026-08-06.md</b> (full material) · <b>ztor-docs/outputs/architecture/solution-arch-2026-08-06-ztor-bookyay-integration.md</b> (SA review) · G1 standalone checkout presented as two options — group decides at kickoff
   </footer>
 
 </div>
