@@ -191,7 +191,7 @@
 
   <div class="stance">
     <h2>Framing — bundles are native by necessity · standalone checkout is the open question (G1)</h2>
-    <p><b>Bundles → native Ztor checkout</b> from allocated ticket blocks — one combined payment forces Ztor-side payment + settlement machinery regardless. <b>Standalone tickets → two options for group discussion (G1):</b> <b>Opt 1 — redirect</b> to Bookyay checkout · <b>Opt 2 — native</b> on Ztor. Side-by-side comparison in S3a; kickoff decides via gates G1–G5 below.</p>
+    <p><b>Bundles → native Ztor checkout</b> (bundle inventory model = G2: shared live pool vs allocated block) — one combined payment forces Ztor-side payment + settlement machinery regardless. <b>Standalone tickets → two options for group discussion (G1):</b> <b>Opt 1 — redirect</b> to Bookyay checkout · <b>Opt 2 — native</b> on Ztor. Side-by-side comparison in S3a; kickoff decides via gates G1–G5 below.</p>
   </div>
 
   <!-- ================= S1 ================= -->
@@ -209,14 +209,14 @@
       </div>
       <div class="box coral">
         <h3>Bookyay API <span class="tag teal">extended</span></h3>
-        <div class="one">Integration touchpoint — catalogue out · ticket allocation · issuance · order status · + real-time inventory hold if G1 = native. Depth unknown → <span class="p">P1 dev audit this week</span></div>
+        <div class="one">Integration touchpoint — catalogue out · issuance · order status · inventory: real-time hold/commit or allocation (G2; hold also needed if G1 = native). Depth unknown → <span class="p">P1 dev audit this week</span></div>
       </div>
     </div>
 
     <div class="sysflows">
       <div class="hconn toR teal"><span class="hstem"></span><small>curated event catalogue sync</small></div>
       <div class="hconn toL coral"><span class="hstem"></span><small>standalone sale — G1 open<br>Opt 1 redirect · Opt 2 native via API</small></div>
-      <div class="hconn toL teal"><span class="hstem"></span><small>bundle ticket issuance<br>from allocated block · async OK</small></div>
+      <div class="hconn toL teal"><span class="hstem"></span><small>bundle ticket issuance<br>G2: live hold/commit or allocated block</small></div>
       <div class="hconn toL gold"><span class="hstem"></span><small>settlement — ticket portion<br>(G5 · contract)</small></div>
     </div>
 
@@ -250,15 +250,16 @@
     <span><span class="dot violet"></span> Creator</span>
     <span><span class="dot gray"></span> System / both</span>
   </div>
+  <div class="phase-note" style="margin:0 0 10px;border-color:var(--blue-ln);background:var(--blue-bg)"><b style="color:var(--blue)">Same team, two hats:</b> Ztor admin &amp; Bookyay ops are one unified ops team — lanes show which system they act in, not separate orgs.</div>
   <div class="steps">
     <div class="step"><span class="n">1</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span class="what">Create event + ticket tiers in Bookyay BO — <small>unchanged process</small></span></div>
-    <div class="step"><span class="n">2</span><span class="who gray"><span class="dot gray"></span>Both ops</span><span class="what">Nominate events for Ztor sale / bundling — <b>curated list, never sync-all</b> <small>· promoter contracts may restrict resale/bundling (<span class="p">P5</span>) · <span class="open">🔶 who approves</span></small></span></div>
+    <div class="step"><span class="n">2</span><span class="who gray"><span class="dot gray"></span>Both ops</span><span class="what">Listing sync: <b>sync-all with per-event opt-out</b> <small>· one unified ops team; blocklist for contract-restricted events (<span class="p">P5</span>) · <b>bundle eligibility stays curated</b> · revisit sync-all if G1 = native</small></span></div>
     <div class="step"><span class="n">3</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span class="what">Sync curated events + ticket info into Creator Studio</span></div>
-    <div class="step gate"><span class="n">4</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span class="what"><span class="g">G2</span> Allocate ticket block to the bundle — <small>carve-out from inventory, release-back window for unsold · oversell impossible by construction</small></span></div>
+    <div class="step gate"><span class="n">4</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span class="what"><span class="g">G2</span> Bundle inventory setup — <small>Opt 1 shared live pool (real-time hold/commit via API) · Opt 2 allocated block + release-back — sequenced on P1 audit</small></span></div>
     <div class="step"><span class="n">5</span><span class="who violet"><span class="dot violet"></span>Creator</span><span class="what">Bundle request → Ztor admin: merch + tier, price, quantity, sales period <small>· intake format <span class="p">P8</span></small></span></div>
     <div class="step"><span class="n">6</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span class="what">Create bundle in Creator Studio → publish to Ztor site — <small>fiat-only, single currency (<span class="p">P7</span>)</small></span></div>
-    <div class="step"><span class="n">7</span><span class="who gray"><span class="dot gray"></span>Both ops</span><span class="what">Sales window: monitor allocation burn-down · release-back at close <small>· ops dashboard <span class="p">P10</span></small></span></div>
-    <div class="step"><span class="n">8a</span><span class="who coral"><span class="dot coral"></span>Bookyay sys</span><span class="what">Issue e-ticket from allocated block — <b>async OK</b> <small>· proposed SLA: within N hours (G4 decides delivery channel)</small></span></div>
+    <div class="step"><span class="n">7</span><span class="who gray"><span class="dot gray"></span>Both ops</span><span class="what">Sales window: monitor sales &amp; availability <small>· if allocated: burn-down + release-back at close · ops dashboard <span class="p">P10</span></small></span></div>
+    <div class="step"><span class="n">8a</span><span class="who coral"><span class="dot coral"></span>Bookyay sys</span><span class="what">Issue e-ticket per G2 model <small>· shared pool: at payment commit · allocated block: async within N hours · G4 decides delivery channel</small></span></div>
     <div class="step"><span class="n">8b</span><span class="who teal"><span class="dot teal"></span>Ztor eShop</span><span class="what">Fulfil merch — ship or QR pickup <small>· existing eShop flows</small></span></div>
     <div class="step gate"><span class="n">9</span><span class="who gray"><span class="dot gray"></span>Both</span><span class="what"><span class="g">G3</span> Post-sale: refunds · seat changes · cancellations — <small>the complexity center: money sits on Ztor, fulfilment events happen in Bookyay → strawman matrix below</small></span></div>
     <div class="step gate"><span class="n">10</span><span class="who gray"><span class="dot gray"></span>Finance ×2</span><span class="what"><span class="g">G5</span> Reconcile + settle ticket portion → Bookyay per agreed schedule <small>· contract: Agnes / Jessie</small></span></div>
@@ -268,7 +269,7 @@
   <div class="lbl">S2b · G3 strawman — post-sale policy matrix <span style="letter-spacing:0;text-transform:none">(react to this, don't start from blank)</span></div>
   <div class="tblwrap"><table>
     <tr><th style="width:22%">Scenario</th><th>Standalone (via redirect)</th><th>Bundle (bought on Ztor)</th></tr>
-    <tr><td><b>Buyer refund</b></td><td>Bookyay policy + support — unchanged</td><td>Whole-bundle only · via Ztor support · Ztor gateway refunds · allocation returned</td></tr>
+    <tr><td><b>Buyer refund</b></td><td>Bookyay policy + support — unchanged</td><td>Whole-bundle only · via Ztor support · Ztor gateway refunds · inventory released back</td></tr>
     <tr><td><b>Event cancelled</b></td><td>Bookyay refunds — unchanged</td><td>Ztor auto-refunds ticket portion · <span class="open">🔶 merch: continues or refunds too?</span></td></tr>
     <tr><td><b>Seat change</b></td><td>Bookyay ops — unchanged</td><td>Bookyay ops handles · status syncs to Ztor order record</td></tr>
     <tr><td><b>Support entry</b></td><td>Bookyay</td><td>Ztor first-line → escalation to Bookyay ops · <span class="open">🔶 SLA</span></td></tr>
@@ -306,6 +307,7 @@
     <tr><td><b>Ztor "my orders"</b></td><td><span class="no">✗</span> without account linking (future)</td><td><span class="yes">✓</span></td></tr>
     <tr><td><b>Bookyay API depth</b></td><td>Catalogue + attribution only</td><td>+ real-time inventory hold &amp; commit</td></tr>
     <tr><td><b>Contract scope</b></td><td>Standalone money stays on Bookyay · fee via attribution (<span class="p">P4</span>)</td><td>Gateway / MoR contract extends to standalone</td></tr>
+    <tr><td><b>Catalogue listing policy</b></td><td>Sync-all + per-event opt-out viable (promo surface only)</td><td>Second selling surface — likely per-event allowlist</td></tr>
     <tr><td><b>Build size for Oct</b></td><td>Lighter</td><td>Heavier</td></tr>
   </table></div>
 
@@ -317,7 +319,7 @@
   </div>
   <div class="forkstem"><span class="fstem"></span><span class="fstem"></span></div>
   <div class="fork">
-    <div class="branch coral"><b>Bookyay issues e-ticket</b><small>from allocated block · async SLA · Ztor polls order status</small></div>
+    <div class="branch coral"><b>Bookyay issues e-ticket</b><small>per G2 inventory model · Ztor polls order status</small></div>
     <div class="branch teal"><b>eShop creates merch order</b><small>ship or QR pickup · existing flows</small></div>
   </div>
   <div class="phase-note" style="border-color:var(--blue-ln);background:var(--blue-bg)"><b style="color:var(--blue)">Linked order records:</b> Ztor order (full bundle) + Bookyay order (ticket component). Eric has declined a centralised transaction table (4–5 order types incl. LINE bookings) — dual records is the working model.</div>
@@ -361,8 +363,8 @@
     <div class="gate-card">
       <span class="gid">G2</span>
       <h4>Bundle ticket inventory</h4>
-      <div class="def"><b>Proposed</b>Allocated block (distributor-allotment style) + release-back window · async issuance SLA (within N hours)</div>
-      <div class="trade"><b>Trade-off:</b> unsold allocation mgmt · block size per event</div>
+      <div class="def"><b>For discussion — two options, sequenced on P1 audit</b>Opt 1 — shared live pool via real-time hold/commit API (single source of truth · Bookyay purchase limits apply) · Opt 2 — allocated block + release-back (fallback / per-event exclusive inventory)</div>
+      <div class="trade"><b>Axis:</b> API depth by Oct (Opt 1) vs stranded inventory + sold-out optics (Opt 2). A check alone can't prevent pay-then-fail races — Opt 1 needs hold → pay → commit.</div>
     </div>
     <div class="gate-card">
       <span class="gid">G3</span>
@@ -391,12 +393,12 @@
     <tr><td class="p">P2</td><td>QueueIt cross-platform contract — <b>required for Phase 1 if G1 = native</b> · off critical path if redirect</td><td>Jeff</td></tr>
     <tr><td class="p">P3</td><td>Platform fee / rev-share values — standalone (attributed) + bundle (ticket vs merch portion)</td><td>Biz + Agnes/Jessie</td></tr>
     <tr><td class="p">P4</td><td>Attribution mechanism spec (redirect param → Bookyay order record) — fee uncomputable without it</td><td>Eric's team + Bookyay</td></tr>
-    <tr><td class="p">P5</td><td>Promoter / pricing-parity permissions — is bundling (effective ticket discount) allowed per event contract? Feeds eligibility checklist</td><td>Bookyay Ops + legal</td></tr>
+    <tr><td class="p">P5</td><td><b>Organizer agreement coverage — discussion topic:</b> does Bookyay's standard organizer agreement permit listing on affiliated platforms? → enables sync-all + opt-out (ops verifying) · plus per-event bundling permission (effective ticket discount)</td><td>Bookyay Ops + legal</td></tr>
     <tr><td class="p">P6</td><td>PII data-sharing between entities (bundle buyer → Bookyay) — consent wording · privacy policy · marketing ownership</td><td>Legal both sides</td></tr>
     <tr><td class="p">P7</td><td>Bundle currency policy — proposed <b>fiat-only, single currency, no POPCORN</b> (virtual currency creates fiat settlement obligations)</td><td>Jeff + finance</td></tr>
     <tr><td class="p">P8</td><td>Creator bundle-request intake format (form / account manager)</td><td>Ztor Admin</td></tr>
     <tr><td class="p">P9</td><td>Creator reporting — content · cadence · combined ticket+bundle view or defer</td><td>Ztor Admin</td></tr>
-    <tr><td class="p">P10</td><td>Ops sales dashboard — allocation burn-down visibility both sides during sale windows</td><td>Both ops teams</td></tr>
+    <tr><td class="p">P10</td><td>Ops sales dashboard — sales &amp; availability visibility during sale windows (burn-down if allocated)</td><td>Ops team (unified)</td></tr>
     <tr><td class="p">P11</td><td>Cross-platform purchase limits — scalper buys max on both sites; enforce across platforms or accept gap for curated events?</td><td>Bookyay Ops</td></tr>
   </table></div>
 
