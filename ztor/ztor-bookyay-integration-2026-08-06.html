@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor × Bookyay — Integration Kickoff · Phase 1</title>
+<style>
+  :root{
+    --bg:#f7f6f3; --panel:#ffffff; --line:#e2dfd8; --txt:#26231e; --muted:#847f74; --faint:#a6a196;
+    --gold:#a97b2f; --gold-bg:#faf3e4;
+    --teal:#2e7d5f; --teal-bg:#eaf5ef;
+    --violet:#7a5ba6; --violet-bg:#f4effa;
+    --blue:#3d6c8f; --blue-bg:#eef4f9; --blue-ln:#c8dcea;
+    --coral:#b4574a; --coral-bg:#faeeec; --coral-ln:#e6c4be;
+    --r:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",sans-serif;font-size:14px;line-height:1.4}
+  .wrap{max-width:1180px;margin:0 auto;padding:34px 26px 60px}
+
+  header.page{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:18px}
+  header.page h1{font-size:21px;margin:0 0 4px;letter-spacing:-.2px}
+  header.page h1 b{color:var(--gold)}
+  header.page h1 i{color:var(--coral);font-style:normal;font-weight:800}
+  .meta{color:var(--faint);font-size:11.5px}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);align-items:center;padding-top:6px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:10px;height:10px;border-radius:3px;border:1.5px solid}
+  .sw.coral{background:var(--coral-bg);border-color:var(--coral)}
+  .sw.teal{background:var(--teal-bg);border-color:var(--teal)}
+  .sw.blue{background:var(--blue-bg);border-color:var(--blue)}
+  .sw.gold{background:var(--gold-bg);border-color:var(--gold)}
+  .sw.violet{background:var(--violet-bg);border-color:var(--violet);border-style:dashed}
+
+  .lbl{color:var(--faint);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;margin:26px 0 10px}
+
+  /* stance banner */
+  .stance{background:linear-gradient(180deg,var(--gold-bg),#fff 80%);border:1.5px solid var(--gold);border-radius:var(--r);padding:14px 18px;margin-bottom:8px}
+  .stance h2{margin:0;font-size:15.5px;color:var(--gold)}
+  .stance p{margin:5px 0 0;font-size:12.5px;color:var(--muted)}
+  .stance b{color:var(--txt)}
+
+  .box{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:13px 15px;box-shadow:0 1px 3px rgba(40,35,25,.05)}
+  .box h3{margin:0;font-size:13.5px}
+  .box .one{color:var(--muted);font-size:11px;margin-top:3px;line-height:1.45}
+  .tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;margin-left:7px;vertical-align:2px;text-transform:uppercase}
+  .tag.blue{color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue-ln)}
+  .tag.teal{color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal)}
+  .tag.gold{color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold)}
+  .tag.violet{color:var(--violet);background:var(--violet-bg);border:1px solid var(--violet)}
+
+  /* ===== S1 system overview: bookyay col | flows | ztor col ===== */
+  .sys{display:grid;grid-template-columns:minmax(280px,1fr) 190px minmax(280px,1fr);align-items:stretch}
+  .syscol{display:flex;flex-direction:column;gap:12px}
+  .colhead{font-size:12px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;padding:7px 12px;border-radius:8px;text-align:center}
+  .colhead.coral{color:var(--coral);background:var(--coral-bg);border:1.5px solid var(--coral)}
+  .colhead.teal{color:var(--teal);background:var(--teal-bg);border:1.5px solid var(--teal)}
+  .box.coral{border-color:var(--coral-ln);background:linear-gradient(180deg,var(--coral-bg),#fff 70%)}
+  .box.coral h3{color:var(--coral)}
+  .box.tealb{border-color:var(--teal);background:linear-gradient(180deg,var(--teal-bg),#fff 70%)}
+  .box.tealb h3{color:var(--teal)}
+  .box.blueb{border-color:var(--blue-ln);background:linear-gradient(180deg,var(--blue-bg),#fff 70%)}
+  .box.blueb h3{color:var(--blue)}
+  .subs{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+  .sub{flex:1;min-width:110px;background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:7px 10px;font-size:11px;font-weight:600;text-align:center}
+  .sub small{display:block;font-weight:400;color:var(--muted);font-size:10px;margin-top:2px}
+  .sub.teal{border-color:var(--teal);color:var(--teal)}
+  .sub.coral{border-color:var(--coral-ln);color:var(--coral)}
+
+  /* horizontal flow connectors between columns */
+  .sysflows{display:flex;flex-direction:column;justify-content:space-around;padding:44px 12px 10px;gap:20px}
+  .hconn{position:relative}
+  .hstem{display:block;border-top:2px solid var(--muted);position:relative}
+  .hconn.toR .hstem::after{content:"";position:absolute;right:-1px;top:-6px;border:5px solid transparent;border-left:7px solid var(--muted)}
+  .hconn.toL .hstem::after{content:"";position:absolute;left:-1px;top:-6px;border:5px solid transparent;border-right:7px solid var(--muted)}
+  .hconn small{display:block;color:var(--muted);font-size:10px;text-align:center;margin-top:5px;line-height:1.35}
+  .hconn.teal .hstem{border-color:var(--teal)} .hconn.teal.toR .hstem::after{border-left-color:var(--teal)} .hconn.teal.toL .hstem::after{border-right-color:var(--teal)} .hconn.teal small{color:var(--teal)}
+  .hconn.coral .hstem{border-color:var(--coral)} .hconn.coral.toR .hstem::after{border-left-color:var(--coral)} .hconn.coral.toL .hstem::after{border-right-color:var(--coral)} .hconn.coral small{color:var(--coral)}
+  .hconn.gold .hstem{border-color:var(--gold);border-top-style:dashed} .hconn.gold.toL .hstem::after{border-right-color:var(--gold)} .hconn.gold.toR .hstem::after{border-left-color:var(--gold)} .hconn.gold small{color:var(--gold)}
+
+  .phase-note{margin-top:12px;border:1.5px dashed var(--violet);background:var(--violet-bg);border-radius:var(--r);padding:10px 15px;font-size:11.5px;color:var(--muted)}
+  .phase-note b{color:var(--violet)}
+
+  /* ===== S2 ops swimlane steps ===== */
+  .lanekey{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:10px}
+  .lanekey span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .dot.coral{background:var(--coral)} .dot.teal{background:var(--teal)} .dot.violet{background:var(--violet)} .dot.gray{background:var(--faint)}
+  .steps{display:flex;flex-direction:column;gap:6px}
+  .step{display:grid;grid-template-columns:30px 150px 1fr;gap:10px;align-items:baseline;background:var(--panel);border:1.5px solid var(--line);border-radius:9px;padding:8px 13px}
+  .step.gate{border-color:var(--gold);background:linear-gradient(90deg,var(--gold-bg),#fff 40%)}
+  .step .n{font-weight:800;color:var(--faint);font-size:12px}
+  .step .who{font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px}
+  .step .who.coral{color:var(--coral)} .step .who.teal{color:var(--teal)} .step .who.violet{color:var(--violet)} .step .who.gray{color:var(--muted)}
+  .step .what{font-size:12px}
+  .step .what small{color:var(--muted);font-size:11px}
+  .g{font-weight:800;color:var(--gold)}
+  .p{font-weight:700;color:var(--blue)}
+  .open{color:var(--gold);font-weight:700}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);overflow:hidden;font-size:11.5px}
+  .tblwrap{border-radius:var(--r);overflow:auto;box-shadow:0 1px 3px rgba(40,35,25,.05)}
+  th{background:#efede8;color:var(--muted);font-size:10px;letter-spacing:1px;text-transform:uppercase;text-align:left;padding:8px 12px}
+  td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top;line-height:1.45}
+  td.c{text-align:center}
+  .yes{color:var(--teal);font-weight:700}
+  .no{color:var(--coral);font-weight:700}
+
+  /* ===== S3 flow chains ===== */
+  .chain{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;row-gap:14px}
+  .cnode{background:var(--panel);border:1.5px solid var(--line);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;max-width:190px}
+  .cnode small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:3px;line-height:1.4}
+  .cnode.coral{border-color:var(--coral);background:linear-gradient(180deg,var(--coral-bg),#fff 75%)}
+  .cnode.teal{border-color:var(--teal);background:linear-gradient(180deg,var(--teal-bg),#fff 75%)}
+  .cnode.gold{border-color:var(--gold);background:linear-gradient(180deg,var(--gold-bg),#fff 75%)}
+  .carrow{display:flex;align-items:center;padding:0 4px;color:var(--muted)}
+  .carrow .shaft{width:26px;border-top:2px solid var(--muted);position:relative}
+  .carrow .shaft::after{content:"";position:absolute;right:-1px;top:-6px;border:5px solid transparent;border-left:7px solid var(--muted)}
+  .why{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .whycard{border-radius:9px;padding:10px 14px;font-size:11.5px;line-height:1.5;border:1.5px solid}
+  .whycard.good{border-color:var(--teal);background:var(--teal-bg)}
+  .whycard.good b{color:var(--teal)}
+  .whycard.warn{border-color:var(--gold);background:var(--gold-bg)}
+  .whycard.warn b{color:var(--gold)}
+
+  /* bundle fork */
+  .fork{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  .forkstem{display:flex;justify-content:center;gap:120px;margin:2px 0}
+  .fstem{width:0;height:16px;border-left:2px solid var(--muted);position:relative}
+  .fstem::after{content:"";position:absolute;left:-5px;bottom:-7px;border:5px solid transparent;border-top:7px solid var(--muted)}
+  .branch{border-radius:9px;border:1.5px solid;padding:10px 14px;font-size:12px}
+  .branch small{display:block;color:var(--muted);font-size:10.5px;margin-top:3px;line-height:1.45}
+  .branch.coral{border-color:var(--coral-ln);background:linear-gradient(180deg,var(--coral-bg),#fff 75%)}
+  .branch.coral b{color:var(--coral)}
+  .branch.teal{border-color:var(--teal);background:linear-gradient(180deg,var(--teal-bg),#fff 75%)}
+  .branch.teal b{color:var(--teal)}
+
+  /* ===== S5 gates ===== */
+  .gates{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+  .gate-card{background:var(--panel);border:1.5px solid var(--gold);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(40,35,25,.05)}
+  .gate-card .gid{font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--gold)}
+  .gate-card h4{margin:3px 0 7px;font-size:13px;line-height:1.3}
+  .gate-card .def{font-size:11.5px;background:var(--gold-bg);border-radius:7px;padding:7px 10px;line-height:1.45}
+  .gate-card .def b{color:var(--gold);font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:2px}
+  .gate-card .trade{font-size:10.5px;color:var(--muted);margin-top:7px;line-height:1.4}
+  .gate-card .trade b{color:var(--coral);font-weight:700}
+
+  /* timeline */
+  .tl{display:flex;align-items:center;gap:0;flex-wrap:wrap;row-gap:12px;margin-top:6px}
+  .tlnode{background:var(--panel);border:1.5px solid var(--line);border-radius:9px;padding:9px 15px;text-align:center}
+  .tlnode b{display:block;font-size:12.5px}
+  .tlnode small{color:var(--muted);font-size:10.5px;display:block;margin-top:2px;line-height:1.35}
+  .tlnode.now{border-color:var(--gold);background:linear-gradient(180deg,var(--gold-bg),#fff 75%)}
+  .tlnode.launch{border-color:var(--teal);background:linear-gradient(180deg,var(--teal-bg),#fff 75%)}
+  .tlpar{border:1.5px dashed var(--blue-ln);background:var(--blue-bg);border-radius:9px;padding:8px 14px;font-size:11px;color:var(--blue);margin-top:12px;display:inline-block}
+
+  footer{margin-top:36px;color:var(--faint);font-size:10.5px;line-height:1.6}
+
+  @media (max-width:940px){
+    .sys{grid-template-columns:1fr}
+    .sysflows{flex-direction:row;padding:14px 0;gap:14px}
+    .hconn{flex:1}
+    .why,.fork{grid-template-columns:1fr}
+    .step{grid-template-columns:26px 1fr}
+    .step .what{grid-column:1 / -1}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <div>
+      <h1><b>ztor.</b> × <i>Bookyay</i> — Integration Kickoff · Phase 1</h1>
+      <div class="meta">2026-08-06 · ops teams kickoff (no dev) · Phase 1 target: <b>October release</b> · dev starts September</div>
+    </div>
+    <div class="legend">
+      <span><span class="sw coral"></span> Bookyay — unchanged</span>
+      <span><span class="sw teal"></span> Ztor — new build</span>
+      <span><span class="sw blue"></span> existing Ztor</span>
+      <span><span class="sw gold"></span> gate decision G#</span>
+      <span><span class="sw violet"></span> future phase</span>
+    </div>
+  </header>
+
+  <div class="stance">
+    <h2>Proposed stance — “Redirect for scale, native for exclusives”</h2>
+    <p><b>Standalone tickets → redirect to Bookyay checkout</b> (spike traffic stays on queue-protected rails) · <b>Bundles → native Ztor checkout</b> from allocated ticket blocks. Bundles force Ztor-side payment + settlement machinery anyway — the only real question is where standalone volume flows. Kickoff confirms via gates G1–G5 below.</p>
+  </div>
+
+  <!-- ================= S1 ================= -->
+  <div class="lbl">S1 · System Overview — who owns what</div>
+  <div class="sys">
+    <div class="syscol">
+      <div class="colhead coral">Bookyay · source of truth for events</div>
+      <div class="box coral">
+        <h3>Bookyay BO <span class="tag blue">no change</span></h3>
+        <div class="one">Event creation &amp; management · ticket tiers · inventory · organizer contracts</div>
+      </div>
+      <div class="box coral">
+        <h3>Bookyay FE + Checkout <span class="tag blue">no change</span></h3>
+        <div class="one">Existing sales channel · QueueIt protection · purchase limits · accepts Ztor redirect + attribution tag</div>
+      </div>
+      <div class="box coral">
+        <h3>Bookyay API <span class="tag teal">extended</span></h3>
+        <div class="one">Integration touchpoint — catalogue out · ticket allocation · issuance · order status. Depth unknown → <span class="p">P1 dev audit this week</span></div>
+      </div>
+    </div>
+
+    <div class="sysflows">
+      <div class="hconn toR teal"><span class="hstem"></span><small>curated event catalogue sync</small></div>
+      <div class="hconn toL coral"><span class="hstem"></span><small>standalone redirect<br>+ attribution tag</small></div>
+      <div class="hconn toL teal"><span class="hstem"></span><small>bundle ticket issuance<br>from allocated block · async OK</small></div>
+      <div class="hconn toR gold"><span class="hstem"></span><small>settlement — ticket portion<br>(G5 · contract)</small></div>
+    </div>
+
+    <div class="syscol">
+      <div class="colhead teal">Ztor · new sales surface</div>
+      <div class="box tealb">
+        <h3>Ztor Frontend <span class="tag teal">new</span></h3>
+        <div class="one">New ticketing entrance on the Ztor site</div>
+        <div class="subs">
+          <div class="sub coral">Event pages<small>discover → redirect out</small></div>
+          <div class="sub teal">Bundle sales<small>native checkout · fiat only</small></div>
+        </div>
+      </div>
+      <div class="box tealb">
+        <h3>Creator Studio <span class="tag teal">new</span></h3>
+        <div class="one">Fetch curated Bookyay events · bundle creation &amp; management · <b>admin-operated</b> (not public yet)</div>
+      </div>
+      <div class="box blueb">
+        <h3>Ztor eShop <span class="tag blue">existing</span></h3>
+        <div class="one">Supplies merch SKUs into bundles · ship / QR pickup fulfilment</div>
+      </div>
+    </div>
+  </div>
+  <div class="phase-note"><b>Phase boundary:</b> Phase 1 = sales integration only. Future phase migrates event creation &amp; management into Creator Studio — today's API contracts (catalogue / allocation / issuance) become internal seams then. Keep them clean; keep the redirect flow cheap.</div>
+
+  <!-- ================= S2 ================= -->
+  <div class="lbl">S2 · Operational Workflow — Phase 1 operating model</div>
+  <div class="lanekey">
+    <span><span class="dot coral"></span> Bookyay Ops</span>
+    <span><span class="dot teal"></span> Ztor Admin / Ops</span>
+    <span><span class="dot violet"></span> Creator</span>
+    <span><span class="dot gray"></span> System / both</span>
+  </div>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span class="what">Create event + ticket tiers in Bookyay BO — <small>unchanged process</small></span></div>
+    <div class="step"><span class="n">2</span><span class="who gray"><span class="dot gray"></span>Both ops</span><span class="what">Nominate events for Ztor sale / bundling — <b>curated list, never sync-all</b> <small>· promoter contracts may restrict resale/bundling (<span class="p">P5</span>) · <span class="open">🔶 who approves</span></small></span></div>
+    <div class="step"><span class="n">3</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span class="what">Sync curated events + ticket info into Creator Studio</span></div>
+    <div class="step gate"><span class="n">4</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span class="what"><span class="g">G2</span> Allocate ticket block to the bundle — <small>carve-out from inventory, release-back window for unsold · oversell impossible by construction</small></span></div>
+    <div class="step"><span class="n">5</span><span class="who violet"><span class="dot violet"></span>Creator</span><span class="what">Bundle request → Ztor admin: merch + tier, price, quantity, sales period <small>· intake format <span class="p">P8</span></small></span></div>
+    <div class="step"><span class="n">6</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span class="what">Create bundle in Creator Studio → publish to Ztor site — <small>fiat-only, single currency (<span class="p">P7</span>)</small></span></div>
+    <div class="step"><span class="n">7</span><span class="who gray"><span class="dot gray"></span>Both ops</span><span class="what">Sales window: monitor allocation burn-down · release-back at close <small>· ops dashboard <span class="p">P10</span></small></span></div>
+    <div class="step"><span class="n">8a</span><span class="who coral"><span class="dot coral"></span>Bookyay sys</span><span class="what">Issue e-ticket from allocated block — <b>async OK</b> <small>· proposed SLA: within N hours (G4 decides delivery channel)</small></span></div>
+    <div class="step"><span class="n">8b</span><span class="who teal"><span class="dot teal"></span>Ztor eShop</span><span class="what">Fulfil merch — ship or QR pickup <small>· existing eShop flows</small></span></div>
+    <div class="step gate"><span class="n">9</span><span class="who gray"><span class="dot gray"></span>Both</span><span class="what"><span class="g">G3</span> Post-sale: refunds · seat changes · cancellations — <small>the complexity center: money sits on Ztor, fulfilment events happen in Bookyay → strawman matrix below</small></span></div>
+    <div class="step gate"><span class="n">10</span><span class="who gray"><span class="dot gray"></span>Finance ×2</span><span class="what"><span class="g">G5</span> Reconcile + settle ticket portion → Bookyay per agreed schedule <small>· contract: Agnes / Jessie</small></span></div>
+    <div class="step"><span class="n">11</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span class="what">Sales report to creator — bundle stats from Creator Studio <small>· content / cadence <span class="p">P9</span></small></span></div>
+  </div>
+
+  <div class="lbl">S2b · G3 strawman — post-sale policy matrix <span style="letter-spacing:0;text-transform:none">(react to this, don't start from blank)</span></div>
+  <div class="tblwrap"><table>
+    <tr><th style="width:22%">Scenario</th><th>Standalone (via redirect)</th><th>Bundle (bought on Ztor)</th></tr>
+    <tr><td><b>Buyer refund</b></td><td>Bookyay policy + support — unchanged</td><td>Whole-bundle only · via Ztor support · Ztor gateway refunds · allocation returned</td></tr>
+    <tr><td><b>Event cancelled</b></td><td>Bookyay refunds — unchanged</td><td>Ztor auto-refunds ticket portion · <span class="open">🔶 merch: continues or refunds too?</span></td></tr>
+    <tr><td><b>Seat change</b></td><td>Bookyay ops — unchanged</td><td>Bookyay ops handles · status syncs to Ztor order record</td></tr>
+    <tr><td><b>Support entry</b></td><td>Bookyay</td><td>Ztor first-line → escalation to Bookyay ops · <span class="open">🔶 SLA</span></td></tr>
+  </table></div>
+
+  <!-- ================= S3 ================= -->
+  <div class="lbl">S3a · Buyer Flow — standalone ticket · proposed Option A redirect (G1)</div>
+  <div class="chain">
+    <div class="cnode teal">Browse event on Ztor<small>new entrance · discovery</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">Buy CTA<small>deep link + attribution tag</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode coral">Bookyay checkout<small>QueueIt · purchase limits · payment — all as today</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode coral">E-ticket in Bookyay account<small>order visible on Bookyay only (Phase 1)</small></div>
+  </div>
+  <div class="why">
+    <div class="whycard good"><b>Why A:</b> bundles already force Ztor-native payment machinery — B only buys UX consistency, at the cost of putting on-sale spikes on rails with no queue protection and reopening the full gateway contract. A keeps standalone as robust as today and <b>drops QueueIt off the Phase 1 critical path</b> (P2).</div>
+    <div class="whycard warn"><b>Trade-off to disclose:</b> standalone purchases won't show in Ztor "my orders" without account linking (future). Option B (native standalone checkout) remains the future-phase direction once migration starts.</div>
+  </div>
+
+  <div class="lbl">S3b · Buyer Flow — bundle · Ztor-native by necessity</div>
+  <div class="chain">
+    <div class="cnode teal">Bundle page on Ztor<small>ticket + merch · one price</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode gold">Single Ztor checkout<small>one combined payment · fiat only (P7)</small></div>
+  </div>
+  <div class="forkstem"><span class="fstem"></span><span class="fstem"></span></div>
+  <div class="fork">
+    <div class="branch coral"><b>Bookyay issues e-ticket</b><small>from allocated block · async SLA · Ztor polls order status</small></div>
+    <div class="branch teal"><b>eShop creates merch order</b><small>ship or QR pickup · existing flows</small></div>
+  </div>
+  <div class="phase-note" style="border-color:var(--blue-ln);background:var(--blue-bg)"><b style="color:var(--blue)">Linked order records:</b> Ztor order (full bundle) + Bookyay order (ticket component). Eric has declined a centralised transaction table (4–5 order types incl. LINE bookings) — dual records is the working model.</div>
+
+  <div class="lbl">S3c · Where does the buyer see their transaction?</div>
+  <div class="tblwrap"><table>
+    <tr><th>Purchase</th><th class="c">Ztor "my orders"</th><th class="c">Bookyay "my orders"</th></tr>
+    <tr><td><b>Standalone</b> (redirect)</td><td class="c"><span class="no">✗</span> Phase 1 <span style="color:var(--muted)">— needs account linking (future)</span></td><td class="c"><span class="yes">✓</span> full order + e-ticket</td></tr>
+    <tr><td><b>Bundle</b></td><td class="c"><span class="yes">✓</span> full bundle + merch status</td><td class="c"><span class="yes">✓</span> ticket component + e-ticket</td></tr>
+  </table></div>
+  <div class="phase-note" style="margin-top:10px"><b>Feeding G4:</b> Bookyay account required to receive the ticket — auto-provision at bundle purchase? · PII consent wording (P6) · e-ticket surfaced inside Ztor order page or Bookyay only? · venue entry validation unchanged (Bookyay ticket = Bookyay validation) — confirm.</div>
+
+  <!-- ================= S4 ================= -->
+  <div class="lbl">S4 · Creator Flow — Phase 1 via admin team</div>
+  <div class="chain">
+    <div class="cnode" style="border-color:var(--violet);background:linear-gradient(180deg,var(--violet-bg),#fff 75%)">Creator request<small>bundle ask → intake format P8</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">Ztor Admin builds<small>in Creator Studio</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode" style="border-color:var(--violet);background:linear-gradient(180deg,var(--violet-bg),#fff 75%)">Creator approves preview</div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">Live on Ztor site</div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode gold">Reports back to creator<small>cadence P9</small></div>
+  </div>
+  <div class="why">
+    <div class="whycard good"><b>Reports split by scope:</b> bundle sales → Creator Studio data, admin sends report (P9) · standalone ticket sales → stay in Bookyay BO as today, Ztor-referred sales identifiable via attribution tag (P4) · <span class="open">🔶 combined view — assemble or defer</span></div>
+    <div class="whycard warn"><b>Future:</b> Creator Studio opens to creators (SSO) → self-serve bundles + dashboards · event management migrates in from Bookyay.</div>
+  </div>
+
+  <!-- ================= S5 ================= -->
+  <div class="lbl">S5 · Kickoff Agenda — 5 gate decisions · must leave the room decided</div>
+  <div class="gates">
+    <div class="gate-card">
+      <span class="gid">G1</span>
+      <h4>Standalone checkout model</h4>
+      <div class="def"><b>Proposed</b>Option A — redirect to Bookyay + attribution tag. Option B = future phase.</div>
+      <div class="trade"><b>Trade-off:</b> standalone orders invisible in Ztor "my orders" Phase 1</div>
+    </div>
+    <div class="gate-card">
+      <span class="gid">G2</span>
+      <h4>Bundle ticket inventory</h4>
+      <div class="def"><b>Proposed</b>Allocated block (distributor-allotment style) + release-back window · async issuance SLA (within N hours)</div>
+      <div class="trade"><b>Trade-off:</b> unsold allocation mgmt · block size per event</div>
+    </div>
+    <div class="gate-card">
+      <span class="gid">G3</span>
+      <h4>Post-sale ownership</h4>
+      <div class="def"><b>Proposed</b>Strawman matrix (S2b) — bundle refunds whole-bundle via Ztor · seat changes stay Bookyay · escalation SLA</div>
+      <div class="trade"><b>Trade-off:</b> merch handling on event cancellation</div>
+    </div>
+    <div class="gate-card">
+      <span class="gid">G4</span>
+      <h4>Buyer account &amp; e-ticket delivery</h4>
+      <div class="def"><b>No default — needs Bookyay input</b>Account required? Auto-provision at purchase? Delivery channel?</div>
+      <div class="trade"><b>Follows:</b> PII consent P6 hangs off this</div>
+    </div>
+    <div class="gate-card">
+      <span class="gid">G5</span>
+      <h4>Bundle settlement &amp; MoR</h4>
+      <div class="def"><b>Proposed</b>Ztor = merchant of record for bundle · ticket portion settles to Bookyay on fixed schedule · contract ask narrowed to bundle settlement only</div>
+      <div class="trade"><b>On top:</b> fee % sits separately (P3)</div>
+    </div>
+  </div>
+
+  <div class="lbl">S5b · Parking lot — assign owner + deadline at kickoff</div>
+  <div class="tblwrap"><table>
+    <tr><th style="width:44px">#</th><th>Item</th><th style="width:190px">Suggested owner</th></tr>
+    <tr><td class="p">P1</td><td><b>Bookyay API audit</b> — catalogue / allocation / issuance / refund hooks / order status · <b>runs this week, parallel to ops track</b></td><td>Eric's team</td></tr>
+    <tr><td class="p">P2</td><td>QueueIt cross-platform contract — off Phase 1 critical path under G1=A · revisit at migration</td><td>Jeff</td></tr>
+    <tr><td class="p">P3</td><td>Platform fee / rev-share values — standalone (attributed) + bundle (ticket vs merch portion)</td><td>Biz + Agnes/Jessie</td></tr>
+    <tr><td class="p">P4</td><td>Attribution mechanism spec (redirect param → Bookyay order record) — fee uncomputable without it</td><td>Eric's team + Bookyay</td></tr>
+    <tr><td class="p">P5</td><td>Promoter / pricing-parity permissions — is bundling (effective ticket discount) allowed per event contract? Feeds eligibility checklist</td><td>Bookyay Ops + legal</td></tr>
+    <tr><td class="p">P6</td><td>PII data-sharing between entities (bundle buyer → Bookyay) — consent wording · privacy policy · marketing ownership</td><td>Legal both sides</td></tr>
+    <tr><td class="p">P7</td><td>Bundle currency policy — proposed <b>fiat-only, single currency, no POPCORN</b> (virtual currency creates fiat settlement obligations)</td><td>Jeff + finance</td></tr>
+    <tr><td class="p">P8</td><td>Creator bundle-request intake format (form / account manager)</td><td>Ztor Admin</td></tr>
+    <tr><td class="p">P9</td><td>Creator reporting — content · cadence · combined ticket+bundle view or defer</td><td>Ztor Admin</td></tr>
+    <tr><td class="p">P10</td><td>Ops sales dashboard — allocation burn-down visibility both sides during sale windows</td><td>Both ops teams</td></tr>
+    <tr><td class="p">P11</td><td>Cross-platform purchase limits — scalper buys max on both sites; enforce across platforms or accept gap for curated events?</td><td>Bookyay Ops</td></tr>
+  </table></div>
+
+  <div class="lbl">S5c · Timeline</div>
+  <div class="tl">
+    <div class="tlnode now"><b>Kickoff — now</b><small>G1–G5 decided<br>parking lot assigned</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="tlnode"><b>+48 h</b><small>BRD opens with gate answers<br>largest unspecced item on the board</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="tlnode"><b>September</b><small>dev starts</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="tlnode launch"><b>October</b><small>Phase 1 launch</small></div>
+  </div>
+  <div class="tlpar">∥ parallel this week: <b>P1 Bookyay API audit</b> — don't serialize behind ops conclusions or September slips</div>
+
+  <footer>
+    Companion docs: <b>ztor-docs/outputs/specs/ztor-bookyay-integration-kickoff-material-2026-08-06.md</b> (full material) · <b>ztor-docs/outputs/architecture/solution-arch-2026-08-06-ztor-bookyay-integration.md</b> (SA review) · gate stance: “redirect for scale, native for exclusives”
+  </footer>
+
+</div>
+</body>
+</html>
