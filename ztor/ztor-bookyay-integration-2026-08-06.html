@@ -98,11 +98,11 @@
   .carrow{display:flex;align-items:center;padding:0 5px}
   .carrow .shaft{width:26px;border-top:2.5px solid var(--muted);position:relative}
   .carrow .shaft::after{content:"";position:absolute;right:-1px;top:-6px;border:5px solid transparent;border-left:8px solid var(--muted)}
-  .forkstem{display:flex;justify-content:center;gap:130px;margin:4px 0}
-  .fstem{width:0;height:16px;border-left:2.5px solid var(--muted);position:relative}
+  .fork{display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+  .forkleg{display:flex;flex-direction:column;align-items:center;flex:0 1 320px;max-width:340px}
+  .fstem{width:0;height:16px;border-left:2.5px solid var(--muted);position:relative;margin-bottom:9px}
   .fstem::after{content:"";position:absolute;left:-5px;bottom:-7px;border:5px solid transparent;border-top:8px solid var(--muted)}
-  .fork{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .branch{border-radius:9px;border:1.5px solid;padding:11px 15px;font-size:13.5px;font-weight:700}
+  .branch{border-radius:9px;border:1.5px solid;padding:11px 15px;font-size:13.5px;font-weight:700;width:100%}
   .branch small{display:block;color:var(--muted);font-size:11.5px;margin-top:3px;font-weight:500}
   .branch.coral{border-color:var(--coral-ln);background:linear-gradient(180deg,var(--coral-bg),#fff 75%)}
   .branch.coral b{color:var(--coral)}
@@ -137,7 +137,7 @@
     .sys{grid-template-columns:1fr}
     .sysflows{flex-direction:row;padding:16px 0;gap:14px}
     .hconn{flex:1}
-    .fork{grid-template-columns:1fr}
+    .forkleg{flex:1 1 100%;max-width:none}
     .step{grid-template-columns:30px 1fr}
     .step .who{grid-column:2}
   }
@@ -225,11 +225,16 @@
     <div class="carrow"><span class="shaft"></span></div>
     <div class="cnode teal">E-ticket in My Wallet<small>no Bookyay account (G4)</small></div>
   </div>
-  <div class="flownote"><b>Bundle:</b> same rails — one combined payment, then two legs ↓</div>
-  <div class="forkstem"><span class="fstem"></span><span class="fstem"></span></div>
+  <div class="flownote"><b>Bundle:</b> same rails — one combined payment, then two fulfilment legs</div>
   <div class="fork">
-    <div class="branch coral"><b>Bookyay issues e-ticket → My Wallet</b><small>per G2 inventory model</small></div>
-    <div class="branch teal"><b>eShop merch order</b><small>ship / QR pickup</small></div>
+    <div class="forkleg">
+      <span class="fstem"></span>
+      <div class="branch coral"><b>Ticket → My Wallet</b><small>Bookyay issues · per G2 inventory model</small></div>
+    </div>
+    <div class="forkleg">
+      <span class="fstem"></span>
+      <div class="branch teal"><b>Merch → eShop order</b><small>ship / QR pickup</small></div>
+    </div>
   </div>
 
   <!-- ============ S4 ============ -->
