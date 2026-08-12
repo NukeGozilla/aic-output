@@ -161,6 +161,16 @@
     <p><b>Standalone tickets AND bundles</b> · redirect to Bookyay is off the table (biz decision) · Bookyay stays the event source of truth — inventory, issuance, venue validation — via API</p>
   </div>
 
+  <!-- ============ S0 ============ -->
+  <div class="lbl">0 · Release Pipeline — what's coming (for biz)</div>
+  <div class="tl">
+    <div class="tlnode now" style="text-align:left"><b>Phase 1 — end of October</b><small>sales integration + Creator Studio bundle setup<br><b>← this kickoff</b></small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="tlnode" style="text-align:left"><b>Phase 2 — end of November</b><small>ticketing reports on ztor.com</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="tlnode" style="text-align:left;border-style:dashed"><b>Phase 3 — TBD</b><small>event creation &amp; management<br>in Creator Studio</small></div>
+  </div>
+
   <!-- ============ S1 ============ -->
   <div class="lbl">1 · System Overview — the Bookyay API is the only integration seam</div>
   <div class="sys">
@@ -192,7 +202,7 @@
     </div>
   </div>
   <div class="note" style="border-color:var(--gold);background:var(--gold-bg)"><b style="color:var(--gold)">Settlement (G5)</b> — ticket revenue → Bookyay on fixed schedule · finance rail, <b>not an API flow</b></div>
-  <div class="note"><b>Phase 1 = sales integration only.</b> Event creation &amp; management migrates into Creator Studio in a future phase — these API contracts become internal seams then.</div>
+  <div class="note"><b>Phase 1 = sales integration only.</b> Reports land in Phase 2 (end Nov) · event creation &amp; management migrates into Creator Studio in Phase 3 — today's API contracts become internal seams then.</div>
 
   <!-- ============ S2 ============ -->
   <div class="lbl">2 · Operating Model — one ops team, two hats</div>
@@ -302,7 +312,7 @@
     <tr><td class="p">D3</td><td><b>Bookyay → Ztor SSO + Loyalty Points</b> — "Login with Ztor" on Bookyay so loyalty accrues; biz timing? complexity?</td></tr>
     <tr><td class="p">D4</td><td><b>T&amp;C fields</b> — inherited from Bookyay; can Ztor append its own clauses?</td></tr>
     <tr><td class="p">D5</td><td><b>Event images</b> — Bookyay specs ≠ Ztor sizes: unified spec, Ztor-side upload, or new Bookyay field?</td></tr>
-    <tr><td class="p">D6</td><td><b>Reporting timing</b> — ship with end-Oct launch or defer (CSV interim)? UI reuses eShop Transaction screens</td></tr>
+    <tr><td class="p">D6</td><td><b>Reporting</b> — Ztor position: <b>Phase 2, end Nov, on ztor.com</b> · CSV / offline interim during Phase 1 — confirm · UI reuses eShop Transaction screens</td></tr>
     <tr><td class="p">D7</td><td><b>Creator Studio Phase 1 scope</b> — confirm the cut: import + bundle-split only, all fields locked / inherited</td></tr>
     <tr><td class="p">D8</td><td><b>Creator → Ztor account mapping at scale</b> — pulled events may have organizers with no Ztor account: efficient matching / account creation? house account for generic promoter events? does Bookyay API expose organizer identity to help? (Phase 1: manual in CS · mapping gates publish)</td></tr>
   </table></div>
@@ -335,7 +345,9 @@
     <div class="carrow"><span class="shaft"></span></div>
     <div class="tlnode"><b>September</b><small>dev starts</small></div>
     <div class="carrow"><span class="shaft"></span></div>
-    <div class="tlnode launch"><b>End of October</b><small>ticketing launch</small></div>
+    <div class="tlnode launch"><b>End of October</b><small>Phase 1 ticketing launch</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="tlnode"><b>End of November</b><small>Phase 2 — reports on ztor.com</small></div>
   </div>
   <div class="note" style="border-color:var(--blue-ln);background:var(--blue-bg)"><b style="color:var(--blue)">∥ parallel this week:</b> P1 API audit (hold/commit is schedule-critical) + P2 spike-protection decision</div>
 
