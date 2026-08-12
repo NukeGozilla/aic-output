@@ -152,7 +152,7 @@
     <div class="legend">
       <span><span class="sw coral"></span> Bookyay — unchanged</span>
       <span><span class="sw teal"></span> Ztor — new build</span>
-      <span><span class="sw gold"></span> decision G# · discussion D#</span>
+      <span><span class="sw gold"></span> #N = item in the section-5 list</span>
     </div>
   </header>
 
@@ -183,13 +183,13 @@
     <div class="syscol">
       <div class="colhead api">Bookyay API — single integration seam</div>
       <div class="apispine">
-        <div class="ahead">EXTENDED · depth unknown → P1 dev audit this week</div>
-        <div class="api-row" style="border-top:none"><span class="an">1</span><div><b>Event catalogue — <span class="dir">Ztor pulls</span></b><small>events · tiers · prices · availability · T&amp;C · images · organizer identity (<span class="p">D8</span>) → lands in Creator Studio</small></div></div>
-        <div class="api-row"><span class="an">2</span><div><b>Inventory — <span class="dir">Ztor calls at checkout</span></b><small>hold → pay → commit / auto-release (G2 Opt 1) · or allocation mgmt (Opt 2) — standalone + bundle ticket leg</small></div></div>
-        <div class="api-row"><span class="an">3</span><div><b>Issuance — <span class="dir">Ztor calls</span></b><small>returns displayable ticket artifact QR / PDF (G4) → My Wallet · spec unknowns: dynamic QR · offline · transfer (<span class="p">D2</span>)</small></div></div>
+        <div class="ahead">EXTENDED · depth unknown → #16 dev audit this week</div>
+        <div class="api-row" style="border-top:none"><span class="an">1</span><div><b>Event catalogue — <span class="dir">Ztor pulls</span></b><small>events · tiers · prices · availability · T&amp;C · images · organizer identity (<span class="p">#15</span>) → lands in Creator Studio</small></div></div>
+        <div class="api-row"><span class="an">2</span><div><b>Inventory — <span class="dir">Ztor calls at checkout</span></b><small>hold → pay → commit / auto-release (#2 Opt 1) · or allocation mgmt (Opt 2) — standalone + bundle ticket leg</small></div></div>
+        <div class="api-row"><span class="an">3</span><div><b>Issuance — <span class="dir">Ztor calls</span></b><small>returns displayable ticket artifact QR / PDF (#5) → My Wallet · spec unknowns: dynamic QR · offline · transfer (<span class="p">#10</span>)</small></div></div>
         <div class="api-row"><span class="an">4</span><div><b>Order status — <span class="dir">Ztor polls</span></b><small>seat changes · cancellations → sync to Ztor order records (current dev leaning: poll, not webhook)</small></div></div>
-        <div class="api-row"><span class="an">5</span><div><b>Post-sale pass-through — <span class="dir">both directions</span></b><small>refund / cancellation / seat-change cases → Bookyay BO, orders <b>Ztor-tagged</b> · refund executes on originating gateway (G6) · Bookyay releases inventory + voids ticket (G3)</small></div></div>
-        <div class="api-row"><span class="an">6</span><div><b>Sales-report feed — <span class="dir">Ztor pulls</span></b><small>Bookyay-channel sales for the full-event picture → reporting surfaces (<span class="p">P9</span> · <span class="p">D6</span>)</small></div></div>
+        <div class="api-row"><span class="an">5</span><div><b>Post-sale pass-through — <span class="dir">both directions</span></b><small>refund / cancellation / seat-change cases → Bookyay BO, orders <b>Ztor-tagged</b> · refund executes on originating gateway (#1) · Bookyay releases inventory + voids ticket (#4)</small></div></div>
+        <div class="api-row"><span class="an">6</span><div><b>Sales-report feed — <span class="dir">Ztor pulls</span></b><small>Bookyay-channel sales for the full-event picture → reporting surfaces (<span class="p">#22</span> · <span class="p">#7</span>)</small></div></div>
       </div>
     </div>
     <div class="syscol">
@@ -201,31 +201,31 @@
       <div class="box blueb"><h3>Ztor eShop <span class="tag blue">existing</span></h3><div class="one">Merch SKUs into bundles</div></div>
     </div>
   </div>
-  <div class="note" style="border-color:var(--gold);background:var(--gold-bg)"><b style="color:var(--gold)">Settlement (G5)</b> — ticket revenue → Bookyay on fixed schedule · finance rail, <b>not an API flow</b></div>
+  <div class="note" style="border-color:var(--gold);background:var(--gold-bg)"><b style="color:var(--gold)">Settlement (#6)</b> — ticket revenue → Bookyay on fixed schedule · finance rail, <b>not an API flow</b></div>
   <div class="note"><b>Phase 1 = sales integration only.</b> Reports land in Phase 2 (end Nov) · event creation &amp; management migrates into Creator Studio in Phase 3 — today's API contracts become internal seams then.</div>
 
   <!-- ============ S2 ============ -->
   <div class="lbl">2 · Operating Model — one ops team, two hats</div>
   <div class="steps">
     <div class="step"><span class="n">1</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span>Create event + ticket tiers in Bookyay BO — unchanged</span></div>
-    <div class="step"><span class="n">2</span><span class="who gray"><span class="dot gray"></span>Ops team</span><span>Listing: <b>sync-all + per-event opt-out</b> · bundles stay curated — gated on <span class="p">P5</span> organizer agreement</span></div>
-    <div class="step"><span class="n">3</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span><b>Map event creator → Ztor account + eShop</b> — manual in CS event listing · <b>publish gate: unmapped events can't go live</b> (<span class="p">D8</span>)</span></div>
-    <div class="step gate"><span class="n">4</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span><span class="g">G2</span> Bundle inventory — <b>shared pool or allocated block</b></span></div>
+    <div class="step"><span class="n">2</span><span class="who gray"><span class="dot gray"></span>Ops team</span><span>Listing: <b>sync-all + per-event opt-out</b> · bundles stay curated — gated on <span class="p">#20</span> organizer agreement</span></div>
+    <div class="step"><span class="n">3</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span><b>Map event creator → Ztor account + eShop</b> — manual in CS event listing · <b>publish gate: unmapped events can't go live</b> (<span class="p">#15</span>)</span></div>
+    <div class="step gate"><span class="n">4</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span><span class="g">#2</span> Bundle inventory — <b>shared pool or allocated block</b></span></div>
     <div class="step"><span class="n">5</span><span class="who violet"><span class="dot violet"></span>Creator</span><span>Bundle ask → admin — <b>offline comms</b> · merch + tier · price · qty · window · admin does all in-system setup</span></div>
-    <div class="step"><span class="n">6</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Build bundle in Creator Studio → publish — fiat-only (<span class="p">P7</span>)</span></div>
-    <div class="step"><span class="n">7</span><span class="who gray"><span class="dot gray"></span>Ops team</span><span>Sale window: monitor sales &amp; availability (<span class="p">P10</span>)</span></div>
-    <div class="step"><span class="n">8</span><span class="who coral"><span class="dot coral"></span>Bookyay sys</span><span>Issue e-ticket → <b>My Wallet on Ztor</b> (G4)</span></div>
+    <div class="step"><span class="n">6</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Build bundle in Creator Studio → publish — fiat-only (<span class="p">#8</span>)</span></div>
+    <div class="step"><span class="n">7</span><span class="who gray"><span class="dot gray"></span>Ops team</span><span>Sale window: monitor sales &amp; availability (<span class="p">#23</span>)</span></div>
+    <div class="step"><span class="n">8</span><span class="who coral"><span class="dot coral"></span>Bookyay sys</span><span>Issue e-ticket → <b>My Wallet on Ztor</b> (#5)</span></div>
     <div class="step"><span class="n">9</span><span class="who teal"><span class="dot teal"></span>Ztor eShop</span><span>Fulfil merch — ship / QR pickup</span></div>
-    <div class="step gate"><span class="n">10</span><span class="who gray"><span class="dot gray"></span>Both</span><span><span class="g">G3</span> Post-sale — <b>pass-through to Bookyay BO via API, Ztor-tagged</b> · strawman below</span></div>
-    <div class="step gate"><span class="n">11</span><span class="who gray"><span class="dot gray"></span>Finance ×2</span><span><span class="g">G5</span> Settle ticket revenue → Bookyay on agreed schedule</span></div>
-    <div class="step"><span class="n">12</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Performance report to creator — from Creator Studio reports, Phase 1 (<span class="p">P9</span> · <span class="p">D10</span>)</span></div>
+    <div class="step gate"><span class="n">10</span><span class="who gray"><span class="dot gray"></span>Both</span><span><span class="g">#4</span> Post-sale — <b>pass-through to Bookyay BO via API, Ztor-tagged</b> · strawman below</span></div>
+    <div class="step gate"><span class="n">11</span><span class="who gray"><span class="dot gray"></span>Finance ×2</span><span><span class="g">#6</span> Settle ticket revenue → Bookyay on agreed schedule</span></div>
+    <div class="step"><span class="n">12</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Performance report to creator — from Creator Studio reports, Phase 1 (<span class="p">#22</span> · <span class="p">#7</span>)</span></div>
   </div>
 
-  <div class="lbl">2b · G3 Strawman — post-sale policy <span style="letter-spacing:0;text-transform:none">(react, don't start from blank)</span></div>
+  <div class="lbl">2b · #4 Strawman — post-sale policy <span style="letter-spacing:0;text-transform:none">(react, don't start from blank)</span></div>
   <div class="tblwrap"><table>
     <tr><th style="width:20%">Scenario</th><th>Standalone (on Ztor)</th><th>Bundle (on Ztor)</th></tr>
     <tr><td><b>Operating model</b></td><td colspan="2"><b>One ops team, one console: Bookyay BO.</b> Ztor passes post-sale cases through via API · Ztor-sold orders carry a <b>Ztor tag</b> so ops sees the channel</td></tr>
-    <tr><td><b>Buyer refund</b></td><td>Case → Bookyay BO (tagged) · refund executes on the originating gateway (G6) · status syncs back</td><td><b>Whole-bundle only</b> — ticket leg via BO pass-through · merch leg refunds in Ztor eShop</td></tr>
+    <tr><td><b>Buyer refund</b></td><td>Case → Bookyay BO (tagged) · refund executes on the originating gateway (#1) · status syncs back</td><td><b>Whole-bundle only</b> — ticket leg via BO pass-through · merch leg refunds in Ztor eShop</td></tr>
     <tr><td><b>Event cancelled</b></td><td>Cancelled once in Bookyay BO → propagates via API · Ztor auto-refunds</td><td>Ticket auto-refunds · <span class="open">🔶 merch?</span></td></tr>
     <tr><td><b>Seat change</b></td><td colspan="2">Handled in Bookyay BO as today · syncs to Ztor order + My Wallet</td></tr>
     <tr><td><b>Bookyay's own channel</b></td><td colspan="2" style="color:var(--muted)">Untouched — already in BO, no tag</td></tr>
@@ -240,13 +240,13 @@
     <div class="carrow"><span class="shaft"></span></div>
     <div class="cnode coral">Bookyay API<small>real-time hold + issue</small></div>
     <div class="carrow"><span class="shaft"></span></div>
-    <div class="cnode teal">E-ticket in My Wallet<small>no Bookyay account (G4)</small></div>
+    <div class="cnode teal">E-ticket in My Wallet<small>no Bookyay account (#5)</small></div>
   </div>
   <div class="flownote"><b>Bundle:</b> same rails — one combined payment, then two fulfilment legs</div>
   <div class="fork">
     <div class="forkleg">
       <span class="fstem"></span>
-      <div class="branch coral"><b>Ticket → My Wallet</b><small>Bookyay issues · per G2 inventory model</small></div>
+      <div class="branch coral"><b>Ticket → My Wallet</b><small>Bookyay issues · per #2 inventory model</small></div>
     </div>
     <div class="forkleg">
       <span class="fstem"></span>
@@ -265,39 +265,39 @@
     <div class="carrow"><span class="shaft"></span></div>
     <div class="cnode teal">Live on Ztor</div>
     <div class="carrow"><span class="shaft"></span></div>
-    <div class="cnode gold">Reports<small>P9 · D6</small></div>
+    <div class="cnode gold">Reports<small>#22 · #7</small></div>
   </div>
-  <div class="flownote"><b>CS Phase 1 (initial cut — confirm D7):</b> import Bookyay event → <b>map creator → Ztor account + eShop</b> (publish gate — <span class="p">D8</span>) → fields locked &amp; inherited, incl. description · <b>bundle-split is the only edit</b> · no event creation · creator ↔ admin comms stay offline</div>
+  <div class="flownote"><b>CS Phase 1 (initial cut — confirm #14):</b> import Bookyay event → <b>map creator → Ztor account + eShop</b> (publish gate — <span class="p">#15</span>) → fields locked &amp; inherited, incl. description · <b>bundle-split is the only edit</b> · no event creation · creator ↔ admin comms stay offline</div>
 
   <!-- ============ S5 ============ -->
   <div class="lbl">5 · Decisions &amp; Pending Items — one list, walk top to bottom</div>
   <div class="flownote" style="margin:0 0 10px">🔴 decide today · 🟢 decided · 🟡 proposed — react · 🔵 discuss — no proposal · ⚪ action / assign owner</div>
   <div class="tblwrap"><table>
     <tr><th style="width:56px">#</th><th>Topic</th><th style="width:118px">Status</th><th style="width:158px">Owner</th></tr>
-    <tr><td class="p">G6</td><td><b>Payment processing — who processes?</b> Proposal: standalone via Bookyay's payment service (behind Ztor checkout) · bundle via Ztor gateway. <b>Wrinkle: events contract-locked to a specific payment provider</b> — can bundles still process via Ztor? If not: exclude from bundling · split into two charges · or all ticket money via Bookyay (reshapes G5 + P3)</td><td>🔴 Decide today</td><td>Jesse + Agnes · Eric</td></tr>
-    <tr><td class="p">G2</td><td><b>Ticket inventory</b> — Opt 1 shared live pool (hold/commit API) vs Opt 2 allocated block · Eric → Opt 2 (don't touch Bookyay) · product → Opt 1 (one step, no split stock)</td><td>🔴 Decide today</td><td>Eric + Jesse</td></tr>
-    <tr><td class="p">G1</td><td><b>Standalone checkout — native on Ztor.</b> Redirect rejected by biz · activates P2 spike protection + hold/commit API + MoR all sales</td><td>🟢 Decided</td><td>—</td></tr>
-    <tr><td class="p">G3</td><td><b>Post-sale — pass-through to Bookyay BO:</b> one ops team, one console · refunds / cancellations / seat changes in BO via API · Ztor-sold orders carry a <b>Ztor tag</b> · money executes on the originating gateway (G6) · strawman matrix in 2B</td><td>🟡 Proposed</td><td>Both ops</td></tr>
-    <tr><td class="p">G4</td><td><b>E-ticket — My Wallet on Ztor, no Bookyay account.</b> Bookyay keeps internal record · same QR at venue · spec unknowns → D2</td><td>🟡 Proposed</td><td>Bookyay confirms</td></tr>
-    <tr><td class="p">G5</td><td><b>Settlement &amp; MoR</b> — Ztor = merchant of record for all Ztor sales · ticket revenue settles to Bookyay on fixed schedule · processor split → G6 · fee % → P3</td><td>🟡 Proposed</td><td>Agnes/Jessie</td></tr>
-    <tr><td class="p">D6·D10</td><td><b>Reporting</b> — Creator Studio full ticketing + bundle reports <b>ship in Phase 1</b> (extends eShop Transaction UI) · ztor.com creator-facing = Phase 2, end Nov · confirm build effort</td><td>🟡 Proposed</td><td>Eric confirms effort</td></tr>
-    <tr><td class="p">P7</td><td><b>Bundle currency — fiat-only, no POPCORN</b> in Phase 1</td><td>🟡 Proposed</td><td>Jeff + finance</td></tr>
-    <tr><td class="p">D1</td><td><b>Bundle-split mechanics</b> — does a bundle reserve a sub-quantity out of a tier? how does unsold bundle stock release back?</td><td>🔵 Discuss</td><td>—</td></tr>
-    <tr><td class="p">D2</td><td><b>E-ticket spec — need Bookyay insight:</b> dynamic vs static QR · offline validation · ticket split / transfer to friends</td><td>🔵 Discuss</td><td>Bookyay</td></tr>
-    <tr><td class="p">D3</td><td><b>Bookyay → Ztor SSO + Loyalty Points</b> — "Login with Ztor" on Bookyay so loyalty accrues · biz timing? complexity?</td><td>🔵 Discuss</td><td>Jesse · Eric</td></tr>
-    <tr><td class="p">D4</td><td><b>T&amp;C fields</b> — inherited from Bookyay · can Ztor append its own clauses?</td><td>🔵 Discuss</td><td>—</td></tr>
-    <tr><td class="p">D5</td><td><b>Event images</b> — Bookyay specs ≠ Ztor sizes: unified spec, Ztor-side upload, or new Bookyay field?</td><td>🔵 Discuss</td><td>Design</td></tr>
-    <tr><td class="p">D7</td><td><b>Creator Studio Phase 1 scope</b> — confirm the cut: import + bundle-split only, all fields locked / inherited</td><td>🔵 Discuss</td><td>Yves</td></tr>
-    <tr><td class="p">D8</td><td><b>Creator → Ztor account mapping at scale</b> — organizers with no Ztor account: efficient matching / creation? house account for generic events? does the API expose organizer identity? (Phase 1: manual in CS · mapping gates publish)</td><td>🔵 Discuss</td><td>—</td></tr>
-    <tr><td class="p">P1</td><td><b>Bookyay API audit</b> — catalogue (+ organizer identity) · holds · issuance + ticket artifact · post-sale pass-through + Ztor tag · status · reports — <b>this week, parallel</b></td><td>⚪ Action</td><td>Eric's team</td></tr>
-    <tr><td class="p">P2</td><td><b>On-sale spike protection on Ztor — Phase-1-critical</b> — QueueIt contract or alternative</td><td>⚪ Action</td><td>Jeff</td></tr>
-    <tr><td class="p">P3</td><td>Platform fee / rev-share values — standalone + bundle</td><td>⚪ Assign</td><td>Biz + Agnes/Jessie</td></tr>
-    <tr><td class="p">P4</td><td>Organizer reporting — Ztor sales must appear in Bookyay BO event reports</td><td>⚪ Assign</td><td>Eric's team + Bookyay</td></tr>
-    <tr><td class="p">P5</td><td><b>Organizer agreement</b> — does the standard contract permit selling on affiliated platforms? gates sync-all</td><td>⚪ Assign</td><td>Bookyay Ops + legal</td></tr>
-    <tr><td class="p">P6</td><td>PII data-sharing (buyer → Bookyay ticket record) — consent + privacy policy</td><td>⚪ Assign</td><td>Legal both sides</td></tr>
-    <tr><td class="p">P9</td><td>Bookyay sales-report feed — needed for the full-event view in reporting</td><td>⚪ Assign</td><td>Ztor Admin + Bookyay</td></tr>
-    <tr><td class="p">P10</td><td>Ops sales dashboard for sale windows</td><td>⚪ Assign</td><td>Ops team</td></tr>
-    <tr><td class="p">P11</td><td>Cross-platform purchase limits — scalper flank</td><td>⚪ Assign</td><td>Bookyay Ops</td></tr>
+    <tr><td class="p">#1</td><td><b>Payment processing — who processes?</b> Proposal: standalone via Bookyay's payment service (behind Ztor checkout) · bundle via Ztor gateway. <b>Wrinkle: events contract-locked to a specific payment provider</b> — can bundles still process via Ztor? If not: exclude from bundling · split into two charges · or all ticket money via Bookyay (reshapes #6 + #18)</td><td>🔴 Decide today</td><td>Jesse + Agnes · Eric</td></tr>
+    <tr><td class="p">#2</td><td><b>Ticket inventory</b> — Opt 1 shared live pool (hold/commit API) vs Opt 2 allocated block · Eric → Opt 2 (don't touch Bookyay) · product → Opt 1 (one step, no split stock)</td><td>🔴 Decide today</td><td>Eric + Jesse</td></tr>
+    <tr><td class="p">#3</td><td><b>Standalone checkout — native on Ztor.</b> Redirect rejected by biz · activates #17 spike protection + hold/commit API + MoR all sales</td><td>🟢 Decided</td><td>—</td></tr>
+    <tr><td class="p">#4</td><td><b>Post-sale — pass-through to Bookyay BO:</b> one ops team, one console · refunds / cancellations / seat changes in BO via API · Ztor-sold orders carry a <b>Ztor tag</b> · money executes on the originating gateway (#1) · strawman matrix in 2B</td><td>🟡 Proposed</td><td>Both ops</td></tr>
+    <tr><td class="p">#5</td><td><b>E-ticket — My Wallet on Ztor, no Bookyay account.</b> Bookyay keeps internal record · same QR at venue · spec unknowns → #10</td><td>🟡 Proposed</td><td>Bookyay confirms</td></tr>
+    <tr><td class="p">#6</td><td><b>Settlement &amp; MoR</b> — Ztor = merchant of record for all Ztor sales · ticket revenue settles to Bookyay on fixed schedule · processor split → #1 · fee % → #18</td><td>🟡 Proposed</td><td>Agnes/Jessie</td></tr>
+    <tr><td class="p">#7</td><td><b>Reporting</b> — Creator Studio full ticketing + bundle reports <b>ship in Phase 1</b> (extends eShop Transaction UI) · ztor.com creator-facing = Phase 2, end Nov · confirm build effort</td><td>🟡 Proposed</td><td>Eric confirms effort</td></tr>
+    <tr><td class="p">#8</td><td><b>Bundle currency — fiat-only, no POPCORN</b> in Phase 1</td><td>🟡 Proposed</td><td>Jeff + finance</td></tr>
+    <tr><td class="p">#9</td><td><b>Bundle-split mechanics</b> — does a bundle reserve a sub-quantity out of a tier? how does unsold bundle stock release back?</td><td>🔵 Discuss</td><td>—</td></tr>
+    <tr><td class="p">#10</td><td><b>E-ticket spec — need Bookyay insight:</b> dynamic vs static QR · offline validation · ticket split / transfer to friends</td><td>🔵 Discuss</td><td>Bookyay</td></tr>
+    <tr><td class="p">#11</td><td><b>Bookyay → Ztor SSO + Loyalty Points</b> — "Login with Ztor" on Bookyay so loyalty accrues · biz timing? complexity?</td><td>🔵 Discuss</td><td>Jesse · Eric</td></tr>
+    <tr><td class="p">#12</td><td><b>T&amp;C fields</b> — inherited from Bookyay · can Ztor append its own clauses?</td><td>🔵 Discuss</td><td>—</td></tr>
+    <tr><td class="p">#13</td><td><b>Event images</b> — Bookyay specs ≠ Ztor sizes: unified spec, Ztor-side upload, or new Bookyay field?</td><td>🔵 Discuss</td><td>Design</td></tr>
+    <tr><td class="p">#14</td><td><b>Creator Studio Phase 1 scope</b> — confirm the cut: import + bundle-split only, all fields locked / inherited</td><td>🔵 Discuss</td><td>Yves</td></tr>
+    <tr><td class="p">#15</td><td><b>Creator → Ztor account mapping at scale</b> — organizers with no Ztor account: efficient matching / creation? house account for generic events? does the API expose organizer identity? (Phase 1: manual in CS · mapping gates publish)</td><td>🔵 Discuss</td><td>—</td></tr>
+    <tr><td class="p">#16</td><td><b>Bookyay API audit</b> — catalogue (+ organizer identity) · holds · issuance + ticket artifact · post-sale pass-through + Ztor tag · status · reports — <b>this week, parallel</b></td><td>⚪ Action</td><td>Eric's team</td></tr>
+    <tr><td class="p">#17</td><td><b>On-sale spike protection on Ztor — Phase-1-critical</b> — QueueIt contract or alternative</td><td>⚪ Action</td><td>Jeff</td></tr>
+    <tr><td class="p">#18</td><td>Platform fee / rev-share values — standalone + bundle</td><td>⚪ Assign</td><td>Biz + Agnes/Jessie</td></tr>
+    <tr><td class="p">#19</td><td>Organizer reporting — Ztor sales must appear in Bookyay BO event reports</td><td>⚪ Assign</td><td>Eric's team + Bookyay</td></tr>
+    <tr><td class="p">#20</td><td><b>Organizer agreement</b> — does the standard contract permit selling on affiliated platforms? gates sync-all</td><td>⚪ Assign</td><td>Bookyay Ops + legal</td></tr>
+    <tr><td class="p">#21</td><td>PII data-sharing (buyer → Bookyay ticket record) — consent + privacy policy</td><td>⚪ Assign</td><td>Legal both sides</td></tr>
+    <tr><td class="p">#22</td><td>Bookyay sales-report feed — needed for the full-event view in reporting</td><td>⚪ Assign</td><td>Ztor Admin + Bookyay</td></tr>
+    <tr><td class="p">#23</td><td>Ops sales dashboard for sale windows</td><td>⚪ Assign</td><td>Ops team</td></tr>
+    <tr><td class="p">#24</td><td>Cross-platform purchase limits — scalper flank</td><td>⚪ Assign</td><td>Bookyay Ops</td></tr>
   </table></div>
 
   <!-- ============ S6 ============ -->
@@ -315,7 +315,7 @@
     <div class="carrow"><span class="shaft"></span></div>
     <div class="tlnode"><b>End of November</b><small>Phase 2 — reports on ztor.com</small></div>
   </div>
-  <div class="note" style="border-color:var(--blue-ln);background:var(--blue-bg)"><b style="color:var(--blue)">∥ parallel this week:</b> P1 API audit (hold/commit is schedule-critical) + P2 spike-protection decision</div>
+  <div class="note" style="border-color:var(--blue-ln);background:var(--blue-bg)"><b style="color:var(--blue)">∥ parallel this week:</b> #16 API audit (hold/commit is schedule-critical) + #17 spike-protection decision</div>
 
   <footer>
     Detail lives in the companion docs: <b>ztor-docs/outputs/specs/ztor-bookyay-integration-kickoff-material-2026-08-06.md</b> · SA review in <b>ztor-docs/outputs/architecture/</b> · rev 2026-08-11 post-standup
