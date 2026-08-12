@@ -164,7 +164,7 @@
   <!-- ============ S0 ============ -->
   <div class="lbl">0 · Release Pipeline — what's coming (for biz)</div>
   <div class="tl">
-    <div class="tlnode now" style="text-align:left"><b>Phase 1 — end of October</b><small>sales integration + Creator Studio bundle setup<br><b>← this kickoff</b></small></div>
+    <div class="tlnode now" style="text-align:left"><b>Phase 1 — end of October</b><small>sales integration + CS bundle setup + CS reports<br><b>← this kickoff</b></small></div>
     <div class="carrow"><span class="shaft"></span></div>
     <div class="tlnode" style="text-align:left"><b>Phase 2 — end of November</b><small>ticketing reports on ztor.com</small></div>
     <div class="carrow"><span class="shaft"></span></div>
@@ -218,7 +218,7 @@
     <div class="step"><span class="n">9</span><span class="who teal"><span class="dot teal"></span>Ztor eShop</span><span>Fulfil merch — ship / QR pickup</span></div>
     <div class="step gate"><span class="n">10</span><span class="who gray"><span class="dot gray"></span>Both</span><span><span class="g">G3</span> Post-sale: refunds · seat changes · cancellations — strawman below</span></div>
     <div class="step gate"><span class="n">11</span><span class="who gray"><span class="dot gray"></span>Finance ×2</span><span><span class="g">G5</span> Settle ticket revenue → Bookyay on agreed schedule</span></div>
-    <div class="step"><span class="n">12</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Performance report to creator (<span class="p">P9</span> · <span class="p">D6</span>)</span></div>
+    <div class="step"><span class="n">12</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Performance report to creator — from Creator Studio reports, Phase 1 (<span class="p">P9</span> · <span class="p">D10</span>)</span></div>
   </div>
 
   <div class="lbl">2b · G3 Strawman — post-sale policy <span style="letter-spacing:0;text-transform:none">(react, don't start from blank)</span></div>
@@ -312,11 +312,11 @@
     <tr><td class="p">D3</td><td><b>Bookyay → Ztor SSO + Loyalty Points</b> — "Login with Ztor" on Bookyay so loyalty accrues; biz timing? complexity?</td></tr>
     <tr><td class="p">D4</td><td><b>T&amp;C fields</b> — inherited from Bookyay; can Ztor append its own clauses?</td></tr>
     <tr><td class="p">D5</td><td><b>Event images</b> — Bookyay specs ≠ Ztor sizes: unified spec, Ztor-side upload, or new Bookyay field?</td></tr>
-    <tr><td class="p">D6</td><td><b>Reporting</b> — Ztor position: <b>Phase 2, end Nov, on ztor.com</b> · CSV / offline interim during Phase 1 — confirm · UI reuses eShop Transaction screens</td></tr>
+    <tr><td class="p">D6</td><td><b>Reporting sequence</b> — Ztor position: <b>Creator Studio reports ship in Phase 1</b> (D10) · <b>ztor.com creator-facing reports = Phase 2, end Nov</b> — confirm · UI extends eShop Transaction screens</td></tr>
     <tr><td class="p">D7</td><td><b>Creator Studio Phase 1 scope</b> — confirm the cut: import + bundle-split only, all fields locked / inherited</td></tr>
     <tr><td class="p">D8</td><td><b>Creator → Ztor account mapping at scale</b> — pulled events may have organizers with no Ztor account: efficient matching / account creation? house account for generic promoter events? does Bookyay API expose organizer identity to help? (Phase 1: manual in CS · mapping gates publish)</td></tr>
     <tr><td class="p">D9</td><td><b>Payment processing — who processes?</b> Proposal: standalone via Bookyay's payment service (behind Ztor checkout) · bundle via Ztor gateway. <b>Wrinkle: events contract-locked to a specific payment provider</b> — can bundles still process via Ztor? If not: exclude those events from bundling, split the bundle into two charges, or all ticket money via Bookyay's gateway (reshapes G5 + P3)</td></tr>
-    <tr><td class="p">D10</td><td><b>Phase 1 bundle transaction visibility</b> — reporting is Phase 2, but ops needs transactions to run refunds / support / settlement. Proposal: minimal admin transaction list in Creator Studio ships with Phase 1 (reuses eShop Transaction UI) · creator-facing reporting stays Phase 2 · CSV interim</td></tr>
+    <tr><td class="p">D10</td><td><b>Creator Studio reporting — scoped INTO Phase 1</b> (Ztor position): full ticketing + bundle reports in CS, an extension of the eShop UI anyway · ztor.com creator-facing reports stay Phase 2 (D6) · confirm build effort with Eric</td></tr>
   </table></div>
 
   <!-- ============ S7 ============ -->
@@ -331,7 +331,7 @@
     <tr><td class="p">P6</td><td>PII data-sharing (buyer → Bookyay ticket record) — consent + privacy policy</td><td>Legal both sides</td></tr>
     <tr><td class="p">P7</td><td>Bundle currency — <b>fiat-only, no POPCORN</b> (proposed)</td><td>Jeff + finance</td></tr>
     <tr><td class="p">P8</td><td>Resolved — creator ↔ admin comms stay offline; admin does all in-system setup (no intake form)</td><td>—</td></tr>
-    <tr><td class="p">P9</td><td>Creator reporting — surface: Creator Studio and/or Ztor FE artist account</td><td>Ztor Admin + Bookyay</td></tr>
+    <tr><td class="p">P9</td><td>Creator reporting — sequenced: Creator Studio (Phase 1, D10) → ztor.com artist account (Phase 2) · needs Bookyay sales feed for full-event view</td><td>Ztor Admin + Bookyay</td></tr>
     <tr><td class="p">P10</td><td>Ops sales dashboard for sale windows</td><td>Ops team</td></tr>
     <tr><td class="p">P11</td><td>Cross-platform purchase limits — scalper flank</td><td>Bookyay Ops</td></tr>
   </table></div>
