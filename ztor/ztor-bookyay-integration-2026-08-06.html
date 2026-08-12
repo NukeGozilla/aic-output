@@ -38,11 +38,18 @@
   .stance b{color:var(--txt)}
 
   /* system overview */
-  .sys{display:grid;grid-template-columns:minmax(280px,1fr) 180px minmax(280px,1fr);align-items:stretch}
+  .sys{display:grid;grid-template-columns:minmax(240px,.9fr) minmax(330px,1.3fr) minmax(240px,.9fr);gap:14px;align-items:start}
   .syscol{display:flex;flex-direction:column;gap:12px}
   .colhead{font-size:13px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;padding:8px 12px;border-radius:8px;text-align:center}
   .colhead.coral{color:var(--coral);background:var(--coral-bg);border:1.5px solid var(--coral)}
   .colhead.teal{color:var(--teal);background:var(--teal-bg);border:1.5px solid var(--teal)}
+  .colhead.api{color:var(--coral);background:#fff;border:2px dashed var(--coral)}
+  .apispine{background:var(--panel);border:2px solid var(--coral);border-radius:var(--r);box-shadow:0 1px 3px rgba(40,35,25,.05);overflow:hidden}
+  .apispine .ahead{padding:9px 16px;background:var(--coral-bg);font-size:11px;font-weight:700;color:var(--coral);letter-spacing:.4px}
+  .api-row{display:flex;gap:10px;padding:9px 16px;border-top:1px solid var(--line);font-size:13.5px}
+  .api-row .an{font-weight:800;color:var(--coral);font-size:12.5px;min-width:16px;padding-top:1px}
+  .api-row b .dir{font-weight:700;color:var(--teal)}
+  .api-row small{display:block;color:var(--muted);font-size:11.5px;line-height:1.45;margin-top:2px}
   .box{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:0 1px 3px rgba(40,35,25,.05)}
   .box h3{margin:0;font-size:15px}
   .box .one{color:var(--muted);font-size:12.5px;margin-top:4px;line-height:1.45}
@@ -57,13 +64,6 @@
   .tag.teal{color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal)}
   .subs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
   .sub{flex:1;min-width:105px;background:#fff;border:1.5px solid var(--teal);color:var(--teal);border-radius:8px;padding:8px 10px;font-size:12.5px;font-weight:700;text-align:center}
-  .sysflows{display:flex;flex-direction:column;justify-content:space-around;padding:48px 12px 12px;gap:22px}
-  .hconn .hstem{display:block;border-top:2.5px solid var(--muted);position:relative}
-  .hconn.toR .hstem::after{content:"";position:absolute;right:-1px;top:-6px;border:5px solid transparent;border-left:8px solid var(--muted)}
-  .hconn.toL .hstem::after{content:"";position:absolute;left:-1px;top:-6px;border:5px solid transparent;border-right:8px solid var(--muted)}
-  .hconn small{display:block;color:var(--muted);font-size:11.5px;text-align:center;margin-top:6px;line-height:1.4;font-weight:600}
-  .hconn.teal .hstem{border-color:var(--teal)} .hconn.teal.toR .hstem::after{border-left-color:var(--teal)} .hconn.teal.toL .hstem::after{border-right-color:var(--teal)} .hconn.teal small{color:var(--teal)}
-  .hconn.gold .hstem{border-color:var(--gold);border-top-style:dashed} .hconn.gold.toL .hstem::after{border-right-color:var(--gold)} .hconn.gold small{color:var(--gold)}
 
   .note{border:1.5px dashed var(--violet);background:var(--violet-bg);border-radius:var(--r);padding:10px 16px;font-size:13px;color:var(--muted);margin-top:12px}
   .note b{color:var(--violet)}
@@ -135,8 +135,6 @@
 
   @media (max-width:940px){
     .sys{grid-template-columns:1fr}
-    .sysflows{flex-direction:row;padding:16px 0;gap:14px}
-    .hconn{flex:1}
     .forkleg{flex:1 1 100%;max-width:none}
     .step{grid-template-columns:30px 1fr}
     .step .who{grid-column:2}
@@ -164,18 +162,25 @@
   </div>
 
   <!-- ============ S1 ============ -->
-  <div class="lbl">1 · System Overview — who owns what</div>
+  <div class="lbl">1 · System Overview — the Bookyay API is the only integration seam</div>
   <div class="sys">
     <div class="syscol">
-      <div class="colhead coral">Bookyay · source of truth</div>
-      <div class="box coral"><h3>Bookyay BO <span class="tag blue">no change</span></h3><div class="one">Event creation · ticket tiers · inventory</div></div>
-      <div class="box coral"><h3>Bookyay FE + Checkout <span class="tag blue">no change</span></h3><div class="one">Own channel, runs in parallel — no Ztor traffic</div></div>
-      <div class="box coral"><h3>Bookyay API <span class="tag teal">extended</span></h3><div class="one">Catalogue · inventory hold/commit · issuance · status · reports — <span class="p">P1 audit</span></div></div>
+      <div class="colhead coral">Bookyay · internals</div>
+      <div class="box coral"><h3>Bookyay BO <span class="tag blue">no change</span></h3><div class="one">Event creation · ticket tiers · inventory · T&amp;C · images</div></div>
+      <div class="box coral"><h3>Bookyay FE + Checkout <span class="tag blue">no change</span></h3><div class="one">Own sales channel, runs in parallel — no Ztor traffic</div></div>
+      <div class="note" style="margin-top:0;border-color:var(--coral-ln);background:var(--coral-bg)"><b style="color:var(--coral)">One Bookyay DB</b> behind BO · FE · API — internals untouched; <b>Ztor touches the API only →</b></div>
     </div>
-    <div class="sysflows">
-      <div class="hconn toR teal"><span class="hstem"></span><small>event catalogue sync</small></div>
-      <div class="hconn toL teal"><span class="hstem"></span><small>ticket sales via API<br>standalone + bundle</small></div>
-      <div class="hconn toL gold"><span class="hstem"></span><small>settlement — ticket revenue (G5)</small></div>
+    <div class="syscol">
+      <div class="colhead api">Bookyay API — single integration seam</div>
+      <div class="apispine">
+        <div class="ahead">EXTENDED · depth unknown → P1 dev audit this week</div>
+        <div class="api-row" style="border-top:none"><span class="an">1</span><div><b>Event catalogue — <span class="dir">Ztor pulls</span></b><small>events · tiers · prices · availability · T&amp;C · images · organizer identity (<span class="p">D8</span>) → lands in Creator Studio</small></div></div>
+        <div class="api-row"><span class="an">2</span><div><b>Inventory — <span class="dir">Ztor calls at checkout</span></b><small>hold → pay → commit / auto-release (G2 Opt 1) · or allocation mgmt (Opt 2) — standalone + bundle ticket leg</small></div></div>
+        <div class="api-row"><span class="an">3</span><div><b>Issuance — <span class="dir">Ztor calls</span></b><small>returns displayable ticket artifact QR / PDF (G4) → My Wallet · spec unknowns: dynamic QR · offline · transfer (<span class="p">D2</span>)</small></div></div>
+        <div class="api-row"><span class="an">4</span><div><b>Order status — <span class="dir">Ztor polls</span></b><small>seat changes · cancellations → sync to Ztor order records (current dev leaning: poll, not webhook)</small></div></div>
+        <div class="api-row"><span class="an">5</span><div><b>Refund hooks — <span class="dir">both directions</span></b><small>Ztor gateway executes refund → Bookyay releases inventory + voids ticket (G3)</small></div></div>
+        <div class="api-row"><span class="an">6</span><div><b>Sales-report feed — <span class="dir">Ztor pulls</span></b><small>Bookyay-channel sales for the full-event picture → reporting surfaces (<span class="p">P9</span> · <span class="p">D6</span>)</small></div></div>
+      </div>
     </div>
     <div class="syscol">
       <div class="colhead teal">Ztor · new sales surface</div>
@@ -186,7 +191,8 @@
       <div class="box blueb"><h3>Ztor eShop <span class="tag blue">existing</span></h3><div class="one">Merch SKUs into bundles</div></div>
     </div>
   </div>
-  <div class="note"><b>Phase 1 = sales integration only.</b> Event creation &amp; management migrates into Creator Studio in a future phase.</div>
+  <div class="note" style="border-color:var(--gold);background:var(--gold-bg)"><b style="color:var(--gold)">Settlement (G5)</b> — ticket revenue → Bookyay on fixed schedule · finance rail, <b>not an API flow</b></div>
+  <div class="note"><b>Phase 1 = sales integration only.</b> Event creation &amp; management migrates into Creator Studio in a future phase — these API contracts become internal seams then.</div>
 
   <!-- ============ S2 ============ -->
   <div class="lbl">2 · Operating Model — one ops team, two hats</div>
