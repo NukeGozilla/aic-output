@@ -299,7 +299,7 @@
       <span class="gid">G5</span><h4>Settlement &amp; MoR</h4>
       <span class="st prop">Proposed</span>
       <p><b>Ztor = merchant of record for all Ztor sales.</b> Ticket revenue settles to Bookyay on fixed schedule.</p>
-      <p>Fee % separate (P3)</p>
+      <p>Open — who processes: standalone via Bookyay payment service? → D9 · fee % separate (P3)</p>
     </div>
   </div>
 
@@ -315,6 +315,8 @@
     <tr><td class="p">D6</td><td><b>Reporting</b> — Ztor position: <b>Phase 2, end Nov, on ztor.com</b> · CSV / offline interim during Phase 1 — confirm · UI reuses eShop Transaction screens</td></tr>
     <tr><td class="p">D7</td><td><b>Creator Studio Phase 1 scope</b> — confirm the cut: import + bundle-split only, all fields locked / inherited</td></tr>
     <tr><td class="p">D8</td><td><b>Creator → Ztor account mapping at scale</b> — pulled events may have organizers with no Ztor account: efficient matching / account creation? house account for generic promoter events? does Bookyay API expose organizer identity to help? (Phase 1: manual in CS · mapping gates publish)</td></tr>
+    <tr><td class="p">D9</td><td><b>Payment processing — who processes?</b> Proposal: standalone via Bookyay's payment service (behind Ztor checkout) · bundle via Ztor gateway. <b>Wrinkle: events contract-locked to a specific payment provider</b> — can bundles still process via Ztor? If not: exclude those events from bundling, split the bundle into two charges, or all ticket money via Bookyay's gateway (reshapes G5 + P3)</td></tr>
+    <tr><td class="p">D10</td><td><b>Phase 1 bundle transaction visibility</b> — reporting is Phase 2, but ops needs transactions to run refunds / support / settlement. Proposal: minimal admin transaction list in Creator Studio ships with Phase 1 (reuses eShop Transaction UI) · creator-facing reporting stays Phase 2 · CSV interim</td></tr>
   </table></div>
 
   <!-- ============ S7 ============ -->
