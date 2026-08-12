@@ -182,7 +182,7 @@
       <div class="box tealb"><h3>Ztor Frontend <span class="tag teal">new</span></h3>
         <div class="subs"><div class="sub">Event pages</div><div class="sub">Bundle sales</div><div class="sub">My Wallet 🎟</div></div>
       </div>
-      <div class="box tealb"><h3>Creator Studio <span class="tag teal">new</span></h3><div class="one">Import events · bundle setup — admin-operated</div></div>
+      <div class="box tealb"><h3>Creator Studio <span class="tag teal">new</span></h3><div class="one">Import events · creator↔account mapping · bundle setup — admin-operated</div></div>
       <div class="box blueb"><h3>Ztor eShop <span class="tag blue">existing</span></h3><div class="one">Merch SKUs into bundles</div></div>
     </div>
   </div>
@@ -193,15 +193,16 @@
   <div class="steps">
     <div class="step"><span class="n">1</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span>Create event + ticket tiers in Bookyay BO — unchanged</span></div>
     <div class="step"><span class="n">2</span><span class="who gray"><span class="dot gray"></span>Ops team</span><span>Listing: <b>sync-all + per-event opt-out</b> · bundles stay curated — gated on <span class="p">P5</span> organizer agreement</span></div>
-    <div class="step gate"><span class="n">3</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span><span class="g">G2</span> Bundle inventory — <b>shared pool or allocated block</b></span></div>
-    <div class="step"><span class="n">4</span><span class="who violet"><span class="dot violet"></span>Creator</span><span>Bundle request → admin: merch + tier · price · qty · window</span></div>
-    <div class="step"><span class="n">5</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Build bundle in Creator Studio → publish — fiat-only (<span class="p">P7</span>)</span></div>
-    <div class="step"><span class="n">6</span><span class="who gray"><span class="dot gray"></span>Ops team</span><span>Sale window: monitor sales &amp; availability (<span class="p">P10</span>)</span></div>
-    <div class="step"><span class="n">7</span><span class="who coral"><span class="dot coral"></span>Bookyay sys</span><span>Issue e-ticket → <b>My Wallet on Ztor</b> (G4)</span></div>
-    <div class="step"><span class="n">8</span><span class="who teal"><span class="dot teal"></span>Ztor eShop</span><span>Fulfil merch — ship / QR pickup</span></div>
-    <div class="step gate"><span class="n">9</span><span class="who gray"><span class="dot gray"></span>Both</span><span><span class="g">G3</span> Post-sale: refunds · seat changes · cancellations — strawman below</span></div>
-    <div class="step gate"><span class="n">10</span><span class="who gray"><span class="dot gray"></span>Finance ×2</span><span><span class="g">G5</span> Settle ticket revenue → Bookyay on agreed schedule</span></div>
-    <div class="step"><span class="n">11</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Performance report to creator (<span class="p">P9</span> · <span class="p">D6</span>)</span></div>
+    <div class="step"><span class="n">3</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span><b>Map event creator → Ztor account + eShop</b> — manual in CS event listing · <b>publish gate: unmapped events can't go live</b> (<span class="p">D8</span>)</span></div>
+    <div class="step gate"><span class="n">4</span><span class="who coral"><span class="dot coral"></span>Bookyay Ops</span><span><span class="g">G2</span> Bundle inventory — <b>shared pool or allocated block</b></span></div>
+    <div class="step"><span class="n">5</span><span class="who violet"><span class="dot violet"></span>Creator</span><span>Bundle ask → admin — <b>offline comms</b> · merch + tier · price · qty · window · admin does all in-system setup</span></div>
+    <div class="step"><span class="n">6</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Build bundle in Creator Studio → publish — fiat-only (<span class="p">P7</span>)</span></div>
+    <div class="step"><span class="n">7</span><span class="who gray"><span class="dot gray"></span>Ops team</span><span>Sale window: monitor sales &amp; availability (<span class="p">P10</span>)</span></div>
+    <div class="step"><span class="n">8</span><span class="who coral"><span class="dot coral"></span>Bookyay sys</span><span>Issue e-ticket → <b>My Wallet on Ztor</b> (G4)</span></div>
+    <div class="step"><span class="n">9</span><span class="who teal"><span class="dot teal"></span>Ztor eShop</span><span>Fulfil merch — ship / QR pickup</span></div>
+    <div class="step gate"><span class="n">10</span><span class="who gray"><span class="dot gray"></span>Both</span><span><span class="g">G3</span> Post-sale: refunds · seat changes · cancellations — strawman below</span></div>
+    <div class="step gate"><span class="n">11</span><span class="who gray"><span class="dot gray"></span>Finance ×2</span><span><span class="g">G5</span> Settle ticket revenue → Bookyay on agreed schedule</span></div>
+    <div class="step"><span class="n">12</span><span class="who teal"><span class="dot teal"></span>Ztor Admin</span><span>Performance report to creator (<span class="p">P9</span> · <span class="p">D6</span>)</span></div>
   </div>
 
   <div class="lbl">2b · G3 Strawman — post-sale policy <span style="letter-spacing:0;text-transform:none">(react, don't start from blank)</span></div>
@@ -240,17 +241,17 @@
   <!-- ============ S4 ============ -->
   <div class="lbl">4 · Creator Flow — via admin team (Creator Studio not public)</div>
   <div class="chain">
-    <div class="cnode violet">Creator request</div>
+    <div class="cnode violet">Creator ask<small>offline, to admin</small></div>
     <div class="carrow"><span class="shaft"></span></div>
     <div class="cnode teal">Admin builds in Creator Studio</div>
     <div class="carrow"><span class="shaft"></span></div>
-    <div class="cnode violet">Creator approves</div>
+    <div class="cnode violet">Creator approves<small>offline</small></div>
     <div class="carrow"><span class="shaft"></span></div>
     <div class="cnode teal">Live on Ztor</div>
     <div class="carrow"><span class="shaft"></span></div>
     <div class="cnode gold">Reports<small>P9 · D6</small></div>
   </div>
-  <div class="flownote"><b>CS Phase 1 (initial cut — confirm D7):</b> import Bookyay event → all fields locked &amp; inherited, incl. description · <b>bundle-split is the only edit</b> · no event creation</div>
+  <div class="flownote"><b>CS Phase 1 (initial cut — confirm D7):</b> import Bookyay event → <b>map creator → Ztor account + eShop</b> (publish gate — <span class="p">D8</span>) → fields locked &amp; inherited, incl. description · <b>bundle-split is the only edit</b> · no event creation · creator ↔ admin comms stay offline</div>
 
   <!-- ============ S5 ============ -->
   <div class="lbl">5 · Gate Decisions</div>
@@ -297,20 +298,21 @@
     <tr><td class="p">D5</td><td><b>Event images</b> — Bookyay specs ≠ Ztor sizes: unified spec, Ztor-side upload, or new Bookyay field?</td></tr>
     <tr><td class="p">D6</td><td><b>Reporting timing</b> — ship with end-Oct launch or defer (CSV interim)? UI reuses eShop Transaction screens</td></tr>
     <tr><td class="p">D7</td><td><b>Creator Studio Phase 1 scope</b> — confirm the cut: import + bundle-split only, all fields locked / inherited</td></tr>
+    <tr><td class="p">D8</td><td><b>Creator → Ztor account mapping at scale</b> — pulled events may have organizers with no Ztor account: efficient matching / account creation? house account for generic promoter events? does Bookyay API expose organizer identity to help? (Phase 1: manual in CS · mapping gates publish)</td></tr>
   </table></div>
 
   <!-- ============ S7 ============ -->
   <div class="lbl">7 · Parking Lot — assign owner + deadline</div>
   <div class="tblwrap"><table>
     <tr><th style="width:48px">#</th><th>Item</th><th style="width:180px">Owner</th></tr>
-    <tr><td class="p">P1</td><td><b>Bookyay API audit</b> — catalogue · holds · issuance + ticket artifact · refund hooks · status · reports — <b>this week, parallel</b></td><td>Eric's team</td></tr>
+    <tr><td class="p">P1</td><td><b>Bookyay API audit</b> — catalogue (+ organizer identity) · holds · issuance + ticket artifact · refund hooks · status · reports — <b>this week, parallel</b></td><td>Eric's team</td></tr>
     <tr><td class="p">P2</td><td><b>On-sale spike protection on Ztor — Phase-1-critical</b> — QueueIt contract or alternative</td><td>Jeff</td></tr>
     <tr><td class="p">P3</td><td>Platform fee / rev-share values — standalone + bundle</td><td>Biz + Agnes/Jessie</td></tr>
     <tr><td class="p">P4</td><td>Organizer reporting — Ztor sales must appear in Bookyay BO event reports</td><td>Eric's team + Bookyay</td></tr>
     <tr><td class="p">P5</td><td><b>Organizer agreement</b> — does the standard contract permit selling on affiliated platforms? gates sync-all</td><td>Bookyay Ops + legal</td></tr>
     <tr><td class="p">P6</td><td>PII data-sharing (buyer → Bookyay ticket record) — consent + privacy policy</td><td>Legal both sides</td></tr>
     <tr><td class="p">P7</td><td>Bundle currency — <b>fiat-only, no POPCORN</b> (proposed)</td><td>Jeff + finance</td></tr>
-    <tr><td class="p">P8</td><td>Creator bundle-request intake format</td><td>Ztor Admin</td></tr>
+    <tr><td class="p">P8</td><td>Resolved — creator ↔ admin comms stay offline; admin does all in-system setup (no intake form)</td><td>—</td></tr>
     <tr><td class="p">P9</td><td>Creator reporting — surface: Creator Studio and/or Ztor FE artist account</td><td>Ztor Admin + Bookyay</td></tr>
     <tr><td class="p">P10</td><td>Ops sales dashboard for sale windows</td><td>Ops team</td></tr>
     <tr><td class="p">P11</td><td>Cross-platform purchase limits — scalper flank</td><td>Bookyay Ops</td></tr>
