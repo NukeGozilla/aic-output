@@ -32,6 +32,15 @@
 
   .lbl{color:var(--faint);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin:32px 0 12px;font-weight:700}
 
+  /* approach tabs */
+  .tabs{display:flex;gap:10px;margin:20px 0 4px;flex-wrap:wrap}
+  .tabbtn{border:1.5px solid var(--line);background:var(--panel);border-radius:24px;padding:10px 20px;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
+  .tabbtn:hover{border-color:var(--gold)}
+  .tabbtn.active{border-color:var(--gold);background:linear-gradient(180deg,var(--gold-bg),#fff 80%);color:var(--txt)}
+  .tabbtn .alt{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#fff;background:var(--coral);border-radius:20px;padding:2px 8px;margin-left:8px;vertical-align:1px}
+  .tabpane{display:none}
+  .tabpane.active{display:block}
+
   .stance{background:linear-gradient(180deg,var(--gold-bg),#fff 85%);border:1.5px solid var(--gold);border-radius:var(--r);padding:14px 18px}
   .stance h2{margin:0;font-size:17px;color:var(--gold)}
   .stance p{margin:6px 0 0;font-size:13.5px;color:var(--muted)}
@@ -156,6 +165,12 @@
     </div>
   </header>
 
+  <div class="tabs">
+    <button class="tabbtn active" data-tab="tabA">Approach A — Native checkout on Ztor · kickoff baseline</button>
+    <button class="tabbtn" data-tab="tabB">Approach B — Checkout on Bookyay<span class="alt">Alternative · biz review</span></button>
+  </div>
+
+  <div id="tabA" class="tabpane active">
   <div class="stance">
     <h2>One rail — every Ztor sale checks out natively on Ztor</h2>
     <p><b>Standalone tickets AND bundles</b> · redirect to Bookyay is off the table (biz decision) · Bookyay stays the event source of truth — inventory, issuance, venue validation — via API</p>
@@ -311,11 +326,80 @@
     <div class="tlnode"><b>End of November</b><small>Phase 2 — reports on ztor.com</small></div>
   </div>
   <div class="note" style="border-color:var(--blue-ln);background:var(--blue-bg)"><b style="color:var(--blue)">∥ parallel this week:</b> O17 API audit (hold/commit is schedule-critical) + O18 spike-protection decision</div>
+  </div><!-- /tabA -->
+
+  <div id="tabB" class="tabpane">
+  <div class="stance" style="border-color:var(--coral);background:linear-gradient(180deg,var(--coral-bg),#fff 85%)">
+    <h2 style="color:var(--coral)">Alternative B — Ztor is the entrance, Bookyay is the store</h2>
+    <p><b>Standalone tickets:</b> buyer completes purchase on Bookyay — shown as an <b>overlay checkout styled like Ztor</b> (not a new tab; Eric confirms feasibility). <b>Bundles:</b> Bookyay allocates a fixed ticket block to Ztor; Ztor sells ticket + merch bundles through its own checkout. Raised in the 08-13 core standup — <b>reopens O4</b> · drafted for biz review by Wed Aug 19.</p>
+  </div>
+
+  <div class="lbl">B1 · Buyer Flow</div>
+  <div class="chain">
+    <div class="cnode teal">Browse events on Ztor<small>listing · artist eShop · homepage</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode coral">Bookyay checkout in overlay<small>Bookyay URL behind a Ztor-styled frame — provider contracts intact</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode coral">Pay on Bookyay<small>QueueIt · block list · limits — all existing</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">E-ticket in Bookyay<small>loyalty points via Store SSO link</small></div>
+  </div>
+  <div class="flownote"><b>Bundle (unchanged Ztor flow):</b> Bookyay allocates a fixed block (e.g. 100) → Ztor sells ticket + merch as one purchase → e-ticket in My Wallet · merch ship / QR. Ztor sells "as if it already bought the tickets" — the vendor-allotment model Bookyay already runs with partners today.</div>
+
+  <div class="lbl">B2 · What this makes free</div>
+  <div class="steps">
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">1</span><span><b>Provider-locked contracts solved</b> — checkout stays on Bookyay's signed URL; no legal / contract work</span></div>
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">2</span><span><b>Money in one account by construction</b> — standalone ticket money lands directly in Bookyay's provider account; no reconciliation or chargeback split</span></div>
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">3</span><span><b>Account binding · block list · dynamic QR dissolve</b> — orders sit on Bookyay accounts in Bookyay's own system</span></div>
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">4</span><span><b>No QueueIt second-domain licence</b> — spikes stay on Bookyay's protected rails</span></div>
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">5</span><span><b>Bookyay promotes Ztor</b> — "Connect your Store account" on Bookyay + Store SSO: their user base links into Ztor for loyalty points</span></div>
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">6</span><span><b>Ztor build shrinks</b> — event browsing + bundles + SSO only; frees October capacity (Easter-egg campaign, VIP loyalty) · Creator Studio permanently = import + mapping + bundles (no event-mgmt migration, ever)</span></div>
+  </div>
+
+  <div class="lbl">B3 · Trade-offs for biz to weigh</div>
+  <div class="tblwrap"><table>
+    <tr><th style="width:30%">Dimension</th><th>Approach A — native</th><th>Approach B — Bookyay checkout</th></tr>
+    <tr><td><b>Standalone buyer journey</b></td><td>Never leaves Ztor</td><td>Overlay to Bookyay · needs a Bookyay account at purchase</td></tr>
+    <tr><td><b>Ticket in Ztor My Wallet</b></td><td>✓ all tickets</td><td>Bundles only — standalone tickets live in Bookyay</td></tr>
+    <tr><td><b>Ztor registration growth</b></td><td>Every ticket buyer becomes a Ztor user</td><td>Indirect — via SSO connect + loyalty incentive</td></tr>
+    <tr><td><b>Engineering risk to end-Oct</b></td><td>Heavy: hold/commit API · account sync · wallet QR</td><td>Light: listing UI + bundles + SSO; work shifts to Bookyay FE</td></tr>
+    <tr><td><b>Bundle inventory</b></td><td>Shared live pool (kickoff lean)</td><td>Allocated block — unsold-block management · multi-ticket bundles + consecutive seats: ask Bookyay (they run vendor allotments today)</td></tr>
+    <tr><td><b>Ops</b></td><td>New: pass-through cases · Ztor-tag · settlement rail</td><td>Bookyay ops unchanged; bundles settle like eShop vendor sales</td></tr>
+  </table></div>
+
+  <div class="lbl">B4 · Impact on the O-list</div>
+  <div class="flownote" style="margin-bottom:6px"><b>Resolves by construction:</b> O1 payment (standalone = Bookyay; bundle = Ztor gateway) · O5 post-sale standalone leg · O6 wallet standalone leg · O18 QueueIt · O19 consent shrinks to bundles</div>
+  <div class="flownote" style="margin-bottom:6px"><b>Changes:</b> O2 inventory → allocated block for bundles (no hold/commit API) · O4 reopens (this is the alternative) · O8 reporting → standalone numbers need Bookyay sales feed</div>
+  <div class="flownote"><b>New asks:</b> Store SSO on Bookyay + "Connect your Store account" entry (Bookyay FE work) · overlay checkout build · loyalty attribution on Bookyay purchases</div>
+
+  <div class="lbl">B5 · Open questions before adopting</div>
+  <div class="tblwrap"><table>
+    <tr><th style="width:48px">#</th><th>Question</th><th style="width:150px">Owner</th></tr>
+    <tr><td class="p">B1</td><td>Is selling big-concert tickets natively on Ztor strategically required — or is entrance-only fine? (Alex leans Bookyay's POV — confirm his stance)</td><td>Jeff → Alex</td></tr>
+    <tr><td class="p">B2</td><td>Overlay pop-up checkout feasibility — Ztor-styled frame over Bookyay checkout, instead of a new tab</td><td>Jeff → Eric</td></tr>
+    <tr><td class="p">B3</td><td>Bundle mechanics: multi-ticket bundles (nobody buys one concert ticket) · consecutive seats within the allocated block · how Bookyay runs vendor allotments today</td><td>Bookyay (Jesse)</td></tr>
+    <tr><td class="p">B4</td><td>Is "all money in one account" a hard requirement or a preference? Determines whether bundles can use the Ztor gateway</td><td>Bookyay (Jesse/Agnes)</td></tr>
+    <tr><td class="p">B5</td><td>Jesse's internal review lands → confirm Creator Studio design direction (Yves holding)</td><td>Jesse → Yves</td></tr>
+  </table></div>
+
+  <div class="note" style="border-color:var(--gold);background:var(--gold-bg)"><b style="color:var(--gold)">Decision ask:</b> biz picks A or B alongside the core-direction confirm — <b>Wed Aug 19</b>. Phase 1 stays end-October either way; B trades standalone-checkout ownership for a much smaller, safer build.</div>
+  </div><!-- /tabB -->
 
   <footer>
     Detail lives in the companion docs: <b>ztor-docs/outputs/specs/ztor-bookyay-integration-kickoff-material-2026-08-06.md</b> · SA review in <b>ztor-docs/outputs/architecture/</b> · rev 2026-08-11 post-standup
   </footer>
 
 </div>
+<script>
+document.querySelectorAll('.tabbtn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.tabbtn').forEach(function(x){x.classList.remove('active')});
+    document.querySelectorAll('.tabpane').forEach(function(x){x.classList.remove('active')});
+    b.classList.add('active');
+    document.getElementById(b.dataset.tab).classList.add('active');
+    window.scrollTo(0,0);
+  });
+});
+</script>
 </body>
 </html>
