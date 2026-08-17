@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Easter Egg / Media Vault — Prototype Ingest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1d21;
+    --muted: #5c6570;
+    --line: #e3e6ea;
+    --bg: #fafbfc;
+    --panel: #ffffff;
+    --accent: #b4590a;
+    --accent-soft: #fdf3e7;
+    --code-bg: #f1f3f5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.65 "Inter", "Noto Sans TC", system-ui, -apple-system, sans-serif;
+  }
+  .page { max-width: 920px; margin: 0 auto; padding: 48px 28px 80px; }
+  h1 { font-size: 1.7rem; line-height: 1.3; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h2 { font-size: 1.18rem; margin: 2.4em 0 0.7em; padding-top: 1.2em; border-top: 1px solid var(--line); letter-spacing: -0.01em; }
+  h2:first-of-type { border-top: 0; padding-top: 0; }
+  p { margin: 0.55em 0; }
+  .kicker { color: var(--accent); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .meta { color: var(--muted); font-size: 0.86rem; margin-top: 2px; }
+  .note {
+    background: var(--accent-soft); border: 1px solid #f0ddc4; border-radius: 8px;
+    padding: 10px 14px; font-size: 0.9rem; margin: 14px 0;
+  }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid #e8c9a4; }
+  a:hover { border-bottom-color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 0.9rem; background: var(--panel); }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: #f4f6f8; font-weight: 600; }
+  code { background: var(--code-bg); border-radius: 4px; padding: 1px 6px; font: 0.85em/1.5 ui-monospace, "Cascadia Code", Consolas, monospace; }
+  ul, ol { padding-left: 1.4em; margin: 0.55em 0; }
+  li { margin: 0.35em 0; }
+  li::marker { color: var(--muted); }
+  strong { font-weight: 600; }
+  .fig {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px 12px 8px; margin: 16px 0; overflow-x: auto;
+    width: min(1380px, calc(100vw - 40px));
+    margin-left: 50%; transform: translateX(-50%);
+  }
+  .fig .mermaid { display: flex; justify-content: safe center; }
+  .fig-cap { color: var(--muted); font-size: 0.84rem; margin: 4px 4px 10px; }
+  .footnote { color: var(--muted); font-size: 0.88rem; }
+  .lane { color: var(--muted); font-size: 0.9rem; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="kicker">Ztor 2.0 · Feature ingest</div>
+  <h1>Easter Egg / Media Vault — Prototype Ingest</h1>
+  <p class="meta">Ingested 2026-08-14 · flowchart added 2026-08-16 · source: <code>ztor-docs/outputs/research/easter-egg-vault-prototype-ingest-2026-08-14.md</code></p>
+
+  <p>New Ztor feature: <strong>Easter Egg — complete missions to unlock a creator's exclusive content.</strong>
+  Two prototypes ingested; this doc captures the feature model each one encodes and where they agree/diverge.</p>
+  <div class="note">Both pages are <strong>designer prototypes</strong> (exploration, not shipped product — confirmed by Jeff 2026-08-16).</div>
+
+  <table>
+    <tr><th>Side</th><th>URL</th><th>Codename on page</th></tr>
+    <tr>
+      <td>CS (Creator Studio)</td>
+      <td><a href="https://ztor-v2-creator-studio.vercel.app/media-vault.html">ztor-v2-creator-studio.vercel.app/media-vault.html</a></td>
+      <td><strong>Media Vault</strong> (Fans › Media Vault)</td>
+    </tr>
+    <tr>
+      <td>FE (fan-facing)</td>
+      <td><a href="https://ztor-endgame-demo.vercel.app/vault.html?c=nick-chou">ztor-endgame-demo.vercel.app/vault.html?c=nick-chou</a></td>
+      <td><strong>彩蛋解鎖 Unlock Surprises</strong> (demo persona: 周湯豪 / nick-chou)</td>
+    </tr>
+  </table>
+
+  <p>FE page cites its plan doc: <code>handover/unlock-surprises-nick-vault-plan-0806.md</code> (0806 企劃, “Dolly” review rounds 0806).</p>
+
+  <h2 id="flowchart">Feature flowchart</h2>
+  <p class="lane">CS setup lane → FE unlock paths → difficulty ladder.</p>
+
+  <div class="fig">
+    <pre class="mermaid">
+flowchart TB
+
+subgraph CS["Creator Studio — set up the vault"]
+  direction TB
+  A["Create vault"] --> B["Upload media&lt;br/&gt;photo · video · audio · post"]
+  B --> C["Set unlock conditions&lt;br/&gt;OR of AND-groups"]
+  C --> C1["Tier ≥ X"]
+  C --> C2["Bought / Backed /&lt;br/&gt;Attended / Earned"]
+  C --> C3["Mission *&lt;br/&gt;share · invite · watch · tip"]
+  B --> K0["Issue keys"]
+  K0 --> K1["🔑 Gift link · 1 use"]
+  K0 --> K2["🔑 NFC product · N uses"]
+  C1 &amp; C2 &amp; C3 &amp; K1 &amp; K2 --> R0["👥 Who gets in&lt;br/&gt;live reach count"]
+end
+
+subgraph FE["Ztor FE — fan unlocks · 彩蛋解鎖"]
+  direction TB
+  F0["Open creator's vault hub"] --> F1{"Item state"}
+  F1 -->|"public"| W["▶ View content"]
+  F1 -->|"locked"| P{"Unlock path"}
+  P -->|"mission"| M1["Complete task"] --> M2["Verified *"] --> KEY["🔑 Key issued&lt;br/&gt;permanent"]
+  P -->|"tier"| T1{"Tier ≥ required?"}
+  T1 -->|"yes"| T2["Access while&lt;br/&gt;tier holds"]
+  T1 -->|"no"| T3["Grind fan level"] -.-> T1
+  P -->|"gift / NFC"| G1["Open link · tap tag"] --> KEY
+  KEY --> W
+  T2 --> W
+  T2 --> N1["Nightly 00:00&lt;br/&gt;tier recompute"]
+  N1 -->|"tier dropped"| N2["Grace until tonight"] -.-> N3["⛔ Access ends"]
+end
+
+subgraph LADDER["Difficulty ladder — FE demo vault"]
+  direction LR
+  L1["Follow · join"] --> L2["Share ×3"] --> L3["Invite ×3"] --> L4["Watch · Buy"] --> L5["Tip 500 🍿"] --> L6["🥚 大彩蛋&lt;br/&gt;Inner Circle only"]
+end
+
+CS ==>|"publish"| FE
+FE -.- LADDER
+    </pre>
+  </div>
+
+  <p class="footnote">* Mission conditions and their verification exist only in the FE demo today — the CS condition catalogue has no mission types yet, and demo unlocks fire on click with no real check. Biggest gap for the BRD (see <a href="#divergences">Divergences</a>).</p>
+
+  <h2 id="core">Core concept (shared by both sides)</h2>
+  <ul>
+    <li>A creator owns multiple <strong>vaults</strong> (庫房). Each vault = a themed collection of exclusive media (photo / video / audio / text post) behind a <strong>door</strong>.</li>
+    <li>The door opens via any of several <strong>paths</strong>: automatic <strong>conditions</strong> (tier, purchase, backing, attendance, achievement, mission/task) or a hand-issued <strong>key</strong> (bearer credential — gift link or NFC product).</li>
+    <li>The number the creator cares about: <strong>“Who gets in” — how many fans can open this vault right now.</strong> Computed as a true set union over a fan population (conditions ∪ claimed keys, overlap deduped), never by adding counts.</li>
+    <li>Access semantics: <strong>tier conditions are volatile</strong> (re-evaluated on the nightly tier recompute; a fan who drops tier keeps access until tonight 00:00 — “grace”), while <strong>purchase / backing / event / achievement / mission conditions are permanent</strong> (they record something that already happened — access never expires).</li>
+    <li><strong>Keys</strong> are a second road on top of conditions: single-use <strong>gift link</strong> (“first fan to open it keeps the access”) or an <strong>NFC batch</strong> (N uses written into a keychain/furniture product; fan taps phone → gets access). Keys can be <strong>revoked</strong> (leak brake) — revoked keys stay visible in history (“issued, revoked, 12 had claimed”).</li>
+    <li>Social proof: each item/vault shows how many keys are out (“X 人已解鎖”), deliberately on a decreasing curve for rarity.</li>
+  </ul>
+
+  <h2 id="cs-side">CS side — how the creator sets it up (Media Vault)</h2>
+  <p>Master–detail single page under <strong>Fans</strong>: left rail = vault list (cover / name / key-count = current reach), right = selected vault.</p>
+  <p>Setup flow per vault:</p>
+  <ol>
+    <li><strong>New vault</strong> (button above the rail list) → inline name field.</li>
+    <li><strong>Unlock conditions</strong> — chips added from a catalogue popover, grouped: <strong>Tier ≥ X</strong> · <strong>Bought</strong> (specific product, incl. limited runs) · <strong>Backed</strong> (specific co-create project) · <strong>Attended</strong> (specific event/ticket) · <strong>Earned</strong> (achievement: Hall of Fame, Ztor Score 800+, 12-month streak). Rule structure (PG-025, not yet in documents/): <code>rules = [ {items:[cond, …]}, … ]</code> — <strong>outer OR of “methods”, inner AND within a method</strong> (“Superfan AND bought vinyl” OR “attended signing”). Empty method never matches.</li>
+    <li><strong>“Who gets in”</strong> — sticky live readout: N of total fans, with a per-tier breakdown bar; changes instantly as conditions are edited. Reach math is set-based over a seeded 1,283-fan population; capped conditions can never exceed real sold counts (e.g. 1/50 vinyl sold 21 → cap 21).</li>
+    <li><strong>Issue a key</strong> (drawer): choose <strong>Send to one fan</strong> (single-use gift) or <strong>Make an NFC product</strong> (batch with uses count, linked to a shop product); generates human-readable code (<code>KC26-A4VP</code>, no 0/O/1/I — laser-engravable) + link <code>ztor.com/k/&lt;code&gt;</code>. Below: <strong>Keys issued</strong> list with claimed/total per key + revoke.</li>
+    <li><strong>Share page</strong> — copies a public showcase-page link for the vault (that page itself is spec’d “later”; entry + copy flow only).</li>
+    <li><strong>Upload media</strong> into the vault (one picker; grid auto-sections photos → clips → audio). Per-item settings drawer = preview, rename, delete + facts only (permissions/expiry/watermark deliberately NOT invented — no upstream spec).</li>
+    <li><strong>Viewer lens</strong> — “View as: Fan/Ranked/Superfan/Inner Circle” swaps the whole page to that tier’s perspective (locked vaults dimmed in rail, gated mask over content).</li>
+  </ol>
+  <p>Tiers referenced (from tier-settings): Inner Circle · Superfan · Ranked fans (devoted) · Fan.</p>
+
+  <h2 id="fe-side">FE side — what the fan sees (彩蛋解鎖 / Unlock Surprises)</h2>
+  <p>Page = per-creator vault hub (<code>?c=&lt;creator-slug&gt;</code>, profile from <code>ZTOR_CREATOR_PROFILE</code>). Creator identity bar links to profile + their shop. Left rail = 彩蛋列表 (vault list with lock icon until first unlock, then progress <code>n/total</code>); right = selected vault’s items + unlock conditions. Per-vault progress bar (“你已解鎖 n / N”).</p>
+  <p><strong>Item states</strong> (<code>kind</code> in seed): <code>perm</code> (mission/task-earned permanent key), <code>level</code> (tier-gated, nightly recompute), <code>open</code> (public). Card shows: blurred media + lock, filename as teaser when locked (title revealed when unlocked), type chip, condition text with key icon (“拿什麼換鑰匙”), social-proof count, and a CTA button for task conditions.</p>
+  <p><strong>Mission/task condition types in the demo ladder</strong> (10-item difficulty climb in vault 1):</p>
+  <ul>
+    <li>Follow + join community</li>
+    <li>Share the vault page to 3 friends</li>
+    <li>Share a designated post to 10 people</li>
+    <li>Invite 3 friends to the community</li>
+    <li>Tier ≥ Fan / Superfan / Inner Circle (level kind)</li>
+    <li>Watch a designated film OR attend a Watch Party</li>
+    <li>Buy any merch in the shop</li>
+    <li>Cumulative popcorn tipping ≥ 500</li>
+    <li>Attended a specific event (成就; “補登票根” retro ticket-claim CTA)</li>
+    <li>Backed a specific co-create project</li>
+    <li><strong>大彩蛋 (grand egg)</strong>: new single full version, 72-hour early listen — Inner Circle only, orange-glow treatment + “大彩蛋” tag</li>
+  </ul>
+  <p>Unlock interaction: CTA click → burst animation on the lock → toast “條件達成——鑰匙已發給你” → card flips to unlocked; state in <code>localStorage ztor_vault_v1</code> (demo only — real completion of the mission isn’t verified).</p>
+  <p><strong>View modes (0806 Dolly rulings):</strong> only two — 一般用戶 (new fan, rank 0, all locked) and 創作者本人. Creator view on FE is <strong>information-only</strong>: no manage buttons, no “new vault”, uncensored content + key counts per item/vault, plus a banner “管理在 Creator Studio”. All management lives in CS.</p>
+
+  <h2 id="divergences">Divergences / open items to reconcile before a BRD</h2>
+  <ol>
+    <li><strong>Naming</strong>: CS calls it <em>Media Vault</em>; FE calls it <em>彩蛋解鎖 / Unlock Surprises</em>. Fan-facing framing is missions→keys; CS framing is audience-gating. One feature, two vocabularies — needs a canonical name pair (EN/ZH).</li>
+    <li><strong>Mission conditions exist only on FE.</strong> CS condition catalogue = tier / bought / backed / attended / earned. FE adds social/growth missions (share page ×3, share post ×10, invite ×3, join community, watch film / watch party, popcorn tipping ≥500). CS has no UI for defining these mission types yet — the biggest CS gap.</li>
+    <li><strong>Mission verification</strong> is unspecified (demo unlocks on click). Share/invite counts, watch completion, tipping totals all need real tracking + anti-abuse rules.</li>
+    <li><strong>Rule semantics</strong>: CS supports OR-of-AND-groups (PG-025, awaiting product ruling, in ASSUMPTIONS.md); FE demo is one condition per item. Also note granularity: CS gates at <strong>vault</strong> level, FE gates <strong>per item</strong> — per-item conditions vs per-vault door needs an explicit decision.</li>
+    <li><strong>Keys on FE</strong>: gift-link/NFC claim flow (<code>ztor.com/k/&lt;code&gt;</code>) has no fan-side page in the FE demo.</li>
+    <li><strong>Share page</strong> (public vault showcase) has an entry point in CS but no spec/page anywhere.</li>
+    <li><strong>Grace rule</strong> (drop tier → keep until 00:00) is encoded on both sides — consistent; surface copy exists (“權限保留至今晚”).</li>
+    <li>Fan-side numbers are seeded mock data (1,283 fans etc.); FE <code>keys</code> counts are curated for a rarity curve, not computed.</li>
+  </ol>
+
+  <h2 id="sources">Source files (fetched 2026-08-14)</h2>
+  <ul>
+    <li>CS: <code>media-vault.html</code> (direction contract in head comment), <code>js/vault-store.js</code> (data + reach math + key model), <code>js/media-vault.js</code> (interactions; ~1,360 lines).</li>
+    <li>FE: <code>vault.html</code> (inline <code>VAULTS</code> seed + renderer; ds.js persona source).</li>
+  </ul>
+
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'neutral',
+    flowchart: { curve: 'basis', useMaxWidth: false }
+  });
+</script>
+</body>
+</html>
