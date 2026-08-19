@@ -216,7 +216,7 @@
         <div class="page-head">
           <div>
             <h1 id="bank-h">IP Bank</h1>
-            <p>Record which creators hold IP in each film and their revenue share. One film can have multiple owners; each entry links to one owner.</p>
+            <p>Record which creators hold IP in each film — their payout method and terms. One film can have multiple owners; each entry links to one owner. This phase, Ops sets payout terms here manually (no owner self-serve UI).</p>
           </div>
           <button class="btn btn-gold" id="open-add">+ Add IP entry</button>
         </div>
@@ -225,14 +225,14 @@
         <div class="card empty" id="bank-empty" style="display:none">
           <div class="ico">🎬</div>
           <h3>No IP entries yet</h3>
-          <p>Add an IP entry to record an owner and their revenue share against a film.</p>
+          <p>Add an IP entry to record an owner, their payout method and terms against a film.</p>
           <button class="btn btn-gold" onclick="document.getElementById('open-add').click()">+ Add IP entry</button>
         </div>
 
         <div class="card tablecard" id="bank-table-wrap">
           <table>
             <thead><tr>
-              <th style="width:30%">Film</th><th>IP title</th><th>Type</th><th>Owner</th><th>Status</th><th class="num">Share</th><th></th>
+              <th style="width:26%">Film</th><th>IP title</th><th>Type</th><th>Owner</th><th>Status</th><th>Payout</th><th class="num">Terms</th><th></th>
             </tr></thead>
             <tbody id="bank-rows">
               <tr class="entry" data-movie="pirate">
@@ -240,6 +240,7 @@
                 <td><b>Zheng Yi Sao (lead character)</b></td><td class="muted">Character / Likeness</td>
                 <td><div class="owner-cell"><span class="av-sm"></span>Denise Wong</div></td>
                 <td><span class="badge b-linked"><span class="pip"></span>Linked</span></td>
+                <td class="muted">Net revenue share</td>
                 <td class="num"><span class="pct">20.00%</span></td>
                 <td class="num"><button class="btn btn-sm btn-ghost">Edit</button></td>
               </tr>
@@ -248,7 +249,8 @@
                 <td><b>Original score</b></td><td class="muted">Music &amp; Score</td>
                 <td><div class="owner-cell"><span class="av-sm"></span>Wong Siu-pong</div></td>
                 <td><span class="badge b-linked"><span class="pip"></span>Linked</span></td>
-                <td class="num"><span class="pct">35.00%</span></td>
+                <td class="muted">Rev share + MG</td>
+                <td class="num"><span class="pct">35.00%</span><div class="faint" style="font-size:11px">MG NT$ 10,000</div></td>
                 <td class="num"><button class="btn btn-sm btn-ghost">Edit</button></td>
               </tr>
               <tr class="entry" data-movie="pirate">
@@ -256,6 +258,7 @@
                 <td><b>Original screenplay</b></td><td class="muted">Original Story / Screenplay</td>
                 <td><div class="owner-cell"><span class="av-sm"></span>Huei-ling C.</div></td>
                 <td><span class="badge b-pending"><span class="pip"></span>Invited (Pending)</span></td>
+                <td class="muted">Net revenue share</td>
                 <td class="num"><span class="pct">15.00%</span></td>
                 <td class="num"><button class="btn btn-sm btn-danger">Remove</button></td>
               </tr>
@@ -264,14 +267,24 @@
                 <td><b>Bruce Lee likeness</b></td><td class="muted">Character / Likeness</td>
                 <td><div class="owner-cell"><span class="av-sm"></span>Lee Estate (B. Lee)</div></td>
                 <td><span class="badge b-linked"><span class="pip"></span>Linked</span></td>
+                <td class="muted">Net revenue share</td>
                 <td class="num"><span class="pct">50.00%</span></td>
+                <td class="num"><button class="btn btn-sm btn-ghost">Edit</button></td>
+              </tr>
+              <tr class="entry" data-movie="fury">
+                <td><div class="movie-cell"><span class="poster"></span><span>Fist Of Fury</span></div></td>
+                <td><b>Stunt choreography footage</b></td><td class="muted">Footage / Clip</td>
+                <td><div class="owner-cell"><span class="av-sm"></span>Robert Li</div></td>
+                <td><span class="badge b-linked"><span class="pip"></span>Linked</span></td>
+                <td class="muted">Flat fee</td>
+                <td class="num">NT$ 30,000<div class="faint" style="font-size:11px">one-time</div></td>
                 <td class="num"><button class="btn btn-sm btn-ghost">Edit</button></td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p class="hint" style="margin-top:14px">Allocation is validated per film when you add or edit an entry. A film's owner shares can total up to 100%; the remainder is the platform's cut.</p>
+        <p class="hint" style="margin-top:14px">Allocation is validated per film when you add or edit a <b>share-based</b> entry (Rev share + MG, Net revenue share) — a film's owner shares can total up to 100%; the remainder is the platform's cut. <b>Flat fees sit outside the share pool</b> and are paid one-time from the platform side.</p>
       </section>
 
       <!-- ============================= REPORTING ============================= -->
@@ -279,7 +292,7 @@
         <div class="page-head">
           <div>
             <h1 id="rep-h">IP Bank Reporting</h1>
-            <p>Read-only revenue split per film. Figures are derived (net revenue × share %) — the settlement engine is out of scope this phase.</p>
+            <p>Read-only revenue split per film. Figures are derived per payout method (v4 formulas, biz-confirmed 2026-07-22) — the settlement engine is out of scope this phase.</p>
           </div>
           <span class="ro-flag">🔒 Read-only · derived figures</span>
         </div>
@@ -295,23 +308,33 @@
 
         <div class="stats">
           <div class="card stat"><div class="k">Film net revenue</div><div class="v" id="rep-net">NT$ 79,300</div></div>
-          <div class="card stat"><div class="k">Allocated to owners</div><div class="v gold" id="rep-alloc">NT$ 55,510</div></div>
-          <div class="card stat"><div class="k">Platform remainder</div><div class="v" id="rep-plat">NT$ 23,790</div></div>
+          <div class="card stat"><div class="k">Allocated to owners</div><div class="v gold" id="rep-alloc">NT$ 51,545</div></div>
+          <div class="card stat"><div class="k">Platform remainder</div><div class="v" id="rep-plat">NT$ 27,755</div></div>
           <div class="card stat"><div class="k">Settlement boundary</div><div class="v sm">Per-party withdrawal <span class="faint">(no period close)</span></div></div>
         </div>
 
         <div class="card tablecard">
           <table>
-            <thead><tr><th>IP title</th><th>Owner</th><th>Status</th><th class="num">Share</th><th class="num">Owed</th><th class="num">Withdrawn</th><th class="num">Available</th></tr></thead>
+            <thead><tr><th>IP title</th><th>Owner</th><th>Payout</th><th>Status</th><th class="num">Terms</th><th class="num">Owed</th><th class="num">Withdrawn</th><th class="num">Available</th></tr></thead>
             <tbody id="rep-rows"></tbody>
           </table>
+        </div>
+
+        <!-- payout methods legend — v4 + 2026-07-22 requirement alignment (Susan) -->
+        <div class="card" style="margin-top:14px;padding:14px 18px;font-size:12px;line-height:1.75;color:var(--muted)">
+          <b style="color:var(--txt)">Payout methods — v4, biz-confirmed 2026-07-22</b><br>
+          ① <b style="color:var(--txt)">Flat fee 一次性費用</b> — one-time fixed amount, independent of revenue performance. No cap.<br>
+          ② <b style="color:var(--txt)">Revenue share + Minimum guarantee</b> — net revenue × share %, share capped at <b>30% of net</b>. At the 1-year mark, if the accrued share is below the MG the system auto-pays the MG; above it, tiered calculation continues. MG is non-refundable and <b>not</b> an advance — never deducted from future share.<br>
+          ③ <b style="color:var(--txt)">Net revenue share</b> — straight net revenue × share %, capped at <b>50% of net</b>. No minimum guarantee.<br>
+          <span class="faint">Flat fee and MG amounts carry their own currency (NT$ / US$ / HK$ / S$); revenue accrues in NT$, so cross-currency comparison and payout convert at the settlement-day FX rate.</span><br>
+          <span class="faint">⚠️ Pending biz before implementation: final net-revenue formula (Tastemaker commission in or out) · Type 2 tier table beyond the MG · settlement processing time (real-time or batched) · FX rate source for non-NT$ amounts.</span>
         </div>
         <div class="invite-banner" id="rep-retro" style="background:#1a1424;border-color:#4a3a5d;color:#cfc0e6">
           <span>↩</span>
           <div id="rep-retro-msg"></div>
         </div>
 
-        <p class="note">Owed = film net revenue × share %. Withdrawals reuse the existing Profile withdraw flow (not configured here). Pending owners accrue but cannot withdraw until they claim. <b>Ztor has no universal settlement period</b> — withdrawal is the only event that makes money final, so a backdated entry genuinely recalculates every un-withdrawn balance and posts a reasoned transaction line on each side (ADR 2026-08-04). Revenue is attributed by date, so a mid-month start resolves exactly. “Net revenue” definition and the settlement/calculation engine are out of scope for this phase — figures shown are illustrative.</p>
+        <p class="note">Owed is derived per payout method: net-share and MG rows accrue net revenue × effective share % (Type 2 clips at 30% of net, Type 3 at 50% — the excess stays with the platform); flat-fee rows are a one-time amount paid from the platform remainder. Withdrawals reuse the existing Profile withdraw flow (not configured here). Pending owners accrue but cannot withdraw until they claim. <b>Ztor has no universal settlement period</b> — withdrawal is the only event that makes money final, so a backdated entry genuinely recalculates every un-withdrawn balance and posts a reasoned transaction line on each side (ADR 2026-08-04). Revenue is attributed by date, so a mid-month start resolves exactly. “Net revenue” definition and the settlement/calculation engine are out of scope for this phase — figures shown are illustrative.</p>
       </section>
 
     </main>
@@ -347,24 +370,71 @@
         <input class="inp" id="f-title" placeholder="e.g. Zheng Yi Sao (lead character)">
       </div>
 
-      <div class="two">
-        <div class="field">
-          <label for="f-type">IP type <span class="req">*</span></label>
-          <select class="inp" id="f-type">
-            <option value="">Select…</option>
-            <option>Original Story / Screenplay</option>
-            <option>Character / Likeness</option>
-            <option>Music &amp; Score</option>
-            <option>Footage / Clip</option>
-            <option>Brand / Trademark</option>
-            <option>Other</option>
-          </select>
+      <div class="field">
+        <label for="f-type">IP type <span class="req">*</span></label>
+        <select class="inp" id="f-type">
+          <option value="">Select…</option>
+          <option>Original Story / Screenplay</option>
+          <option>Character / Likeness</option>
+          <option>Music &amp; Score</option>
+          <option>Footage / Clip</option>
+          <option>Brand / Trademark</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <!-- payout method — 2026-07-22 requirement alignment (Susan). Owner picks
+           one of three at IP upload; this phase Ops sets it here manually. -->
+      <div class="field">
+        <label>Payout method <span class="req">*</span></label>
+        <div class="choices" id="method-choices" role="radiogroup" aria-label="Payout method">
+          <label class="choice">
+            <input type="radio" name="method" value="flat">
+            <span class="lbl">Flat fee 一次性費用<span class="sub">One-time fixed amount — independent of revenue performance. No cap.</span></span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="method" value="mg">
+            <span class="lbl">Revenue share + Minimum guarantee<span class="sub">Net revenue × share % — share capped at 30% of net. At the 1-year mark, if the accrued share is below the MG the system auto-pays the MG; above it, tiered calculation continues <b>(tier table pending biz)</b>.</span></span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="method" value="net">
+            <span class="lbl">Net revenue share<span class="sub">Straight net revenue × share % — capped at 50% of net. No minimum guarantee.</span></span>
+          </label>
         </div>
-        <div class="field">
+      </div>
+
+      <div class="two">
+        <div class="field" id="fld-pct" style="display:none">
           <label for="f-pct">Revenue-share % <span class="req">*</span></label>
           <input class="inp" id="f-pct" type="number" min="0" max="100" step="0.01" placeholder="0.00">
           <div class="errline" id="pct-err" style="display:none">⛔ <span></span></div>
           <div class="hint" id="pct-hint"></div>
+        </div>
+        <div class="field" id="fld-mg" style="display:none">
+          <label for="f-mg">Minimum guarantee (MG) <span class="req">*</span></label>
+          <div style="display:flex;gap:8px">
+            <select class="inp" id="f-mg-cur" style="width:92px;flex:0 0 92px" aria-label="MG currency">
+              <option value="TWD" selected>NT$</option>
+              <option value="USD">US$</option>
+              <option value="HKD">HK$</option>
+              <option value="SGD">S$</option>
+            </select>
+            <input class="inp" id="f-mg" type="number" min="0" step="1" placeholder="e.g. 10000" style="flex:1">
+          </div>
+          <div class="hint">Non-refundable — <b>not</b> an advance, never deducted from future share. Non-NT$ MG compares/pays at the settlement-day FX rate <span class="faint">(rate source pending biz)</span>.</div>
+        </div>
+        <div class="field" id="fld-flat" style="display:none">
+          <label for="f-flat">Flat fee (one-time) <span class="req">*</span></label>
+          <div style="display:flex;gap:8px">
+            <select class="inp" id="f-flat-cur" style="width:92px;flex:0 0 92px" aria-label="Flat fee currency">
+              <option value="TWD" selected>NT$</option>
+              <option value="USD">US$</option>
+              <option value="HKD">HK$</option>
+              <option value="SGD">S$</option>
+            </select>
+            <input class="inp" id="f-flat" type="number" min="0" step="1" placeholder="e.g. 30000" style="flex:1">
+          </div>
+          <div class="hint">Paid once — does not consume the film's share pool. Non-NT$ fees pay out at the settlement-day FX rate <span class="faint">(rate source pending biz)</span>.</div>
         </div>
       </div>
 
@@ -450,14 +520,17 @@ const USERS = [
 // per-film already-allocated % (owners only)
 const MOVIE_ALLOC = {pirate:70, fury:50, tableread:0, clock:0};
 const MOVIE_NAME  = {pirate:"海上霸姬 - 鄭一嫂", fury:"Fist Of Fury", tableread:"Table Read", clock:"The Clock"};
+// method: 'flat' | 'mg' | 'net' — the three payout options confirmed at the
+// 2026-07-22 requirement alignment (Susan). Chosen once per IP entry.
 const REPORTS = {
   pirate:{net:79300, rows:[
-    {ip:"Zheng Yi Sao", owner:"Denise Wong", status:"linked", pct:20, withdrawn:2200},
-    {ip:"Original screenplay", owner:"Huei-ling C.", status:"pending", pct:15, withdrawn:null},
-    {ip:"Original score", owner:"Wong Siu-pong", status:"linked", pct:35, withdrawn:0},
+    {ip:"Zheng Yi Sao", owner:"Denise Wong", status:"linked", method:"net", pct:20, withdrawn:2200},
+    {ip:"Original screenplay", owner:"Huei-ling C.", status:"pending", method:"net", pct:15, withdrawn:null},
+    {ip:"Original score", owner:"Wong Siu-pong", status:"linked", method:"mg", pct:35, mg:10000, withdrawn:0},
   ]},
   fury:{net:142000, rows:[
-    {ip:"Bruce Lee likeness", owner:"Lee Estate (B. Lee)", status:"linked", pct:50, withdrawn:18000},
+    {ip:"Bruce Lee likeness", owner:"Lee Estate (B. Lee)", status:"linked", method:"net", pct:50, withdrawn:18000},
+    {ip:"Stunt choreography footage", owner:"Robert Li", status:"linked", method:"flat", flat:30000, withdrawn:30000},
   ]},
 };
 const TODAY = "2026-06-15"; // wireframe "now"
@@ -534,6 +607,17 @@ function netSince(mv, from){
 const RETRO_ADJ = [];
 const fmt = n => "NT$ " + n.toLocaleString("en-US");
 
+// ── Payout methods (v4 + 2026-07-22 alignment) ──────────────────────────────
+const METHOD_LABEL = {flat:'Flat fee', mg:'Rev share + MG', net:'Net revenue share'};
+const SHARE_CAP    = {mg:30, net:50};   // payout cap as % of net revenue — v4 上限
+// fixed amounts (flat fee, MG) carry their own currency; revenue accrues in NT$,
+// so cross-currency compare/payout happens at settlement FX (rate source pending biz)
+const CUR_SYM = {TWD:'NT$', USD:'US$', HKD:'HK$', SGD:'S$'};
+const fmtCur  = (n, cur) => (CUR_SYM[cur||'TWD']||'NT$') + " " + n.toLocaleString("en-US");
+const method = () => document.querySelector('input[name="method"]:checked')?.value || null;
+/** Share % that actually pays out — nominal share clipped at the method cap. */
+function effectivePct(m, pct){ return Math.min(pct, SHARE_CAP[m] ?? 100); }
+
 /* ---------------- nav ---------------- */
 const views = {bank:document.getElementById('view-bank'), report:document.getElementById('view-report')};
 function show(view){
@@ -570,18 +654,33 @@ let owner = null; // {name, invite:bool, contact}
 const F = id => document.getElementById(id);
 
 function resetForm(){
-  F('f-movie').value=''; F('f-title').value=''; F('f-type').value=''; F('f-pct').value='';
+  F('f-movie').value=''; F('f-title').value=''; F('f-type').value='';
+  F('f-pct').value=''; F('f-mg').value=''; F('f-flat').value='';
+  F('f-mg-cur').value='TWD'; F('f-flat-cur').value='TWD';
+  document.querySelectorAll('input[name="method"]').forEach(r=>r.checked=false);
   owner=null; renderOwnerField(); F('movie-meta').classList.remove('show');
   F('pct-err').style.display='none'; F('pct-hint').textContent=''; F('f-pct').classList.remove('err');
   F('invite-banner').classList.remove('show');
+  applyMethodUI();
   updateFromWindow();
   updateRetro();
   validate();
 }
 
+/* payout method → which term fields show */
+function applyMethodUI(){
+  const m = method();
+  F('fld-pct').style.display  = (m==='mg'||m==='net') ? '' : 'none';
+  F('fld-mg').style.display   = m==='mg'   ? '' : 'none';
+  F('fld-flat').style.display = m==='flat' ? '' : 'none';
+}
+
 /* movie meta + allocation hint */
 F('f-movie').addEventListener('change', ()=>{ updateMovieMeta(); checkPct(); updateFromWindow(); updateRetro(); validate(); });
 F('f-pct').addEventListener('input', ()=>{ checkPct(); updateRetro(); validate(); });
+['f-mg','f-flat'].forEach(id=>F(id).addEventListener('input', validate));
+document.querySelectorAll('input[name="method"]').forEach(r=>
+  r.addEventListener('change', ()=>{ applyMethodUI(); checkPct(); updateFromWindow(); updateRetro(); validate(); }));
 document.querySelectorAll('input[name="from"]').forEach(r=>
   r.addEventListener('change', ()=>{ updateRetro(); validate(); }));
 
@@ -602,6 +701,12 @@ function updateFromWindow(){
     lbl.childNodes[0].nodeValue = title;
     sub.innerHTML = subtitle;
   };
+  if(method()==='flat'){
+    radio.disabled = true; radio.checked = false;
+    F('choice-today').querySelector('input').checked = true;
+    setLabel('Backdate', 'Flat fee is one-time — nothing accrues over time, so there is nothing to backdate.');
+    return;
+  }
   if(!mv){
     radio.disabled = true; radio.checked = false;
     F('choice-today').querySelector('input').checked = true;
@@ -632,12 +737,12 @@ function updateFromWindow(){
 function updateRetro(){
   const banner=F('retro-banner'), msg=F('retro-msg'), save=F('modal-save');
   const mv=F('f-movie').value, from=selectedFrom();
-  const backdated = !!(mv && fromRadio()==='backdate' && from < TODAY);
+  const backdated = !!(mv && method()!=='flat' && fromRadio()==='backdate' && from < TODAY);
   banner.classList.toggle('show', backdated);
   save.textContent = backdated ? 'Add + recalculate' : 'Add entry';
   if(!backdated) return;
 
-  const pct=parseFloat(F('f-pct').value||'0');
+  const pct=effectivePct(method(), parseFloat(F('f-pct').value||'0'));
   const days = daysBetween(from, TODAY);
   const debits = (DEBITED_PARTIES[mv]||[]).map(p=>p.name).join(' · ');
   if(!pct){
@@ -661,17 +766,22 @@ function updateMovieMeta(){
   meta.classList.add('show');
 }
 function checkPct(){
+  const m = method();
   const v = F('f-movie').value; const pct = parseFloat(F('f-pct').value||'0');
   const err=F('pct-err'), hint=F('pct-hint'), inp=F('f-pct');
   err.style.display='none'; inp.classList.remove('err'); hint.textContent='';
-  if(!v || !F('f-pct').value) return true;
+  if(!m || m==='flat' || !v || !F('f-pct').value) return true;
   const used = MOVIE_ALLOC[v];
   const total = used + pct;
   if(total > 100){
     err.querySelector('span').textContent = `Total would be ${total.toFixed(2)}% — exceeds 100% by ${(total-100).toFixed(2)}%.`;
     err.style.display='flex'; inp.classList.add('err'); return false;
   }
-  hint.textContent = `After this entry: ${total.toFixed(2)}% allocated · ${(100-total).toFixed(2)}% platform remainder.`;
+  const cap = SHARE_CAP[m];
+  const capNote = (cap && pct > cap)
+    ? ` ⚠️ Payout clips at ${cap}% of net (${m==='mg'?'Type 2':'Type 3'} cap) — the excess stays with the platform.`
+    : '';
+  hint.textContent = `After this entry: ${total.toFixed(2)}% allocated · ${(100-total).toFixed(2)}% platform remainder.${capNote}`;
   return true;
 }
 
@@ -740,16 +850,28 @@ document.addEventListener('click', e=>{ if(!combo.contains(e.target)) closePop()
 /* ---------------- validation + save ---------------- */
 function validate(){
   // No free date entry any more — both options are always valid by construction.
-  const mv=F('f-movie').value;
-  const ok = mv && F('f-title').value.trim() && F('f-type').value && F('f-pct').value && owner && checkPct();
-  F('modal-save').disabled = !ok;
+  const mv=F('f-movie').value, m=method();
+  const base = mv && F('f-title').value.trim() && F('f-type').value && owner && m;
+  const terms = m==='flat' ? parseFloat(F('f-flat').value||'0')>0
+              : m==='mg'   ? F('f-pct').value && parseFloat(F('f-mg').value||'0')>0 && checkPct()
+              : m==='net'  ? F('f-pct').value && checkPct()
+              : false;
+  F('modal-save').disabled = !(base && terms);
 }
 ['f-title'].forEach(id=>F(id).addEventListener('input', validate));
 F('f-type').addEventListener('change', validate);
 
 F('modal-save').onclick = ()=>{
   const mv=F('f-movie').value, mvName=MOVIE_NAME[mv];
-  const title=F('f-title').value.trim(), type=F('f-type').value, pct=parseFloat(F('f-pct').value);
+  const title=F('f-title').value.trim(), type=F('f-type').value, m=method();
+  const pct=parseFloat(F('f-pct').value||'0');
+  const mg=parseFloat(F('f-mg').value||'0');
+  const flat=parseFloat(F('f-flat').value||'0');
+  const mgCur=F('f-mg-cur').value, flatCur=F('f-flat-cur').value;
+  const termsCell = m==='flat'
+    ? `${fmtCur(flat,flatCur)}<div class="faint" style="font-size:11px">one-time</div>`
+    : `<span class="pct">${pct.toFixed(2)}%</span>` +
+      (m==='mg' ? `<div class="faint" style="font-size:11px">MG ${fmtCur(mg,mgCur)}</div>` : '');
   // append row to bank table
   const tb=document.getElementById('bank-rows');
   const tr=document.createElement('tr'); tr.className='entry row-new'; tr.dataset.movie=mv;
@@ -757,16 +879,17 @@ F('modal-save').onclick = ()=>{
     <td><b>${title}</b></td><td class="muted">${type}</td>
     <td><div class="owner-cell"><span class="av-sm"></span>${owner.name}</div></td>
     <td><span class="badge ${owner.invite?'b-pending':'b-linked'}"><span class="pip"></span>${owner.invite?'Invited (Pending)':'Linked'}</span></td>
-    <td class="num"><span class="pct">${pct.toFixed(2)}%</span></td>
+    <td class="muted">${METHOD_LABEL[m]}</td>
+    <td class="num">${termsCell}</td>
     <td class="num"><button class="btn btn-sm btn-ghost">Edit</button></td>`;
   tb.appendChild(tr);
-  MOVIE_ALLOC[mv]+=pct; // keep allocation live
+  if(m!=='flat') MOVIE_ALLOC[mv]+=pct; // flat fees sit outside the share pool
   const from = selectedFrom();
-  const backdated = fromRadio()==='backdate' && from < TODAY;
+  const backdated = m!=='flat' && fromRadio()==='backdate' && from < TODAY;
   if(backdated){
-    const amt = Math.round(netSince(mv, from) * pct/100);
+    const amt = Math.round(netSince(mv, from) * effectivePct(m,pct)/100);
     if(amt) RETRO_ADJ.push({
-      movie:mv, ip:title, owner:owner.name, pct, from, amount:amt,
+      movie:mv, ip:title, owner:owner.name, pct:effectivePct(m,pct), from, amount:amt,
       debits:(DEBITED_PARTIES[mv]||[]).map(p=>p.name),
     });
   }
@@ -783,28 +906,45 @@ function toast(msg){
 }
 
 /* ---------------- reporting ---------------- */
+/** Per-row owed, by payout method (v4 formulas). */
+function rowOwed(r, x){
+  if(x.method==='flat') return x.flat;
+  return Math.round(r.net * effectivePct(x.method, x.pct)/100);
+}
 function renderReport(){
   const mv=F('rep-movie').value, r=REPORTS[mv];
-  const allocPct=r.rows.reduce((s,x)=>s+x.pct,0);
-  const alloc=Math.round(r.net*allocPct/100), plat=r.net-alloc;
+  const owedAll = r.rows.map(x=>rowOwed(r,x));
+  const alloc = owedAll.reduce((s,v)=>s+v,0), plat = r.net-alloc;
+  // nominal share-pool allocation — flat fees sit outside the pool
+  const allocPct = r.rows.reduce((s,x)=>s+(x.method==='flat'?0:x.pct),0);
   F('rep-net').textContent=fmt(r.net);
   F('rep-alloc').textContent=fmt(alloc);
   F('rep-plat').textContent=fmt(plat);
   const tb=document.getElementById('rep-rows'); tb.innerHTML='';
-  r.rows.forEach(x=>{
-    const owed=Math.round(r.net*x.pct/100);
+  r.rows.forEach((x,i)=>{
+    const owed=owedAll[i];
+    const clipped = x.method!=='flat' && effectivePct(x.method,x.pct) < x.pct;
+    const methodCell = METHOD_LABEL[x.method] +
+      (clipped?` <span class="faint" style="font-size:10.5px">(clips at ${SHARE_CAP[x.method]}%)</span>`:'');
+    const termsCell = x.method==='flat'
+      ? `<span class="pct">${fmtCur(x.flat,x.cur)}</span><div class="faint" style="font-size:11px">one-time</div>`
+      : `<span class="pct">${x.pct.toFixed(2)}%</span>` +
+        (x.method==='mg' ? `<div class="faint" style="font-size:11px">MG ${fmtCur(x.mg,x.cur)}</div>` : '');
+    const mgNote = x.method==='mg'
+      ? `<div class="faint" style="font-size:10.5px">${owed>=x.mg?'above MG':'below MG — MG tops up'} · 1-yr review</div>` : '';
     const tr=document.createElement('tr');
     const avail = x.status==='pending' ? `<td class="num muted">locked until claim</td>`
       : `<td class="num"><b>${fmt(owed-(x.withdrawn||0))}</b></td>`;
     tr.innerHTML=`<td><b>${x.ip}</b></td><td>${x.owner}</td>
+      <td class="muted">${methodCell}</td>
       <td><span class="badge ${x.status==='pending'?'b-pending':'b-linked'}"><span class="pip"></span>${x.status==='pending'?'Pending':'Linked'}</span></td>
-      <td class="num"><span class="pct">${x.pct.toFixed(2)}%</span></td>
-      <td class="num">${fmt(owed)}</td>
+      <td class="num">${termsCell}</td>
+      <td class="num">${fmt(owed)}${mgNote}</td>
       <td class="num">${x.withdrawn===null?'<span class="dash">—</span>':fmt(x.withdrawn)}</td>${avail}`;
     tb.appendChild(tr);
   });
   const pr=document.createElement('tr'); pr.className='platform-row';
-  pr.innerHTML=`<td><b>Platform</b></td><td>—</td><td>—</td><td class="num"><span class="pct">${(100-allocPct).toFixed(2)}%</span></td><td class="num">${fmt(plat)}</td><td class="num">—</td><td class="num">—</td>`;
+  pr.innerHTML=`<td><b>Platform</b></td><td>—</td><td>—</td><td>—</td><td class="num"><span class="pct">${(100-allocPct).toFixed(2)}%</span></td><td class="num">${fmt(plat)}</td><td class="num">—</td><td class="num">—</td>`;
   tb.appendChild(pr);
 
   // Backdates recalculate history. Every affected party gets a transaction line
