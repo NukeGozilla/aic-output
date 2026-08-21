@@ -42,6 +42,12 @@
   .tabpane.active{display:block}
 
   /* approach C consignment lanes */
+  .chain.mini{row-gap:8px;margin-bottom:10px;align-items:center}
+  .chain.mini .cnode{padding:6px 11px;font-size:12px;font-weight:600;max-width:250px}
+  .chain.mini .cnode small{font-size:10.5px}
+  .chain.mini .carrow .shaft{width:16px}
+  .opslbl{display:inline-flex;align-items:center;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:5px 11px;border-radius:8px;background:var(--blue-bg);color:var(--blue);border:1.5px solid var(--blue-ln);margin-right:12px;flex-shrink:0}
+
   .clanes{display:grid;grid-template-columns:minmax(250px,1fr) 170px minmax(250px,1fr);gap:0;align-items:stretch}
   .clanes .syscol{gap:10px}
   .cn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#fff;font-size:12px;font-weight:800;margin-right:8px;flex-shrink:0}
@@ -223,27 +229,53 @@
     </div>
   </div>
 
-  <div class="lbl">C2 · Support &amp; Money</div>
+  <div class="lbl">C2 · Key Assumptions — validate</div>
   <div class="steps">
-    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">1</span><span><b>One ops team · one Ztor-brand inbox</b> · CS order lookup + refund console</span></div>
-    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">2</span><span><b>Refund on Ztor gateway</b> → voids the pre-issued QR in Bookyay</span></div>
-    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">3</span><span><b>Event change / cancel in Bookyay</b> → push to Ztor → pause sales · auto-refund</span></div>
-    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">4</span><span><b>Settlement</b> — consignment ledger per allocation (same group)</span></div>
+    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A1</span><span><b>Order ops live in Creator Studio</b> — build lookup · refund · void console (Ztor money → Ztor tooling)</span></div>
+    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A2</span><span><b>Customer inquiries flow through Bookyay's existing ops channel</b>, tagged Ztor — same ops team · no new inquiry system</span></div>
+    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A3</span><span><b>Reporting sync is one-way, batch</b> (Ztor → Bookyay) — nothing in checkout waits on Bookyay</span></div>
+    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A4</span><span><b>Pre-issued QR + unchanged Organizer App</b> at the venue</span></div>
+    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A5</span><span><b>Settlement = internal consignment ledger</b> per allocation — same group</span></div>
   </div>
 
-  <div class="lbl">C3 · Reporting Split</div>
+  <div class="lbl">C3 · Ops Flows</div>
+  <div class="chain mini"><span class="opslbl">Event change</span>
+    <div class="cnode coral">Edit in Bookyay BO</div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode">Push to Ztor</div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">Listing + CS auto-update</div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">Buyers notified · Wallet refreshes</div>
+  </div>
+  <div class="chain mini"><span class="opslbl" style="background:var(--coral-bg);color:var(--coral);border-color:var(--coral-ln)">Event cancel</span>
+    <div class="cnode coral">Cancel in Bookyay BO</div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode">Push to Ztor</div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">Pause + delist</div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">Auto-refund on Ztor gateway<small>bundle = whole bundle · 🔶 merch</small></div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode coral">Voids sync back</div>
+  </div>
+  <div class="chain mini"><span class="opslbl">Inventory top-up</span>
+    <div class="cnode coral">Allocate more in Bookyay</div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode coral">Pre-issue QRs</div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode teal">Ztor pool grows — live</div>
+  </div>
+  <div class="chain mini"><span class="opslbl">Release-back</span>
+    <div class="cnode teal">Unsold only<small>sold tickets never claw back</small></div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode coral">Returns to Bookyay pool<small>auto at window close · or manual</small></div>
+  </div>
+
+  <div class="lbl">C4 · Reporting Split</div>
   <div class="tblwrap"><table>
     <tr><td style="width:30%"><b>Ztor</b></td><td>System of record for Ztor sales → creator reports on ztor.com + Creator Studio</td></tr>
     <tr><td><b>Bookyay BO</b></td><td>Combined cross-channel view + allocation burn-down (fed by sync-back)</td></tr>
   </table></div>
 
-  <div class="lbl">C4 · Validate Before BRD — Aug 26</div>
+  <div class="lbl">C5 · Validate Before BRD — Aug 26</div>
   <div class="tblwrap"><table>
     <tr><td style="width:30%"><b>Eric</b></td><td>Pre-issuance against an allocation · sync-back channel (sales / voids)</td></tr>
     <tr><td><b>Biz team</b></td><td>Confirm: Bookyay-origin events sold on Ztor fits their decisions</td></tr>
+    <tr><td><b>Ops + Eric</b></td><td>Confirm assumptions A1–A5</td></tr>
   </table></div>
 
-  <div class="lbl">C5 · Phases</div>
+  <div class="lbl">C6 · Phases</div>
   <div class="tl">
     <div class="tlnode now"><b>Phase 1 — end Oct</b><small>consignment selling + bundles</small></div>
     <div class="carrow"><span class="shaft"></span></div>
