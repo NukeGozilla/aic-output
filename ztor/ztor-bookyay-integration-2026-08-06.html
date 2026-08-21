@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ztor × Bookyay — Integration Kickoff · Phase 1</title>
+<title>Ztor × Bookyay — Ticketing Integration</title>
 <style>
   :root{
     --bg:#f7f6f3; --panel:#ffffff; --line:#e2dfd8; --txt:#26231e; --muted:#847f74; --faint:#a6a196;
@@ -40,6 +40,29 @@
   .tabbtn .alt{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#fff;background:var(--coral);border-radius:20px;padding:2px 8px;margin-left:8px;vertical-align:1px}
   .tabpane{display:none}
   .tabpane.active{display:block}
+
+  /* approach C consignment lanes */
+  .clanes{display:grid;grid-template-columns:minmax(250px,1fr) 170px minmax(250px,1fr);gap:0;align-items:stretch}
+  .clanes .syscol{gap:10px}
+  .cn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--gold);color:#fff;font-size:12px;font-weight:800;margin-right:8px;flex-shrink:0}
+  .cbox{background:var(--panel);border-radius:var(--r);padding:12px 15px;box-shadow:0 1px 3px rgba(40,35,25,.05);border:1.5px solid var(--line)}
+  .cbox h3{margin:0;font-size:14px;display:flex;align-items:center}
+  .cbox .one{color:var(--muted);font-size:11.5px;margin:4px 0 0 30px}
+  .cbox.coral{border-color:var(--coral-ln);background:linear-gradient(180deg,var(--coral-bg),#fff 70%)}
+  .cbox.tealb{border-color:var(--teal);background:linear-gradient(180deg,var(--teal-bg),#fff 70%)}
+  .cmid{display:flex;flex-direction:column;justify-content:space-around;padding:52px 10px 10px;gap:18px}
+  .harr .stem{display:block;border-top:2.5px solid var(--teal);position:relative}
+  .harr.toR .stem::after{content:"";position:absolute;right:-1px;top:-6px;border:5px solid transparent;border-left:8px solid var(--teal)}
+  .harr.toL .stem::after{content:"";position:absolute;left:-1px;top:-6px;border:5px solid transparent;border-right:8px solid var(--teal)}
+  .harr.coral .stem{border-color:var(--coral)} .harr.coral.toL .stem::after{border-right-color:var(--coral)} .harr.coral.toR .stem::after{border-left-color:var(--coral)}
+  .harr.dash .stem{border-top-style:dashed}
+  .harr.both .stem::before{content:"";position:absolute;left:-1px;top:-6px;border:5px solid transparent;border-right:8px solid var(--teal)}
+  .harr small{display:block;color:var(--muted);font-size:11px;text-align:center;margin-top:6px;line-height:1.4;font-weight:600}
+  @media (max-width:940px){
+    .clanes{grid-template-columns:1fr}
+    .cmid{flex-direction:row;padding:14px 0;gap:12px}
+    .harr{flex:1}
+  }
 
   .stance{background:linear-gradient(180deg,var(--gold-bg),#fff 85%);border:1.5px solid var(--gold);border-radius:var(--r);padding:14px 18px}
   .stance h2{margin:0;font-size:17px;color:var(--gold)}
@@ -155,8 +178,8 @@
 
   <header class="page">
     <div>
-      <h1><b>ztor.</b> × <i>Bookyay</i> — Integration Kickoff · Phase 1</h1>
-      <div class="meta">2026-08-12 kickoff · Jesse (Bookyay) · Eric (dev) · Dolly + 花花 (design) · Jeff (PM) · target: <b>end-October launch</b></div>
+      <h1><b>ztor.</b> × <i>Bookyay</i> — Ticketing Integration</h1>
+      <div class="meta">rev 2026-08-20 · <b>Approach C proposed</b> (consignment) · A / B superseded — background tabs · target: <b>end-October launch</b></div>
     </div>
     <div class="legend">
       <span><span class="sw coral"></span> Bookyay — unchanged</span>
@@ -166,11 +189,71 @@
   </header>
 
   <div class="tabs">
-    <button class="tabbtn active" data-tab="tabA">Approach A — Native checkout on Ztor · kickoff baseline</button>
-    <button class="tabbtn" data-tab="tabB">Approach B — Checkout on Bookyay<span class="alt">Alternative · biz review</span></button>
+    <button class="tabbtn active" data-tab="tabC">Approach C — Consignment<span class="alt" style="background:var(--gold)">Proposed</span></button>
+    <button class="tabbtn" data-tab="tabA">A — Native checkout · superseded</button>
+    <button class="tabbtn" data-tab="tabB">B — Bookyay checkout · superseded</button>
   </div>
 
-  <div id="tabA" class="tabpane active">
+  <div id="tabC" class="tabpane active">
+  <div class="stance">
+    <h2>Approach C — Consignment: Bookyay wholesales, Ztor retails</h2>
+    <p><b>Events created &amp; allocated in Bookyay</b> · <b>everything the customer touches is Ztor</b> — checkout · brand · wallet · support</p>
+  </div>
+
+  <div class="lbl">C1 · The Flow</div>
+  <div class="clanes">
+    <div class="syscol">
+      <div class="colhead coral">Bookyay · back of house</div>
+      <div class="cbox coral"><h3><span class="cn">1</span>Create event + ticket tiers</h3></div>
+      <div class="cbox coral"><h3><span class="cn">2</span>Pick events for Ztor · allocate block</h3></div>
+      <div class="cbox coral"><h3><span class="cn">3</span>Pre-issue QR tickets for the block</h3><div class="one">validate with Eric</div></div>
+      <div class="cbox coral" style="margin-top:auto"><h3><span class="cn">8</span>Scan at venue — Organizer App</h3><div class="one">unchanged</div></div>
+    </div>
+    <div class="cmid">
+      <div class="harr toR coral"><span class="stem"></span><small>allocated block<br>+ pre-issued QRs</small></div>
+      <div class="harr toL dash"><span class="stem"></span><small>sync-back · batch<br>sales · voids · burn-down</small></div>
+      <div class="harr both toR"><span class="stem"></span><small>top-up ⇄ release-back</small></div>
+    </div>
+    <div class="syscol">
+      <div class="colhead teal">Ztor · customer-facing</div>
+      <div class="cbox tealb"><h3><span class="cn">4</span>Event lands in CS import list</h3><div class="one">map creator → account · publish gate</div></div>
+      <div class="cbox tealb"><h3><span class="cn">5</span>Set up sale — solo ticket / bundle</h3><div class="one">admin-operated · allocated inventory only</div></div>
+      <div class="cbox tealb"><h3><span class="cn">6</span>Sell on ztor.com</h3><div class="one">Ztor checkout · Ztor gateway</div></div>
+      <div class="cbox tealb"><h3><span class="cn">7</span>E-ticket → My Wallet</h3><div class="one">pre-issued QR assigned per sale</div></div>
+    </div>
+  </div>
+
+  <div class="lbl">C2 · Support &amp; Money</div>
+  <div class="steps">
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">1</span><span><b>One ops team · one Ztor-brand inbox</b> · CS order lookup + refund console</span></div>
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">2</span><span><b>Refund on Ztor gateway</b> → voids the pre-issued QR in Bookyay</span></div>
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">3</span><span><b>Event change / cancel in Bookyay</b> → push to Ztor → pause sales · auto-refund</span></div>
+    <div class="step" style="grid-template-columns:34px 1fr"><span class="n">4</span><span><b>Settlement</b> — consignment ledger per allocation (same group)</span></div>
+  </div>
+
+  <div class="lbl">C3 · Reporting Split</div>
+  <div class="tblwrap"><table>
+    <tr><td style="width:30%"><b>Ztor</b></td><td>System of record for Ztor sales → creator reports on ztor.com + Creator Studio</td></tr>
+    <tr><td><b>Bookyay BO</b></td><td>Combined cross-channel view + allocation burn-down (fed by sync-back)</td></tr>
+  </table></div>
+
+  <div class="lbl">C4 · Validate Before BRD — Aug 26</div>
+  <div class="tblwrap"><table>
+    <tr><td style="width:30%"><b>Eric</b></td><td>Pre-issuance against an allocation · sync-back channel (sales / voids)</td></tr>
+    <tr><td><b>Biz team</b></td><td>Confirm: Bookyay-origin events sold on Ztor fits their decisions</td></tr>
+  </table></div>
+
+  <div class="lbl">C5 · Phases</div>
+  <div class="tl">
+    <div class="tlnode now"><b>Phase 1 — end Oct</b><small>consignment selling + bundles</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="tlnode"><b>Phase 2</b><small>self-serve + reports on ztor.com</small></div>
+    <div class="carrow"><span class="shaft"></span></div>
+    <div class="tlnode"><b>Phase 3 — TBD</b><small>event creation moves into Creator Studio</small></div>
+  </div>
+  </div><!-- /tabC -->
+
+  <div id="tabA" class="tabpane">
   <div class="stance">
     <h2>One rail — every Ztor sale checks out natively on Ztor</h2>
     <p><b>Standalone tickets AND bundles</b> · redirect to Bookyay is off the table (biz decision) · Bookyay stays the event source of truth — inventory, issuance, venue validation — via API</p>
