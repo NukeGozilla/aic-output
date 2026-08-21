@@ -310,7 +310,7 @@
     <div class="forkleg" style="align-items:stretch;flex:1 1 420px;max-width:none"><div class="branch coral"><b>#A — Bookyay engine as core · "reverse consignment"</b><small>CS create form → event registers into Bookyay via API → 100% allocation back to Ztor → <b>Phase 1 rails take over unchanged</b> (pre-issued QR · Organizer App · sync-back) · new machinery ≈ one create-event API + the CS form · cost: Bookyay carries events it doesn't own · coupling deepens</small></div></div>
     <div class="forkleg" style="align-items:stretch;flex:1 1 420px;max-width:none"><div class="branch teal"><b>#B — Independent engine in Creator Studio</b><small>events native on Ztor rails (eShop checkout · own QR + validation) · full control · modern self-serve UX · cost: rebuild issuance / validation / anti-fraud · <b>splits venue scanning into two systems</b> · breaks Bookyay BO combined view</small></div></div>
   </div>
-  <div class="flownote" style="margin-top:8px"><b>Decision drivers:</b> scanner unification · which console ops uses when things break · does Bookyay have a create-event API? · end-state ownership — Phase 3 = creation in CS ⇒ <b>B is the destination · A is a bridge</b> — choose: bridge first, or build the destination directly</div>
+  <div class="flownote" style="margin-top:8px"><b>Decision drivers:</b> scanner unification · which console ops uses when things break · does Bookyay have a create-event API? · end-state ownership — Phase 3 = creation in CS ⇒ <b>B is the destination · A is a bridge</b> — choose: bridge first, or build the destination directly · <b>Q9</b> (creator events on Bookyay's channel?) — a yes strengthens #A</div>
 
   <div class="lbl">P3 · Ops Questions First — answer before design</div>
   <div class="tblwrap"><table>
@@ -323,12 +323,13 @@
     <tr><td class="p">Q6</td><td><b>Creator payout</b> — settlement schedule per event?</td><td>Reuse CS crowdfund payout / waterfall rails</td></tr>
     <tr><td class="p">Q7</td><td><b>Fraud &amp; quality</b> — fake event selling tickets = platform liability</td><td>Approval gate + payout holdback (crowdfund patterns)</td></tr>
     <tr><td class="p">Q8</td><td><b>Support split</b> — creator-caused vs platform problems: who faces the buyer?</td><td>—</td></tr>
+    <tr><td class="p">Q9</td><td><b>Ztor-born events on Bookyay's channel too?</b> — reverse distribution: creator events also listed / sold on Bookyay</td><td>Under #A nearly free (allocation split) · under #B = Phase 1 in reverse, expensive · biz call: distribution boost vs Ztor-exclusive</td></tr>
   </table></div>
 
   <div class="lbl">P4 · Suggested Path</div>
   <div class="chain mini">
     <div class="cnode violet">Ops workshop</div><div class="carrow"><span class="shaft"></span></div>
-    <div class="cnode violet">Answer Q1–Q8</div><div class="carrow"><span class="shaft"></span></div>
+    <div class="cnode violet">Answer Q1–Q9</div><div class="carrow"><span class="shaft"></span></div>
     <div class="cnode gold">Pick #A / #B</div><div class="carrow"><span class="shaft"></span></div>
     <div class="cnode teal">Design v1</div>
   </div>
