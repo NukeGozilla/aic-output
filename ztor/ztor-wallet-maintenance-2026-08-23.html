@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Wallet — Maintenance State (Design Proposal)</title>
+<style>
+  :root {
+    --bg: #111112;
+    --panel: #1c1c1e;
+    --panel-2: #242426;
+    --border: #333336;
+    --text: #f2f0ec;
+    --text-dim: #9c9ca0;
+    --pink: #f0a3b8;
+    --pink-dim: rgba(240,163,184,.12);
+    --amber: #f5c86e;
+    --amber-dim: rgba(245,200,110,.10);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0a0b; color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,"Noto Sans TC",sans-serif; padding:32px 24px 64px; }
+
+  .doc-header { max-width:1280px; margin:0 auto 28px; }
+  .doc-header h1 { font-size:22px; font-weight:700; }
+  .doc-header p { color:var(--text-dim); font-size:14px; margin-top:6px; }
+  .tag { display:inline-block; background:var(--pink-dim); color:var(--pink); border:1px solid var(--pink); border-radius:99px; font-size:12px; padding:2px 10px; margin-left:8px; vertical-align:2px; }
+
+  .frame { max-width:1280px; margin:0 auto; background:var(--bg); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.5); }
+
+  /* top bar */
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding:18px 28px; }
+  .logo { font-size:26px; font-weight:800; letter-spacing:-.5px; }
+  .logo::after { content:"."; color:var(--pink); }
+  .top-right { display:flex; align-items:center; gap:16px; }
+  .btn-outline { border:1px solid var(--border); border-radius:10px; padding:8px 16px; color:var(--text); font-size:14px; background:transparent; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#7a4a4a,#4a5a7a); }
+
+  /* layout */
+  .layout { display:flex; min-height:640px; }
+  .sidebar { width:250px; padding:12px 14px 24px; display:flex; flex-direction:column; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:10px; color:var(--text); font-size:15px; }
+  .nav-item .ic { width:20px; text-align:center; opacity:.85; }
+  .nav-item.active { background:var(--panel-2); color:var(--pink); }
+  .nav-spacer { flex:1; min-height:120px; }
+  .nav-item.getting-started { background:var(--pink-dim); color:var(--pink); }
+  .nav-foot { color:var(--text-dim); font-size:13px; padding:10px 14px; }
+
+  .main { flex:1; background:#161617; padding:28px 36px 48px; border-left:1px solid #222; }
+  .crumb { font-size:14px; color:var(--text-dim); }
+  .crumb b { color:var(--text); font-weight:600; }
+  .page-title { font-size:28px; font-weight:800; margin:10px 0 24px; }
+
+  /* maintenance card */
+  .maint { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:64px 32px; text-align:center; }
+  .maint-icon { width:72px; height:72px; margin:0 auto 20px; border-radius:50%; background:var(--amber-dim); border:1px solid rgba(245,200,110,.35); display:flex; align-items:center; justify-content:center; font-size:32px; }
+  .maint h2 { font-size:20px; font-weight:700; margin-bottom:10px; }
+  .maint p { color:var(--text-dim); font-size:15px; max-width:520px; margin:0 auto; line-height:1.6; }
+  .maint .sub { margin-top:14px; font-size:13px; }
+  .maint .cta { display:inline-block; margin-top:24px; border:1px solid var(--border); border-radius:10px; padding:10px 20px; font-size:14px; color:var(--text); }
+
+  /* annotations */
+  .notes { max-width:1280px; margin:28px auto 0; display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .note { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .note h3 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--pink); margin-bottom:10px; }
+  .note ul { list-style:none; }
+  .note li { font-size:13.5px; color:var(--text-dim); line-height:1.55; padding-left:16px; position:relative; margin-bottom:6px; }
+  .note li::before { content:"–"; position:absolute; left:0; color:var(--pink); }
+  .note li b { color:var(--text); font-weight:600; }
+
+  @media (max-width:900px){ .layout{flex-direction:column} .sidebar{width:100%; flex-direction:row; flex-wrap:wrap} .notes{grid-template-columns:1fr} }
+  @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <h1>Creator Studio · My Wallet — Maintenance State <span class="tag">Design proposal · 2026-08-23</span></h1>
+  <p>Wallet route replaced by a maintenance card while settlement figures are reconciled. All other Creator Studio pages stay accessible.</p>
+</div>
+
+<div class="frame" role="img" aria-label="Mockup of Creator Studio My Wallet page showing an under-maintenance message">
+  <div class="topbar">
+    <div class="logo">ztor</div>
+    <div class="top-right">
+      <span class="btn-outline">🏪 Preview HowZ eShop</span>
+      <span>🔔</span>
+      <div class="avatar"></div>
+    </div>
+  </div>
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="nav-item"><span class="ic">🏠</span> Home</div>
+      <div class="nav-item"><span class="ic">🏷️</span> Sales</div>
+      <div class="nav-item"><span class="ic">▦</span> QR Scanner</div>
+      <div class="nav-item"><span class="ic">📅</span> Events</div>
+      <div class="nav-item active"><span class="ic">💳</span> My Wallet</div>
+      <div class="nav-spacer"></div>
+      <div class="nav-item getting-started"><span class="ic">📣</span> Getting Started</div>
+      <div class="nav-foot">🌐 English &nbsp;·&nbsp; TWD - NT$ &nbsp;·&nbsp; FAQ</div>
+    </nav>
+    <main class="main">
+      <div class="crumb">Dashboard &nbsp;›&nbsp; <b>My Wallet</b></div>
+      <h1 class="page-title">My Wallet</h1>
+
+      <div class="maint">
+        <div class="maint-icon" aria-hidden="true">🛠️</div>
+        <h2>Wallet temporarily under maintenance</h2>
+        <p>We're upgrading our settlement system to make sure your balance and
+        withdrawal figures are accurate. Your earnings are safe and unaffected.</p>
+        <p class="sub" style="color:var(--amber)">Withdrawals are paused during maintenance.</p>
+        <p class="sub">Need help with a payout in the meantime? Contact us and we'll handle it manually.</p>
+        <span class="cta">Contact support</span>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="notes">
+  <div class="note">
+    <h3>Scope</h3>
+    <ul>
+      <li><b>Only the My Wallet route</b> is replaced — sidebar, Sales, Events, QR all untouched</li>
+      <li>Wallet card + Reports section both hidden (no stale numbers anywhere on the page)</li>
+      <li>Copy avoids "wrong numbers" — frames it as a settlement-system upgrade</li>
+    </ul>
+  </div>
+  <div class="note">
+    <h3>Implementation</h3>
+    <ul>
+      <li>One <b>feature flag</b> (e.g. <b>wallet_maintenance</b>) checked at the route level</li>
+      <li>Flag ON → render this card instead of wallet content</li>
+      <li><b>Also guard the withdraw API server-side</b> — UI hiding alone doesn't stop a direct call</li>
+      <li>Flip flag OFF when reconciliation is done — no redeploy needed</li>
+    </ul>
+  </div>
+  <div class="note">
+    <h3>Watch-outs</h3>
+    <ul>
+      <li>Check <b>Home dashboard</b> for any revenue/balance widgets — mask those too if present</li>
+      <li>Pending withdrawal requests: decide whether to process or hold (ops call)</li>
+      <li>Have the support path ready before flipping the flag — creators <i>will</i> ask where their money is</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>
