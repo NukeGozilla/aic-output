@@ -185,7 +185,7 @@
   <header class="page">
     <div>
       <h1><b>ztor.</b> × <i>Bookyay</i> — Ticketing Integration</h1>
-      <div class="meta">rev 2026-08-20 · <b>Approach C proposed</b> (consignment) · A / B superseded — background tabs · target: <b>end-October launch</b></div>
+      <div class="meta">rev 2026-09-01 · <b>Approach C CONFIRMED 08-27</b> (consignment, long-term) · A / B / self-serve — background tabs · target: <b>end-October launch</b></div>
     </div>
     <div class="legend">
       <span><span class="sw coral"></span> Bookyay — unchanged</span>
@@ -195,15 +195,15 @@
   </header>
 
   <div class="tabs">
-    <button class="tabbtn active" data-tab="tabC">Approach C — Consignment<span class="alt" style="background:var(--gold)">Proposed</span></button>
-    <button class="tabbtn" data-tab="tabD">Phase 2 — Self-serve<span class="alt" style="background:var(--violet)">Discussion</span></button>
+    <button class="tabbtn active" data-tab="tabC">Approach C — Consignment<span class="alt" style="background:var(--teal)">Confirmed 08-27</span></button>
+    <button class="tabbtn" data-tab="tabD">Self-serve · retired 08-27</button>
     <button class="tabbtn" data-tab="tabA">A — Native checkout · superseded</button>
     <button class="tabbtn" data-tab="tabB">B — Bookyay checkout · superseded</button>
   </div>
 
   <div id="tabC" class="tabpane active">
   <div class="stance">
-    <h2>Approach C — Consignment: Bookyay wholesales, Ztor retails</h2>
+    <h2>Approach C — Consignment: Bookyay wholesales, Ztor retails <span class="tag teal" style="vertical-align:4px">Confirmed 2026-08-27 · long-term model</span></h2>
     <p><b>Events created &amp; allocated in Bookyay</b> · <b>everything the customer touches is Ztor</b> — checkout · brand · wallet · support</p>
   </div>
 
@@ -233,10 +233,10 @@
   <div class="lbl">C2 · Key Assumptions — validate</div>
   <div class="steps">
     <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A1</span><span><b>Order ops live in Creator Studio</b> — build lookup · refund · void console (Ztor money → Ztor tooling)</span></div>
-    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A2</span><span><b>Customer inquiries flow through Bookyay's existing ops channel</b>, tagged Ztor — same ops team · no new inquiry system</span></div>
-    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A3</span><span><b>Reporting sync is one-way, batch</b> (Ztor → Bookyay) — nothing in checkout waits on Bookyay</span></div>
-    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A4</span><span><b>Pre-issued QR + unchanged Organizer App</b> at the venue</span></div>
-    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A5</span><span><b>Settlement = internal consignment ledger</b> per allocation — same group</span></div>
+    <div class="step" style="grid-template-columns:38px 1fr"><span class="n">A2</span><span><b>REVISED 08-27 — separate CS teams:</b> Store CS gets its own email + team (not Bookyay's channel) · Phase 1 email-only, no WhatsApp / IG</span></div>
+    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A3</span><span>✓ <b>Confirmed 08-27 — one-way batch sync</b> (Ztor → Bookyay) feeds their existing reporting tools · Store transactions carry a Store tag</span></div>
+    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A4</span><span>✓ <b>Confirmed 08-27 — pre-issued QR + unchanged Organizer App</b> · no rebrand · NEW: per-event-scoped organizer logins (Bookyay checking complexity)</span></div>
+    <div class="step gate" style="grid-template-columns:38px 1fr"><span class="n">A5</span><span>✓ <b>Confirmed 08-27 — no money settlement at all</b> (same company) · the Store transaction tag is the whole requirement</span></div>
   </div>
 
   <div class="lbl">C3 · Ops Flows</div>
@@ -275,11 +275,14 @@
     <tr><td><b>Bookyay BO</b></td><td>Combined cross-channel view + allocation burn-down (fed by sync-back)</td></tr>
   </table></div>
 
-  <div class="lbl">C5 · Validate Before BRD — Aug 26</div>
+  <div class="lbl">C5 · New Decisions — 08-27 Alignment</div>
   <div class="tblwrap"><table>
-    <tr><td style="width:30%"><b>Eric</b></td><td>Pre-issuance against an allocation · sync-back channel (sales / voids)</td></tr>
-    <tr><td><b>Biz team</b></td><td>Confirm: Bookyay-origin events sold on Ztor fits their decisions</td></tr>
-    <tr><td><b>Ops + Eric</b></td><td>Confirm assumptions A1–A5</td></tr>
+    <tr><td style="width:30%"><b>Self-serve: never</b></td><td>Internal team sets up everything, Excel intake — Bookyay's proven model · Approach C is the long-term engine, not a bridge</td></tr>
+    <tr><td><b>Web-first</b></td><td>Ticketing + eShop run on web for ~10 events before app support · app shows redirect-to-web for orders</td></tr>
+    <tr><td><b>Refunds</b></td><td>CS-only — no buyer self-service · order statuses incl. void / cancel · executed on Ztor gateway, void syncs to Bookyay</td></tr>
+    <tr><td><b>Organizer logins</b></td><td>Per-event-scoped accounts for venue scanning (prevents cross-event data / wrong-event scans) — Bookyay confirming feasibility</td></tr>
+    <tr><td><b>Reporting milestone</b></td><td>Creator-facing sales reports on ztor.com in <b>November</b> (CS not public; parity with BinQo expected by creators)</td></tr>
+    <tr><td><b>Timeline owed</b></td><td>Jeff → realistic Ticketing + reporting timeline to the group by <b>Fri Sept 4</b></td></tr>
   </table></div>
 
   <div class="lbl">C6 · Phases</div>
@@ -294,8 +297,8 @@
 
   <div id="tabD" class="tabpane">
   <div class="stance" style="border-color:var(--violet);background:linear-gradient(180deg,var(--violet-bg),#fff 85%)">
-    <h2 style="color:var(--violet)">Phase 2 — Creator self-serve events · discussion draft</h2>
-    <p><b>Bookyay stays the foundation</b> for its own events (Phase 1, permanent) · Phase 2 adds a <b>second event class born in Creator Studio</b> — separate creation &amp; business flow, same storefront</p>
+    <h2 style="color:var(--violet)">Self-serve events — RETIRED 2026-08-27</h2>
+    <p><b>Decision 08-27: no self-serve, ever</b> — internal team sets up all events (Excel intake, Bookyay's proven model); even large organizers refuse to self-serve. Approach C is the permanent engine. Q1–Q9 below kept for the record only.</p>
   </div>
 
   <div class="lbl">P1 · Two Event Classes — One Ztor Storefront</div>
