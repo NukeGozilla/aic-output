@@ -55,8 +55,30 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td><code>my_wallet</code></td><td>Ztor FE surface where a buyer's e-tickets (QR) live</td></tr>
 </table></div>
 <h2>3 · Scope</h2>
-<p><b>In:</b> Bookyay-origin GA (non-seated) events · solo tickets + bundles on ztor.com (web) · Ztor gateway, fiat · My Wallet e-tickets · venue scanning via existing Bookyay Organizer App · CS admin order-ops (lookup / refund / void) · one-way sync-back + store_tag · CS admin reporting · ops flows (change / cancel / top-up / reduce / release-back).</p>
-<p><b>Out (explicit):</b> seated events · creator self-serve (killed 08-27, permanent) · Queue-It / spike infra (small curated events only) · app support at launch (web-first, ~10 events; app shows redirect) · POPCORN / crypto payment · money settlement between companies (same group — store_tag only) · WhatsApp/IG support channels · organizer partnerships · Bookyay storefront changes.</p>
+<p><b>In:</b></p>
+<ul>
+<li>Bookyay-origin GA (non-seated) events</li>
+<li>Solo tickets + ticket+merch bundles on ztor.com (web)</li>
+<li>Ztor gateway, fiat</li>
+<li>My Wallet e-tickets</li>
+<li>Venue scanning via existing Bookyay Organizer App</li>
+<li>CS admin order-ops (lookup / refund / void)</li>
+<li>One-way sync-back + <code>store_tag</code></li>
+<li>CS admin reporting</li>
+<li>Ops flows: change / cancel / top-up / reduce / release-back</li>
+</ul>
+<p><b>Out (explicit):</b></p>
+<ul>
+<li>Seated events</li>
+<li>Creator self-serve (killed 08-27, permanent)</li>
+<li>Queue-It / spike infra (small curated events only)</li>
+<li>App support at launch (web-first, ~10 events; app shows redirect)</li>
+<li>POPCORN / crypto payment</li>
+<li>Money settlement between companies (same group — <code>store_tag</code> only)</li>
+<li>WhatsApp / IG support channels</li>
+<li>Organizer partnerships</li>
+<li>Bookyay storefront changes</li>
+</ul>
 <h2>4 · Actors &amp; surfaces</h2>
 <div class="tblwrap"><table>
 <tr><th>Actor</th><th>Surface</th><th>Role</th></tr>
@@ -144,7 +166,11 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </ul>
 <h2>9 · Assumptions, dependencies, accepted risks</h2>
 <ul>
-<li><b>A1</b> CS order-ops console (lookup/refund/void) is Ztor-built. <b>A2 (revised 08-27)</b> separate Store CS team + email. <b>A3 ✓</b> one-way batch sync. <b>A4 ✓</b> pre-issued QR + unchanged Organizer App (+ scoped logins pending). <b>A5 ✓</b> no money settlement — store_tag only.</li>
+<li><b>A1</b> CS order-ops console (lookup/refund/void) is Ztor-built</li>
+<li><b>A2</b> (revised 08-27) separate Store CS team + email</li>
+<li><b>A3 ✓</b> one-way batch sync</li>
+<li><b>A4 ✓</b> pre-issued QR + unchanged Organizer App (scoped logins pending)</li>
+<li><b>A5 ✓</b> no money settlement — <code>store_tag</code> only</li>
 <li>Dependencies: Bookyay pre-issue at allocation (validated verbally 08-27) · organizer_login scoping feasibility (Bookyay, open) · TW gateway (Airwallex eval — payout side; does not block ticket sales on current rails) · eShop shipping work for bundle merch fulfilment (2.3 stream).</li>
 <li>Accepted risks: static bearer QR (screenshot transfer possible — small curated events; confirm whether pre-issue supports Bookyay's dynamic QR, else accept) · Bookyay BO view trails Ztor by ≤ one sync window.</li>
 </ul>
@@ -186,24 +212,33 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>20</td><td>Timeline note to group — revised milestone (was due Fri 09-04)</td><td>Jeff</td></tr>
 <tr><td>21</td><td>Ztor-specific T&amp;C version needed, or Bookyay terms suffice? (BR-14)</td><td>Legal</td></tr>
 </table></div>
-<p><b>Resolved since v1.2</b> (for reviewers; details in the cited BRs): C2 allocation plumbing → capacity mirrors the feed read-only (§6b) · loyalty display → deferred out of 2.3 (BR-24) · scanner split ticket-side → Organizer App (09-04) · cancel origin → Bookyay BO reaffirmed, Ztor-cancel rejected (BR-43) · per-unit bundle QR (BR-13) · auto-import replaces manual import (BR-10) · self-serve creator-side disabled (§6b).</p>
+<p><b>Resolved since v1.2</b> (details in the cited BRs):</p>
+<ul>
+<li>C2 allocation plumbing → capacity mirrors the feed read-only (§6b)</li>
+<li>Loyalty display → deferred out of 2.3 (BR-24)</li>
+<li>Scanner split ticket-side → Organizer App (09-04)</li>
+<li>Cancel origin → Bookyay BO reaffirmed; Ztor-cancel rejected (BR-43)</li>
+<li>Per-unit bundle QR (BR-13)</li>
+<li>Auto-import replaces manual import (BR-10)</li>
+<li>Creator-side self-serve disabled (§6b)</li>
+</ul>
 <h2>11 · Milestones</h2>
 <p>Sept: design + dev → <b>early-Nov: web rollout (~10 events)</b> → <b>Dec: creator sales reports on ztor.com</b> → app support after web proves smooth. <i>(Revised 2026-09-02: rollout moved end-Oct → early-Nov, reports Nov → Dec.)</i></p>
 <h2>12 · Acceptance (condensed)</h2>
 <ul>
-<li>Event with allocation 100 + pre-issued QRs appears in CS import; publish blocked until creator_mapping.</li>
-<li>Solo + bundle sale_items reserve from one allocation; reservations cannot exceed allocation.</li>
-<li>Buyer completes checkout with Bookyay API unreachable.</li>
-<li>On capture: ticket assigned atomically; QR in my_wallet + email; Organizer App scans it under the event's scoped login and rejects it for any other event.</li>
-<li>CS refund → gateway refund + <code>voided</code> + void in Bookyay within one sync window; voided QR rejected at scan.</li>
-<li>Event cancel → delist + auto-refund all orders; bundle merch per resolved policy #2.</li>
-<li>Reduce mid-sale → capped at unsold; racing sale wins; zero remaining shows <code>sold_out</code> (listed).</li>
-<li>Release-back returns exactly (allocation − assigned).</li>
-<li>Every Ztor transaction visible in Bookyay reporting with <code>store_tag</code> within one sync window; no buyer PII in the payload.</li>
-<li>BR-53 path auto-refunds; a paid order is never ticketless.</li>
-<li>An imported event in CS shows no ticket-issuance, scanner, check-in, cancel, or delete surfaces; capacity is not editable (§6b).</li>
+<li>1. Event with allocation 100 + pre-issued QRs appears in CS import; publish blocked until creator_mapping.</li>
+<li>2. Solo + bundle sale_items reserve from one allocation; reservations cannot exceed allocation.</li>
+<li>3. Buyer completes checkout with Bookyay API unreachable.</li>
+<li>4. On capture: ticket assigned atomically; QR in my_wallet + email; Organizer App scans it under the event's scoped login and rejects it for any other event.</li>
+<li>5. CS refund → gateway refund + <code>voided</code> + void in Bookyay within one sync window; voided QR rejected at scan.</li>
+<li>6. Event cancel → delist + auto-refund all orders; bundle merch per resolved policy #2.</li>
+<li>7. Reduce mid-sale → capped at unsold; racing sale wins; zero remaining shows <code>sold_out</code> (listed).</li>
+<li>8. Release-back returns exactly (allocation − assigned).</li>
+<li>9. Every Ztor transaction visible in Bookyay reporting with <code>store_tag</code> within one sync window; no buyer PII in the payload.</li>
+<li>10. BR-53 path auto-refunds; a paid order is never ticketless.</li>
+<li>11. An imported event in CS shows no ticket-issuance, scanner, check-in, cancel, or delete surfaces; capacity is not editable (§6b).</li>
 </ul>
-<footer>Generated from the .md 2026-09-07 (BRD v1.3) · companion: <a href="ztor-bookyay-integration-2026-08-06.html">Ticketing Integration one-pager</a> · <a href="https://github.com/NukeGozilla/ztor-docs/blob/main/outputs/architecture/solution-arch-2026-09-01-ztor-bookyay-ticketing-brd.md">SA review</a></footer>
+<footer>Generated from the .md 2026-09-07 (BRD v1.3) · <a href="ztor-bookyay-integration-2026-08-06.html">Ticketing Integration one-pager</a> · <a href="https://github.com/NukeGozilla/ztor-docs/blob/main/outputs/specs/ztor-bookyay-ticketing-phase1-brd-v1-2026-09-01.md">source .md on GitHub</a></footer>
 </div>
 </body>
 </html>
