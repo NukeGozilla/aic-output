@@ -50,7 +50,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td><code>reservation</code></td><td>A sub-quantity of an allocation earmarked to one <code>sale_item</code> (e.g. 50 of 100 to a bundle)</td></tr>
 <tr><td><code>ztor_tag</code></td><td>Marker on every Ztor-sold transaction, synced to Bookyay so their finance/reporting can filter channel</td></tr>
 <tr><td><code>creator_mapping</code></td><td>Link event → Ztor creator account (+ eShop). <b>Publish gate</b>: unmapped events cannot go live</td></tr>
-<tr><td><code>sync_back</code></td><td>One-way, batch, non-transactional feed Ztor → Bookyay: sales, voids, burn-down. Nothing in checkout waits on it</td></tr>
+<tr><td><code>sync_back</code></td><td>One-way, batch, non-transactional feed Ztor → Bookyay: ticket status · ticket inventory · transaction details (payload BR-63). Nothing in checkout waits on it</td></tr>
 <tr><td><code>organizer_login</code></td><td>Per-event-scoped account for the Bookyay Organizer App (venue scanning)</td></tr>
 <tr><td><code>my_wallet</code></td><td>Ztor FE surface where a buyer's e-tickets (QR) live</td></tr>
 </table></div>
