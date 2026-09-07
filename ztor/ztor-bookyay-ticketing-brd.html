@@ -245,6 +245,13 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li>10. BR-53 path auto-refunds; a paid order is never ticketless.</li>
 <li>11. An imported event in CS shows no ticket-issuance, scanner, check-in, cancel, or delete surfaces; capacity is not editable (§6b).</li>
 </ul>
+<h2>13 · Resolved log (reference — details live in the cited BRs)</h2>
+<ul>
+<li><b>09-07</b> <code>store_tag</code> → <code>ztor_tag</code> · refunds = offline request + void-only, money moves on gateway console (BR-40) · sync transport = hourly CS auto-pull + manual sync button (BR-10)</li>
+<li><b>09-04</b> Ticket QR + scanner = Bookyay (BR-02/03, §6b) · allocation quantity read-only from API feed (§6b) · cancel origin = Bookyay BO reaffirmed, Ztor-originated cancel rejected (BR-43)</li>
+<li><b>09-03</b> Per-unit QR in bundles (BR-13) · auto-import replaces manual import (BR-10) · creator-side self-serve disabled, admin-only (§6b) · loyalty deferred out of 2.3 (BR-24) · buyer-facing 退款 → 取消 (BR-40)</li>
+<li><b>09-02</b> Milestone: rollout end-Oct → early-Nov, creator reports Nov → Dec (§11)</li>
+</ul>
 <footer>Generated from the .md 2026-09-07 (BRD v1.3) · <a href="ztor-bookyay-integration-2026-08-06.html">Ticketing Integration one-pager</a> · <a href="https://github.com/NukeGozilla/ztor-docs/blob/main/outputs/specs/ztor-bookyay-ticketing-phase1-brd-v1-2026-09-01.md">source .md on GitHub</a></footer>
 </div>
 </body>
