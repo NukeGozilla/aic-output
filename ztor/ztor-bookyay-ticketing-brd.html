@@ -62,10 +62,10 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li>Ztor gateway, fiat</li>
 <li>My Wallet e-tickets</li>
 <li>Venue scanning via existing Bookyay Organizer App</li>
-<li>CS admin order-ops (lookup / refund / void)</li>
-<li>One-way sync-back + <code>store_tag</code></li>
+<li>CS admin order ops: <b>lookup / void only</b> — refund requests handled offline (Ztor CS mailbox); system never moves money, ops refunds on the gateway console</li>
+<li>Sales data <b>sync back to Bookyay</b> — one-way batch (sales · voids · burn-down), every transaction tagged <code>store_tag</code></li>
 <li>CS admin reporting</li>
-<li>Ops flows: change / cancel / top-up / reduce / release-back</li>
+<li>Ops flows (defined in §6): event change · event cancel · allocation top-up · reduce · release-back</li>
 </ul>
 <p><b>Out (explicit):</b></p>
 <ul>
@@ -121,10 +121,10 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </ul>
 <h3>E · Post-sale &amp; support</h3>
 <ul>
-<li><b>BR-40</b> Refunds CS-only (no buyer self-service; special cases = BO void, 09-03). Ztor CS mailbox (own team + email). Refund executes on Ztor gateway via a CS refund console; ticket → <code>voided</code>; void syncs to Bookyay. <b>Bundle refunds are whole-bundle only:</b> ticket voided + merch leg refunded (pre-shipment) per eShop policy. Buyer-facing copy says <b>取消</b>, never 退款 (09-03).</li>
+<li><b>BR-40</b> Refund requests handled <b>offline</b> via the Ztor CS mailbox (no buyer self-service, no in-system refund). System action = <b>void only</b>: admin voids the transaction → ticket <code>voided</code> → void syncs to Bookyay. Money refund executed by ops on the <b>gateway console</b> (Stripe/Antom) — the system never moves money. <b>Bundles: whole-bundle only</b> — ticket voided + merch leg refunded (pre-shipment) per eShop policy. Buyer-facing copy says <b>取消</b>, never 退款 (09-03).</li>
 <li><b>BR-41</b> Order statuses: paid, fulfilled, refunded, <code>voided</code>, <code>cancelled</code> — visible in CS order lookup.</li>
 <li><b>BR-42</b> Event change (Bookyay BO edit) → push to Ztor → listing/CS auto-update → buyers notified (<b>email minimum</b>; in-app optional Phase 1), wallet refreshes.</li>
-<li><b>BR-43</b> Event cancel (Bookyay BO) → push → pause + delist → auto-refund all Ztor orders on Ztor gateway → voids sync back. Bundle merch on cancel: <code>NEEDS-POLICY-OWNER</code>. <i>(Ztor-originated cancel evaluated &amp; rejected 09-04 — future co-sale keeps Bookyay the lifecycle owner. Closed; don't reopen.)</i></li>
+<li><b>BR-43</b> Event cancel (Bookyay BO) → push → pause + delist → all Ztor tickets voided, voids sync back; buyer refunds executed by ops on the gateway (BR-40 model). Bundle merch on cancel: <code>NEEDS-POLICY-OWNER</code>. <i>(Ztor-originated cancel evaluated &amp; rejected 09-04 — future co-sale keeps Bookyay the lifecycle owner. Closed; don't reopen.)</i></li>
 <li><b>BR-44</b> Refund cutoff before doors: <code>NEEDS-POLICY-OWNER</code> (no refunds within N hours of event start, so voids propagate before scanning).</li>
 </ul>
 <h3>F · Inventory lifecycle</h3>
@@ -132,7 +132,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li><b>BR-50</b> Top-up: Bookyay allocates + pre-issues more; Ztor sellable pool grows live.</li>
 <li><b>BR-51</b> Reduce (Bookyay-initiated): capped at <b>unsold at the moment it lands</b> (racing sale wins; sold tickets never claw back). Zero remaining → <code>sold_out</code> (listed, not delisted). Returned QRs re-enter Bookyay's pool.</li>
 <li><b>BR-52</b> Release-back: unsold tickets auto-return at sale-window close (or manual).</li>
-<li><b>BR-53</b> If assignment fails at capture (pool exhausted by a racing reduce), the order auto-refunds; buyer sees sold-out. A paid order is never left ticketless.</li>
+<li><b>BR-53</b> If assignment fails at capture (pool exhausted by a racing reduce), the payment auto-reverses (checkout-path reversal — distinct from BR-40 ops refunds); buyer sees sold-out. A paid order is never left ticketless.</li>
 </ul>
 <h3>G · Sync &amp; reporting</h3>
 <ul>
@@ -141,7 +141,15 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li><b>BR-62</b> Ztor = system of record for Ztor sales. CS admin reporting ships Phase 1 (eShop Transaction UI extension); <b>creator sales reports on ztor.com in December</b> (milestone rev 09-02); Bookyay BO keeps the combined cross-channel view via sync.</li>
 </ul>
 <h2>6 · Ops flows (normative)</h2>
-<p>Change / cancel / top-up / reduce / release-back — as drawn in one-pager tab C (C3) + material S10; part of this BRD by reference.</p>
+<p>Diagrams in one-pager tab C (C3) + material S10; part of this BRD by reference.</p>
+<div class="tblwrap"><table>
+<tr><th>Flow</th><th>Trigger</th><th>What happens</th></tr>
+<tr><td>Event change</td><td>Edit in Bookyay BO</td><td>Pushes down via feed → Ztor listing + CS auto-update → buyers notified (email minimum) → wallet refreshes (BR-42)</td></tr>
+<tr><td>Event cancel</td><td>Cancel in Bookyay BO</td><td>Push → pause + delist → all Ztor tickets voided, voids sync back → buyer refunds executed by ops on the gateway (BR-43)</td></tr>
+<tr><td>Top-up</td><td>Bookyay allocates more</td><td>More tickets pre-issued → Ztor sellable pool grows live (BR-50)</td></tr>
+<tr><td>Reduce</td><td>Bookyay takes back unsold</td><td>Capped at unsold-at-that-moment (sold never claws back) → returned QRs re-enter Bookyay's pool → zero remaining shows sold-out (BR-51)</td></tr>
+<tr><td>Release-back</td><td>Sale window closes (or manual)</td><td>Unsold tickets auto-return to Bookyay (BR-52)</td></tr>
+</table></div>
 <h2>6b · Imported-event mode — CS contract (new 09-06; the bridge to the designer's native spec suite)</h2>
 <p><b>Bookyay is the ticket engine.</b> The designer's 5.1.6.x suite is the native target state; an imported (consigned) event behaves differently on exactly these points — everything else follows the native spec:</p>
 <div class="tblwrap"><table>
@@ -151,7 +159,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>Ticket issuance</td><td>None on Ztor — pre-issued Bookyay QRs only (BR-02/30)</td></tr>
 <tr><td>Check-in / scanner</td><td>Hidden — scan = Bookyay Organizer App (09-04). Read-only status feed = open #10</td></tr>
 <tr><td>Cancel / delete</td><td>Hidden — cancel arrives via Bookyay push only (BR-43)</td></tr>
-<tr><td>Refunds</td><td>Admin console only; buyer copy 取消 (BR-40)</td></tr>
+<tr><td>Refunds</td><td>Offline request → admin <b>voids</b> in CS; money moves on the gateway console only; buyer copy 取消 (BR-40)</td></tr>
 <tr><td>Create/edit wizard</td><td>Creator-side <b>disabled</b> (09-03, admin-only); admin enters via pending-setup 繼續設定 solely for sale_item setup (BR-12)</td></tr>
 </table></div>
 <h2>7 · State machines (total)</h2>
@@ -166,7 +174,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </ul>
 <h2>9 · Assumptions, dependencies, accepted risks</h2>
 <ul>
-<li><b>A1</b> CS order-ops console (lookup/refund/void) is Ztor-built</li>
+<li><b>A1</b> CS order-ops console (lookup/void) is Ztor-built — no refund function; money moves only on the gateway console</li>
 <li><b>A2</b> (revised 08-27) separate Ztor CS team + email</li>
 <li><b>A3 ✓</b> one-way batch sync</li>
 <li><b>A4 ✓</b> pre-issued QR + unchanged Organizer App (scoped logins pending)</li>
@@ -211,6 +219,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>19</td><td>L confirm creator self-serve fully removed (09-03 pending)</td><td>L</td></tr>
 <tr><td>20</td><td>Timeline note to group — revised milestone (was due Fri 09-04)</td><td>Jeff</td></tr>
 <tr><td>21</td><td>Ztor-specific T&amp;C version needed, or Bookyay terms suffice? (BR-14)</td><td>Legal</td></tr>
+<tr><td>22</td><td>Mass-refund path on event cancel: gateway bulk refund vs per-order manual (BR-43; refunds are ops-side now)</td><td>Eric + ops</td></tr>
 </table></div>
 <p><b>Resolved since v1.2</b> (details in the cited BRs):</p>
 <ul>
@@ -230,8 +239,8 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li>2. Solo + bundle sale_items reserve from one allocation; reservations cannot exceed allocation.</li>
 <li>3. Buyer completes checkout with Bookyay API unreachable.</li>
 <li>4. On capture: ticket assigned atomically; QR in my_wallet + email; Organizer App scans it under the event's scoped login and rejects it for any other event.</li>
-<li>5. CS refund → gateway refund + <code>voided</code> + void in Bookyay within one sync window; voided QR rejected at scan.</li>
-<li>6. Event cancel → delist + auto-refund all orders; bundle merch per resolved policy #2.</li>
+<li>5. CS void → ticket <code>voided</code> + void in Bookyay within one sync window; voided QR rejected at scan. (Money refund runs on the gateway console, outside the system.)</li>
+<li>6. Event cancel → delist + all tickets voided; buyer refunds by ops per BR-40; bundle merch per resolved policy #2.</li>
 <li>7. Reduce mid-sale → capped at unsold; racing sale wins; zero remaining shows <code>sold_out</code> (listed).</li>
 <li>8. Release-back returns exactly (allocation − assigned).</li>
 <li>9. Every Ztor transaction visible in Bookyay reporting with <code>store_tag</code> within one sync window; no buyer PII in the payload.</li>
