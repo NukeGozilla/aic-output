@@ -106,7 +106,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </ul>
 <h3>B · Creator Studio (admin-operated)</h3>
 <ul>
-<li><b>BR-10</b> <b>Auto-import</b> (09-03, = designer D238): once a creator's Bookyay account is bound, ALL their allocated events import automatically and land as <b>pending-setup</b> (待設定套組); system checks Bookyay for updates continuously + admin can re-check on demand. Event fields display-only from the feed (incl. description); images re-uploaded to Ztor specs. No manual per-event import.</li>
+<li><b>BR-10</b> <b>Auto-import</b> (09-03, = designer D238): once a creator's Bookyay account is bound, ALL their allocated events import automatically and land as <b>pending-setup</b> (待設定套組). Sync (09-07): CS <b>auto-pulls latest event data from Bookyay hourly</b>; CS admin also has a <b>manual sync button</b>. Event fields display-only from the feed (incl. description); images re-uploaded to Ztor specs. No manual per-event import.</li>
 <li><b>BR-11</b> <code>creator_mapping</code> required before publish (<b>publish gate</b>). Unmapped organizers: pending account + invitation (IP Bank pattern).</li>
 <li><b>BR-12</b> Admin creates <code>sale_item</code>s against the allocation: solo_ticket and/or bundle; each takes a <code>reservation</code>; sum of reservations ≤ allocation. Reservations may be re-balanced mid-sale (floor = sold count per sale_item).</li>
 <li><b>BR-13</b> Bundle = ticket(s) + ≥1 eShop merch SKU, one combined price, fiat only. <b>Every unit carries its own QR</b> (09-03: 4-item order → 4 QRs): each ticket = a pre-issued Bookyay QR; each merch = an eShop pickup QR.</li>
@@ -131,7 +131,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <ul>
 <li><b>BR-40</b> Refund requests handled <b>offline</b> via the Ztor CS mailbox (no buyer self-service, no in-system refund). System action = <b>void only</b>: admin voids the transaction → ticket <code>voided</code> → void syncs to Bookyay. Money refund executed by ops on the <b>gateway console</b> (Stripe/Antom) — the system never moves money. <b>Bundles: whole-bundle only</b> — ticket voided + merch leg refunded (pre-shipment) per eShop policy. Buyer-facing copy says <b>取消</b>, never 退款 (09-03).</li>
 <li><b>BR-41</b> Order statuses: paid, fulfilled, refunded, <code>voided</code>, <code>cancelled</code> — visible in CS order lookup.</li>
-<li><b>BR-42</b> Event change (Bookyay BO edit) → push to Ztor → listing/CS auto-update → buyers notified (<b>email minimum</b>; in-app optional Phase 1), wallet refreshes.</li>
+<li><b>BR-42</b> Event change (Bookyay BO edit) → arrives via the hourly auto-pull / manual sync (BR-10) → listing/CS auto-update → buyers notified (<b>email minimum</b>; in-app optional Phase 1), wallet refreshes.</li>
 <li><b>BR-43</b> Event cancel (Bookyay BO) → push → pause + delist → all Ztor tickets voided, voids sync back; buyer refunds executed by ops on the gateway (BR-40 model). Bundle merch on cancel: <code>NEEDS-POLICY-OWNER</code>. <i>(Ztor-originated cancel evaluated &amp; rejected 09-04 — future co-sale keeps Bookyay the lifecycle owner. Closed; don't reopen.)</i></li>
 <li><b>BR-44</b> Refund cutoff before doors: <code>NEEDS-POLICY-OWNER</code> (no refunds within N hours of event start, so voids propagate before scanning).</li>
 </ul>
@@ -152,7 +152,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <p>Diagrams in one-pager tab C (C3) + material S10; part of this BRD by reference.</p>
 <div class="tblwrap"><table>
 <tr><th>Flow</th><th>Trigger</th><th>What happens</th></tr>
-<tr><td>Event change</td><td>Edit in Bookyay BO</td><td>Pushes down via feed → Ztor listing + CS auto-update → buyers notified (email minimum) → wallet refreshes (BR-42)</td></tr>
+<tr><td>Event change</td><td>Edit in Bookyay BO</td><td>Arrives via the hourly CS auto-pull (or manual sync button, BR-10) → Ztor listing + CS update → buyers notified (email minimum) → wallet refreshes (BR-42)</td></tr>
 <tr><td>Event cancel</td><td>Cancel in Bookyay BO</td><td>Push → pause + delist → all Ztor tickets voided, voids sync back → buyer refunds executed by ops on the gateway (BR-43)</td></tr>
 <tr><td>Top-up</td><td>Bookyay allocates more</td><td>More tickets pre-issued → Ztor sellable pool grows live (BR-50)</td></tr>
 <tr><td>Reduce</td><td>Bookyay takes back unsold</td><td>Capped at unsold-at-that-moment (sold never claws back) → returned QRs re-enter Bookyay's pool → zero remaining shows sold-out (BR-51)</td></tr>
@@ -213,7 +213,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><th>#</th><th>Item</th><th>Owner</th></tr>
 <tr><td>10</td><td>C1 residual: read-only scan-status feed into CS, or no check-in display at all (native surfaces cut 09-04, §6b)</td><td>Eric + Jeff</td></tr>
 <tr><td>11</td><td>Sync latency target (BR-60, proposed ≤15 min)</td><td>Eric</td></tr>
-<tr><td>12</td><td>Auto-import mechanics (BR-10): transport (push/poll/event), check frequency, Bookyay-side edit/delete sync, un-import escape hatch</td><td>Eric + Bookyay</td></tr>
+<tr><td>12</td><td>Auto-import remainder (transport settled 09-07: hourly CS pull + manual button): Bookyay-side edit/delete propagation rules · un-import escape hatch · does event <b>cancel</b> need a faster path than the hourly pull?</td><td>Eric + Bookyay</td></tr>
 <tr><td>13</td><td>Creator ↔ Bookyay account binding flow: who operates, what info (both registers mark it 待確認)</td><td>Yves + Jeff</td></tr>
 <tr><td>14</td><td>Event-ticket platform fee rate: designer default 10% (their D154) vs platform-fees BRD — reconcile</td><td>Jeff + Biz</td></tr>
 </table></div>
@@ -236,7 +236,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li>Scanner split ticket-side → Organizer App (09-04)</li>
 <li>Cancel origin → Bookyay BO reaffirmed; Ztor-cancel rejected (BR-43)</li>
 <li>Per-unit bundle QR (BR-13)</li>
-<li>Auto-import replaces manual import (BR-10)</li>
+<li>Auto-import replaces manual import (BR-10); sync transport = hourly CS pull + manual sync button (09-07)</li>
 <li>Creator-side self-serve disabled (§6b)</li>
 </ul>
 <h2>11 · Milestones</h2>
