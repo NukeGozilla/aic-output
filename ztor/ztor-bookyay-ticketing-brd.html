@@ -85,9 +85,9 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>Bookyay admin</td><td>Bookyay BO</td><td>Creates events; selects events for Ztor; sets allocation; pre-issues tickets; runs venue ops</td></tr>
 <tr><td>Ztor admin</td><td>Creator Studio</td><td>Imports allocated events; creator_mapping; sets up sale_items; order ops; admin reports</td></tr>
 <tr><td>Creator</td><td>(offline)</td><td>Requests via ops team — Excel intake; no system access for ticketing</td></tr>
-<tr><td>Buyer</td><td>ztor.com (web)</td><td>Browses, buys, holds tickets in my_wallet, contacts Store CS</td></tr>
+<tr><td>Buyer</td><td>ztor.com (web)</td><td>Browses, buys, holds tickets in my_wallet, contacts Ztor CS</td></tr>
 <tr><td>Venue staff</td><td>Bookyay Organizer App</td><td>Scans QR with per-event organizer_login</td></tr>
-<tr><td>Store CS</td><td>Store CS mailbox</td><td>Separate team + email from Bookyay CS; email-only Phase 1</td></tr>
+<tr><td>Ztor CS</td><td>Ztor CS mailbox</td><td>Separate team + email from Bookyay CS; email-only Phase 1</td></tr>
 </table></div>
 <h2>5 · Requirements</h2>
 <h3>A · Intake &amp; allocation (Bookyay side)</h3>
@@ -121,7 +121,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </ul>
 <h3>E · Post-sale &amp; support</h3>
 <ul>
-<li><b>BR-40</b> Refunds CS-only (no buyer self-service; special cases = BO void, 09-03). Store CS mailbox (own team + email). Refund executes on Ztor gateway via a CS refund console; ticket → <code>voided</code>; void syncs to Bookyay. <b>Bundle refunds are whole-bundle only:</b> ticket voided + merch leg refunded (pre-shipment) per eShop policy. Buyer-facing copy says <b>取消</b>, never 退款 (09-03).</li>
+<li><b>BR-40</b> Refunds CS-only (no buyer self-service; special cases = BO void, 09-03). Ztor CS mailbox (own team + email). Refund executes on Ztor gateway via a CS refund console; ticket → <code>voided</code>; void syncs to Bookyay. <b>Bundle refunds are whole-bundle only:</b> ticket voided + merch leg refunded (pre-shipment) per eShop policy. Buyer-facing copy says <b>取消</b>, never 退款 (09-03).</li>
 <li><b>BR-41</b> Order statuses: paid, fulfilled, refunded, <code>voided</code>, <code>cancelled</code> — visible in CS order lookup.</li>
 <li><b>BR-42</b> Event change (Bookyay BO edit) → push to Ztor → listing/CS auto-update → buyers notified (<b>email minimum</b>; in-app optional Phase 1), wallet refreshes.</li>
 <li><b>BR-43</b> Event cancel (Bookyay BO) → push → pause + delist → auto-refund all Ztor orders on Ztor gateway → voids sync back. Bundle merch on cancel: <code>NEEDS-POLICY-OWNER</code>. <i>(Ztor-originated cancel evaluated &amp; rejected 09-04 — future co-sale keeps Bookyay the lifecycle owner. Closed; don't reopen.)</i></li>
@@ -167,7 +167,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <h2>9 · Assumptions, dependencies, accepted risks</h2>
 <ul>
 <li><b>A1</b> CS order-ops console (lookup/refund/void) is Ztor-built</li>
-<li><b>A2</b> (revised 08-27) separate Store CS team + email</li>
+<li><b>A2</b> (revised 08-27) separate Ztor CS team + email</li>
 <li><b>A3 ✓</b> one-way batch sync</li>
 <li><b>A4 ✓</b> pre-issued QR + unchanged Organizer App (scoped logins pending)</li>
 <li><b>A5 ✓</b> no money settlement — <code>store_tag</code> only</li>
