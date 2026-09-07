@@ -206,14 +206,14 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>6</td><td>organizer_login scoping feasibility (BR-31); if no → ops fallback (dedicated device / gate list)</td><td>Bookyay + ops</td></tr>
 <tr><td>7</td><td>Dynamic vs static pre-issued QR (§9)</td><td>Bookyay</td></tr>
 <tr><td>8</td><td><b>Take-all vs split allocation</b> for the ~10 Phase-1 events (09-04)</td><td>Jesse</td></tr>
-<tr><td>9</td><td>Merch-pickup QR flow design (ticket scan = Organizer App confirmed 09-04; merch QR → Store scanner)</td><td>Ops + Eric</td></tr>
+<tr><td>9</td><td>Merch-pickup QR flow design (merch QR → Store scanner)</td><td>Ops + Eric</td></tr>
 </table></div>
 <p><b>Dev / Eric:</b></p>
 <div class="tblwrap"><table>
 <tr><th>#</th><th>Item</th><th>Owner</th></tr>
 <tr><td>10</td><td>C1 residual: read-only scan-status feed into CS, or no check-in display at all (native surfaces cut 09-04, §6b)</td><td>Eric + Jeff</td></tr>
 <tr><td>11</td><td>Sync latency target (BR-60, proposed ≤15 min)</td><td>Eric</td></tr>
-<tr><td>12</td><td>Auto-import remainder (transport settled 09-07: hourly CS pull + manual button): Bookyay-side edit/delete propagation rules · un-import escape hatch · does event <b>cancel</b> need a faster path than the hourly pull?</td><td>Eric + Bookyay</td></tr>
+<tr><td>12</td><td>Auto-import remainder: Bookyay-side edit/delete propagation rules · un-import escape hatch · does event <b>cancel</b> need a faster path than the hourly pull?</td><td>Eric + Bookyay</td></tr>
 <tr><td>13</td><td>Creator ↔ Bookyay account binding flow: who operates, what info (both registers mark it 待確認)</td><td>Yves + Jeff</td></tr>
 <tr><td>14</td><td>Event-ticket platform fee rate: designer default 10% (their D154) vs platform-fees BRD — reconcile</td><td>Jeff + Biz</td></tr>
 </table></div>
@@ -229,16 +229,6 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>21</td><td>Ztor-specific T&amp;C version needed, or Bookyay terms suffice? (BR-14)</td><td>Legal</td></tr>
 <tr><td>22</td><td>Mass-refund path on event cancel: gateway bulk refund vs per-order manual (BR-43; refunds are ops-side now)</td><td>Eric + ops</td></tr>
 </table></div>
-<p><b>Resolved since v1.2</b> (details in the cited BRs):</p>
-<ul>
-<li>C2 allocation plumbing → capacity mirrors the feed read-only (§6b)</li>
-<li>Loyalty display → deferred out of 2.3 (BR-24)</li>
-<li>Scanner split ticket-side → Organizer App (09-04)</li>
-<li>Cancel origin → Bookyay BO reaffirmed; Ztor-cancel rejected (BR-43)</li>
-<li>Per-unit bundle QR (BR-13)</li>
-<li>Auto-import replaces manual import (BR-10); sync transport = hourly CS pull + manual sync button (09-07)</li>
-<li>Creator-side self-serve disabled (§6b)</li>
-</ul>
 <h2>11 · Milestones</h2>
 <p>Sept: design + dev → <b>early-Nov: web rollout (~10 events)</b> → <b>Dec: creator sales reports on ztor.com</b> → app support after web proves smooth. <i>(Revised 2026-09-02: rollout moved end-Oct → early-Nov, reports Nov → Dec.)</i></p>
 <h2>12 · Acceptance (condensed)</h2>
