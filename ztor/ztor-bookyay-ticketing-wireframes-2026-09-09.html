@@ -13,7 +13,6 @@ h1{font-size:21px;margin:0 0 4px}
 h1:first-letter{color:var(--gold)}
 .sub{color:var(--muted);font-size:12.5px;margin-bottom:14px}
 .sub a{color:var(--gold);font-weight:600;text-decoration:none}
-/* sticky section nav */
 nav{position:sticky;top:0;z-index:9;background:var(--bg);padding:10px 0;border-bottom:1.5px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
 nav a{border:1.5px solid var(--line);background:var(--panel);border-radius:20px;padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--txt);text-decoration:none}
 nav a:hover,nav a:focus-visible{border-color:var(--gold);background:var(--gold-bg);outline:none}
@@ -22,12 +21,17 @@ section{margin-top:38px;scroll-margin-top:64px}
 .snum{background:var(--gold);color:#fff;border-radius:8px;padding:2px 10px;font-weight:800;font-size:13px}
 .shead h2{font-size:16px;margin:0;color:var(--gold)}
 .goal{color:var(--muted);font-size:12.5px;margin:0 0 12px}
-/* wireframe canvas */
 .stage{display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:start}
 @media(max-width:800px){.stage{grid-template-columns:1fr}}
-.wf{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 1px 3px rgba(40,35,25,.05)}
-.wf .bar{background:var(--wf);border-radius:6px;height:12px;margin:6px 0}
-.wf .bar.w40{width:40%}.wf .bar.w60{width:60%}.wf .bar.w80{width:80%}
+.wf{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:14px 16px 16px;box-shadow:0 1px 3px rgba(40,35,25,.05)}
+/* state switcher */
+.states{display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-bottom:1.5px solid var(--line);padding-bottom:10px;margin-bottom:12px}
+.states .lbl{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.states button{border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer}
+.states button[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
+.states button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+[data-panel]{display:none}
+[data-panel].on{display:block}
 .box{border:1.5px dashed #c9c4b8;border-radius:8px;background:var(--wf);padding:10px;margin:8px 0;font-size:12.5px;color:var(--muted)}
 .box b{color:var(--txt)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
@@ -40,9 +44,8 @@ section{margin-top:38px;scroll-margin-top:64px}
 .pill.warn{background:var(--gold-bg);color:var(--gold)}
 .pill.bad{background:var(--coral-bg);color:var(--coral)}
 .pill.gray{background:var(--wf);color:var(--muted)}
-.qr{width:74px;height:74px;border:1.5px solid var(--line);border-radius:8px;background:repeating-conic-gradient(#26231e 0 25%,#fff 0 50%) 0 0/14px 14px;flex:none}
+.qr{width:84px;height:84px;border:1.5px solid var(--line);border-radius:8px;background:repeating-conic-gradient(#26231e 0 25%,#fff 0 50%) 0 0/14px 14px;flex:none}
 .qr.dim{opacity:.25}
-/* annotation side panel */
 .notes{font-size:12.5px}
 .notes .chip{display:block;background:var(--panel);border:1.5px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:8px 10px;margin-bottom:8px}
 .notes .chip code{background:var(--gold-bg);border-radius:4px;padding:0 5px;font-size:11.5px;color:var(--coral)}
@@ -60,7 +63,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <body>
 <div class="wrap">
 <h1>Ticketing — feature wireframes (Phase 1 demo)</h1>
-<p class="sub">Biz walkthrough Wed 09-09 · wireframes = direction, not final design · contract: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · flows: <a href="ztor-bookyay-integration-2026-08-06.html">one-pager tab C</a></p>
+<p class="sub">Biz walkthrough Wed 09-09 · wireframes = direction, not final design · click the state pills to flip each screen · contract: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · flows: <a href="ztor-bookyay-integration-2026-08-06.html">one-pager tab C</a></p>
 
 <nav aria-label="Sections">
 <a href="#s1">1 · Listing & detail</a><a href="#s2">2 · Checkout</a><a href="#s3">3 · My Wallet</a><a href="#s4">4 · CS workbench</a><a href="#s5">5 · Event setup</a><a href="#s6">6 · Ops & sync</a>
@@ -71,23 +74,40 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="shead"><span class="snum">1</span><h2>Buyer · Event listing & detail (ztor.com)</h2></div>
 <p class="goal">Fans discover events beside merch — same shop, Ztor brand end to end.</p>
 <div class="stage">
-<div class="wf" role="img" aria-label="Wireframe: event listing grid and event detail with ticket tiers and a bundle">
-  <div class="bar w40"></div>
-  <div class="row">
+<div class="wf">
+  <div class="states"><span class="lbl">State</span>
+    <button aria-pressed="true" data-for="s1a">售票中</button>
+    <button aria-pressed="false" data-for="s1b">完售</button>
+  </div>
+  <div data-panel="s1a" class="on">
     <div class="box"><b>全部</b> · 演唱會 · 粉絲見面會 · 其他 <span class="pill bad">線上演唱會?</span></div>
-  </div>
-  <div class="row">
-    <div class="box" style="min-height:70px"><b>Event card</b><br>poster · name · date · venue<br><b>NT$ 1,800 起</b> <span class="pill gray">單一幣別</span></div>
-    <div class="box" style="min-height:70px"><b>Event card</b><br><span class="pill warn">SOLD OUT</span></div>
-    <div class="box" style="min-height:70px"><b>Event card</b></div>
-  </div>
-  <div class="box"><b>Event detail</b> — hero · lineup · doors time
-    <div class="row" style="margin-top:6px">
-      <div class="box" style="background:#fff"><b>一般票</b> NT$1,800 · <span class="pill ok">On sale</span></div>
-      <div class="box" style="background:#fff"><b>VIP</b> NT$3,600 · <span class="pill warn">95%</span></div>
-      <div class="box" style="background:#fff"><b>套組：票 + 巡演T恤</b> NT$2,400 · bundle</div>
+    <div class="row">
+      <div class="box" style="min-height:70px"><b>Event card</b><br>poster · name · date · venue<br><b>NT$ 1,800 起</b> <span class="pill gray">單一幣別</span></div>
+      <div class="box" style="min-height:70px"><b>Event card</b></div>
+      <div class="box" style="min-height:70px"><b>Event card</b></div>
     </div>
-    <span class="btn">購買</span>
+    <div class="box"><b>Event detail</b> — hero · lineup · doors time
+      <div class="row" style="margin-top:6px">
+        <div class="box" style="background:#fff"><b>一般票</b> NT$1,800 · <span class="pill ok">On sale</span></div>
+        <div class="box" style="background:#fff"><b>VIP</b> NT$3,600 · <span class="pill ok">On sale</span></div>
+        <div class="box" style="background:#fff"><b>套組：票 + 巡演T恤</b> NT$2,400 · bundle</div>
+      </div>
+      <span class="btn">購買</span>
+    </div>
+  </div>
+  <div data-panel="s1b">
+    <div class="box"><b>全部</b> · 演唱會 · 粉絲見面會 · 其他</div>
+    <div class="row">
+      <div class="box" style="min-height:70px"><b>Event card</b><br><span class="pill warn">SOLD OUT</span> — listed, not delisted (縮減到 0 也一樣)</div>
+      <div class="box" style="min-height:70px"><b>Event card</b><br><span class="pill warn">SOLD OUT</span></div>
+    </div>
+    <div class="box"><b>Event detail</b>
+      <div class="row" style="margin-top:6px">
+        <div class="box" style="background:#fff"><b>一般票</b> <span class="pill warn">完售</span></div>
+        <div class="box" style="background:#fff"><b>VIP</b> <span class="pill warn">完售</span></div>
+      </div>
+      <span class="btn ghost">已完售</span>
+    </div>
   </div>
 </div>
 <div class="notes">
@@ -105,17 +125,31 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="shead"><span class="snum">2</span><h2>Buyer · Ticket checkout</h2></div>
 <p class="goal">Pay on Ztor's gateway — checkout never calls Bookyay, works even if Bookyay is down.</p>
 <div class="stage">
-<div class="wf" role="img" aria-label="Wireframe: quantity selection with cap, payment, confirmation">
-  <div class="row">
-    <div class="box"><b>1 · 選票</b><br>一般票 NT$1,800<br><span class="btn ghost">−</span> <b>2</b> <span class="btn ghost">＋</span><br><span class="pill warn">每人每場上限 N 張</span></div>
-    <div class="box"><b>2 · 付款</b><br>Ztor gateway (Stripe/Antom)<br><span class="pill gray">卡片 · Apple Pay · LINE Pay</span><br><span class="pill ok">no Bookyay call</span></div>
-    <div class="box"><b>3 · 完成</b><br>✔ 訂單成立<br>票已放入 <b>My Wallet</b><br>Email 附票寄出</div>
+<div class="wf">
+  <div class="states"><span class="lbl">State</span>
+    <button aria-pressed="true" data-for="s2a">正常購買</button>
+    <button aria-pressed="false" data-for="s2b">池已搶空（極端）</button>
   </div>
-  <div class="box">Capture 時：每張售出票 = 原子指派一張 Bookyay 預開 QR；池被搶空 → 自動反轉付款，絕不留「已付款沒票」訂單</div>
+  <div data-panel="s2a" class="on">
+    <div class="flow">
+      <span class="fstep"><b>1 · 選票</b><br>一般票 NT$1,800<br><span class="btn ghost">−</span> <b>2</b> <span class="btn ghost">＋</span><br><span class="pill warn">每人每場上限 N 張</span></span><span class="farr">→</span>
+      <span class="fstep"><b>2 · 付款</b><br>Ztor gateway<br><span class="pill gray">卡片 · Apple Pay · LINE Pay</span></span><span class="farr">→</span>
+      <span class="fstep"><b>3 · 完成</b><br>✔ 訂單成立<br>票已放入 <b>My Wallet</b><br>Email 附票寄出</span>
+    </div>
+    <div class="box">Capture 時：每張售出票 = 原子指派一張 Bookyay 預開 QR</div>
+  </div>
+  <div data-panel="s2b">
+    <div class="flow">
+      <span class="fstep"><b>1 · 選票</b> ✔</span><span class="farr">→</span>
+      <span class="fstep"><b>2 · 付款</b> ✔ 已扣款</span><span class="farr">→</span>
+      <span class="fstep"><b>指派失敗</b>（縮減搶先）<br><span class="pill bad">付款自動反轉</span><br>買家看到「已完售」</span>
+    </div>
+    <div class="box">絕不留「已付款沒票」的訂單 — 結帳路徑的自動反轉，與客服退款無關</div>
+  </div>
 </div>
 <div class="notes">
 <span class="chip">Payment path independent of Bookyay <code>BR-21</code></span>
-<span class="chip">Atomic assignment from the pre-issued pool <code>BR-30</code> · <code>BR-53</code></span>
+<span class="chip">Atomic assignment; auto-reverse on pool exhaustion <code>BR-30</code> · <code>BR-53</code></span>
 <span class="chip decide">#1 — per-buyer cap number (4 / 6 / 8?)</span>
 </div>
 </div>
@@ -124,26 +158,41 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <!-- S3 -->
 <section id="s3">
 <div class="shead"><span class="snum">3</span><h2>Buyer · My Wallet 票券</h2></div>
-<p class="goal">The e-ticket surface — Bookyay QR in a Ztor wallet; the venue scans it with the Bookyay app, unchanged.</p>
+<p class="goal">The e-ticket surface — a Bookyay QR in a Ztor wallet; the venue scans it with the Bookyay app, unchanged.</p>
 <div class="stage">
-<div class="wf" role="img" aria-label="Wireframe: wallet ticket cards with QR codes and states">
-  <div class="row">
-    <div class="box" style="background:#fff"><div style="display:flex;gap:10px"><span class="qr" aria-hidden="true"></span><span><b>一般票 · 5/15 8PM</b><br>Tokyo Dome<br><span class="pill ok">有效</span></span></div></div>
-    <div class="box" style="background:#fff"><div style="display:flex;gap:10px"><span class="qr dim" aria-hidden="true"></span><span><b>VIP</b><br><span class="pill gray">已使用</span></span></div></div>
-    <div class="box" style="background:#fff"><div style="display:flex;gap:10px"><span class="qr dim" aria-hidden="true"></span><span><b>一般票</b><br><span class="pill bad">已取消</span></span></div></div>
+<div class="wf">
+  <div class="states"><span class="lbl">Ticket state</span>
+    <button aria-pressed="true" data-for="s3a">有效</button>
+    <button aria-pressed="false" data-for="s3b">已使用</button>
+    <button aria-pressed="false" data-for="s3c">已取消</button>
+    <button aria-pressed="false" data-for="s3d">套組訂單</button>
   </div>
-  <div class="box"><b>套組訂單（票2 + T恤2）→ 4 個 QR</b>
-    <div class="row" style="margin-top:6px">
-      <div class="box" style="background:#fff">🎫 票 QR ×2 <span class="pill gray">Bookyay 預開</span></div>
-      <div class="box" style="background:#fff">📦 取貨 QR ×2 <span class="pill gray">Ztor scanner 核銷</span></div>
+  <div data-panel="s3a" class="on">
+    <div class="box" style="background:#fff"><div style="display:flex;gap:14px;align-items:center"><span class="qr" aria-hidden="true"></span><span><b>一般票 · 5/15 (五) 8:00 PM</b><br>Tokyo Dome · Tokyo<br><span class="pill ok">有效</span> <span class="pill gray">出示此 QR 入場</span></span></div></div>
+    <div class="box">門口以 <b>Bookyay Organizer App</b> 掃描（每場獨立帳號）；QR 為不記名票</div>
+  </div>
+  <div data-panel="s3b">
+    <div class="box" style="background:#fff"><div style="display:flex;gap:14px;align-items:center"><span class="qr dim" aria-hidden="true"></span><span><b>一般票 · 5/15 (五) 8:00 PM</b><br>Tokyo Dome · Tokyo<br><span class="pill gray">已使用 · 8:12 PM 入場</span></span></div></div>
+    <div class="box">掃描後不可逆；重複出示掃描顯示紅色（already used）</div>
+  </div>
+  <div data-panel="s3c">
+    <div class="box" style="background:#fff"><div style="display:flex;gap:14px;align-items:center"><span class="qr dim" aria-hidden="true"></span><span><b>一般票 · 5/15 (五) 8:00 PM</b><br><span class="pill bad">已取消</span> <span class="pill gray">款項退回原付款方式</span></span></div></div>
+    <div class="box">作廢的 QR 到門口掃描 = 紅色拒絕；文案一律「取消」，不用「退款」</div>
+  </div>
+  <div data-panel="s3d">
+    <div class="box"><b>套組訂單（票 ×2 + T恤 ×2）→ 4 個 QR，每件一碼</b>
+      <div class="row" style="margin-top:6px">
+        <div class="box" style="background:#fff">🎫 票 QR ×2<br><span class="pill gray">Bookyay 預開 · Organizer App 掃</span></div>
+        <div class="box" style="background:#fff">📦 取貨 QR ×2<br><span class="pill gray">eShop 產生 · Ztor scanner 核銷</span></div>
+      </div>
     </div>
   </div>
 </div>
 <div class="notes">
 <span class="chip">QR pre-issued by Bookyay — Ztor never generates ticket QRs <code>BR-02/30</code></span>
-<span class="chip">Every unit its own QR: ticket → Organizer App · merch → Ztor scanner <code>BR-13</code></span>
-<span class="chip">States: 有效 / 已使用 / 已取消 — voided QR scans red at the door <code>BR-40</code></span>
-<span class="chip">Bearer QR, no ID check at door — accepted risk <code>BR-32</code></span>
+<span class="chip">Every unit its own QR <code>BR-13</code></span>
+<span class="chip">Voided QR scans red at the door <code>BR-40</code></span>
+<span class="chip">Bearer QR, no ID check — accepted risk <code>BR-32</code></span>
 </div>
 </div>
 </section>
@@ -153,19 +202,39 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="shead"><span class="snum">4</span><h2>Admin CS · Creator event workbench</h2></div>
 <p class="goal">Bind a creator's Bookyay account once — their events flow in automatically; admin only finishes the sale setup.</p>
 <div class="stage">
-<div class="wf" role="img" aria-label="Wireframe: creator list with imported events, pending setup queue and sync controls">
-  <div class="row">
-    <div class="box" style="flex:0 0 32%"><b>Creators</b><br>陳綺貞 <span class="pill warn">2 待設定</span><br>李榮浩 <span class="pill ok">已綁定</span><br>新人A <span class="pill gray">未綁定</span></div>
-    <div class="box"><b>已匯入活動（自動）</b> <span class="pill gray">上次檢查 14:00</span> <span class="btn ghost">手動同步</span><br>
-      <div class="box" style="background:#fff">小巨蛋演唱會 · 5/15 <span class="pill warn">待設定套組</span> <span class="btn">繼續設定</span></div>
-      <div class="box" style="background:#fff">香港見面會 · 6/02 <span class="pill ok">已完成</span></div>
+<div class="wf">
+  <div class="states"><span class="lbl">Creator state</span>
+    <button aria-pressed="true" data-for="s4a">已綁定 · 有活動</button>
+    <button aria-pressed="false" data-for="s4b">已綁定 · 無活動</button>
+    <button aria-pressed="false" data-for="s4c">未綁定</button>
+  </div>
+  <div data-panel="s4a" class="on">
+    <div class="row">
+      <div class="box" style="flex:0 0 32%"><b>Creators</b><br><b style="color:var(--gold)">▸ 陳綺貞</b> <span class="pill warn">2 待設定</span><br>李榮浩<br>新人A</div>
+      <div class="box"><b>已匯入活動（自動）</b> <span class="pill gray">上次檢查 14:00</span> <span class="btn ghost">手動同步</span><br>
+        <div class="box" style="background:#fff">小巨蛋演唱會 · 5/15 <span class="pill warn">待設定套組</span> <span class="btn">繼續設定</span></div>
+        <div class="box" style="background:#fff">香港見面會 · 6/02 <span class="pill ok">已完成</span></div>
+      </div>
     </div>
   </div>
-  <div class="box">綁定 = publish gate 的另一半：未 mapping 的活動不能上架；未綁定主辦方 → 待啟用帳號 + 邀請</div>
+  <div data-panel="s4b">
+    <div class="row">
+      <div class="box" style="flex:0 0 32%"><b>Creators</b><br>陳綺貞<br><b style="color:var(--gold)">▸ 李榮浩</b> <span class="pill ok">已綁定</span><br>新人A</div>
+      <div class="box"><span class="pill gray">上次檢查 14:00</span> <span class="btn ghost">手動同步</span><br>
+        <div class="box">目前 Bookyay 上沒有分配給 Ztor 的活動<br>（檢查過了，結果是零 — 有分配會自動出現）</div>
+      </div>
+    </div>
+  </div>
+  <div data-panel="s4c">
+    <div class="row">
+      <div class="box" style="flex:0 0 32%"><b>Creators</b><br>陳綺貞<br>李榮浩<br><b style="color:var(--gold)">▸ 新人A</b> <span class="pill gray">未綁定</span></div>
+      <div class="box">尚未綁定 Bookyay 帳號，所以這裡沒有她的活動<br><b>綁定之後活動會自動搬進來</b>，不需手動匯入<br><span class="btn">前往綁定</span><br><span class="pill gray">不顯示 0 — 沒綁定就沒有「查過是零」這回事</span></div>
+    </div>
+  </div>
 </div>
 <div class="notes">
-<span class="chip">Auto-import all allocated events; hourly pull + manual sync button <code>BR-10</code></span>
-<span class="chip">creator_mapping publish gate <code>BR-11</code></span>
+<span class="chip">Auto-import all allocated events; hourly pull + manual sync <code>BR-10</code></span>
+<span class="chip">creator_mapping publish gate — unmapped can't go live <code>BR-11</code></span>
 <span class="chip">Matches the designer's 5.1.0.6 workbench (their D238) — already designed</span>
 </div>
 </div>
@@ -176,24 +245,42 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="shead"><span class="snum">5</span><h2>Admin CS · Imported event setup (§6b contract)</h2></div>
 <p class="goal">What admin CAN and CANNOT touch on a Bookyay event — Bookyay stays the ticket engine.</p>
 <div class="stage">
-<div class="wf" role="img" aria-label="Wireframe: imported event with locked fields, read-only capacity and sale item setup">
-  <div class="row">
-    <div class="box"><b class="lock">活動資料</b><br>名稱 · 日期 · 場地 · 描述<br><span class="pill gray">唯讀 · 來自 Bookyay feed</span><br><b>圖片</b> <span class="pill ok">重新上傳（Ztor 規格）</span></div>
-    <div class="box"><b class="lock">Capacity = allocation 1,000</b><br><span class="pill gray">唯讀鏡像 · MVP = 整場庫存</span><br>增減 = Bookyay 發起、feed 到達</div>
+<div class="wf">
+  <div class="states"><span class="lbl">View</span>
+    <button aria-pressed="true" data-for="s5a">可編輯的（sale items）</button>
+    <button aria-pressed="false" data-for="s5b">唯讀的（feed 資料）</button>
+    <button aria-pressed="false" data-for="s5c">刻意不存在的</button>
   </div>
-  <div class="box"><b>Sale items（admin 唯一可編輯區）</b>
-    <div class="row" style="margin-top:6px">
-      <div class="box" style="background:#fff"><b>單賣票</b> reservation 600 · 已售 412</div>
-      <div class="box" style="background:#fff"><b>套組 票+T恤</b> reservation 400 · 已售 121</div>
+  <div data-panel="s5a" class="on">
+    <div class="box"><b>Sale items — admin 唯一可編輯區</b>
+      <div class="row" style="margin-top:6px">
+        <div class="box" style="background:#fff"><b>單賣票</b><br>reservation 600 · 已售 412<br><span class="btn ghost">調整</span></div>
+        <div class="box" style="background:#fff"><b>套組 票+T恤</b><br>reservation 400 · 已售 121<br><span class="btn ghost">調整</span></div>
+      </div>
+      Σ reservations ≤ allocation 1,000 · 售中可重新分配（下限 = 已售）
     </div>
-    Σ reservations ≤ 1,000 · 售中可重新分配（下限 = 已售）
+    <div class="box"><b>圖片</b> <span class="pill ok">可重新上傳（Ztor 版位規格）</span> · <b>creator_mapping</b> <span class="pill ok">可設定（發布閘門）</span></div>
   </div>
-  <div class="gone"><b>此活動看不到：</b>取消/刪除按鈕（取消只從 Bookyay BO 推送） · 報到/掃描介面（現場 = Organizer App） · 票券產生（QR 全部 Bookyay 預開） · 退款按鈕（僅「作廢」）</div>
+  <div data-panel="s5b">
+    <div class="box"><b class="lock">活動資料 — 來自 Bookyay feed，唯讀</b><br>名稱 · 類型 · 日期時間 · 場地 · 描述 · Lineup<br><span class="pill gray">每小時自動更新 · 可手動同步</span></div>
+    <div class="box"><b class="lock">Capacity = allocation 1,000 — 唯讀鏡像</b><br>MVP = 整場庫存（take-all）· 增減由 Bookyay 發起、隨 feed 到達；縮減下限 = 已售</div>
+  </div>
+  <div data-panel="s5c">
+    <div class="gone"><b>這個活動的頁面上「沒有」這些東西（刻意，非未做完）：</b></div>
+    <div class="row">
+      <div class="gone">✕ 取消 / 刪除按鈕<br>取消只從 Bookyay BO 推送</div>
+      <div class="gone">✕ 報到 / 掃描介面<br>現場 = Bookyay Organizer App</div>
+    </div>
+    <div class="row">
+      <div class="gone">✕ 票券產生<br>QR 全部 Bookyay 預開</div>
+      <div class="gone">✕ 退款按鈕<br>僅「作廢」；退款在金流後台</div>
+    </div>
+  </div>
 </div>
 <div class="notes">
+<span class="chip">The §6b table, on screen — the Phase 1 contract</span>
+<span class="chip">Reservations against the allocation <code>BR-12</code></span>
 <span class="chip">Fields read-only, images re-uploaded <code>BR-10</code></span>
-<span class="chip">Reservations against the allocation, re-balance mid-sale <code>BR-12</code></span>
-<span class="chip">Hidden surfaces = the §6b table — the Phase 1 contract in one glance</span>
 <span class="chip">Ztor-side cancel evaluated & rejected 09-04 — closed <code>BR-43</code></span>
 </div>
 </div>
@@ -204,33 +291,64 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="shead"><span class="snum">6</span><h2>Ops · Support, cancel & sync-back</h2></div>
 <p class="goal">System voids tickets; money moves only on the gateway console. Reporting home = Bookyay BO via daily sync.</p>
 <div class="stage">
-<div class="wf" role="img" aria-label="Wireframe: refund flow steps and sync-back records">
-  <div class="flow">
-    <span class="fstep">買家寄信 Ztor CS 信箱<br><span class="pill gray">無自助退款</span></span><span class="farr">→</span>
-    <span class="fstep">Admin：訂單查詢 → <b>作廢</b><br><span class="pill bad">票 → voided</span></span><span class="farr">→</span>
-    <span class="fstep">營運在 Stripe/Antom 退款<br><span class="pill gray">系統不動錢</span></span><span class="farr">→</span>
-    <span class="fstep">作廢同步回 Bookyay<br><span class="pill warn">須趕在掃描前</span></span>
+<div class="wf">
+  <div class="states"><span class="lbl">Flow</span>
+    <button aria-pressed="true" data-for="s6a">單筆退票</button>
+    <button aria-pressed="false" data-for="s6b">整場取消</button>
+    <button aria-pressed="false" data-for="s6c">Sync-back</button>
   </div>
-  <div class="box"><b>活動取消</b>：Bookyay BO 發起 → 推送 → 下架 + 全部票作廢 + 買家通知 → 營運退款</div>
-  <div class="box"><b>Sync-back（每日自動 + 手動按鈕）</b> — 3 種紀錄，全帶 <b>ztor_tag</b>
-    <div class="row" style="margin-top:6px">
-      <div class="box" style="background:#fff">🎫 Ticket status<br>assigned / voided / returned</div>
-      <div class="box" style="background:#fff">📊 Ticket inventory<br>burn-down per event</div>
-      <div class="box" style="background:#fff">💳 Transactions<br>order · qty · amount · status</div>
+  <div data-panel="s6a" class="on">
+    <div class="flow">
+      <span class="fstep">買家寄信 Ztor CS 信箱<br><span class="pill gray">無自助退款</span></span><span class="farr">→</span>
+      <span class="fstep">Admin：訂單查詢 → <b>作廢</b><br><span class="pill bad">票 → voided</span></span><span class="farr">→</span>
+      <span class="fstep">營運在 Stripe/Antom 退款<br><span class="pill gray">系統不動錢</span></span><span class="farr">→</span>
+      <span class="fstep">作廢同步回 Bookyay<br><span class="pill warn">須趕在掃描前</span></span>
     </div>
-    日常報表：營運直接看 <b>Bookyay BO</b>（ztor_tag 分渠道）
+    <div class="box">截止規則：開演前 N 小時不受理（週三決定 #3）；作廢快速通道由 Eric 定（候選：直接呼叫 Bookyay void API）</div>
+  </div>
+  <div data-panel="s6b">
+    <div class="flow">
+      <span class="fstep"><b>Bookyay BO</b> 按下取消<br><span class="pill gray">唯一發起點</span></span><span class="farr">→</span>
+      <span class="fstep">Ztor 收到推送<br>下架 + 停售</span><span class="farr">→</span>
+      <span class="fstep">全部票自動作廢<br>買家 Email 通知</span><span class="farr">→</span>
+      <span class="fstep">營運批次退款<br><span class="pill gray">金流後台</span></span>
+    </div>
+    <div class="box">套組的周邊出不出貨 = 週三決定 #2；大量退款路徑（批次 vs 逐筆）open #21</div>
+  </div>
+  <div data-panel="s6c">
+    <div class="box"><b>每日自動 + 手動按鈕 · 一律單向 Ztor → Bookyay · 全帶 ztor_tag</b>
+      <div class="row" style="margin-top:6px">
+        <div class="box" style="background:#fff">🎫 <b>Ticket status</b><br>assigned / voided / returned</div>
+        <div class="box" style="background:#fff">📊 <b>Ticket inventory</b><br>burn-down per event</div>
+        <div class="box" style="background:#fff">💳 <b>Transactions</b><br>order · qty · amount · status</div>
+      </div>
+    </div>
+    <div class="box">日常報表：營運直接看 <b>Bookyay BO</b>（ztor_tag 分渠道）；CS 留訂單查詢供客服</div>
   </div>
 </div>
 <div class="notes">
-<span class="chip">Void-only console; buyer copy 取消, never 退款 <code>BR-40</code></span>
+<span class="chip">Void-only console; buyer copy 取消 <code>BR-40</code></span>
 <span class="chip">Payload spec <code>BR-63</code> · daily + manual <code>BR-60</code></span>
-<span class="chip">Void must beat the scan — Eric owns the fast path (Bookyay void API candidate)</span>
-<span class="chip decide">#2 — bundle merch on cancel · #3 — refund cutoff N hours</span>
+<span class="chip decide">#2 — bundle merch on cancel</span>
+<span class="chip decide">#3 — refund cutoff N hours</span>
 </div>
 </div>
 </section>
 
 <footer>Wireframes for direction alignment only — visual design follows the designer's CS/FE systems · BRD v1.3 is the contract · 2026-09-07</footer>
 </div>
+<script>
+document.querySelectorAll('.states').forEach(function(group){
+  group.querySelectorAll('button[data-for]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var wf = group.parentElement;
+      group.querySelectorAll('button[data-for]').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+      btn.setAttribute('aria-pressed','true');
+      wf.querySelectorAll('[data-panel]').forEach(function(p){ p.classList.remove('on'); });
+      wf.querySelector('[data-panel="'+btn.dataset.for+'"]').classList.add('on');
+    });
+  });
+});
+</script>
 </body>
 </html>
