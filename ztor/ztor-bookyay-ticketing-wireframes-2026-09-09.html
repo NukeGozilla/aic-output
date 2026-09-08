@@ -69,13 +69,13 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <p class="sub">Biz walkthrough Wed 09-09 · wireframes = direction, not final design · click the state pills to flip each screen · contract: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · flows: <a href="ztor-bookyay-integration-2026-08-06.html">one-pager tab C</a></p>
 
 <nav aria-label="Sections">
-<a href="#s1">1 · Listing & detail</a><a href="#s2">2 · Checkout</a><a href="#s3">3 · My Wallet</a><a href="#s4">4 · 活動設定</a><a href="#s5">5 · 活動管理</a><a href="#s6">6 · 交易管理</a><a href="#s7">7 · Bookyay BO</a>
+<a href="#s1">1 · 活動列表與詳情</a><a href="#s2">2 · 購票結帳</a><a href="#s3">3 · My Wallet</a><a href="#s4">4 · 活動設定</a><a href="#s5">5 · 活動管理</a><a href="#s6">6 · 交易管理</a><a href="#s7">7 · Bookyay BO</a>
 </nav>
 
 <!-- S1 -->
 <section id="s1">
-<div class="shead"><span class="snum">1</span><h2>Buyer · Event listing & detail (ztor.com)</h2></div>
-<p class="goal">Fans discover events beside merch — same shop, Ztor brand end to end.</p>
+<div class="shead"><span class="snum">1</span><h2>買家 · 活動列表與詳情（ztor.com）</h2></div>
+<p class="goal">粉絲在同一個商店裡發現活動與周邊 — 從頭到尾都是 Ztor 品牌。</p>
 <div class="stage">
 <div class="wf">
   <div class="states"><span class="lbl">State</span>
@@ -131,16 +131,18 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 
 <!-- S2 -->
 <section id="s2">
-<div class="shead"><span class="snum">2</span><h2>Buyer · Ticket checkout</h2></div>
-<p class="goal">Pay on Ztor's gateway — checkout never calls Bookyay, works even if Bookyay is down.</p>
+<div class="shead"><span class="snum">2</span><h2>買家 · 購票結帳</h2></div>
+<p class="goal">付款走 Ztor 金流 — 結帳路徑不呼叫 Bookyay，對方系統停機也照常賣票。</p>
 <div class="stage">
 <div class="wf">
   <div class="states"><span class="lbl">State</span>
-    <button aria-pressed="true" data-for="s2a">正常購買</button>
+    <button aria-pressed="true" data-for="s2a">單買票券</button>
+    <button aria-pressed="false" data-for="s2c">套組結帳</button>
     <button aria-pressed="false" data-for="s2b">池已搶空（極端）</button>
   </div>
   <div data-panel="s2a" class="on">
-    <div class="flow">
+    <span class="screenlbl">ztor.com · 購票流程</span>
+    <div class="flow" style="margin-top:6px">
       <span class="fstep"><b>1 · 選票</b><br>一般票 NT$1,800<br><span class="btn ghost">−</span> <b>2</b> <span class="btn ghost">＋</span><br><span class="pill warn">每人每場上限 N 張</span></span><span class="farr">→</span>
       <span class="fstep"><b>2 · 付款</b><br>Ztor gateway<br><span class="pill gray">卡片 · Apple Pay · LINE Pay</span></span><span class="farr">→</span>
       <span class="fstep"><b>3 · 完成</b><br>✔ 訂單成立<br>票已放入 <b>My Wallet</b><br>Email 附票寄出</span>
@@ -148,12 +150,23 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <div class="box">Capture 時：每張售出票 = 原子指派一張 Bookyay 預開 QR</div>
   </div>
   <div data-panel="s2b">
-    <div class="flow">
+    <span class="screenlbl">ztor.com · 極端情境</span>
+    <div class="flow" style="margin-top:6px">
       <span class="fstep"><b>1 · 選票</b> ✔</span><span class="farr">→</span>
       <span class="fstep"><b>2 · 付款</b> ✔ 已扣款</span><span class="farr">→</span>
       <span class="fstep"><b>指派失敗</b>（縮減搶先）<br><span class="pill bad">付款自動反轉</span><br>買家看到「已完售」</span>
     </div>
     <div class="box">絕不留「已付款沒票」的訂單 — 結帳路徑的自動反轉，與客服退款無關</div>
+  </div>
+  <div data-panel="s2c">
+    <span class="screenlbl">ztor.com · 套組結帳</span>
+    <div class="flow" style="margin-top:6px">
+      <span class="fstep"><b>1 · 選套組</b><br>票 + 巡演T恤 ×1<br>NT$2,400（一個組合價）<br><span class="pill warn">上限計入票的張數</span></span><span class="farr">→</span>
+      <span class="fstep"><b>2 · 周邊取貨</b><br><span class="pill gray">現場取貨（QR）— 免運</span><br>依 eShop 出貨規則</span><span class="farr">→</span>
+      <span class="fstep"><b>3 · 付款</b><br>Ztor gateway · 一筆付款</span><span class="farr">→</span>
+      <span class="fstep"><b>4 · 完成</b><br>🎫 票 QR + 📦 取貨 QR<br>都放入 My Wallet</span>
+    </div>
+    <div class="box">一筆付款、兩條履約：票 = Bookyay 預開 QR 即時指派；周邊 = eShop 取貨 QR（每件一碼）</div>
   </div>
 </div>
 <div class="notes">
@@ -166,8 +179,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 
 <!-- S3 -->
 <section id="s3">
-<div class="shead"><span class="snum">3</span><h2>Buyer · My Wallet 票券</h2></div>
-<p class="goal">The e-ticket surface — a Bookyay QR in a Ztor wallet; the venue scans it with the Bookyay app, unchanged.</p>
+<div class="shead"><span class="snum">3</span><h2>買家 · My Wallet 票券</h2></div>
+<p class="goal">電子票的家 — Ztor 錢包裡放的是 Bookyay 預開 QR；門口用 Bookyay App 掃，完全不用改。</p>
 <div class="stage">
 <div class="wf">
   <div class="states"><span class="lbl">Ticket state</span>
@@ -177,19 +190,23 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <button aria-pressed="false" data-for="s3d">套組訂單</button>
   </div>
   <div data-panel="s3a" class="on">
-    <div class="box" style="background:#fff"><div style="display:flex;gap:14px;align-items:center"><span class="qr" aria-hidden="true"></span><span><b>一般票 · 5/15 (五) 8:00 PM</b><br>Tokyo Dome · Tokyo<br><span class="pill ok">有效</span> <span class="pill gray">出示此 QR 入場</span></span></div></div>
+    <span class="screenlbl">My Wallet · 有效票</span>
+    <div class="box" style="margin-top:0" style="background:#fff"><div style="display:flex;gap:14px;align-items:center"><span class="qr" aria-hidden="true"></span><span><b>一般票 · 5/15 (五) 8:00 PM</b><br>Tokyo Dome · Tokyo<br><span class="pill ok">有效</span> <span class="pill gray">出示此 QR 入場</span></span></div></div>
     <div class="box">門口以 <b>Bookyay Organizer App</b> 掃描（每場獨立帳號）；QR 為不記名票</div>
   </div>
   <div data-panel="s3b">
-    <div class="box" style="background:#fff"><div style="display:flex;gap:14px;align-items:center"><span class="qr dim" aria-hidden="true"></span><span><b>一般票 · 5/15 (五) 8:00 PM</b><br>Tokyo Dome · Tokyo<br><span class="pill gray">已使用 · 8:12 PM 入場</span></span></div></div>
+    <span class="screenlbl">My Wallet · 已使用</span>
+    <div class="box" style="margin-top:0" style="background:#fff"><div style="display:flex;gap:14px;align-items:center"><span class="qr dim" aria-hidden="true"></span><span><b>一般票 · 5/15 (五) 8:00 PM</b><br>Tokyo Dome · Tokyo<br><span class="pill gray">已使用 · 8:12 PM 入場</span></span></div></div>
     <div class="box">掃描後不可逆；重複出示掃描顯示紅色（already used）</div>
   </div>
   <div data-panel="s3c">
-    <div class="box" style="background:#fff"><div style="display:flex;gap:14px;align-items:center"><span class="qr dim" aria-hidden="true"></span><span><b>一般票 · 5/15 (五) 8:00 PM</b><br><span class="pill bad">已取消</span> <span class="pill gray">款項退回原付款方式</span></span></div></div>
+    <span class="screenlbl">My Wallet · 已取消</span>
+    <div class="box" style="margin-top:0" style="background:#fff"><div style="display:flex;gap:14px;align-items:center"><span class="qr dim" aria-hidden="true"></span><span><b>一般票 · 5/15 (五) 8:00 PM</b><br><span class="pill bad">已取消</span> <span class="pill gray">款項退回原付款方式</span></span></div></div>
     <div class="box">作廢的 QR 到門口掃描 = 紅色拒絕；文案一律「取消」，不用「退款」</div>
   </div>
   <div data-panel="s3d">
-    <div class="box"><b>套組訂單（票 ×2 + T恤 ×2）→ 4 個 QR，每件一碼</b>
+    <span class="screenlbl">My Wallet · 套組訂單</span>
+    <div class="box" style="margin-top:0"><b>套組訂單（票 ×2 + T恤 ×2）→ 4 個 QR，每件一碼</b>
       <div class="row" style="margin-top:6px">
         <div class="box" style="background:#fff">🎫 票 QR ×2<br><span class="pill gray">Bookyay 預開 · Organizer App 掃</span></div>
         <div class="box" style="background:#fff">📦 取貨 QR ×2<br><span class="pill gray">eShop 產生 · Ztor scanner 核銷</span></div>
@@ -390,8 +407,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 
 <!-- S7 -->
 <section id="s7">
-<div class="shead"><span class="snum">7</span><h2>Bookyay BO · What we need from their side</h2></div>
-<p class="goal">The five asks to Bookyay — everything else in this integration is Ztor-built.</p>
+<div class="shead"><span class="snum">7</span><h2>Bookyay BO · 需要對方支援的五件事</h2></div>
+<p class="goal">整合裡只有這五件事需要 Bookyay 動手 — 其餘全部由 Ztor 建置。</p>
 <div class="stage">
 <div class="wf">
   <div class="states"><span class="lbl">Feature</span>
@@ -437,6 +454,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <span class="chip">Select + allocate + pre-issue <code>BR-01/02</code></span>
 <span class="chip">Feed down, sync-back up <code>BR-10</code> · <code>BR-60/63</code></span>
 <span class="chip">ztor_tag channel reporting — no money settlement <code>BR-62</code> · A5</span>
+<span class="chip">Scan-status feed（已入場/未入場）<code>BR-64</code> — 09-07 new ask</span>
 <span class="chip">Scoped scanning logins <code>BR-31</code> — feasibility open #6</span>
 <span class="chip">Dynamic vs static pre-issued QR — open #7</span>
 </div>
