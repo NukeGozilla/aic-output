@@ -69,7 +69,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <p class="sub">Biz walkthrough Wed 09-09 · wireframes = direction, not final design · click the state pills to flip each screen · contract: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · flows: <a href="ztor-bookyay-integration-2026-08-06.html">one-pager tab C</a></p>
 
 <nav aria-label="Sections">
-<a href="#s1">1 · Listing & detail</a><a href="#s2">2 · Checkout</a><a href="#s3">3 · My Wallet</a><a href="#s4">4 · CS workbench</a><a href="#s5">5 · Event setup</a><a href="#s6">6 · Ops & sync</a>
+<a href="#s1">1 · Listing & detail</a><a href="#s2">2 · Checkout</a><a href="#s3">3 · My Wallet</a><a href="#s4">4 · CS workbench</a><a href="#s5">5 · Event setup</a><a href="#s6">6 · Ops & sync</a><a href="#s7">7 · Bookyay BO</a>
 </nav>
 
 <!-- S1 -->
@@ -257,8 +257,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="wf">
   <div class="states"><span class="lbl">View</span>
     <button aria-pressed="true" data-for="s5a">可編輯的（sale items）</button>
-    <button aria-pressed="false" data-for="s5b">唯讀的（feed 資料）</button>
-    <button aria-pressed="false" data-for="s5c">刻意不存在的</button>
+    <button aria-pressed="false" data-for="s5b">Feed 資料（鎖定＋可覆寫）</button>
+    <button aria-pressed="false" data-for="s5c">由 Bookyay 負責的</button>
   </div>
   <div data-panel="s5a" class="on">
     <div class="box"><b>Sale items — admin 唯一可編輯區</b>
@@ -271,19 +271,27 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <div class="box"><b>圖片</b> <span class="pill ok">可重新上傳（Ztor 版位規格）</span> · <b>creator_mapping</b> <span class="pill ok">可設定（發布閘門）</span></div>
   </div>
   <div data-panel="s5b">
-    <div class="box"><b class="lock">活動資料 — 來自 Bookyay feed，唯讀</b><br>名稱 · 類型 · 日期時間 · 場地 · 描述 · Lineup<br><span class="pill gray">每小時自動更新 · 可手動同步</span></div>
-    <div class="box"><b class="lock">Capacity = allocation 1,000 — 唯讀鏡像</b><br>MVP = 整場庫存（take-all）· 增減由 Bookyay 發起、隨 feed 到達；縮減下限 = 已售</div>
+    <div class="box"><b class="lock">恆鎖定 — 來自 Bookyay feed，不可改</b><br>日期時間 · 場地 · 活動類型 · Capacity（= allocation 1,000，增減由 Bookyay 發起）<br><span class="pill gray">每小時自動更新 · 可手動同步</span></div>
+    <div class="box"><b>呈現類欄位 — 預設跟隨 feed，可覆寫（Ztor UI 需求）</b>
+      <div class="row" style="margin-top:6px">
+        <div class="box" style="background:#fff">顯示名稱 <span class="pill gray">跟隨 feed</span> <span class="btn ghost">覆寫</span></div>
+        <div class="box" style="background:#fff">描述 <span class="pill warn">已覆寫</span> <span class="btn ghost">還原</span></div>
+        <div class="box" style="background:#fff">Lineup 顯示 <span class="pill gray">跟隨 feed</span> <span class="btn ghost">覆寫</span></div>
+      </div>
+      覆寫後該欄不再隨 feed 更新，可一鍵還原
+    </div>
   </div>
   <div data-panel="s5c">
-    <div class="gone"><b>這個活動的頁面上「沒有」這些東西（刻意，非未做完）：</b></div>
+    <div class="box"><b>這些功能不在 CS — 各自有明確的家：</b></div>
     <div class="row">
-      <div class="gone">✕ 取消 / 刪除按鈕<br>取消只從 Bookyay BO 推送</div>
-      <div class="gone">✕ 報到 / 掃描介面<br>現場 = Bookyay Organizer App</div>
+      <div class="box" style="background:#fff"><b>取消活動</b><br>→ Bookyay BO 發起、推送到 Ztor</div>
+      <div class="box" style="background:#fff"><b>現場報到掃描</b><br>→ Bookyay Organizer App</div>
     </div>
     <div class="row">
-      <div class="gone">✕ 票券產生<br>QR 全部 Bookyay 預開</div>
-      <div class="gone">✕ 退款按鈕<br>僅「作廢」；退款在金流後台</div>
+      <div class="box" style="background:#fff"><b>票券 QR 產生</b><br>→ Bookyay 於 allocation 時預開</div>
+      <div class="box" style="background:#fff"><b>退款金流</b><br>→ 營運在 Stripe / Antom 後台；CS 只「作廢」</div>
     </div>
+    <div class="box"><span class="pill gray">因此匯入活動的 CS 頁面不出現這些按鈕／分頁 — 設計上收起，不是沒做完</span></div>
   </div>
 </div>
 <div class="notes">
@@ -340,6 +348,61 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <span class="chip">Payload spec <code>BR-63</code> · daily + manual <code>BR-60</code></span>
 <span class="chip decide">#2 — bundle merch on cancel</span>
 <span class="chip decide">#3 — refund cutoff N hours</span>
+</div>
+</div>
+</section>
+
+<!-- S7 -->
+<section id="s7">
+<div class="shead"><span class="snum">7</span><h2>Bookyay BO · What we need from their side</h2></div>
+<p class="goal">The five asks to Bookyay — everything else in this integration is Ztor-built.</p>
+<div class="stage">
+<div class="wf">
+  <div class="states"><span class="lbl">Feature</span>
+    <button aria-pressed="true" data-for="s7a">分配與預開</button>
+    <button aria-pressed="false" data-for="s7b">API feed + 回寫</button>
+    <button aria-pressed="false" data-for="s7c">渠道報表 ztor_tag</button>
+    <button aria-pressed="false" data-for="s7d">掃描帳號</button>
+  </div>
+  <div data-panel="s7a" class="on">
+    <span class="screenlbl">Bookyay BO · 活動分配</span>
+    <div class="box" style="margin-top:0"><b>小巨蛋演唱會</b> · 5/15 · 庫存 1,000
+      <div class="row" style="margin-top:6px">
+        <div class="box" style="background:#fff"><b>分配給 Ztor</b><br>數量 <b>1,000</b>（MVP = 整場 take-all）· 票種 · 價格</div>
+        <div class="box" style="background:#fff"><b>預開票券</b><br>產生 1,000 張 QR → 隨 allocation 移交 Ztor<br><span class="pill ok">Organizer App 原生可掃</span></div>
+      </div>
+      <span class="btn">分配並預開</span>
+    </div>
+    <div class="box">之後的增量／縮減／到期回收都從這裡發起，隨 feed 到達 Ztor；縮減上限 = Ztor 未售數</div>
+  </div>
+  <div data-panel="s7b">
+    <span class="screenlbl">Bookyay ↔ Ztor · 兩條通道</span>
+    <div class="box" style="margin-top:0"><b>→ 給 Ztor 的 API feed（下行）</b><br>活動資料 · allocation 數量 · 更新（Ztor 每小時拉取 + 手動）</div>
+    <div class="box"><b>← 接收 Ztor 回寫（上行，每日批次）</b><br>🎫 票券狀態（assigned / voided / returned）· 📊 庫存 burn-down · 💳 交易明細<br><span class="pill gray">冪等可重放 · 不含買家個資</span></div>
+    <div class="box"><b>作廢快速通道（候選）</b>：Ztor 作廢時直接呼叫 Bookyay void API，讓作廢趕在掃描前 <span class="pill warn">Eric 評估中</span></div>
+  </div>
+  <div data-panel="s7c">
+    <span class="screenlbl">Bookyay BO · 銷售報表</span>
+    <div class="box" style="margin-top:0"><b>渠道篩選</b>：全部 · Bookyay <b style="color:var(--gold)">· Ztor（ztor_tag）</b>
+      <div class="row" style="margin-top:6px">
+        <div class="box" style="background:#fff"><b>小巨蛋演唱會</b><br>已售 533 / 1,000<br>Ztor 渠道 533 · Bookyay 0</div>
+        <div class="box" style="background:#fff"><b>營收（資訊用）</b><br>公司間不結算 — 同集團<br><span class="pill gray">ztor_tag 只為分渠道</span></div>
+      </div>
+    </div>
+    <div class="box">MVP 日常報表的家：營運直接看這裡，資料由每日回寫餵入（落後 ≤ 一個同步週期）</div>
+  </div>
+  <div data-panel="s7d">
+    <span class="screenlbl">Bookyay · Organizer App 帳號</span>
+    <div class="box" style="margin-top:0"><b>每場獨立 organizer_login</b><br>5/15 小巨蛋 → 帳號 A（只能掃這一場）<br>6/02 見面會 → 帳號 B<br><span class="pill warn">可行性待 Bookyay 確認（open #6）</span></div>
+    <div class="box">若不可行 → 營運備案：專用裝置或名單管制（open #6 備案）</div>
+  </div>
+</div>
+<div class="notes">
+<span class="chip">Select + allocate + pre-issue <code>BR-01/02</code></span>
+<span class="chip">Feed down, sync-back up <code>BR-10</code> · <code>BR-60/63</code></span>
+<span class="chip">ztor_tag channel reporting — no money settlement <code>BR-62</code> · A5</span>
+<span class="chip">Scoped scanning logins <code>BR-31</code> — feasibility open #6</span>
+<span class="chip">Dynamic vs static pre-issued QR — open #7</span>
 </div>
 </div>
 </section>
