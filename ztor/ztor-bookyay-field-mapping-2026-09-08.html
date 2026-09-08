@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor × Bookyay — 活動欄位對照</title>
+<style>
+:root{--bg:#f7f6f3;--panel:#fff;--line:#e2dfd8;--txt:#26231e;--muted:#847f74;--gold:#a97b2f;--gold-bg:#faf3e4;--teal:#2e7d5f;--coral:#b4574a;--r:12px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",sans-serif;font-size:15px;line-height:1.6}
+.wrap{max-width:920px;margin:0 auto;padding:36px 28px 70px}
+h1{font-size:22px;letter-spacing:-.2px;margin:0 0 6px}
+h1:first-letter{color:var(--gold)}
+h2{font-size:16px;margin:34px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--gold);color:var(--gold)}
+h3{font-size:14px;margin:20px 0 8px;color:var(--teal)}
+p{margin:8px 0}
+ul{margin:8px 0;padding-left:22px}
+li{margin:5px 0}
+code{background:var(--gold-bg);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12.5px;color:var(--coral)}
+.tblwrap{overflow:auto;border-radius:var(--r);box-shadow:0 1px 3px rgba(40,35,25,.05);margin:10px 0}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1.5px solid var(--line);font-size:13px}
+th{background:#efede8;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:left;padding:8px 12px}
+td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.backlink{display:inline-block;border:1.5px solid var(--gold);background:linear-gradient(180deg,var(--gold-bg),#fff 80%);border-radius:22px;padding:8px 18px;font-size:13px;font-weight:700;color:var(--txt);text-decoration:none}
+footer{margin-top:40px;color:var(--muted);font-size:11.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topbar"><a class="backlink" href="ztor-bookyay-ticketing-brd.html">← BRD v1.3</a><span style="color:var(--muted);font-size:12px">draft for 09-09 confirm · source of truth: <a href="https://github.com/NukeGozilla/ztor-docs/blob/main/outputs/specs/ticketing-field-mapping-draft-2026-09-08.md" style="color:var(--gold)">the .md on GitHub</a></span></div>
+<h1>Bookyay → Ztor 活動欄位對照（草案，供 biz / Jesse 確認）</h1>
+<p><i>2026-09-08 · 依據 09-08 standup（CS 已涵蓋多數 Bookyay 欄位；FE 尚未對齊）· 母規則 BRD v1.3 §6b/BR-10 · 供 09-09 會議逐列打勾</i></p>
+<p><b>三個問題，逐欄位回答：</b> ① 要不要從 Bookyay 拉？ ② Ztor 端用在哪（FE 買家頁 / CS 管理）？ ③ 誰是權威（feed 鎖定 / 可覆寫 / Ztor 自建）？</p>
+<h2>A · 基本資訊</h2>
+<div class="tblwrap"><table>
+<tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
+<tr><td>event id</td><td><b>必拉</b></td><td>對帳鍵（匯入 / 回寫 / 作廢）</td><td>feed 鎖定</td><td>同一場只帶入一次的鍵</td></tr>
+<tr><td>活動名稱</td><td><b>必拉</b></td><td>FE 卡片+詳情 · CS</td><td>feed，<b>可覆寫</b>顯示名稱</td><td>BR-10</td></tr>
+<tr><td>活動類型</td><td><b>必拉</b></td><td>FE 分類篩選 · CS 標籤</td><td>feed 鎖定</td><td>Ztor 端對應到 FE 三分類；線上演唱會歸屬 = 週三決策 #5</td></tr>
+<tr><td>描述</td><td><b>必拉</b></td><td>FE 詳情</td><td>feed，<b>可覆寫</b></td><td>Ztor UI 版面不同（09-08：欄位調整以符合 UI/UX）</td></tr>
+<tr><td>主辦方名稱</td><td><b>必拉</b></td><td>CS 對應創作者的線索</td><td>feed 鎖定</td><td>無 creator 檔案 — 僅文字</td></tr>
+<tr><td>Lineup / 表演者</td><td><b>必拉</b></td><td>FE 詳情</td><td>feed，顯示<b>可覆寫</b></td><td>Ztor 用戶連結 = Ztor 側自建</td></tr>
+<tr><td>系列 / 場次序</td><td>建議拉</td><td>FE 場次選購 · CS</td><td>feed 鎖定</td><td>09-08：多場次選購是 FE 需求</td></tr>
+</table></div>
+<h2>B · 時間與地點</h2>
+<div class="tblwrap"><table>
+<tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
+<tr><td>活動日期 + 開演時間</td><td><b>必拉</b></td><td>FE · Wallet · 通知</td><td>feed 鎖定</td><td>變更 → 通知購票者（BR-42）</td></tr>
+<tr><td>開放入場（doors）</td><td><b>必拉</b></td><td>FE 詳情 · 票面</td><td>feed 鎖定</td><td>退款截止的基準（BR-44）</td></tr>
+<tr><td>結束時間</td><td>可略</td><td>—</td><td>—</td><td>FE 不顯示可略；拉了不用也無妨</td></tr>
+<tr><td>場地名稱 + 城市</td><td><b>必拉</b></td><td>FE 卡片+詳情</td><td>feed 鎖定</td><td></td></tr>
+<tr><td>完整地址</td><td>建議拉</td><td>FE 詳情（地圖連結）</td><td>feed 鎖定</td><td></td></tr>
+</table></div>
+<h2>C · 視覺素材</h2>
+<div class="tblwrap"><table>
+<tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
+<tr><td>Bookyay 圖片</td><td>拉作<b>參考</b></td><td>CS 設定時預覽</td><td>—</td><td>正式素材一律 <b>Ztor 重新上傳</b>（版位規格 2:3 / 16:9 / 圖庫，BR-10）</td></tr>
+<tr><td>影片預告</td><td>可略</td><td>—</td><td>—</td><td>Ztor 端如需，自行上傳</td></tr>
+</table></div>
+<h2>D · 票務（核心）</h2>
+<div class="tblwrap"><table>
+<tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
+<tr><td>allocation 數量</td><td><b>必拉</b></td><td>CS 唯讀容量</td><td>feed 鎖定</td><td>MVP = 整場庫存（take-all）；增減隨 feed</td></tr>
+<tr><td>票種結構（名稱/價格/數量）</td><td><b>必拉</b></td><td>CS sale_item 基礎 · FE 票區</td><td>feed 鎖定</td><td>票價幣別 = 週三決策 #4</td></tr>
+<tr><td><b>各票種販售時窗</b></td><td><b>必拉</b></td><td>FE 開賣/停售 · CS</td><td>feed 鎖定</td><td>09-08 確認：Bookyay 原生支援逐票種時窗 — 不需要「同活動開兩頁」的變通</td></tr>
+<tr><td>預開 QR payload</td><td><b>必拉</b></td><td>Wallet 出票</td><td>feed 鎖定</td><td>BR-02/30</td></tr>
+<tr><td>活動狀態（售票中/取消…）</td><td><b>必拉</b></td><td>FE + CS 生命週期</td><td>feed 鎖定</td><td>取消 → 自動下架+作廢（BR-43）</td></tr>
+<tr><td>座位圖 / 劃位</td><td><b>不拉</b></td><td>—</td><td>—</td><td>Phase 1 僅 GA（§3）</td></tr>
+</table></div>
+<h2>E · Ztor 側自建（不從 Bookyay 來）</h2>
+<ul>
+<li>creator_mapping（逐場對應，發布閘門）· sale_items / reservations（單賣+套組）· 套組周邊 SKU（eShop）</li>
+<li>FE 分類標籤與排序 · 顯示幣別價格（Ztor 幣別模型）· Ztor 上架窗口（可見性）</li>
+<li>覆寫欄位的值（名稱/描述/Lineup 顯示）· Ztor 版位圖片</li>
+</ul>
+<h2>給會議的三個確認</h2>
+<ul>
+<li>1. <b>Bookyay 欄位清單</b>以上表為準逐列打勾（Jesse 補我們漏掉的欄位）</li>
+<li>2. FE 原型缺的欄位（場次選購、doors、逐票種時窗）→ 花花/設計負責人調整（09-08：FE 主要工作 = 欄位調整）</li>
+<li>3. 「可略」欄位確認可略 — 少拉一欄就少一個同步面</li>
+</ul>
+<p><i>Ref: BRD v1.3（§6b 匯入活動模式）· designer 5.1.6.1（CS 欄位清單來源）· FE shop-data 模型（現況：id/name/cat/date/venue/price/badge/soldOut + tiers）</i></p>
+<footer>Draft 2026-09-08 · confirm per-field with biz + Jesse · companions: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · <a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html">feature wireframes</a></footer>
+</div>
+</body>
+</html>
