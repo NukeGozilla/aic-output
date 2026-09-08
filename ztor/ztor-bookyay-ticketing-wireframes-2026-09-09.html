@@ -208,43 +208,45 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 
 <!-- S4 -->
 <section id="s4">
-<div class="shead"><span class="snum">4</span><h2>Admin CS · Creator event workbench</h2></div>
-<p class="goal">Bind a creator's Bookyay account once — their events flow in automatically; admin only finishes the sale setup.</p>
+<div class="shead"><span class="snum">4</span><h2>Admin CS · Imported event workbench</h2></div>
+<p class="goal">Bookyay has no creator profile — the feed is a flat list of every event allocated to Ztor; admin maps each event to a creator AFTER it lands, then finishes the sale setup.</p>
 <div class="stage">
 <div class="wf">
-  <div class="states"><span class="lbl">Creator state</span>
-    <button aria-pressed="true" data-for="s4a">已綁定 · 有活動</button>
-    <button aria-pressed="false" data-for="s4b">已綁定 · 無活動</button>
-    <button aria-pressed="false" data-for="s4c">未綁定</button>
+  <div class="states"><span class="lbl">State</span>
+    <button aria-pressed="true" data-for="s4a">活動清單（自動匯入）</button>
+    <button aria-pressed="false" data-for="s4b">對應創作者</button>
+    <button aria-pressed="false" data-for="s4c">全部處理完</button>
   </div>
   <div data-panel="s4a" class="on">
-    <div class="row">
-      <div class="box" style="flex:0 0 32%"><b>Creators</b><br><b style="color:var(--gold)">▸ 陳綺貞</b> <span class="pill warn">2 待設定</span><br>李榮浩<br>新人A</div>
-      <div class="box"><b>已匯入活動（自動）</b> <span class="pill gray">上次檢查 14:00</span> <span class="btn ghost">手動同步</span><br>
-        <div class="box" style="background:#fff">小巨蛋演唱會 · 5/15 <span class="pill warn">待設定套組</span> <span class="btn">繼續設定</span></div>
-        <div class="box" style="background:#fff">香港見面會 · 6/02 <span class="pill ok">已完成</span></div>
-      </div>
-    </div>
+    <span class="screenlbl">CS · 匯入活動清單（全平台）</span>
+    <div class="box" style="margin-top:0">篩選：<b>全部</b> · 待對應創作者 · 待設定套組 · 已完成 <span class="pill gray" style="float:right">上次檢查 14:00</span> <span class="btn ghost" style="float:right">手動同步</span></div>
+    <div class="box" style="background:#fff">小巨蛋演唱會 · 5/15 · 台北 <span class="pill bad">待對應創作者</span> <span class="btn">對應創作者</span></div>
+    <div class="box" style="background:#fff">香港見面會 · 6/02 · 香港 <span class="pill warn">待設定套組</span> <span class="pill gray">陳綺貞</span> <span class="btn">繼續設定</span></div>
+    <div class="box" style="background:#fff">高雄音樂節 · 6/20 <span class="pill ok">已完成</span> <span class="pill gray">李榮浩</span></div>
+    <div class="box">每場活動兩道關卡，順序：<b>① 對應創作者（發布閘門）→ ② 設定 sale items</b>；allocation 建立後隨下一次拉取自動出現，無需手動匯入</div>
   </div>
   <div data-panel="s4b">
+    <span class="screenlbl">CS · 對應創作者（逐場）</span>
+    <div class="box" style="margin-top:0"><b>小巨蛋演唱會 · 5/15</b> — 主辦方（來自 feed）：「綺貞工作室」</div>
     <div class="row">
-      <div class="box" style="flex:0 0 32%"><b>Creators</b><br>陳綺貞<br><b style="color:var(--gold)">▸ 李榮浩</b> <span class="pill ok">已綁定</span><br>新人A</div>
-      <div class="box"><span class="pill gray">上次檢查 14:00</span> <span class="btn ghost">手動同步</span><br>
-        <div class="box">目前 Bookyay 上沒有分配給 Ztor 的活動<br>（檢查過了，結果是零 — 有分配會自動出現）</div>
-      </div>
+      <div class="box" style="background:#fff"><b>搜尋 Ztor creator</b><br>🔍 陳綺貞 <span class="pill ok">帳號 + eShop ✓</span><br><span class="btn">對應</span></div>
+      <div class="box" style="background:#fff"><b>找不到帳號？</b><br>建立待啟用帳號 + 寄邀請<br><span class="pill gray">沿用 IP Bank 模式</span><br><span class="btn ghost">建立並邀請</span></div>
     </div>
+    <div class="box">未對應 = 不能發布（publish gate）；對應後 creator 才成為清單的篩選／分組維度</div>
   </div>
   <div data-panel="s4c">
-    <div class="row">
-      <div class="box" style="flex:0 0 32%"><b>Creators</b><br>陳綺貞<br>李榮浩<br><b style="color:var(--gold)">▸ 新人A</b> <span class="pill gray">未綁定</span></div>
-      <div class="box">尚未綁定 Bookyay 帳號，所以這裡沒有她的活動<br><b>綁定之後活動會自動搬進來</b>，不需手動匯入<br><span class="btn">前往綁定</span><br><span class="pill gray">不顯示 0 — 沒綁定就沒有「查過是零」這回事</span></div>
-    </div>
+    <span class="screenlbl">CS · 匯入活動清單</span>
+    <div class="box" style="margin-top:0">篩選：全部 · <b>已完成</b> <span class="pill gray" style="float:right">上次檢查 15:00</span></div>
+    <div class="box" style="background:#fff">小巨蛋演唱會 <span class="pill ok">已完成</span> <span class="pill gray">陳綺貞</span> <span class="btn ghost">調整套組</span></div>
+    <div class="box" style="background:#fff">香港見面會 <span class="pill ok">已完成</span> <span class="pill gray">陳綺貞</span> <span class="btn ghost">調整套組</span></div>
+    <div class="box">「已完成」仍可回頭調整 sale items（售中重新分配 reservation，下限 = 已售）；活動資料本身持續隨 feed 更新</div>
   </div>
 </div>
 <div class="notes">
-<span class="chip">Auto-import all allocated events; hourly pull + manual sync <code>BR-10</code></span>
-<span class="chip">creator_mapping publish gate — unmapped can't go live <code>BR-11</code></span>
-<span class="chip">Matches the designer's 5.1.0.6 workbench (their D238) — already designed</span>
+<span class="chip">Flat auto-import — every allocated event, no creator scoping on arrival <code>BR-10</code></span>
+<span class="chip">Per-event creator_mapping in CS = publish gate <code>BR-11</code></span>
+<span class="chip">Hourly pull + manual sync <code>BR-10</code></span>
+<span class="chip">Designer's 5.1.0.6 restructures creator-first → event-first (rulings A16)</span>
 </div>
 </div>
 </section>

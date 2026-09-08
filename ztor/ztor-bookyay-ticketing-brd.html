@@ -49,7 +49,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td><code>sale_item</code></td><td>What Ztor sells against an allocation: <code>solo_ticket</code> or <code>bundle</code> (ticket + eShop merch, one payment)</td></tr>
 <tr><td><code>reservation</code></td><td>A sub-quantity of an allocation earmarked to one <code>sale_item</code> (e.g. 50 of 100 to a bundle)</td></tr>
 <tr><td><code>ztor_tag</code></td><td>Marker on every Ztor-sold transaction, synced to Bookyay so their finance/reporting can filter channel</td></tr>
-<tr><td><code>creator_mapping</code></td><td>Link event → Ztor creator account (+ eShop). <b>Publish gate</b>: unmapped events cannot go live</td></tr>
+<tr><td><code>creator_mapping</code></td><td>Link event → Ztor creator account (+ eShop), done <b>per event in CS after import</b> (Bookyay has no creator profile). <b>Publish gate</b>: unmapped events cannot go live</td></tr>
 <tr><td><code>sync_back</code></td><td>One-way, batch, non-transactional feed Ztor → Bookyay: ticket status · ticket inventory · transaction details (payload BR-63). Nothing in checkout waits on it</td></tr>
 <tr><td><code>organizer_login</code></td><td>Per-event-scoped account for the Bookyay Organizer App (venue scanning)</td></tr>
 <tr><td><code>my_wallet</code></td><td>Ztor FE surface where a buyer's e-tickets (QR) live</td></tr>
@@ -106,8 +106,8 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </ul>
 <h3>B · Creator Studio (admin-operated)</h3>
 <ul>
-<li><b>BR-10</b> <b>Auto-import</b> (09-03, = designer D238): once a creator's Bookyay account is bound, ALL their allocated events import automatically and land as <b>pending-setup</b> (待設定套組). Sync (09-07): CS <b>auto-pulls latest event data from Bookyay hourly</b>; CS admin also has a <b>manual sync button</b>. Event fields inherit from the feed; <b>presentation fields — display name · description · lineup display — may be optionally overridden in CS for Ztor UI needs (09-07)</b>: an overridden field stops tracking the feed (one-click revert to feed value). <b>Locked (never overridable): date/time · venue · event type · capacity.</b> Images re-uploaded to Ztor specs. No manual per-event import.</li>
-<li><b>BR-11</b> <code>creator_mapping</code> required before publish (<b>publish gate</b>). Unmapped organizers: pending account + invitation (IP Bank pattern).</li>
+<li><b>BR-10</b> <b>Auto-import</b> (09-03; scope corrected 09-07): Bookyay has <b>no creator profile</b> — the feed is a <b>flat list of all events allocated to Ztor</b>, not per-creator. Every allocated event imports automatically and lands as <b>pending-setup</b> (待設定套組); creator association happens per event on the Ztor side (BR-11). Sync (09-07): CS <b>auto-pulls latest event data from Bookyay hourly</b>; CS admin also has a <b>manual sync button</b>. Event fields inherit from the feed; <b>presentation fields — display name · description · lineup display — may be optionally overridden in CS for Ztor UI needs (09-07)</b>: an overridden field stops tracking the feed (one-click revert to feed value). <b>Locked (never overridable): date/time · venue · event type · capacity.</b> Images re-uploaded to Ztor specs. No manual per-event import.</li>
+<li><b>BR-11</b> <code>creator_mapping</code> = a <b>per-event step in CS after import</b> (Bookyay has no creator concept); required before publish (<b>publish gate</b>). Unmapped organizers: pending account + invitation (IP Bank pattern).</li>
 <li><b>BR-12</b> Admin creates <code>sale_item</code>s against the allocation: solo_ticket and/or bundle; each takes a <code>reservation</code>; sum of reservations ≤ allocation. Reservations may be re-balanced mid-sale (floor = sold count per sale_item).</li>
 <li><b>BR-13</b> Bundle = ticket(s) + ≥1 eShop merch SKU, one combined price, fiat only. <b>Every unit carries its own QR</b> (09-03: 4-item order → 4 QRs): each ticket = a pre-issued Bookyay QR; each merch = an eShop pickup QR.</li>
 <li><b>BR-14</b> T&amp;C: Bookyay's terms inherited; Ztor-specific T&amp;C version if legal requires (open #20).</li>
@@ -223,7 +223,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>9</td><td>C1 residual: read-only scan-status feed into CS, or no check-in display at all (native surfaces cut 09-04, §6b)</td><td>Eric + Jeff</td></tr>
 <tr><td>10</td><td>Void propagation under daily sync (BR-60): candidate = CS void calls Bookyay's void API directly; fallback = event-day final sync + refund cutoff (BR-44)</td><td>Eric</td></tr>
 <tr><td>11</td><td>Auto-import remainder: Bookyay-side edit/delete propagation rules · un-import escape hatch · does event <b>cancel</b> need a faster path than the hourly pull?</td><td>Eric + Bookyay</td></tr>
-<tr><td>12</td><td>Creator ↔ Bookyay account binding flow: who operates, what info (both registers mark it 待確認)</td><td>Yves + Jeff</td></tr>
+<tr><td>12</td><td>Event → creator mapping ops flow: who maps, creator search, unmapped-organizer invitation (replaces the "account binding" question — no creator profile on Bookyay, 09-07)</td><td>Yves + Jeff</td></tr>
 <tr><td>13</td><td>Event-ticket platform fee rate: designer default 10% (their D154) vs platform-fees BRD — reconcile</td><td>Jeff + Biz</td></tr>
 </table></div>
 <p><b>Design / build:</b></p>
@@ -258,7 +258,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </ul>
 <h2>13 · Resolved log (reference — details live in the cited BRs)</h2>
 <ul>
-<li><b>09-07</b> <code>store_tag</code> → <code>ztor_tag</code> · refunds = offline request + void-only, money moves on gateway console (BR-40) · sync transport = hourly CS auto-pull + manual sync button (BR-10) · <b>allocation = take-all</b> for MVP (BR-02) · sync-back cadence = <b>daily</b>, MVP reporting home = Bookyay BO (BR-60/62) · sync-back payload = 3 record types (BR-63) · <b>presentation-field override in CS allowed</b> (name/description/lineup; BR-10) · Phase 2 = co-sale with channel-partitioned ops (§11)</li>
+<li><b>09-07</b> <code>store_tag</code> → <code>ztor_tag</code> · refunds = offline request + void-only, money moves on gateway console (BR-40) · sync transport = hourly CS auto-pull + manual sync button (BR-10) · <b>allocation = take-all</b> for MVP (BR-02) · sync-back cadence = <b>daily</b>, MVP reporting home = Bookyay BO (BR-60/62) · sync-back payload = 3 record types (BR-63) · <b>presentation-field override in CS allowed</b> (name/description/lineup; BR-10) · <b>no creator binding — flat event feed, per-event creator_mapping in CS</b> (BR-10/11) · Phase 2 = co-sale with channel-partitioned ops (§11)</li>
 <li><b>09-04</b> Ticket QR + scanner = Bookyay (BR-02/03, §6b) · allocation quantity read-only from API feed (§6b) · cancel origin = Bookyay BO reaffirmed, Ztor-originated cancel rejected (BR-43)</li>
 <li><b>09-03</b> Per-unit QR in bundles (BR-13) · auto-import replaces manual import (BR-10) · creator-side self-serve disabled, admin-only (§6b) · loyalty deferred out of 2.3 (BR-24) · buyer-facing 退款 → 取消 (BR-40)</li>
 <li><b>09-02</b> Milestone: rollout end-Oct → early-Nov, creator reports Nov → Dec (§11)</li>
