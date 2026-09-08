@@ -260,6 +260,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   <div class="states"><span class="lbl">View</span>
     <button aria-pressed="true" data-for="s5a">可編輯的（sale items）</button>
     <button aria-pressed="false" data-for="s5b">Feed 資料（鎖定＋可覆寫）</button>
+    <button aria-pressed="false" data-for="s5d">報到狀態（唯讀）</button>
+    <button aria-pressed="false" data-for="s5e">交易明細（可作廢）</button>
     <button aria-pressed="false" data-for="s5c">由 Bookyay 負責的</button>
   </div>
   <div data-panel="s5a" class="on">
@@ -283,11 +285,33 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       覆寫後該欄不再隨 feed 更新，可一鍵還原
     </div>
   </div>
+  <div data-panel="s5d">
+    <span class="screenlbl">活動詳情 · 報到狀態（唯讀）</span>
+    <div class="box" style="margin-top:0"><b>已入場 412 / 533</b> · 未入場 121 <span class="pill gray" style="float:right">資料來自 Bookyay 掃描回饋 · 上次同步 19:00</span> <span class="btn ghost" style="float:right">手動同步</span></div>
+    <div class="row">
+      <div class="box" style="background:#fff"><b>已入場（scanned）</b><br>#T-0412 一般票 · 19:02 ✓<br>#T-0411 VIP · 18:58 ✓<br>#T-0410 一般票 · 18:57 ✓<br><span class="pill gray">…列表繼續</span></div>
+      <div class="box" style="background:#fff"><b>未入場（pending）</b><br>#T-0533 一般票 <span class="pill warn">未入場</span><br>#T-0531 套組票 <span class="pill warn">未入場</span><br>#T-0489 一般票 <span class="pill bad">已作廢</span></div>
+    </div>
+    <div class="box">唯讀清單 — CS 不提供掃描／反轉操作（掃描在 Organizer App）；活動日可按手動同步拉最新狀態</div>
+  </div>
+  <div data-panel="s5e">
+    <span class="screenlbl">活動詳情 · 交易明細</span>
+    <div class="box" style="margin-top:0">篩選：<b>全部</b> · 已付款 · 已作廢 <span class="pill gray" style="float:right">金額不在此退 — 金流後台處理</span></div>
+    <div class="box" style="background:#fff"><b>#ORD-1042</b> · 一般票 ×2 · NT$3,600 <span class="pill ok">已付款</span> <span class="btn ghost">作廢</span></div>
+    <div class="box" style="background:#fff"><b>#ORD-1041</b> · 套組（票×1 + T恤×1）· NT$2,400 <span class="pill ok">已付款</span> <span class="btn ghost">作廢</span>
+      <div class="row" style="margin-top:6px">
+        <div class="box">🎫 票 QR #T-0531 <span class="pill ok">有效</span></div>
+        <div class="box">📦 取貨 QR #P-0207 <span class="pill gray">未取貨</span></div>
+      </div>
+    </div>
+    <div class="box" style="background:#fff"><b>#ORD-1038</b> · 一般票 ×1 · NT$1,800 <span class="pill bad">已作廢</span> <span class="pill gray">19:05 已同步 Bookyay</span></div>
+    <div class="box">作廢 = 票/取貨碼即失效並同步回 Bookyay；套組整組作廢（票 + 周邊一起，BR-40）；退款金額由營運在 Stripe/Antom 後台執行</div>
+  </div>
   <div data-panel="s5c">
     <div class="box"><b>這些功能不在 CS — 各自有明確的家：</b></div>
     <div class="row">
       <div class="box" style="background:#fff"><b>取消活動</b><br>→ Bookyay BO 發起、推送到 Ztor</div>
-      <div class="box" style="background:#fff"><b>現場報到掃描</b><br>→ Bookyay Organizer App</div>
+      <div class="box" style="background:#fff"><b>現場報到掃描</b><br>→ Bookyay Organizer App（CS 只顯示唯讀報到清單）</div>
     </div>
     <div class="row">
       <div class="box" style="background:#fff"><b>票券 QR 產生</b><br>→ Bookyay 於 allocation 時預開</div>
@@ -299,7 +323,9 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="notes">
 <span class="chip">The §6b table, on screen — the Phase 1 contract</span>
 <span class="chip">Reservations against the allocation <code>BR-12</code></span>
-<span class="chip">Fields read-only, images re-uploaded <code>BR-10</code></span>
+<span class="chip">Presentation fields overridable; facts locked <code>BR-10</code></span>
+<span class="chip">Read-only 已入場/未入場 via Bookyay scan feed <code>BR-64</code> — new ask to Bookyay</span>
+<span class="chip">Void covers ticket & merch; bundle voids whole-order <code>BR-40/41</code></span>
 <span class="chip">Ztor-side cancel evaluated & rejected 09-04 — closed <code>BR-43</code></span>
 </div>
 </div>
@@ -379,7 +405,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   </div>
   <div data-panel="s7b">
     <span class="screenlbl">Bookyay ↔ Ztor · 兩條通道</span>
-    <div class="box" style="margin-top:0"><b>→ 給 Ztor 的 API feed（下行）</b><br>活動資料 · allocation 數量 · 更新（Ztor 每小時拉取 + 手動）</div>
+    <div class="box" style="margin-top:0"><b>→ 給 Ztor 的 API feed（下行）</b><br>活動資料 · allocation 數量 · 更新 · <b>掃描狀態（已入場/未入場，BR-64 新增）</b>（Ztor 每小時拉取 + 手動）</div>
     <div class="box"><b>← 接收 Ztor 回寫（上行，每日批次）</b><br>🎫 票券狀態（assigned / voided / returned）· 📊 庫存 burn-down · 💳 交易明細<br><span class="pill gray">冪等可重放 · 不含買家個資</span></div>
     <div class="box"><b>作廢快速通道（候選）</b>：Ztor 作廢時直接呼叫 Bookyay void API，讓作廢趕在掃描前 <span class="pill warn">Eric 評估中</span></div>
   </div>
