@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ztor × Bookyay — 活動欄位對照</title>
+<title>Ztor × Bookyay — Event Field Mapping · 活動欄位對照</title>
 <style>
 :root{--bg:#f7f6f3;--panel:#fff;--line:#e2dfd8;--txt:#26231e;--muted:#847f74;--gold:#a97b2f;--gold-bg:#faf3e4;--teal:#2e7d5f;--coral:#b4574a;--r:12px}
 *{box-sizing:border-box}
@@ -20,16 +20,117 @@ code{background:var(--gold-bg);border:1px solid var(--line);border-radius:5px;pa
 .tblwrap{overflow:auto;border-radius:var(--r);box-shadow:0 1px 3px rgba(40,35,25,.05);margin:10px 0}
 table{width:100%;border-collapse:collapse;background:var(--panel);border:1.5px solid var(--line);font-size:13px}
 th{background:#efede8;color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;text-align:left;padding:8px 12px}
+th .zhh{text-transform:none;letter-spacing:0;font-size:11px;color:var(--muted);margin-left:4px}
 td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
-.backlink{display:inline-block;border:1.5px solid var(--gold);background:linear-gradient(180deg,var(--gold-bg),#fff 80%);border-radius:22px;padding:8px 18px;font-size:13px;font-weight:700;color:var(--txt);text-decoration:none}
+.backlink{display:inline-block;border:1.5px solid var(--gold);background:linear-gradient(180deg,var(--gold-bg),#fff 80%);border-radius:22px;padding:8px 18px;font-size:13px;font-weight:700;color:var(--gold);text-decoration:none}
+.docnav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.docnav a{display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none}
+.docnav a.cur{border-color:var(--gold);background:var(--gold-bg);color:var(--gold);font-weight:800}
+.langbar{display:inline-flex;border:1.5px solid var(--gold);border-radius:20px;overflow:hidden;margin-left:auto}
+.langbar button{border:0;background:var(--panel);padding:6px 14px;font-size:12px;font-weight:700;color:var(--gold);cursor:pointer;font-family:inherit}
+.langbar button.on{background:var(--gold);color:#fff}
+.legend{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:4px 16px 10px;font-size:13px;margin:10px 0 4px}
+.legend table{border:0;box-shadow:none}
+.legend h3{margin:12px 0 6px}
+html[data-lang="en"] .zh{display:none}
+html[data-lang="zh"] .en{display:none}
 footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="topbar"><a class="backlink" href="ztor-bookyay-ticketing-brd.html">← BRD v1.3</a><span style="color:var(--muted);font-size:12px">draft for 09-09 confirm · source of truth: <a href="https://github.com/NukeGozilla/ztor-docs/blob/main/outputs/specs/ticketing-field-mapping-draft-2026-09-08.md" style="color:var(--gold)">the .md on GitHub</a></span></div>
-<div class="docnav" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px"><a href="ztor-bookyay-ticketing-brd.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">BRD v1.3</a><a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">Wireframes</a><a href="ztor-bookyay-field-mapping-2026-09-08.html" style="display:inline-block;border:1.5px solid var(--gold);background:var(--gold-bg);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:800;color:var(--gold);text-decoration:none">Field mapping</a><a href="ztor-bookyay-integration-2026-08-06.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">One-pager</a></div>
+<div class="topbar">
+  <a class="backlink" href="ztor-bookyay-ticketing-brd.html">← BRD v1.3</a>
+  <span style="color:var(--muted);font-size:12px">draft for 09-09 confirm · source of truth: <a class="zh" href="https://github.com/NukeGozilla/ztor-docs/blob/main/outputs/specs/ticketing-field-mapping-draft-2026-09-08.md" style="color:var(--gold)">the .md on GitHub</a><a class="en" href="https://github.com/NukeGozilla/ztor-docs/blob/main/outputs/specs/ticketing-field-mapping-draft-2026-09-08-en.md" style="color:var(--gold)">the .md on GitHub</a></span>
+  <div class="langbar" role="group" aria-label="Language"><button type="button" data-l="en">EN</button><button type="button" data-l="zh">中文</button></div>
+</div>
+<div class="docnav"><a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a><a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html">Wireframes</a><a class="cur" href="ztor-bookyay-field-mapping-2026-09-08.html">Field mapping</a><a href="ztor-bookyay-integration-2026-08-06.html">One-pager</a></div>
+
+<!-- ═══════════════ EN ═══════════════ -->
+<div class="en">
+<h1>Bookyay → Ztor Event Field Mapping (draft — for biz / Jesse to confirm)</h1>
+<p><i>2026-09-08 · English version 2026-09-09 (legend added from BRD BR-10) · from the 09-08 standup (CS already covers most Bookyay fields; FE not yet aligned) · parent rule: BRD v1.3 §6b / BR-10 · tick row by row at the 09-09 meeting</i></p>
+<p><b>Three questions, answered per field:</b> ① Pull it from Bookyay? ② Where does Ztor use it (FE buyer pages / CS admin)? ③ Who is the authority (feed-locked / override allowed / Ztor-owned)?</p>
+
+<div class="legend">
+<h3>Legend 圖例 — Pull? 拉取</h3>
+<div class="tblwrap"><table>
+<tr><th>Value</th><th>Meaning</th></tr>
+<tr><td><b>Must pull</b> 必拉</td><td>Required for Phase 1 — a Ztor surface depends on it</td></tr>
+<tr><td>Recommended 建議拉</td><td>Useful now or soon; not blocking</td></tr>
+<tr><td>Optional 可略</td><td>May be skipped; harmless if pulled and unused</td></tr>
+<tr><td>Reference only 拉作參考</td><td>Pulled to help the admin, never shown to buyers</td></tr>
+<tr><td><b>Do not pull</b> 不拉</td><td>Out of Phase 1 scope</td></tr>
+</table></div>
+<h3>Legend 圖例 — Authority 權威 <span style="font-weight:400;color:var(--muted)">(rule source: BRD v1.3 BR-10 / §6b)</span></h3>
+<div class="tblwrap"><table>
+<tr><th>Value</th><th>Meaning</th></tr>
+<tr><td><b>feed-locked</b> feed 鎖定</td><td>Bookyay is the source of truth. Ztor shows the value read-only; every hourly sync overwrites it. Never editable on Ztor.</td></tr>
+<tr><td><b>feed · override allowed</b> feed，可覆寫</td><td>Bookyay supplies the default value. A CS admin may override it for Ztor UI needs. <b>An overridden field stops tracking the feed; one-click revert restores the feed value.</b> Only three fields qualify: display name, description, lineup display.</td></tr>
+<tr><td><b>Ztor-owned</b> Ztor 自建</td><td>Never comes from Bookyay (section E).</td></tr>
+<tr><td>—</td><td>Not pulled or not shown, so no authority applies.</td></tr>
+</table></div>
+</div>
+
+<h2>A · Basic info 基本資訊</h2>
+<div class="tblwrap"><table>
+<tr><th>Field <span class="zhh">欄位</span></th><th>Pull? <span class="zhh">拉取</span></th><th>Ztor use <span class="zhh">用途</span></th><th>Authority <span class="zhh">權威</span></th><th>Notes <span class="zhh">備註</span></th></tr>
+<tr><td>event id</td><td><b>Must pull</b></td><td>Reconciliation key (import / sync-back / void)</td><td>feed-locked</td><td>The key that guarantees each event is imported once</td></tr>
+<tr><td>Event name</td><td><b>Must pull</b></td><td>FE card + detail · CS</td><td>feed · <b>override allowed</b> (display name)</td><td>BR-10</td></tr>
+<tr><td>Event type</td><td><b>Must pull</b></td><td>FE category filter · CS tag</td><td>feed-locked</td><td>Mapped to the three FE categories on the Ztor side; 線上演唱會 (online concert) / Watch Party placement = Wed decision #4</td></tr>
+<tr><td>Description</td><td><b>Must pull</b></td><td>FE detail</td><td>feed · <b>override allowed</b></td><td>Ztor UI layout differs (09-08: fields adjusted to fit UI/UX)</td></tr>
+<tr><td>Organizer name</td><td><b>Must pull</b></td><td>CS clue for creator mapping</td><td>feed-locked</td><td>Bookyay has no creator profile — text only</td></tr>
+<tr><td>Lineup / performers</td><td><b>Must pull</b></td><td>FE detail</td><td>feed · <b>override allowed</b> (display)</td><td>Links to Ztor user accounts = Ztor-owned</td></tr>
+<tr><td>Series / show sequence</td><td>Recommended</td><td>FE multi-show picker · CS</td><td>feed-locked</td><td>09-08: multi-show selection is an FE requirement</td></tr>
+</table></div>
+
+<h2>B · Time &amp; place 時間與地點</h2>
+<div class="tblwrap"><table>
+<tr><th>Field <span class="zhh">欄位</span></th><th>Pull? <span class="zhh">拉取</span></th><th>Ztor use <span class="zhh">用途</span></th><th>Authority <span class="zhh">權威</span></th><th>Notes <span class="zhh">備註</span></th></tr>
+<tr><td>Event date + start time</td><td><b>Must pull</b></td><td>FE · Wallet · notifications</td><td>feed-locked</td><td>Change → notify ticket holders (BR-42)</td></tr>
+<tr><td>Doors open</td><td><b>Must pull</b></td><td>FE detail · ticket face</td><td>feed-locked</td><td>Shown on the ticket and in notifications</td></tr>
+<tr><td>End time</td><td>Optional</td><td>—</td><td>—</td><td>FE does not show it; harmless to pull and not use</td></tr>
+<tr><td>Venue name + city</td><td><b>Must pull</b></td><td>FE card + detail</td><td>feed-locked</td><td></td></tr>
+<tr><td>Full address</td><td>Recommended</td><td>FE detail (map link)</td><td>feed-locked</td><td></td></tr>
+</table></div>
+
+<h2>C · Visual assets 視覺素材</h2>
+<div class="tblwrap"><table>
+<tr><th>Field <span class="zhh">欄位</span></th><th>Pull? <span class="zhh">拉取</span></th><th>Ztor use <span class="zhh">用途</span></th><th>Authority <span class="zhh">權威</span></th><th>Notes <span class="zhh">備註</span></th></tr>
+<tr><td>Bookyay images</td><td>Pull as <b>reference</b></td><td>Preview during CS setup</td><td>—</td><td>Production assets are always <b>re-uploaded on Ztor</b> (slot specs 2:3 / 16:9 / gallery, BR-10)</td></tr>
+<tr><td>Video teaser</td><td>Optional</td><td>—</td><td>—</td><td>Ztor uploads its own if needed</td></tr>
+</table></div>
+
+<h2>D · Ticketing (core) 票務</h2>
+<div class="tblwrap"><table>
+<tr><th>Field <span class="zhh">欄位</span></th><th>Pull? <span class="zhh">拉取</span></th><th>Ztor use <span class="zhh">用途</span></th><th>Authority <span class="zhh">權威</span></th><th>Notes <span class="zhh">備註</span></th></tr>
+<tr><td>Allocation quantity</td><td><b>Must pull</b></td><td>CS read-only capacity</td><td>feed-locked</td><td>MVP = full event inventory (take-all); top-ups / reductions follow the feed</td></tr>
+<tr><td>Tier structure (name / price / quantity)</td><td><b>Must pull</b></td><td>Basis for CS sale_items · FE ticket section</td><td>feed-locked</td><td>Ticket price currency = Wed decision #3</td></tr>
+<tr><td><b>Per-tier sale window</b></td><td><b>Must pull</b></td><td>FE on-sale / off-sale · CS</td><td>feed-locked</td><td>09-08 confirmed: Bookyay natively supports per-tier windows — no "two pages per event" workaround needed</td></tr>
+<tr><td>Pre-issued QR payload</td><td><b>Must pull</b></td><td>Wallet ticket issuance</td><td>feed-locked</td><td>BR-02/30</td></tr>
+<tr><td>Event status (on sale / cancelled …)</td><td><b>Must pull</b></td><td>FE + CS lifecycle</td><td>feed-locked</td><td>Cancel → auto delist + void (BR-43)</td></tr>
+<tr><td>Seat map / assigned seating</td><td><b>Do not pull</b></td><td>—</td><td>—</td><td>Phase 1 is GA only (§3)</td></tr>
+</table></div>
+
+<h2>E · Ztor-owned (not from Bookyay) Ztor 側自建</h2>
+<ul>
+<li>creator_mapping (per event, publish gate) · sale_items / reservations (solo + bundle) · bundle merch SKUs (eShop)</li>
+<li>FE category tags and sort order · display-currency prices (Ztor currency model) · Ztor listing window (visibility)</li>
+<li>Values of overridden fields (name / description / lineup display) · Ztor slot images</li>
+</ul>
+
+<h2>Three confirmations for the meeting 給會議的三個確認</h2>
+<ul>
+<li>1. <b>Bookyay field list</b> — tick the tables above row by row (Jesse adds any fields we missed)</li>
+<li>2. Fields missing from the FE prototype (multi-show picker, doors, per-tier sale windows) → 花花 / design lead to adjust (09-08: FE's main work = field adjustments)</li>
+<li>3. Confirm the "Optional" fields can really be skipped — one fewer field pulled is one fewer sync surface</li>
+</ul>
+<p><i>Ref: BRD v1.3 (§6b imported-event mode) · designer 5.1.6.1 (source of the CS field list) · FE shop-data model (today: id / name / cat / date / venue / price / badge / soldOut + tiers)</i></p>
+</div>
+
+<!-- ═══════════════ ZH ═══════════════ -->
+<div class="zh">
 <h1>Bookyay → Ztor 活動欄位對照（草案，供 biz / Jesse 確認）</h1>
 <p><i>2026-09-08 · 依據 09-08 standup（CS 已涵蓋多數 Bookyay 欄位；FE 尚未對齊）· 母規則 BRD v1.3 §6b/BR-10 · 供 09-09 會議逐列打勾</i></p>
 <p><b>三個問題，逐欄位回答：</b> ① 要不要從 Bookyay 拉？ ② Ztor 端用在哪（FE 買家頁 / CS 管理）？ ③ 誰是權威（feed 鎖定 / 可覆寫 / Ztor 自建）？</p>
@@ -82,7 +183,24 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li>3. 「可略」欄位確認可略 — 少拉一欄就少一個同步面</li>
 </ul>
 <p><i>Ref: BRD v1.3（§6b 匯入活動模式）· designer 5.1.6.1（CS 欄位清單來源）· FE shop-data 模型（現況：id/name/cat/date/venue/price/badge/soldOut + tiers）</i></p>
-<footer>Draft 2026-09-08 · confirm per-field with biz + Jesse · companions: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · <a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html">feature wireframes</a></footer>
 </div>
+
+<footer>Draft 2026-09-08 · EN 2026-09-09 · confirm per-field with biz + Jesse · companions: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · <a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html">feature wireframes</a> · <code>?lang=zh</code> / <code>?lang=en</code> deep-links</footer>
+</div>
+<script>
+(function(){
+  var KEY='bookyay-fm-lang', root=document.documentElement, btns=document.querySelectorAll('.langbar button');
+  function set(l){
+    l = (l==='zh') ? 'zh' : 'en';
+    root.dataset.lang=l; root.lang = (l==='zh') ? 'zh-Hant' : 'en';
+    for (var i=0;i<btns.length;i++) btns[i].classList.toggle('on', btns[i].dataset.l===l);
+    try{ localStorage.setItem(KEY,l); }catch(e){}
+  }
+  var q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
+  var s=null; try{ s=localStorage.getItem(KEY); }catch(e){}
+  set(q||s||'en');
+  for (var i=0;i<btns.length;i++) btns[i].addEventListener('click', function(){ set(this.dataset.l); });
+})();
+</script>
 </body>
 </html>
