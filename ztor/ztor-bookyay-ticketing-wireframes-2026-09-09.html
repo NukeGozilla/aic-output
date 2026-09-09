@@ -330,7 +330,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="screenlbl">活動管理 · Bookyay 異動（隨 feed 到達）</span>
     <div class="box" style="margin-top:0"><span class="pill warn">變更</span> <b>開演時間 7:30 PM → 8:00 PM</b>（來自 feed 19:00）→ 頁面已更新 · 已 Email 通知 533 位購票者 · Wallet 已刷新</div>
     <div class="box"><span class="pill gray">增量</span> allocation 1,000 → 1,200：可售池自動 +200，可再分配給販售項目</div>
-    <div class="box"><span class="pill bad">取消</span> 活動被 Bookyay 取消 → 自動下架 + 全部票作廢 + 通知購票者；<b>退款由營運在金流後台執行</b>（大量退款路徑 open #19）</div>
+    <div class="box"><span class="pill bad">取消</span> 活動被 Bookyay 取消 → 自動下架 + 全部票作廢 + 通知購票者；<b>退款由營運在金流後台執行</b>（大量退款路徑 open #11）</div>
   </div>
   <div data-panel="s5d">
     <div class="box"><b>這些功能不在 CS — 各自有明確的家：</b></div>
@@ -379,7 +379,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   </div>
   <div data-panel="s6b">
     <span class="screenlbl">CS · 作廢確認（#ORD-1041 套組）</span>
-    <div class="box" style="margin-top:0"><b>確認作廢這筆訂單？</b><br>將發生：<br>· 🎫 票 QR #T-0531 立即失效（門口掃描顯示紅色）<br>· 📦 取貨 QR #P-0207 失效<br>· 套組<b>整組作廢</b> — 票與周邊一起（BR-40）<br>· 作廢狀態同步回 Bookyay（快速通道 open #8）</div>
+    <div class="box" style="margin-top:0"><b>確認作廢這筆訂單？</b><br>將發生：<br>· 🎫 票 QR #T-0531 立即失效（門口掃描顯示紅色）<br>· 📦 取貨 QR #P-0207 失效<br>· 套組<b>整組作廢</b> — 票與周邊一起（BR-40）<br>· 作廢狀態同步回 Bookyay（快速通道 open #9）</div>
     <div class="box"><span class="pill warn">提醒</span> 金額 NT$2,400 請至 Stripe / Antom 後台退回 — 系統不動錢<br><span class="pill gray">作廢結果由客服以 Email 回覆買家</span></div>
     <div class="box"><span class="btn">確認作廢</span> <span class="btn ghost">取消</span></div>
   </div>
@@ -399,7 +399,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="notes">
 <span class="chip">Void-only; money on gateway console; buyer copy 取消 <code>BR-40</code></span>
 <span class="chip">Bundle voids whole-order <code>BR-40</code></span>
-<span class="chip">Payload <code>BR-63</code> · daily + manual <code>BR-60</code> · void fast path open #8</span>
+<span class="chip">Payload <code>BR-63</code> · daily + manual <code>BR-60</code> · void fast path open #9</span>
 <span class="chip decide">#2 — bundle merch on cancel</span>
 </div>
 </div>
@@ -446,8 +446,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   </div>
   <div data-panel="s7d">
     <span class="screenlbl">Bookyay · Organizer App 帳號</span>
-    <div class="box" style="margin-top:0"><b>每場獨立 organizer_login</b><br>5/15 小巨蛋 → 帳號 A（只能掃這一場）<br>6/02 見面會 → 帳號 B<br><span class="pill warn">可行性待 Bookyay 確認（open #5）</span></div>
-    <div class="box">若不可行 → 營運備案：專用裝置或名單管制（open #5 備案）</div>
+    <div class="box" style="margin-top:0"><b>每場獨立 organizer_login</b><br>5/15 小巨蛋 → 帳號 A（只能掃這一場）<br>6/02 見面會 → 帳號 B<br><span class="pill warn">可行性待 Bookyay 確認（open #6）</span></div>
+    <div class="box">若不可行 → 營運備案：專用裝置或名單管制（open #6 備案）</div>
   </div>
 </div>
 <div class="notes">
@@ -455,8 +455,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <span class="chip">Feed down, sync-back up <code>BR-10</code> · <code>BR-60/63</code></span>
 <span class="chip">ztor_tag channel reporting — no money settlement <code>BR-62</code> · A5</span>
 <span class="chip">Scan-status feed（已入場/未入場）<code>BR-64</code> — 09-07 new ask</span>
-<span class="chip">Scoped scanning logins <code>BR-31</code> — feasibility open #5</span>
-<span class="chip">Dynamic vs static pre-issued QR — open #6</span>
+<span class="chip">Scoped scanning logins <code>BR-31</code> — feasibility open #6</span>
+<span class="chip">Dynamic vs static pre-issued QR — open #7</span>
 </div>
 </div>
 </section>
@@ -499,7 +499,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <span class="chip">Web-only sales; app = handoff + read-only visibility <code>BR-23</code></span>
 <span class="chip">No dead ends — entry always resolves to the web page</span>
 <span class="chip">Bought on web ≠ invisible in app (09-03 concern)</span>
-<span class="chip decide">#22 — app surface list & copy (花花 + L + Jeff)</span>
+<span class="chip decide">#18 — app surface list & copy (花花 + L + Jeff)</span>
 </div>
 </div>
 </section>
