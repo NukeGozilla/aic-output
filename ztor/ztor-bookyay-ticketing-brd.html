@@ -81,7 +81,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li>Seated events</li>
 <li>Creator self-serve (killed 08-27, permanent)</li>
 <li>Queue-It / spike infra (small curated events only)</li>
-<li>App support at launch (web-first, ~10 events; app shows redirect)</li>
+<li>App sales at launch (web-first, ~10 events; app = web handoff + read-only order visibility, BR-23)</li>
 <li>POPCORN / crypto payment</li>
 <li>Money settlement between companies (same group — <code>ztor_tag</code> only)</li>
 <li>WhatsApp / IG support channels</li>
@@ -119,7 +119,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li><b>BR-20</b> Event listing + event detail pages; buyers cannot distinguish event classes (future-proofing; Phase 1 = Bookyay-origin only). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s1" style="color:var(--gold);font-weight:600">WF §1</a>〕</li>
 <li><b>BR-21</b> Checkout on Ztor gateway; <b>no call to Bookyay in the payment path</b> (checkout works when Bookyay is down). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s2" style="color:var(--gold);font-weight:600">WF §2</a>〕</li>
 <li><b>BR-22</b> Per-buyer purchase cap per event: number <b>TBD — biz decides Wed (open #1)</b>. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s2" style="color:var(--gold);font-weight:600">WF §2</a>〕</li>
-<li><b>BR-23</b> App: no native ticketing; orders screen deep-links/redirects to web.</li>
+<li><b>BR-23</b> <b>App (Phase 1 — no in-app sales):</b> event &amp; ticket purchases are web-only. What the app user sees: (a) event/eShop entry points <b>hand off to mobile web</b> (「前往 ztor.com」, opens in-app browser) — no dead-end storefront; (b) ticket orders bought on web appear <b>read-only in the app order list</b>, deep-linking to the web My Wallet for the QR; (c) no purchase flow, no native wallet render — app sales come after web proves smooth (§11). Exact surfaces &amp; copy = design work (open #22; 09-03 direction split — full visibility vs minimal app — to align). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s8" style="color:var(--gold);font-weight:600">WF §8</a>〕</li>
 <li><b>BR-24</b> Loyalty: <b>deferred out of 2.3</b> (09-03 — VIP/Loyalty/KYC cut from the release). No points display at ticket purchase Phase 1; retro-credit question moves to the loyalty stream.</li>
 <li><b>BR-25</b> Pricing &amp; currency: Bookyay sets the allocation price in the event's base currency (<b>TBD — biz decides Wed, open #3</b>); ztor.com displays per the Ztor currency model — user display currency by registration IP, Ztor-controlled FX table, no live FX. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s1" style="color:var(--gold);font-weight:600">WF §1</a>〕</li>
 </ul>
@@ -240,6 +240,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>19</td><td>Mass-refund path on event cancel: gateway bulk refund vs per-order manual (BR-43; refunds are ops-side now)</td><td>Eric + ops</td></tr>
 <tr><td>20</td><td>Bundle amount in sync-back transactions: full bundle price or ticket-leg attribution only (BR-63)</td><td>Jeff + Bookyay finance</td></tr>
 <tr><td>21</td><td><b>Field mapping confirm</b> — which Bookyay fields to pull / skip / build Ztor-side (<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-field-mapping-2026-09-08.html" style="color:var(--gold);font-weight:600">draft table</a>); FE prototype field adjustments follow</td><td>Biz + Jesse (09-09)</td></tr>
+<tr><td>22</td><td>App transition UX (BR-23): surface list + copy for the web handoff and read-only order visibility — align the 09-03 direction split (full visibility vs minimal app)</td><td>花花 + L + Jeff</td></tr>
 </table></div>
 <h2>11 · Milestones</h2>
 <p>Sept: design + dev → <b>early-Nov: web rollout (~10 events)</b> → <b>Dec: creator sales reports on ztor.com</b> → app support after web proves smooth. <i>(Revised 2026-09-02: rollout moved end-Oct → early-Nov, reports Nov → Dec.)</i></p>

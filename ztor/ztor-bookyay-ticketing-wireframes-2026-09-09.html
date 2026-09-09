@@ -70,7 +70,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <p class="sub">Biz walkthrough Wed 09-09 · wireframes = direction, not final design · click the state pills to flip each screen · contract: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · flows: <a href="ztor-bookyay-integration-2026-08-06.html">one-pager tab C</a></p>
 
 <nav aria-label="Sections">
-<a href="#s1">1 · 活動列表與詳情</a><a href="#s2">2 · 購票結帳</a><a href="#s3">3 · My Wallet</a><a href="#s4">4 · 活動設定</a><a href="#s5">5 · 活動管理</a><a href="#s6">6 · 交易管理</a><a href="#s7">7 · Bookyay BO</a>
+<a href="#s1">1 · 活動列表與詳情</a><a href="#s2">2 · 購票結帳</a><a href="#s3">3 · My Wallet</a><a href="#s4">4 · 活動設定</a><a href="#s5">5 · 活動管理</a><a href="#s6">6 · 交易管理</a><a href="#s7">7 · Bookyay BO</a><a href="#s8">8 · App（過渡期）</a>
 </nav>
 
 <!-- S1 -->
@@ -457,6 +457,49 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <span class="chip">Scan-status feed（已入場/未入場）<code>BR-64</code> — 09-07 new ask</span>
 <span class="chip">Scoped scanning logins <code>BR-31</code> — feasibility open #5</span>
 <span class="chip">Dynamic vs static pre-issued QR — open #6</span>
+</div>
+</div>
+</section>
+
+
+<!-- S8 -->
+<section id="s8">
+<div class="shead"><span class="snum">8</span><h2>買家 · App（過渡期 — 不提供站內購票）</h2></div>
+<p class="goal">Phase 1 活動與 eShop 只在 Web 販售。App 使用者看到的是：導流到網頁，加上已購訂單的唯讀可見 — 不留死路，也不裝作有功能。</p>
+<div class="stage">
+<div class="wf">
+  <div class="states"><span class="lbl">State</span>
+    <button aria-pressed="true" data-for="s8a">入口導流</button>
+    <button aria-pressed="false" data-for="s8b">訂單可見（唯讀）</button>
+    <button aria-pressed="false" data-for="s8c">App 沒有的</button>
+  </div>
+  <div data-panel="s8a" class="on">
+    <span class="screenlbl">App · 活動入口</span>
+    <div class="box" style="margin-top:0"><b>探索頁 · 活動區塊</b><br>活動卡（海報 · 名稱 · 日期）— 點擊 ↓</div>
+    <div class="box" style="background:#fff"><b>前往 ztor.com 購票</b><br>活動購票目前於網頁提供<br><span class="btn">在瀏覽器開啟</span> <span class="btn ghost">取消</span></div>
+    <div class="box">開啟 in-app browser 直達該活動詳情頁；App 不出現買不了的購買按鈕（沒有死路）</div>
+  </div>
+  <div data-panel="s8b">
+    <span class="screenlbl">App · 我的訂單</span>
+    <div class="box" style="margin-top:0">訂單列表（與 Web 同帳號）</div>
+    <div class="box" style="background:#fff"><b>#ORD-1042</b> · 小巨蛋演唱會 一般票 ×2 <span class="pill ok">已付款</span><br><span class="btn ghost">在網頁開啟 My Wallet（QR）</span></div>
+    <div class="box" style="background:#fff"><b>#ORD-0998</b> · 巡演T恤 ×1 <span class="pill gray">待取貨</span></div>
+    <div class="box">唯讀 — 在 Web 買的票 App 看得到（不會「買了就消失」）；出示 QR 走網頁 My Wallet（行動瀏覽器可用於入場）</div>
+  </div>
+  <div data-panel="s8c">
+    <div class="box"><b>Phase 1 App 刻意不做：</b></div>
+    <div class="row">
+      <div class="box" style="background:#fff"><b>站內購票 / 結帳</b><br>→ Web 專屬；App 銷售待 Web 穩定後（§11）</div>
+      <div class="box" style="background:#fff"><b>原生錢包 QR</b><br>→ 走網頁 My Wallet deep link</div>
+    </div>
+    <div class="box"><span class="pill gray">09-03 方向待對齊：訂單完整可見 vs 極簡 App — 設計定案前以本節為預設</span></div>
+  </div>
+</div>
+<div class="notes">
+<span class="chip">Web-only sales; app = handoff + read-only visibility <code>BR-23</code></span>
+<span class="chip">No dead ends — entry always resolves to the web page</span>
+<span class="chip">Bought on web ≠ invisible in app (09-03 concern)</span>
+<span class="chip decide">#22 — app surface list & copy (花花 + L + Jeff)</span>
 </div>
 </div>
 </section>
