@@ -29,6 +29,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <body>
 <div class="wrap">
 <div class="topbar"><a class="backlink" href="ztor-bookyay-ticketing-brd.html">← BRD v1.3</a><span style="color:var(--muted);font-size:12px">draft for 09-09 confirm · source of truth: <a href="https://github.com/NukeGozilla/ztor-docs/blob/main/outputs/specs/ticketing-field-mapping-draft-2026-09-08.md" style="color:var(--gold)">the .md on GitHub</a></span></div>
+<div class="docnav" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px"><a href="ztor-bookyay-ticketing-brd.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">BRD v1.3</a><a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">Wireframes</a><a href="ztor-bookyay-field-mapping-2026-09-08.html" style="display:inline-block;border:1.5px solid var(--gold);background:var(--gold-bg);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:800;color:var(--gold);text-decoration:none">Field mapping</a><a href="ztor-bookyay-integration-2026-08-06.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">One-pager</a></div>
 <h1>Bookyay → Ztor 活動欄位對照（草案，供 biz / Jesse 確認）</h1>
 <p><i>2026-09-08 · 依據 09-08 standup（CS 已涵蓋多數 Bookyay 欄位；FE 尚未對齊）· 母規則 BRD v1.3 §6b/BR-10 · 供 09-09 會議逐列打勾</i></p>
 <p><b>三個問題，逐欄位回答：</b> ① 要不要從 Bookyay 拉？ ② Ztor 端用在哪（FE 買家頁 / CS 管理）？ ③ 誰是權威（feed 鎖定 / 可覆寫 / Ztor 自建）？</p>
@@ -37,7 +38,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
 <tr><td>event id</td><td><b>必拉</b></td><td>對帳鍵（匯入 / 回寫 / 作廢）</td><td>feed 鎖定</td><td>同一場只帶入一次的鍵</td></tr>
 <tr><td>活動名稱</td><td><b>必拉</b></td><td>FE 卡片+詳情 · CS</td><td>feed，<b>可覆寫</b>顯示名稱</td><td>BR-10</td></tr>
-<tr><td>活動類型</td><td><b>必拉</b></td><td>FE 分類篩選 · CS 標籤</td><td>feed 鎖定</td><td>Ztor 端對應到 FE 三分類；線上演唱會歸屬 = 週三決策 #5</td></tr>
+<tr><td>活動類型</td><td><b>必拉</b></td><td>FE 分類篩選 · CS 標籤</td><td>feed 鎖定</td><td>Ztor 端對應到 FE 三分類；線上演唱會歸屬 = 週三決策 #4</td></tr>
 <tr><td>描述</td><td><b>必拉</b></td><td>FE 詳情</td><td>feed，<b>可覆寫</b></td><td>Ztor UI 版面不同（09-08：欄位調整以符合 UI/UX）</td></tr>
 <tr><td>主辦方名稱</td><td><b>必拉</b></td><td>CS 對應創作者的線索</td><td>feed 鎖定</td><td>無 creator 檔案 — 僅文字</td></tr>
 <tr><td>Lineup / 表演者</td><td><b>必拉</b></td><td>FE 詳情</td><td>feed，顯示<b>可覆寫</b></td><td>Ztor 用戶連結 = Ztor 側自建</td></tr>
@@ -47,7 +48,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <div class="tblwrap"><table>
 <tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
 <tr><td>活動日期 + 開演時間</td><td><b>必拉</b></td><td>FE · Wallet · 通知</td><td>feed 鎖定</td><td>變更 → 通知購票者（BR-42）</td></tr>
-<tr><td>開放入場（doors）</td><td><b>必拉</b></td><td>FE 詳情 · 票面</td><td>feed 鎖定</td><td>退款截止的基準（BR-44）</td></tr>
+<tr><td>開放入場（doors）</td><td><b>必拉</b></td><td>FE 詳情 · 票面</td><td>feed 鎖定</td><td>票面與通知顯示</td></tr>
 <tr><td>結束時間</td><td>可略</td><td>—</td><td>—</td><td>FE 不顯示可略；拉了不用也無妨</td></tr>
 <tr><td>場地名稱 + 城市</td><td><b>必拉</b></td><td>FE 卡片+詳情</td><td>feed 鎖定</td><td></td></tr>
 <tr><td>完整地址</td><td>建議拉</td><td>FE 詳情（地圖連結）</td><td>feed 鎖定</td><td></td></tr>
@@ -62,7 +63,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <div class="tblwrap"><table>
 <tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
 <tr><td>allocation 數量</td><td><b>必拉</b></td><td>CS 唯讀容量</td><td>feed 鎖定</td><td>MVP = 整場庫存（take-all）；增減隨 feed</td></tr>
-<tr><td>票種結構（名稱/價格/數量）</td><td><b>必拉</b></td><td>CS sale_item 基礎 · FE 票區</td><td>feed 鎖定</td><td>票價幣別 = 週三決策 #4</td></tr>
+<tr><td>票種結構（名稱/價格/數量）</td><td><b>必拉</b></td><td>CS sale_item 基礎 · FE 票區</td><td>feed 鎖定</td><td>票價幣別 = 週三決策 #3</td></tr>
 <tr><td><b>各票種販售時窗</b></td><td><b>必拉</b></td><td>FE 開賣/停售 · CS</td><td>feed 鎖定</td><td>09-08 確認：Bookyay 原生支援逐票種時窗 — 不需要「同活動開兩頁」的變通</td></tr>
 <tr><td>預開 QR payload</td><td><b>必拉</b></td><td>Wallet 出票</td><td>feed 鎖定</td><td>BR-02/30</td></tr>
 <tr><td>活動狀態（售票中/取消…）</td><td><b>必拉</b></td><td>FE + CS 生命週期</td><td>feed 鎖定</td><td>取消 → 自動下架+作廢（BR-43）</td></tr>
