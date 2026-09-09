@@ -244,7 +244,6 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </table></div>
 <h2>11 · Milestones</h2>
 <p>Sept: design + dev → <b>early-Nov: web rollout (~10 events)</b> → <b>Dec: creator sales reports on ztor.com</b> → app support after web proves smooth. <i>(Revised 2026-09-02: rollout moved end-Oct → early-Nov, reports Nov → Dec.)</i></p>
-<p><b>Phase 2 direction (09-07):</b> Bookyay + Ztor <b>co-sale</b> — allocation becomes a real sub-block, sync runs more frequently, ops are <b>channel-partitioned</b>: each side voids/refunds its own channel's tickets; event lifecycle stays Bookyay-owned.</p>
 <h2>12 · Acceptance (condensed)</h2>
 <ul>
 <li>1. Event with allocation 100 + pre-issued QRs appears in CS import; publish blocked until creator_mapping.</li>
@@ -265,7 +264,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li><b>09-08</b> standup: Bookyay-as-engine reaffirmed ("Store 不自建 Ticketing Engine") · Phase 1 events sell <b>only on Ztor</b>, not co-listed on bookyay.com (fits take-all, BR-02) · Bookyay natively supports <b>per-tier sale windows</b> — no two-page workaround needed · CS covers most Bookyay fields; FE not yet aligned → field-mapping confirm = open #5 · <b>creator self-serve removal re-confirmed</b> in the 09-08 dev sync (L-confirm closed) · <b>refund cutoff dropped, BR-44 removed</b> — no buyer refunds; void = manual ops action, outcome by email</li>
 </ul>
 <ul>
-<li><b>09-07</b> <code>store_tag</code> → <code>ztor_tag</code> · refunds = offline request + void-only, money moves on gateway console (BR-40) · sync transport = hourly CS auto-pull + manual sync button (BR-10) · <b>allocation = take-all</b> for MVP (BR-02) · sync-back cadence = <b>daily</b>, MVP reporting home = Bookyay BO (BR-60/62) · sync-back payload = 3 record types (BR-63) · <b>presentation-field override in CS allowed</b> (name/description/lineup; BR-10) · <b>no creator binding — flat event feed, per-event creator_mapping in CS</b> (BR-10/11) · <b>C1 closed: CS shows read-only 已入場/未入場 lists via a Bookyay scan-status feed</b> (BR-64) · Phase 2 = co-sale with channel-partitioned ops (§11)</li>
+<li><b>09-07</b> <code>store_tag</code> → <code>ztor_tag</code> · refunds = offline request + void-only, money moves on gateway console (BR-40) · sync transport = hourly CS auto-pull + manual sync button (BR-10) · <b>allocation = take-all</b> for MVP (BR-02) · sync-back cadence = <b>daily</b>, MVP reporting home = Bookyay BO (BR-60/62) · sync-back payload = 3 record types (BR-63) · <b>presentation-field override in CS allowed</b> (name/description/lineup; BR-10) · <b>no creator binding — flat event feed, per-event creator_mapping in CS</b> (BR-10/11) · <b>C1 closed: CS shows read-only 已入場/未入場 lists via a Bookyay scan-status feed</b> (BR-64)</li>
 <li><b>09-04</b> Ticket QR + scanner = Bookyay (BR-02/03, §6b) · allocation quantity read-only from API feed (§6b) · cancel origin = Bookyay BO reaffirmed, Ztor-originated cancel rejected (BR-43)</li>
 <li><b>09-03</b> Per-unit QR in bundles (BR-13) · auto-import replaces manual import (BR-10) · creator-side self-serve disabled, admin-only (§6b) · loyalty deferred out of 2.3 (BR-24) · buyer-facing 退款 → 取消 (BR-40)</li>
 <li><b>09-02</b> Milestone: rollout end-Oct → early-Nov, creator reports Nov → Dec (§11)</li>
