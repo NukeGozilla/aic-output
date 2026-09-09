@@ -33,6 +33,7 @@ td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}
 .legend{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:4px 16px 10px;font-size:13px;margin:10px 0 4px}
 .legend table{border:0;box-shadow:none}
 .legend h3{margin:12px 0 6px}
+.rev{background:var(--gold-bg);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:12.5px;color:var(--muted);margin:6px 0 0}
 html[data-lang="en"] .zh{display:none}
 html[data-lang="zh"] .en{display:none}
 footer{margin-top:40px;color:var(--muted);font-size:11.5px}
@@ -50,8 +51,9 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <!-- ═══════════════ EN ═══════════════ -->
 <div class="en">
 <h1>Bookyay → Ztor Event Field Mapping (draft — for biz / Jesse to confirm)</h1>
-<p><i>2026-09-08 · English version 2026-09-09 (legend added from BRD BR-10) · from the 09-08 standup (CS already covers most Bookyay fields; FE not yet aligned) · parent rule: BRD v1.3 §6b / BR-10 · tick row by row at the 09-09 meeting</i></p>
-<p><b>Three questions, answered per field:</b> ① Pull it from Bookyay? ② Where does Ztor use it (FE buyer pages / CS admin)? ③ Who is the authority (feed-locked / override allowed / Ztor-owned)?</p>
+<p><i>2026-09-08 · English version 2026-09-09 · from the 09-08 standup (CS already covers most Bookyay fields; FE not yet aligned) · parent rule: BRD v1.3 §6b / BR-10 · tick row by row at the 09-09 meeting</i></p>
+<div class="rev"><b>rev 09-09:</b> legend added (from BR-10) · 8 review fixes — authority labels unified · event type / lineup / event status split by authority · QR payload and scan status flagged as ticket-level feeds · change-notification markers on date, doors, venue · T&amp;C row · series/show sequence promoted to Must pull</div>
+<p><b>Three questions, answered per field:</b> ① Pull it from Bookyay? ② Where does Ztor use it (FE buyer pages / CS admin)? ③ Who is the authority (feed-locked / feed · override allowed / Ztor-owned)?</p>
 
 <div class="legend">
 <h3>Legend 圖例 — Pull? 拉取</h3>
@@ -78,27 +80,28 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><th>Field <span class="zhh">欄位</span></th><th>Pull? <span class="zhh">拉取</span></th><th>Ztor use <span class="zhh">用途</span></th><th>Authority <span class="zhh">權威</span></th><th>Notes <span class="zhh">備註</span></th></tr>
 <tr><td>event id</td><td><b>Must pull</b></td><td>Reconciliation key (import / sync-back / void)</td><td>feed-locked</td><td>The key that guarantees each event is imported once</td></tr>
 <tr><td>Event name</td><td><b>Must pull</b></td><td>FE card + detail · CS</td><td>feed · <b>override allowed</b> (display name)</td><td>BR-10</td></tr>
-<tr><td>Event type</td><td><b>Must pull</b></td><td>FE category filter · CS tag</td><td>feed-locked</td><td>Mapped to the three FE categories on the Ztor side; 線上演唱會 (online concert) / Watch Party placement = Wed decision #4</td></tr>
+<tr><td>Event type</td><td><b>Must pull</b></td><td>FE category filter · CS tag</td><td>feed-locked (source value) · FE three-category <b>mapping = Ztor-owned</b></td><td>線上演唱會 (online concert) / Watch Party placement = Wed decision #4</td></tr>
 <tr><td>Description</td><td><b>Must pull</b></td><td>FE detail</td><td>feed · <b>override allowed</b></td><td>Ztor UI layout differs (09-08: fields adjusted to fit UI/UX)</td></tr>
 <tr><td>Organizer name</td><td><b>Must pull</b></td><td>CS clue for creator mapping</td><td>feed-locked</td><td>Bookyay has no creator profile — text only</td></tr>
-<tr><td>Lineup / performers</td><td><b>Must pull</b></td><td>FE detail</td><td>feed · <b>override allowed</b> (display)</td><td>Links to Ztor user accounts = Ztor-owned</td></tr>
-<tr><td>Series / show sequence</td><td>Recommended</td><td>FE multi-show picker · CS</td><td>feed-locked</td><td>09-08: multi-show selection is an FE requirement</td></tr>
+<tr><td>Lineup / performers</td><td><b>Must pull</b></td><td>FE detail</td><td>feed · <b>override allowed</b> (display text) · links to Ztor accounts = <b>Ztor-owned</b></td><td></td></tr>
+<tr><td>Series / show sequence</td><td><b>Must pull</b></td><td>FE multi-show picker · CS</td><td>feed-locked</td><td>09-08: multi-show selection is an FE requirement → Must pull (was "Recommended")</td></tr>
+<tr><td>Terms / refund policy link (T&amp;C)</td><td>Recommended</td><td>FE detail · checkout</td><td>feed-locked</td><td>BR-14 inherits Bookyay's terms — Jesse to confirm whether the feed carries a terms URL</td></tr>
 </table></div>
 
 <h2>B · Time &amp; place 時間與地點</h2>
 <div class="tblwrap"><table>
 <tr><th>Field <span class="zhh">欄位</span></th><th>Pull? <span class="zhh">拉取</span></th><th>Ztor use <span class="zhh">用途</span></th><th>Authority <span class="zhh">權威</span></th><th>Notes <span class="zhh">備註</span></th></tr>
 <tr><td>Event date + start time</td><td><b>Must pull</b></td><td>FE · Wallet · notifications</td><td>feed-locked</td><td>Change → notify ticket holders (BR-42)</td></tr>
-<tr><td>Doors open</td><td><b>Must pull</b></td><td>FE detail · ticket face</td><td>feed-locked</td><td>Shown on the ticket and in notifications</td></tr>
+<tr><td>Doors open</td><td><b>Must pull</b></td><td>FE detail · ticket face</td><td>feed-locked</td><td>Shown on the ticket and in notifications; change → notify ticket holders (BR-42)</td></tr>
 <tr><td>End time</td><td>Optional</td><td>—</td><td>—</td><td>FE does not show it; harmless to pull and not use</td></tr>
-<tr><td>Venue name + city</td><td><b>Must pull</b></td><td>FE card + detail</td><td>feed-locked</td><td></td></tr>
-<tr><td>Full address</td><td>Recommended</td><td>FE detail (map link)</td><td>feed-locked</td><td></td></tr>
+<tr><td>Venue name + city</td><td><b>Must pull</b></td><td>FE card + detail</td><td>feed-locked</td><td>Change → notify ticket holders (BR-42)</td></tr>
+<tr><td>Full address</td><td>Recommended</td><td>FE detail (map link)</td><td>feed-locked</td><td>Map link is nice-to-have, not required; venue-change notification keys off the "Venue name" row</td></tr>
 </table></div>
 
 <h2>C · Visual assets 視覺素材</h2>
 <div class="tblwrap"><table>
 <tr><th>Field <span class="zhh">欄位</span></th><th>Pull? <span class="zhh">拉取</span></th><th>Ztor use <span class="zhh">用途</span></th><th>Authority <span class="zhh">權威</span></th><th>Notes <span class="zhh">備註</span></th></tr>
-<tr><td>Bookyay images</td><td>Pull as <b>reference</b></td><td>Preview during CS setup</td><td>—</td><td>Production assets are always <b>re-uploaded on Ztor</b> (slot specs 2:3 / 16:9 / gallery, BR-10)</td></tr>
+<tr><td>Bookyay images</td><td>Pull as <b>reference</b></td><td>Preview during CS setup</td><td><b>Ztor-owned (re-upload)</b></td><td>Production assets are always <b>re-uploaded on Ztor</b> (slot specs 2:3 / 16:9 / gallery, BR-10)</td></tr>
 <tr><td>Video teaser</td><td>Optional</td><td>—</td><td>—</td><td>Ztor uploads its own if needed</td></tr>
 </table></div>
 
@@ -108,84 +111,114 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>Allocation quantity</td><td><b>Must pull</b></td><td>CS read-only capacity</td><td>feed-locked</td><td>MVP = full event inventory (take-all); top-ups / reductions follow the feed</td></tr>
 <tr><td>Tier structure (name / price / quantity)</td><td><b>Must pull</b></td><td>Basis for CS sale_items · FE ticket section</td><td>feed-locked</td><td>Ticket price currency = Wed decision #3</td></tr>
 <tr><td><b>Per-tier sale window</b></td><td><b>Must pull</b></td><td>FE on-sale / off-sale · CS</td><td>feed-locked</td><td>09-08 confirmed: Bookyay natively supports per-tier windows — no "two pages per event" workaround needed</td></tr>
-<tr><td>Pre-issued QR payload</td><td><b>Must pull</b></td><td>Wallet ticket issuance</td><td>feed-locked</td><td>BR-02/30</td></tr>
-<tr><td>Event status (on sale / cancelled …)</td><td><b>Must pull</b></td><td>FE + CS lifecycle</td><td>feed-locked</td><td>Cancel → auto delist + void (BR-43)</td></tr>
+<tr><td>Pre-issued QR payload</td><td><b>Must pull</b></td><td>Wallet ticket issuance</td><td>feed-locked</td><td>BR-02/30 · <b>ticket-level</b>: delivered once at allocation time, not part of the hourly event pull — a separate API surface</td></tr>
+<tr><td>Per-ticket scan status (checked-in / not)</td><td><b>Must pull</b></td><td>CS read-only 已入場/未入場 list</td><td>feed-locked</td><td>BR-04/64 · §6b (09-07) · scanning happens in the Bookyay Organizer App; Ztor reads, never writes</td></tr>
+<tr><td>Event status (Bookyay lifecycle: on sale / cancelled …)</td><td><b>Must pull</b></td><td>FE + CS lifecycle</td><td>feed-locked</td><td>Cancel → auto delist + void (BR-43). Ztor listing visibility (published ↔ paused) = <b>Ztor-owned</b> (§7), not in the feed</td></tr>
 <tr><td>Seat map / assigned seating</td><td><b>Do not pull</b></td><td>—</td><td>—</td><td>Phase 1 is GA only (§3)</td></tr>
 </table></div>
 
 <h2>E · Ztor-owned (not from Bookyay) Ztor 側自建</h2>
 <ul>
 <li>creator_mapping (per event, publish gate) · sale_items / reservations (solo + bundle) · bundle merch SKUs (eShop)</li>
-<li>FE category tags and sort order · display-currency prices (Ztor currency model) · Ztor listing window (visibility)</li>
-<li>Values of overridden fields (name / description / lineup display) · Ztor slot images</li>
+<li>Bookyay event type → FE three-category <b>mapping</b> · FE category tags and sort order · display-currency prices (Ztor currency model) · Ztor listing window / visibility (published ↔ paused)</li>
+<li>Values of overridden fields (name / description / lineup display) · Lineup links to Ztor accounts · Ztor slot images</li>
 </ul>
 
 <h2>Three confirmations for the meeting 給會議的三個確認</h2>
 <ul>
-<li>1. <b>Bookyay field list</b> — tick the tables above row by row (Jesse adds any fields we missed)</li>
+<li>1. <b>Bookyay field list</b> — tick the tables above row by row (Jesse adds any fields we missed, and confirms the two ticket-level feeds: QR payload and scan status)</li>
 <li>2. Fields missing from the FE prototype (multi-show picker, doors, per-tier sale windows) → 花花 / design lead to adjust (09-08: FE's main work = field adjustments)</li>
 <li>3. Confirm the "Optional" fields can really be skipped — one fewer field pulled is one fewer sync surface</li>
 </ul>
-<p><i>Ref: BRD v1.3 (§6b imported-event mode) · designer 5.1.6.1 (source of the CS field list) · FE shop-data model (today: id / name / cat / date / venue / price / badge / soldOut + tiers)</i></p>
+<p><i>Ref: BRD v1.3 (§6b imported-event mode · BR-04 feed · BR-64 scan status) · designer 5.1.6.1 (source of the CS field list) · FE shop-data model (today: id / name / cat / date / venue / price / badge / soldOut + tiers)</i></p>
 </div>
 
 <!-- ═══════════════ ZH ═══════════════ -->
 <div class="zh">
 <h1>Bookyay → Ztor 活動欄位對照（草案，供 biz / Jesse 確認）</h1>
 <p><i>2026-09-08 · 依據 09-08 standup（CS 已涵蓋多數 Bookyay 欄位；FE 尚未對齊）· 母規則 BRD v1.3 §6b/BR-10 · 供 09-09 會議逐列打勾</i></p>
-<p><b>三個問題，逐欄位回答：</b> ① 要不要從 Bookyay 拉？ ② Ztor 端用在哪（FE 買家頁 / CS 管理）？ ③ 誰是權威（feed 鎖定 / 可覆寫 / Ztor 自建）？</p>
+<div class="rev"><b>rev 09-09：</b>加圖例（依 BR-10）· 審閱修正 8 項 — 權威標籤統一 · 活動類型／Lineup／活動狀態拆分權威 · QR payload 與掃描狀態標為票券層級 feed · 日期／doors／場地加變更通知標記 · 新增 T&amp;C 列 · 系列／場次序升為必拉</div>
+<p><b>三個問題，逐欄位回答：</b> ① 要不要從 Bookyay 拉？ ② Ztor 端用在哪（FE 買家頁 / CS 管理）？ ③ 誰是權威（feed 鎖定 / feed，可覆寫 / Ztor 自建）？</p>
+
+<div class="legend">
+<h3>圖例 — 拉取</h3>
+<div class="tblwrap"><table>
+<tr><th>值</th><th>意思</th></tr>
+<tr><td><b>必拉</b></td><td>Phase 1 必要 — 有 Ztor 介面依賴它</td></tr>
+<tr><td>建議拉</td><td>現在或不久會用到；不阻塞</td></tr>
+<tr><td>可略</td><td>可以不拉；拉了不用也無妨</td></tr>
+<tr><td>拉作參考</td><td>只給 Admin 設定時參考，不對買家顯示</td></tr>
+<tr><td><b>不拉</b></td><td>Phase 1 範圍外</td></tr>
+</table></div>
+<h3>圖例 — 權威 <span style="font-weight:400;color:var(--muted)">（規則來源：BRD v1.3 BR-10 / §6b）</span></h3>
+<div class="tblwrap"><table>
+<tr><th>值</th><th>意思</th></tr>
+<tr><td><b>feed 鎖定</b></td><td>Bookyay 是唯一權威。Ztor 唯讀顯示，每小時同步一律覆蓋；Ztor 端永不可編輯。</td></tr>
+<tr><td><b>feed，可覆寫</b></td><td>Bookyay 提供預設值，CS Admin 可為 Ztor UI 需要覆寫。<b>覆寫後該欄位停止跟隨 feed；一鍵還原 feed 值。</b> 只有三個欄位適用：顯示名稱、描述、Lineup 顯示。</td></tr>
+<tr><td><b>Ztor 自建</b></td><td>不來自 Bookyay（E 節）。</td></tr>
+<tr><td>—</td><td>不拉或不顯示，無權威可言。</td></tr>
+</table></div>
+</div>
+
 <h2>A · 基本資訊</h2>
 <div class="tblwrap"><table>
 <tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
 <tr><td>event id</td><td><b>必拉</b></td><td>對帳鍵（匯入 / 回寫 / 作廢）</td><td>feed 鎖定</td><td>同一場只帶入一次的鍵</td></tr>
-<tr><td>活動名稱</td><td><b>必拉</b></td><td>FE 卡片+詳情 · CS</td><td>feed，<b>可覆寫</b>顯示名稱</td><td>BR-10</td></tr>
-<tr><td>活動類型</td><td><b>必拉</b></td><td>FE 分類篩選 · CS 標籤</td><td>feed 鎖定</td><td>Ztor 端對應到 FE 三分類；線上演唱會 / Watch Party 歸屬 = 週三決策 #4</td></tr>
+<tr><td>活動名稱</td><td><b>必拉</b></td><td>FE 卡片+詳情 · CS</td><td>feed，<b>可覆寫</b>（顯示名稱）</td><td>BR-10</td></tr>
+<tr><td>活動類型</td><td><b>必拉</b></td><td>FE 分類篩選 · CS 標籤</td><td>feed 鎖定（來源值）· FE 三分類<b>對應表 = Ztor 自建</b></td><td>線上演唱會 / Watch Party 歸屬 = 週三決策 #4</td></tr>
 <tr><td>描述</td><td><b>必拉</b></td><td>FE 詳情</td><td>feed，<b>可覆寫</b></td><td>Ztor UI 版面不同（09-08：欄位調整以符合 UI/UX）</td></tr>
 <tr><td>主辦方名稱</td><td><b>必拉</b></td><td>CS 對應創作者的線索</td><td>feed 鎖定</td><td>無 creator 檔案 — 僅文字</td></tr>
-<tr><td>Lineup / 表演者</td><td><b>必拉</b></td><td>FE 詳情</td><td>feed，顯示<b>可覆寫</b></td><td>Ztor 用戶連結 = Ztor 側自建</td></tr>
-<tr><td>系列 / 場次序</td><td>建議拉</td><td>FE 場次選購 · CS</td><td>feed 鎖定</td><td>09-08：多場次選購是 FE 需求</td></tr>
+<tr><td>Lineup / 表演者</td><td><b>必拉</b></td><td>FE 詳情</td><td>feed，<b>可覆寫</b>（顯示文字）· Ztor 帳號連結 = <b>Ztor 自建</b></td><td></td></tr>
+<tr><td>系列 / 場次序</td><td><b>必拉</b></td><td>FE 場次選購 · CS</td><td>feed 鎖定</td><td>09-08：多場次選購是 FE 需求 → 必拉（原「建議拉」）</td></tr>
+<tr><td>條款 / 退票規則連結（T&amp;C）</td><td>建議拉</td><td>FE 詳情 · 結帳</td><td>feed 鎖定</td><td>BR-14 沿用 Bookyay 條款 — 請 Jesse 確認 feed 是否帶條款 URL</td></tr>
 </table></div>
+
 <h2>B · 時間與地點</h2>
 <div class="tblwrap"><table>
 <tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
 <tr><td>活動日期 + 開演時間</td><td><b>必拉</b></td><td>FE · Wallet · 通知</td><td>feed 鎖定</td><td>變更 → 通知購票者（BR-42）</td></tr>
-<tr><td>開放入場（doors）</td><td><b>必拉</b></td><td>FE 詳情 · 票面</td><td>feed 鎖定</td><td>票面與通知顯示</td></tr>
+<tr><td>開放入場（doors）</td><td><b>必拉</b></td><td>FE 詳情 · 票面</td><td>feed 鎖定</td><td>票面與通知顯示；變更 → 通知購票者（BR-42）</td></tr>
 <tr><td>結束時間</td><td>可略</td><td>—</td><td>—</td><td>FE 不顯示可略；拉了不用也無妨</td></tr>
-<tr><td>場地名稱 + 城市</td><td><b>必拉</b></td><td>FE 卡片+詳情</td><td>feed 鎖定</td><td></td></tr>
-<tr><td>完整地址</td><td>建議拉</td><td>FE 詳情（地圖連結）</td><td>feed 鎖定</td><td></td></tr>
+<tr><td>場地名稱 + 城市</td><td><b>必拉</b></td><td>FE 卡片+詳情</td><td>feed 鎖定</td><td>變更 → 通知購票者（BR-42）</td></tr>
+<tr><td>完整地址</td><td>建議拉</td><td>FE 詳情（地圖連結）</td><td>feed 鎖定</td><td>地圖連結為加分項、非必要；場地變更通知以「場地名稱」列為準</td></tr>
 </table></div>
+
 <h2>C · 視覺素材</h2>
 <div class="tblwrap"><table>
 <tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
-<tr><td>Bookyay 圖片</td><td>拉作<b>參考</b></td><td>CS 設定時預覽</td><td>—</td><td>正式素材一律 <b>Ztor 重新上傳</b>（版位規格 2:3 / 16:9 / 圖庫，BR-10）</td></tr>
+<tr><td>Bookyay 圖片</td><td>拉作<b>參考</b></td><td>CS 設定時預覽</td><td><b>Ztor 自建（重新上傳）</b></td><td>正式素材一律 <b>Ztor 重新上傳</b>（版位規格 2:3 / 16:9 / 圖庫，BR-10）</td></tr>
 <tr><td>影片預告</td><td>可略</td><td>—</td><td>—</td><td>Ztor 端如需，自行上傳</td></tr>
 </table></div>
+
 <h2>D · 票務（核心）</h2>
 <div class="tblwrap"><table>
 <tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
 <tr><td>allocation 數量</td><td><b>必拉</b></td><td>CS 唯讀容量</td><td>feed 鎖定</td><td>MVP = 整場庫存（take-all）；增減隨 feed</td></tr>
 <tr><td>票種結構（名稱/價格/數量）</td><td><b>必拉</b></td><td>CS sale_item 基礎 · FE 票區</td><td>feed 鎖定</td><td>票價幣別 = 週三決策 #3</td></tr>
 <tr><td><b>各票種販售時窗</b></td><td><b>必拉</b></td><td>FE 開賣/停售 · CS</td><td>feed 鎖定</td><td>09-08 確認：Bookyay 原生支援逐票種時窗 — 不需要「同活動開兩頁」的變通</td></tr>
-<tr><td>預開 QR payload</td><td><b>必拉</b></td><td>Wallet 出票</td><td>feed 鎖定</td><td>BR-02/30</td></tr>
-<tr><td>活動狀態（售票中/取消…）</td><td><b>必拉</b></td><td>FE + CS 生命週期</td><td>feed 鎖定</td><td>取消 → 自動下架+作廢（BR-43）</td></tr>
+<tr><td>預開 QR payload</td><td><b>必拉</b></td><td>Wallet 出票</td><td>feed 鎖定</td><td>BR-02/30 · <b>票券層級</b>：於 allocation 時一次交付，不在每小時活動拉取內 — 另一個 API 介面</td></tr>
+<tr><td>各票券掃描狀態（已入場/未入場）</td><td><b>必拉</b></td><td>CS 唯讀名單（已入場/未入場）</td><td>feed 鎖定</td><td>BR-04/64 · §6b（09-07）· 掃描在 Bookyay Organizer App，Ztor 只讀不寫</td></tr>
+<tr><td>活動狀態（Bookyay 生命週期：售票中/取消…）</td><td><b>必拉</b></td><td>FE + CS 生命週期</td><td>feed 鎖定</td><td>取消 → 自動下架+作廢（BR-43）。Ztor 上架可見性（published ↔ paused）= <b>Ztor 自建</b>（§7），不在 feed</td></tr>
 <tr><td>座位圖 / 劃位</td><td><b>不拉</b></td><td>—</td><td>—</td><td>Phase 1 僅 GA（§3）</td></tr>
 </table></div>
+
 <h2>E · Ztor 側自建（不從 Bookyay 來）</h2>
 <ul>
 <li>creator_mapping（逐場對應，發布閘門）· sale_items / reservations（單賣+套組）· 套組周邊 SKU（eShop）</li>
-<li>FE 分類標籤與排序 · 顯示幣別價格（Ztor 幣別模型）· Ztor 上架窗口（可見性）</li>
-<li>覆寫欄位的值（名稱/描述/Lineup 顯示）· Ztor 版位圖片</li>
+<li>Bookyay 活動類型 → FE 三分類<b>對應表</b> · FE 分類標籤與排序 · 顯示幣別價格（Ztor 幣別模型）· Ztor 上架窗口 / 可見性（published ↔ paused）</li>
+<li>覆寫欄位的值（名稱/描述/Lineup 顯示）· Lineup 的 Ztor 帳號連結 · Ztor 版位圖片</li>
 </ul>
+
 <h2>給會議的三個確認</h2>
 <ul>
-<li>1. <b>Bookyay 欄位清單</b>以上表為準逐列打勾（Jesse 補我們漏掉的欄位）</li>
+<li>1. <b>Bookyay 欄位清單</b>以上表為準逐列打勾（Jesse 補我們漏掉的欄位；並確認 QR payload 與掃描狀態這兩個票券層級 feed 的介面）</li>
 <li>2. FE 原型缺的欄位（場次選購、doors、逐票種時窗）→ 花花/設計負責人調整（09-08：FE 主要工作 = 欄位調整）</li>
 <li>3. 「可略」欄位確認可略 — 少拉一欄就少一個同步面</li>
 </ul>
-<p><i>Ref: BRD v1.3（§6b 匯入活動模式）· designer 5.1.6.1（CS 欄位清單來源）· FE shop-data 模型（現況：id/name/cat/date/venue/price/badge/soldOut + tiers）</i></p>
+<p><i>Ref: BRD v1.3（§6b 匯入活動模式 · BR-04 feed · BR-64 掃描狀態）· designer 5.1.6.1（CS 欄位清單來源）· FE shop-data 模型（現況：id/name/cat/date/venue/price/badge/soldOut + tiers）</i></p>
 </div>
 
-<footer>Draft 2026-09-08 · EN 2026-09-09 · confirm per-field with biz + Jesse · companions: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · <a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html">feature wireframes</a> · <code>?lang=zh</code> / <code>?lang=en</code> deep-links</footer>
+<footer>Draft 2026-09-08 · rev 09-09 · confirm per-field with biz + Jesse · companions: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · <a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html">feature wireframes</a> · <code>?lang=zh</code> / <code>?lang=en</code> deep-links</footer>
 </div>
 <script>
 (function(){
