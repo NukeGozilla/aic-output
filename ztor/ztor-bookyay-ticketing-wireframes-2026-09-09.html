@@ -270,12 +270,12 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
         <div class="box" style="background:#fff">圖庫 1–8 張 <span class="pill ok">3 張</span></div>
       </div>
     </div>
-    <div class="box"><b>文字欄位 — 預設跟隨 feed，可覆寫</b>
+    <div class="box"><b>Ztor 補充內容 — 獨立顯示層（新增不改，09-10 定案）</b>
       <div class="row" style="margin-top:6px">
-        <div class="box" style="background:#fff">顯示名稱 <span class="pill gray">跟隨 feed</span> <span class="btn ghost">覆寫</span></div>
-        <div class="box" style="background:#fff">描述 <span class="pill warn">已覆寫</span> <span class="btn ghost">還原</span></div>
+        <div class="box" style="background:#fff">補充文案區塊 <span class="pill gray">選配 · 顯示於 feed 描述之後</span></div>
+        <div class="box" style="background:#fff">四語翻譯 <span class="pill gray">自 feed 原文產生（機制 open #16）</span></div>
       </div>
-      日期時間・場地・類型・容量恆鎖定，只能來自 feed
+      feed 欄位一律唯讀 — 名稱・描述・日期・場地・類型・容量全部只能來自 Bookyay
     </div>
   </div>
   <div data-panel="s4e">
@@ -289,7 +289,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <span class="chip">Flat auto-import; status derived on Ztor <code>BR-10</code></span>
 <span class="chip">① creator_mapping = publish gate <code>BR-11</code></span>
 <span class="chip">② reservations vs allocation; per-unit QR in bundles <code>BR-12/13</code></span>
-<span class="chip">③ presentation override, facts locked <code>BR-10</code></span>
+<span class="chip">③ add-never-edit：feed 全鎖，Ztor 顯示層新增（圖片/補充/翻譯）<code>BR-10</code></span>
 <span class="chip decide">#2 — pricing currency shows up in step ②</span>
 </div>
 </div>
