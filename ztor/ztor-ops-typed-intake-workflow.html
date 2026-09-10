@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ops Request Intake — Typed Workflow v1</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    background:#0a0a0a; color:#e0e0e0; min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- header ---------- */
+  .header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); padding:30px 44px 24px; border-bottom:2px solid #2a2a4a; }
+  .header h1 { font-size:27px; font-weight:700; color:#fff; letter-spacing:-.3px; }
+  .header h1 .badge { display:inline-block; background:#b58850; color:#1a1a1a; font-size:10px; font-weight:800; letter-spacing:.6px; padding:3px 9px; border-radius:11px; margin-left:12px; vertical-align:middle; }
+  .header .sub { font-size:13.5px; color:#8f8fb0; margin-top:7px; line-height:1.55; max-width:900px; }
+  .header .meta { font-size:11.5px; color:#6a6a88; margin-top:10px; }
+  .tabs { display:flex; gap:7px; margin-top:18px; flex-wrap:wrap; }
+  .tabs button {
+    font:inherit; font-size:12px; font-weight:600; color:#aaaadd; cursor:pointer;
+    background:rgba(255,255,255,.04); border:1px solid #2a2a4a; padding:7px 15px; border-radius:7px; transition:all .15s;
+  }
+  .tabs button:hover { background:rgba(181,136,80,.12); border-color:#b58850; color:#d2a36f; }
+  .tabs button.on { background:rgba(181,136,80,.22); border-color:#b58850; color:#fff; }
+
+  /* ---------- callout ---------- */
+  .why { margin:0 44px; margin-top:26px; background:rgba(181,136,80,.07); border:1px solid #4a3a22; border-left:3px solid #b58850; border-radius:8px; padding:16px 20px; }
+  .why b { color:#d2a36f; font-size:12px; letter-spacing:.5px; text-transform:uppercase; display:block; margin-bottom:7px; }
+  .why p { font-size:13.5px; line-height:1.65; color:#bbb; }
+  .why p + p { margin-top:9px; }
+  .why em { color:#e8c99a; font-style:normal; font-weight:600; }
+
+  .board { display:none; padding:30px 44px 70px; }
+  .board.on { display:block; }
+  .board > h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:#666; margin:34px 0 16px; }
+  .board > h2:first-child { margin-top:8px; }
+
+  /* ---------- flow: intake ---------- */
+  .funnel { display:flex; flex-direction:column; align-items:center; }
+  .intake {
+    background:#16213e; border:1.5px solid #3a3a6a; border-radius:10px; padding:16px 26px; text-align:center; min-width:430px;
+  }
+  .intake .t { font-size:14.5px; font-weight:700; color:#fff; }
+  .intake .s { font-size:12px; color:#9a9ac0; margin-top:5px; line-height:1.5; }
+  .triage {
+    background:rgba(181,136,80,.10); border:1.5px dashed #b58850; border-radius:10px; padding:14px 26px; text-align:center; min-width:430px;
+  }
+  .triage .t { font-size:13.5px; font-weight:700; color:#d2a36f; }
+  .triage .s { font-size:11.5px; color:#a99070; margin-top:5px; line-height:1.5; }
+  .down { width:2px; height:26px; background:#3a3a5a; position:relative; }
+  .down::after { content:""; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid #3a3a5a; }
+  .split { width:78%; height:2px; background:#3a3a5a; margin-top:26px; position:relative; }
+  .split::before { content:""; position:absolute; top:-26px; left:50%; width:2px; height:26px; background:#3a3a5a; }
+
+  /* ---------- lanes ---------- */
+  .lanes { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:0; align-items:start; }
+  .lane { position:relative; padding-top:26px; }
+  .lane::before { content:""; position:absolute; top:0; left:50%; width:2px; height:26px; background:#3a3a5a; }
+  .lane::after { content:""; position:absolute; top:19px; left:50%; transform:translateX(-50%); border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid #3a3a5a; }
+
+  .lane-head { border-radius:9px 9px 0 0; padding:13px 15px; border:1.5px solid; border-bottom:none; }
+  .lane-head .pfx { font-size:10px; font-weight:800; letter-spacing:1.2px; padding:2px 7px; border-radius:4px; display:inline-block; }
+  .lane-head .nm { font-size:15px; font-weight:700; color:#fff; margin-top:8px; }
+  .lane-head .ex { font-size:11px; color:#9a9ab5; margin-top:5px; line-height:1.45; }
+  .lane-body { border:1.5px solid; border-top:none; border-radius:0 0 9px 9px; padding:14px 13px 16px; background:rgba(255,255,255,.015); }
+
+  .step { border-radius:7px; padding:11px 12px; font-size:12.5px; line-height:1.5; border:1px solid; background:rgba(255,255,255,.03); }
+  .step .n { font-size:9.5px; font-weight:800; letter-spacing:.9px; color:#777; display:block; margin-bottom:4px; }
+  .step .h { font-weight:650; color:#e8e8f0; display:block; }
+  .step .d { color:#9494ad; font-size:11.5px; margin-top:4px; display:block; line-height:1.5; }
+  .step.gate { border-style:dashed; }
+  .step.gate .h { color:#e8c99a; }
+  .step.art { background:rgba(255,255,255,.05); }
+  .step.art .h::before { content:"📄 "; }
+  .step.term { text-align:center; font-weight:700; font-size:12px; letter-spacing:.4px; }
+
+  .vgap { width:2px; height:16px; background:#333350; margin:0 auto; position:relative; }
+  .vgap::after { content:""; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); border-left:4px solid transparent; border-right:4px solid transparent; border-top:6px solid #333350; }
+  .vgap.lbl { height:26px; }
+  .vgap .tag { position:absolute; left:9px; top:3px; font-size:9.5px; color:#7a7a95; white-space:nowrap; background:#0a0a0a; padding:0 4px; }
+
+  /* lane colours */
+  .cm .lane-head, .cm .lane-body { border-color:#7a5c33; }
+  .cm .lane-head { background:rgba(181,136,80,.14); }
+  .cm .lane-head .pfx { background:#b58850; color:#1a1a1a; }
+  .cm .step { border-color:#5c4526; }
+  .cm .step.term { background:rgba(181,136,80,.18); color:#e8c99a; border-color:#b58850; }
+
+  .cr .lane-head, .cr .lane-body { border-color:#2a5a8f; }
+  .cr .lane-head { background:rgba(74,158,255,.12); }
+  .cr .lane-head .pfx { background:#4a9eff; color:#0a1a2a; }
+  .cr .step { border-color:#24466b; }
+  .cr .step.term { background:rgba(74,158,255,.16); color:#9fcaff; border-color:#4a9eff; }
+
+  .nf .lane-head, .nf .lane-body { border-color:#5a3d8a; }
+  .nf .lane-head { background:rgba(124,58,237,.14); }
+  .nf .lane-head .pfx { background:#a78bfa; color:#1a0f2e; }
+  .nf .step { border-color:#452e6b; }
+  .nf .step.term { background:rgba(167,139,250,.16); color:#c9b6fd; border-color:#a78bfa; }
+
+  .bf .lane-head, .bf .lane-body { border-color:#8a3d3d; }
+  .bf .lane-head { background:rgba(239,68,68,.11); }
+  .bf .lane-head .pfx { background:#f87171; color:#2a0a0a; }
+  .bf .step { border-color:#6b2d2d; }
+  .bf .step.term { background:rgba(248,113,113,.15); color:#fca5a5; border-color:#f87171; }
+
+  .sla { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+  .sla span { font-size:9.5px; padding:3px 7px; border-radius:4px; background:rgba(0,0,0,.35); color:#a8a8c0; border:1px solid rgba(255,255,255,.08); }
+  .sla span b { color:#d8d8e8; font-weight:650; }
+
+  /* ---------- emergency rail ---------- */
+  .emg { margin-top:34px; border:1.5px dashed #ff4d4d; border-radius:10px; background:rgba(255,77,77,.06); padding:18px 22px; }
+  .emg .hd { display:flex; align-items:center; gap:11px; flex-wrap:wrap; }
+  .emg .hd .pfx { font-size:10px; font-weight:800; letter-spacing:1.2px; background:#ff4d4d; color:#2a0000; padding:3px 8px; border-radius:4px; }
+  .emg .hd h3 { font-size:15px; font-weight:700; color:#ffb4b4; }
+  .emg .hd .note { font-size:11.5px; color:#c98a8a; }
+  .emg .rail { display:flex; align-items:center; gap:0; margin-top:15px; flex-wrap:wrap; }
+  .emg .rn { background:rgba(255,77,77,.10); border:1px solid #8a3d3d; border-radius:7px; padding:10px 14px; font-size:12px; color:#f0c8c8; text-align:center; min-width:150px; }
+  .emg .rn b { display:block; color:#ffd0d0; font-size:12.5px; margin-bottom:3px; }
+  .emg .ra { width:26px; height:2px; background:#8a3d3d; position:relative; flex-shrink:0; }
+  .emg .ra::after { content:""; position:absolute; right:-1px; top:50%; transform:translateY(-50%); border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:7px solid #8a3d3d; }
+  .emg .foot { font-size:12px; color:#c98a8a; margin-top:14px; line-height:1.6; }
+  .emg .foot b { color:#ffb4b4; }
+
+  /* ---------- tables ---------- */
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  th { text-align:left; font-size:10px; font-weight:700; letter-spacing:1.1px; text-transform:uppercase; color:#7a7a95; padding:9px 12px; border-bottom:1.5px solid #2a2a4a; white-space:nowrap; }
+  td { padding:12px; border-bottom:1px solid #1e1e30; color:#c4c4d4; line-height:1.55; vertical-align:top; }
+  tr:hover td { background:rgba(255,255,255,.018); }
+  td .pill { font-size:9.5px; font-weight:800; letter-spacing:1px; padding:2.5px 7px; border-radius:4px; }
+  .p-cm { background:#b58850; color:#1a1a1a; }
+  .p-cr { background:#4a9eff; color:#0a1a2a; }
+  .p-nf { background:#a78bfa; color:#1a0f2e; }
+  .p-bf { background:#f87171; color:#2a0a0a; }
+  td b { color:#e8e8f0; font-weight:650; }
+  td .mut { color:#8a8aa5; }
+
+  /* ---------- cards ---------- */
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:15px; }
+  .card { background:#111; border:1px solid #232338; border-radius:9px; padding:17px 19px; }
+  .card h4 { font-size:13.5px; font-weight:700; color:#fff; margin-bottom:9px; display:flex; align-items:center; gap:9px; }
+  .card h4 .k { font-size:9.5px; font-weight:800; letter-spacing:.9px; padding:2.5px 7px; border-radius:4px; background:#2a2a4a; color:#aaaadd; }
+  .card p, .card li { font-size:12.5px; line-height:1.65; color:#a8a8bd; }
+  .card ul { padding-left:17px; margin-top:5px; }
+  .card li { margin-bottom:5px; }
+  .card li b, .card p b { color:#d8d8e8; font-weight:650; }
+  .card.warn { border-color:#4a3a22; background:rgba(181,136,80,.05); }
+  .card.warn h4 .k { background:#b58850; color:#1a1a1a; }
+  .card.gap { border-color:#3a2a4a; }
+  .card.gap h4 .k { background:#a78bfa; color:#1a0f2e; }
+  .card.q { border-color:#24466b; }
+  .card.q h4 .k { background:#4a9eff; color:#0a1a2a; }
+
+  .prio { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .pcard { border-radius:9px; padding:15px 17px; border:1px solid; }
+  .pcard .lv { font-size:16px; font-weight:800; letter-spacing:.5px; }
+  .pcard .nm { font-size:12.5px; color:#c8c8d8; font-weight:650; margin-top:2px; }
+  .pcard .d { font-size:11.5px; color:#9494ad; margin-top:8px; line-height:1.55; }
+  .pcard .r { font-size:11px; margin-top:10px; padding-top:9px; border-top:1px solid rgba(255,255,255,.07); color:#a8a8bd; }
+  .pcard .r b { color:#e0e0ee; }
+  .p0 { border-color:#ff4d4d; background:rgba(255,77,77,.08); } .p0 .lv { color:#ff8080; }
+  .p1 { border-color:#d97706; background:rgba(217,119,6,.08); } .p1 .lv { color:#fbbf24; }
+  .p2 { border-color:#2a5a8f; background:rgba(74,158,255,.07); } .p2 .lv { color:#7fb8ff; }
+  .p3 { border-color:#333350; background:rgba(255,255,255,.02); } .p3 .lv { color:#9a9ab5; }
+
+  .foot { padding:22px 44px 50px; font-size:11.5px; color:#5a5a75; border-top:1px solid #1a1a2a; line-height:1.7; }
+  .foot b { color:#8a8aa5; }
+
+  @media (max-width:1180px) { .lanes { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:640px) { .lanes { grid-template-columns:1fr; } .header,.board,.why,.foot { padding-left:20px; padding-right:20px; } .why { margin-left:20px; margin-right:20px; } .intake,.triage { min-width:0; width:100%; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Ops Request Intake — Typed Workflow<span class="badge">DRAFT v1</span></h1>
+  <p class="sub">A redraw of the ops-manager request flow. The original diagram was a <strong style="color:#d2a36f">campaign-launch</strong> flow — one path, one approver, no build step. This version keeps that path intact as the <strong style="color:#d2a36f">CM</strong> lane and adds three more, so New Feature / Change Request / Bug Fix each get the artifact, approver and SLA they actually need.</p>
+  <p class="meta">Ztor · Operations × IT · 2026-09-10 · for review by Jeff / Alex / Ops</p>
+  <div class="tabs">
+    <button class="on" data-b="flow">Flow</button>
+    <button data-b="tax">Type Taxonomy</button>
+    <button data-b="prio">Priority Axis</button>
+    <button data-b="rules">Rules &amp; Open Questions</button>
+  </div>
+</div>
+
+<div class="why">
+  <b>Why the legend is a routing decision, not decoration</b>
+  <p>If all four types still walk the same six boxes, the labels add nothing. A type is only worth naming when it changes something: <em>different required artifact, different approver, different SLA, different path.</em> That is what each lane below encodes.</p>
+  <p>The type that was missing from the original is <em>Campaign / Content</em> — which is what the original diagram actually is. Without naming it, everything gets mislabelled "change request."</p>
+</div>
+
+<!-- ============ FLOW ============ -->
+<div class="board on" id="b-flow">
+
+  <h2>Single entry → triage → four lanes</h2>
+
+  <div class="funnel">
+    <div class="intake">
+      <div class="t">Intake Form — one door for everything</div>
+      <div class="s">Requester · region · what &amp; why · desired date · evidence<br>→ auto-creates one Asana ticket with a type prefix</div>
+    </div>
+    <div class="down"></div>
+    <div class="triage">
+      <div class="t">Ops Manager triage — classify &amp; assign</div>
+      <div class="s">Sets <b>type</b> (CM / CR / NF / BF) + <b>priority</b> (P0–P3) + <b>one named owner</b> · ticket ID issued here</div>
+    </div>
+    <div class="split"></div>
+  </div>
+
+  <div class="lanes">
+
+    <!-- CM -->
+    <div class="lane cm">
+      <div class="lane-head">
+        <span class="pfx">CM</span>
+        <div class="nm">Campaign / Content</div>
+        <div class="ex">Promo, seasonal push, content drop, pricing event, landing page</div>
+        <div class="sla">
+          <span>Approver <b>Alex</b></span>
+          <span>SLA <b>14 days</b></span>
+        </div>
+      </div>
+      <div class="lane-body">
+        <div class="step art"><span class="n">ARTIFACT</span><span class="h">Campaign brief</span><span class="d">KPI · budget · target launch date · assets ready-by</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 1</span><span class="h">Regional proposal + joint assessment</span><span class="d">HK / TW / SEA. Mandatory Ops &amp; IT consult — feasibility, lead time, infra. IT confirms the achievable date back here.</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 2</span><span class="h">Present to Alex</span><span class="d">With KPI, budget, estimated launch date. cc Agnes.</span></div>
+        <div class="vgap"></div>
+        <div class="step gate"><span class="n">GATE</span><span class="h">Approve / Decline</span><span class="d">Decline → amend &amp; re-present. <b style="color:#e8c99a">Max 2 rounds</b>, then Parked.</span></div>
+        <div class="vgap lbl"><span class="tag">approved — SLA clock starts</span></div>
+        <div class="step"><span class="n">STEP 4</span><span class="h">Setup &amp; UAT testing</span><span class="d">System config · payment gateway test · load test</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 5</span><span class="h">Final sign-off &amp; launch</span><span class="d">Go-live + monitoring</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 6</span><span class="h">Weekly performance &amp; reconciliation</span><span class="d">Needs an exit rule: hit KPI → extend · miss 2 cycles → kill or re-scope</span></div>
+        <div class="vgap"></div>
+        <div class="step term">LIVE → EXTENDED / CLOSED / PARKED</div>
+      </div>
+    </div>
+
+    <!-- CR -->
+    <div class="lane cr">
+      <div class="lane-head">
+        <span class="pfx">CR</span>
+        <div class="nm">Change Request</div>
+        <div class="ex">Tweak to something that already exists — copy, config, rule, threshold, layout</div>
+        <div class="sla">
+          <span>Approver <b>Ops Mgr + IT lead</b></span>
+          <span>SLA <b>3–5 days / sprint</b></span>
+        </div>
+      </div>
+      <div class="lane-body">
+        <div class="step art"><span class="n">ARTIFACT</span><span class="h">CR form + impact note</span><span class="d">What changes · why · blast radius · rollback plan</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 1</span><span class="h">Sizing by Ops Mgr + IT lead</span><span class="d">Config-only or code change? Estimate dev-days.</span></div>
+        <div class="vgap"></div>
+        <div class="step gate"><span class="n">GATE</span><span class="h">Threshold check</span><span class="d">Over <b style="color:#e8c99a">N dev-days</b> or has budget impact → escalate to Alex. Otherwise no exec approval needed.</span></div>
+        <div class="vgap lbl"><span class="tag">sized — clock starts</span></div>
+        <div class="step"><span class="n">STEP 2</span><span class="h">Config or build</span><span class="d">Config-only → 3–5 working days · code → next sprint slot</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 3</span><span class="h">UAT + requester verifies</span><span class="d">The person who asked confirms it's what they meant</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 4</span><span class="h">Release</span><span class="d">Bundled into the next release window</span></div>
+        <div class="vgap"></div>
+        <div class="step term">SHIPPED / REJECTED</div>
+      </div>
+    </div>
+
+    <!-- NF -->
+    <div class="lane nf">
+      <div class="lane-head">
+        <span class="pfx">NF</span>
+        <div class="nm">New Feature</div>
+        <div class="ex">Something that doesn't exist yet — new screen, new capability, new integration</div>
+        <div class="sla">
+          <span>Approver <b>Alex + Product</b></span>
+          <span>SLA <b>roadmap cycle</b></span>
+        </div>
+      </div>
+      <div class="lane-body">
+        <div class="step art"><span class="n">ARTIFACT</span><span class="h">BRD (required)</span><span class="d">Problem · user · business case · requirements. <b style="color:#c9b6fd">This is the step the original flow has no room for.</b></span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 1</span><span class="h">One-pager → BRD</span><span class="d">Idea qualifies before anyone writes a full BRD</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 2</span><span class="h">Feasibility &amp; sizing</span><span class="d">IT + Product. T-shirt size, dependencies, risk.</span></div>
+        <div class="vgap"></div>
+        <div class="step gate"><span class="n">GATE</span><span class="h">Roadmap slot decision</span><span class="d">Alex + Product. Into a named release, or backlog. <b style="color:#e8c99a">Not a date promise — a slot.</b></span></div>
+        <div class="vgap lbl"><span class="tag">slotted</span></div>
+        <div class="step"><span class="n">STEP 3</span><span class="h">Design → Dev → QA</span><span class="d">Normal delivery cycle</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 4</span><span class="h">UAT → sign-off → launch</span><span class="d">Rejoins the CM lane's steps 4–5 from here</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 5</span><span class="h">Post-launch review</span><span class="d">Did it do what the BRD claimed?</span></div>
+        <div class="vgap"></div>
+        <div class="step term">SHIPPED / BACKLOG</div>
+      </div>
+    </div>
+
+    <!-- BF -->
+    <div class="lane bf">
+      <div class="lane-head">
+        <span class="pfx">BF</span>
+        <div class="nm">Bug Fix</div>
+        <div class="ex">Something built is not behaving as specified</div>
+        <div class="sla">
+          <span>Approver <b>none — IT triage</b></span>
+          <span>SLA <b>by priority</b></span>
+        </div>
+      </div>
+      <div class="lane-body">
+        <div class="step art"><span class="n">ARTIFACT</span><span class="h">Repro steps + severity</span><span class="d">Environment · account · timestamp · screenshot / video · expected vs actual</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 1</span><span class="h">IT triage</span><span class="d">Confirm repro, set priority. <b style="color:#fca5a5">No business approval required</b> — bugs are not negotiated.</span></div>
+        <div class="vgap"></div>
+        <div class="step gate"><span class="n">GATE</span><span class="h">Not-a-bug check</span><span class="d">Behaves as specified? → re-route to <b style="color:#e8c99a">CR</b> lane, don't close silently.</span></div>
+        <div class="vgap lbl"><span class="tag">triaged</span></div>
+        <div class="step"><span class="n">STEP 2</span><span class="h">Route by priority</span><span class="d">P0 / P1 → hotfix rail below · P2 / P3 → sprint or backlog</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 3</span><span class="h">Fix &amp; verify</span><span class="d">Reporter verifies the fix, not the developer</span></div>
+        <div class="vgap"></div>
+        <div class="step"><span class="n">STEP 4</span><span class="h">Close with root cause</span><span class="d">One line: what broke, why, what stops it recurring</span></div>
+        <div class="vgap"></div>
+        <div class="step term">CLOSED / → CR</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="emg">
+    <div class="hd">
+      <span class="pfx">P0 BYPASS</span>
+      <h3>Emergency hotfix rail</h3>
+      <span class="note">Site down · payment broken · data loss · security. Bypasses intake, triage and every approval gate.</span>
+    </div>
+    <div class="rail">
+      <div class="rn"><b>Anyone raises</b>Direct to IT on-call</div>
+      <div class="ra"></div>
+      <div class="rn"><b>IT acts immediately</b>No approval wait</div>
+      <div class="ra"></div>
+      <div class="rn"><b>Verify &amp; confirm</b>Reporter + IT</div>
+      <div class="ra"></div>
+      <div class="rn"><b>Ticket filed within 24h</b>Retroactive, not optional</div>
+      <div class="ra"></div>
+      <div class="rn"><b>Post-incident note</b>Root cause + prevention</div>
+    </div>
+    <p class="foot"><b>Why this must be on the diagram:</b> a P0 will bypass the process whether or not you draw it. If the emergency lane isn't official, ops will just Slack IT directly — and you lose the paper trail exactly when you most need it. Drawing it makes the shortcut auditable.</p>
+  </div>
+
+</div>
+
+<!-- ============ TAXONOMY ============ -->
+<div class="board" id="b-tax">
+  <h2>The four types — what actually differs</h2>
+  <table>
+    <thead>
+      <tr><th>Type</th><th>Use when</th><th>Required artifact</th><th>Approver</th><th>Lead time</th><th>Path</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="pill p-cm">CM</span><br><b style="display:inline-block;margin-top:6px">Campaign / Content</b></td>
+        <td>Running a promo, content drop, seasonal push, pricing event. <span class="mut">Nothing new is built — things are configured and scheduled.</span></td>
+        <td><b>Campaign brief</b><br><span class="mut">KPI · budget · launch date · assets ready-by</span></td>
+        <td><b>Alex</b><br><span class="mut">cc Agnes</span></td>
+        <td><b>14 days</b><br><span class="mut">from approval, not from proposal</span></td>
+        <td>The original six steps, unchanged</td>
+      </tr>
+      <tr>
+        <td><span class="pill p-cr">CR</span><br><b style="display:inline-block;margin-top:6px">Change Request</b></td>
+        <td>Changing something that already exists — copy, threshold, rule, config, layout tweak.</td>
+        <td><b>CR form + impact note</b><br><span class="mut">what · why · blast radius · rollback</span></td>
+        <td><b>Ops Mgr + IT lead</b><br><span class="mut">Alex only above the threshold</span></td>
+        <td><b>3–5 working days</b> (config)<br><b>Next sprint</b> (code)</td>
+        <td>Skips the Alex pitch — goes straight to sizing → build → UAT</td>
+      </tr>
+      <tr>
+        <td><span class="pill p-nf">NF</span><br><b style="display:inline-block;margin-top:6px">New Feature</b></td>
+        <td>The capability doesn't exist yet. New screen, new integration, new business rule.</td>
+        <td><b>BRD</b><br><span class="mut">non-negotiable — this is the gate</span></td>
+        <td><b>Alex + Product</b></td>
+        <td><b>Roadmap cycle</b><br><span class="mut">a slot, not a date</span></td>
+        <td>Different flow entirely: BRD → feasibility → roadmap slot → dev → UAT</td>
+      </tr>
+      <tr>
+        <td><span class="pill p-bf">BF</span><br><b style="display:inline-block;margin-top:6px">Bug Fix</b></td>
+        <td>Something built is not behaving as specified.</td>
+        <td><b>Repro steps + severity</b><br><span class="mut">env · account · evidence · expected vs actual</span></td>
+        <td><b>None</b><br><span class="mut">IT triage owns it</span></td>
+        <td><b>P0 same-day → P3 backlog</b></td>
+        <td>Straight to the bug board. P0 takes the bypass rail.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Boundary cases — how to classify when it's not obvious</h2>
+  <div class="cards">
+    <div class="card"><h4><span class="k">CR vs NF</span></h4><p>Ask: <b>does the screen already exist?</b> Changing a value, rule or label on an existing surface is CR. Anything that needs a new screen, new data model or new integration is NF — even if it "feels small."</p></div>
+    <div class="card"><h4><span class="k">BF vs CR</span></h4><p>Ask: <b>does it match the spec?</b> If it behaves as specified but the spec is wrong, that's a CR, not a bug. Re-route it — never close a bug ticket as "working as intended" without opening the CR.</p></div>
+    <div class="card"><h4><span class="k">CM vs CR</span></h4><p>A campaign that needs a <b>new</b> capability to run is two tickets, not one: a CM for the campaign and an NF/CR for the capability, with the CM blocked on it. This is where the 14-day SLA usually breaks.</p></div>
+    <div class="card"><h4><span class="k">Regional splits</span></h4><p>Same campaign in HK + TW + SEA = <b>one CM ticket with regional subtasks</b>, not three tickets — otherwise IT sizes the same work three times and the reconciliation in Step 6 can't roll up.</p></div>
+  </div>
+</div>
+
+<!-- ============ PRIORITY ============ -->
+<div class="board" id="b-prio">
+  <h2>Priority is a second axis — not a fifth type</h2>
+  <div class="why" style="margin:0 0 22px">
+    <b>Two axes, never merged</b>
+    <p><em>Type</em> = what kind of work it is, and therefore which path it walks. <em>Priority</em> = how urgent it is, and therefore how fast that path runs. Every ticket carries both. "Urgent" is not a type, and a New Feature can be P1 without becoming a bug.</p>
+  </div>
+  <div class="prio">
+    <div class="pcard p0">
+      <div class="lv">P0</div><div class="nm">Critical — bypass</div>
+      <div class="d">Site down · payment failing · data loss · security exposure. Revenue is stopping right now.</div>
+      <div class="r"><b>Response:</b> immediate, hotfix rail<br><b>Set by:</b> anyone · <b>Ticket:</b> within 24h</div>
+    </div>
+    <div class="pcard p1">
+      <div class="lv">P1</div><div class="nm">High</div>
+      <div class="d">Major function broken with no workaround, or a dated campaign will miss its launch.</div>
+      <div class="r"><b>Response:</b> same/next working day<br><b>Set by:</b> Ops Mgr or IT lead</div>
+    </div>
+    <div class="pcard p2">
+      <div class="lv">P2</div><div class="nm">Normal</div>
+      <div class="d">The default. Broken but workaroundable, or planned work with a real but non-urgent date.</div>
+      <div class="r"><b>Response:</b> current or next sprint<br><b>Set by:</b> triage</div>
+    </div>
+    <div class="pcard p3">
+      <div class="lv">P3</div><div class="nm">Low / backlog</div>
+      <div class="d">Cosmetic, nice-to-have, or a good idea with no date attached.</div>
+      <div class="r"><b>Response:</b> backlog, reviewed monthly<br><b>Set by:</b> triage</div>
+    </div>
+  </div>
+
+  <h2>Guardrail</h2>
+  <div class="cards">
+    <div class="card warn"><h4><span class="k">P0/P1 inflation</span></h4><p>If everything is P1, nothing is. Only <b>Ops Mgr or IT lead</b> can set P0/P1 — requesters propose, triage decides. Review the P1 count monthly; if it's more than ~20% of tickets, the scale has stopped meaning anything.</p></div>
+    <div class="card warn"><h4><span class="k">Priority ≠ queue-jumping approval</span></h4><p>A P1 New Feature still needs a BRD and a roadmap slot. Priority speeds up the path; it doesn't delete the gates. The only true bypass is P0, and only for bugs.</p></div>
+  </div>
+</div>
+
+<!-- ============ RULES ============ -->
+<div class="board" id="b-rules">
+  <h2>IT lead-time rules — carried over from the original</h2>
+  <div class="cards">
+    <div class="card warn"><h4><span class="k">14 DAYS</span> New campaign</h4><p>Reserve at least <b>14 days</b> for IT preparation. <span class="mut">Clarified: the clock starts at <b>approval</b> (Step 3), not at proposal — and IT confirms the achievable date back to the requester at Step 1 so nobody plans against a date IT never agreed to.</span></p></div>
+    <div class="card warn"><h4><span class="k">3 DAYS</span> Out-of-hours support</h4><p>Special arrangement for IT support outside working hours must be raised at least <b>3 days</b> before the event.</p></div>
+    <div class="card warn"><h4><span class="k">3 DAYS</span> Video conversion</h4><p>Video converting takes <b>3 working days</b>. <span class="mut">Belongs on the campaign brief as an assets-ready-by dependency, not discovered at Step 4.</span></p></div>
+  </div>
+
+  <h2>Gaps in the original — fixed in this version</h2>
+  <div class="cards">
+    <div class="card gap"><h4><span class="k">1</span> No ticket ID</h4><p>Labels only work if every request has one. <b>One intake form → one ticket</b>, prefixed <code style="color:#d2a36f">CM-</code> / <code style="color:#d2a36f">CR-</code> / <code style="color:#d2a36f">NF-</code> / <code style="color:#d2a36f">BF-</code>. Otherwise the legend lives only on the diagram and never in Asana.</p></div>
+    <div class="card gap"><h4><span class="k">2</span> Unbounded decline loop</h4><p>"Revisit the details" had no round limit and no terminal state. Now: <b>max 2 amend rounds</b>, then the ticket moves to <b>Parked / Won't Do</b> with a reason. Requests should die out loud, not quietly.</p></div>
+    <div class="card gap"><h4><span class="k">3</span> "cc Agnes" is not an owner</h4><p>Every ticket names <b>one accountable owner</b> at triage who carries it end-to-end. cc is visibility; it is not accountability.</p></div>
+    <div class="card gap"><h4><span class="k">4</span> SLA clock had no start</h4><p>14 days from <b>approval</b>, stated on the ticket. Ambiguity here is what turns a lead-time rule into an argument.</p></div>
+    <div class="card gap"><h4><span class="k">5</span> Step 6 had no exit</h4><p>Weekly review with no kill/extend criteria reviews forever. Now: <b>hit KPI → extend · miss 2 consecutive cycles → kill or re-scope.</b></p></div>
+    <div class="card gap"><h4><span class="k">6</span> No build step for features</h4><p>The original went approval → UAT with nothing in between. Fine for a campaign IT only configures; impossible for a feature. The NF lane inserts BRD → feasibility → slot → dev → QA.</p></div>
+  </div>
+
+  <h2>Open questions — need a decision before this goes live</h2>
+  <div class="cards">
+    <div class="card q"><h4><span class="k">Q1</span> Who owns triage?</h4><p>One named ops manager must own classification, or types will drift within a month. Who, and who covers when they're out?</p></div>
+    <div class="card q"><h4><span class="k">Q2</span> What's the CR escalation threshold?</h4><p>"Over N dev-days or has budget impact → Alex." <b>N = ?</b> and is there a dollar figure? Without a number, everything escalates and CR collapses back into CM.</p></div>
+    <div class="card q"><h4><span class="k">Q3</span> Where does the intake form live?</h4><p>Asana form is the obvious answer since the ticket lands there anyway. Confirm — and confirm whether regional teams get separate forms or one shared form with a region field.</p></div>
+    <div class="card q"><h4><span class="k">Q4</span> Does Alex approve NF alone?</h4><p>The NF lane assumes Alex + Product jointly hold the roadmap slot. If it's Alex alone, the "Product" box comes off the diagram.</p></div>
+    <div class="card q"><h4><span class="k">Q5</span> Regional autonomy</h4><p>Can HK / TW / SEA each run CM lanes in parallel against the same IT capacity, or is there one shared queue with a cap? This determines whether the 14-day SLA is per-request or per-region.</p></div>
+    <div class="card q"><h4><span class="k">Q6</span> Colour-coding in Asana</h4><p>Cheapest win: mirror these four colours as Asana tags so the type is readable in the board, not just here.</p></div>
+  </div>
+</div>
+
+<div class="foot">
+  <b>Source:</b> redraw of the ops-manager request-workflow diagram shared 2026-09-10. Original six-step campaign path preserved as the CM lane. &nbsp;·&nbsp;
+  <b>Status:</b> DRAFT — nothing here is agreed. The six open questions are the blocking items. &nbsp;·&nbsp;
+  <b>Next:</b> walk this with Alex + Ops, settle Q1–Q6, then encode the four types as Asana tags + one intake form.
+</div>
+
+<script>
+  document.querySelectorAll('.tabs button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('on'));
+      document.querySelectorAll('.board').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      document.getElementById('b-' + b.dataset.b).classList.add('on');
+      window.scrollTo({ top:0, behavior:'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
