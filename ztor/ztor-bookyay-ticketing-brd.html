@@ -74,7 +74,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li>Event + allocation API feed to Ztor: event data, quantity, lifecycle + scan status, continuous updates (BR-04)</li>
 <li>Pre-issue QRs at allocation; take back returned QRs on reduce / release-back (BR-02/51/52)</li>
 <li>Accept the batch sync-back: ticket status · inventory burn-down · transactions (BR-60/63)</li>
-<li>Per-event <code>organizer_login</code> scoping for venue scanning (BR-31; feasibility open #6)</li>
+<li>Per-event <code>organizer_login</code> scoping for venue scanning (BR-31; feasibility open #5)</li>
 </ul>
 <p><b>Out (explicit):</b></p>
 <ul>
@@ -108,20 +108,20 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </ul>
 <h3>B · Creator Studio (admin-operated)</h3>
 <ul>
-<li><b>BR-10</b> <b>Auto-import</b> (09-03; scope corrected 09-07): Bookyay has <b>no creator profile</b> — the feed is a <b>flat list of all events allocated to Ztor</b>, not per-creator. Every allocated event imports automatically. Its status is <b>derived on the Ztor side from setup progress — not a feed field</b>: 待對應創作者 (BR-11) → 待設定販售項目 (sale items, BR-12) → publishable (= §7 <code>imported → mapped → sale_setup → published</code>). Sync (09-07): CS <b>auto-pulls the BR-04 feed hourly</b>; CS admin also has a <b>manual sync button</b>. Event fields inherit from the feed; <b>presentation fields — display name · description · lineup display — may be optionally overridden in CS for Ztor UI needs (09-07)</b>: an overridden field stops tracking the feed (one-click revert to feed value). <b>Locked (never overridable): date/time · venue · event type · capacity.</b> Images re-uploaded to Ztor specs. <i>(09-09 with Bookyay: leaning to NARROW overrides to image-only — Bookyay decision pending, ask-list #4.)</i> No manual per-event import. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s4" style="color:var(--gold);font-weight:600">WF §4</a>〕</li>
+<li><b>BR-10</b> <b>Auto-import</b> (09-03; scope corrected 09-07): Bookyay has <b>no creator profile</b> — the feed is a <b>flat list of all events allocated to Ztor</b>, not per-creator. Every allocated event imports automatically. Its status is <b>derived on the Ztor side from setup progress — not a feed field</b>: 待對應創作者 (BR-11) → 待設定販售項目 (sale items, BR-12) → publishable (= §7 <code>imported → mapped → sale_setup → published</code>). Sync (09-07): CS <b>auto-pulls the BR-04 feed hourly</b>; CS admin also has a <b>manual sync button</b>. Event fields inherit from the feed; <b>presentation fields — display name · description · lineup display — may be optionally overridden in CS for Ztor UI needs (09-07)</b>: an overridden field stops tracking the feed (one-click revert to feed value). <b>Locked (never overridable): date/time · venue · event type · capacity.</b> Images re-uploaded to Ztor specs. <i>(09-09 with Bookyay: leaning to NARROW overrides to image-only — Bookyay decision pending, ask-list #3.)</i> No manual per-event import. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s4" style="color:var(--gold);font-weight:600">WF §4</a>〕</li>
 <li><b>BR-11</b> <code>creator_mapping</code> = a <b>per-event step in CS after import</b> (Bookyay has no creator concept); required before publish (<b>publish gate</b>). Unmapped organizers: pending account + invitation (IP Bank pattern). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s4" style="color:var(--gold);font-weight:600">WF §4</a>〕</li>
 <li><b>BR-12</b> Admin creates <code>sale_item</code>s against the allocation: solo_ticket and/or bundle; each takes a <code>reservation</code>; sum of reservations ≤ allocation. Reservations may be re-balanced mid-sale (floor = sold count per sale_item). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s4" style="color:var(--gold);font-weight:600">WF §4</a>〕</li>
 <li><b>BR-13</b> Bundle = ticket(s) + ≥1 eShop merch SKU, one combined price, fiat only. <b>Every unit carries its own QR</b> (09-03: 4-item order → 4 QRs): each ticket = a pre-issued Bookyay QR; each merch = an eShop pickup QR. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s4" style="color:var(--gold);font-weight:600">WF §4</a>〕</li>
-<li><b>BR-14</b> T&amp;C: Bookyay's terms inherited; Ztor-specific T&amp;C version if legal requires (open #14).</li>
+<li><b>BR-14</b> T&amp;C: Bookyay's terms inherited; Ztor-specific T&amp;C version if legal requires (open #13).</li>
 </ul>
 <h3>C · Storefront &amp; checkout (ztor.com, web)</h3>
 <ul>
 <li><b>BR-20</b> Event listing + event detail pages; buyers cannot distinguish event classes (future-proofing; Phase 1 = Bookyay-origin only). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s1" style="color:var(--gold);font-weight:600">WF §1</a>〕</li>
 <li><b>BR-21</b> Checkout on Ztor gateway; <b>no call to Bookyay in the payment path</b> (checkout works when Bookyay is down). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s2" style="color:var(--gold);font-weight:600">WF §2</a>〕</li>
-<li><b>BR-22</b> Per-buyer purchase cap per event: number <b>TBD — biz decides Wed (open #1)</b>. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s2" style="color:var(--gold);font-weight:600">WF §2</a>〕</li>
-<li><b>BR-23</b> <b>App (Phase 1 — no in-app sales):</b> event &amp; ticket purchases are web-only. What the app user sees: (a) event/eShop entry points <b>hand off to mobile web</b> (「前往 ztor.com」, opens in-app browser) — no dead-end storefront; (b) ticket orders bought on web appear <b>read-only in the app order list</b>, deep-linking to the web My Wallet for the QR; (c) no purchase flow, no native wallet render — app sales come after web proves smooth (§11). Exact surfaces &amp; copy = design work (open #16; 09-03 direction split — full visibility vs minimal app — to align). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s8" style="color:var(--gold);font-weight:600">WF §8</a>〕</li>
+<li><b>BR-22</b> Per-buyer purchase cap: <b>configured in Bookyay</b> (native settings — per-account cap · per-order cap · order count) and <b>pulled via the BR-04 feed</b>; Ztor checkout enforces the pulled values (ruled 09-09). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s2" style="color:var(--gold);font-weight:600">WF §2</a>〕</li>
+<li><b>BR-23</b> <b>App (Phase 1 — no in-app sales):</b> event &amp; ticket purchases are web-only. What the app user sees: (a) event/eShop entry points <b>hand off to mobile web</b> (「前往 ztor.com」, opens in-app browser) — no dead-end storefront; (b) ticket orders bought on web appear <b>read-only in the app order list</b>, deep-linking to the web My Wallet for the QR; (c) no purchase flow, no native wallet render — app sales come after web proves smooth (§11). Exact surfaces &amp; copy = design work (open #15; 09-03 direction split — full visibility vs minimal app — to align). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s8" style="color:var(--gold);font-weight:600">WF §8</a>〕</li>
 <li><b>BR-24</b> Loyalty: <b>deferred out of 2.3</b> (09-03 — VIP/Loyalty/KYC cut from the release). No points display at ticket purchase Phase 1; retro-credit question moves to the loyalty stream.</li>
-<li><b>BR-25</b> Pricing &amp; currency: Bookyay sets the allocation price in the event's base currency (<b>TBD — biz decides Wed, open #3</b>); ztor.com displays per the Ztor currency model — user display currency by registration IP, Ztor-controlled FX table, no live FX. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s1" style="color:var(--gold);font-weight:600">WF §1</a>〕</li>
+<li><b>BR-25</b> Pricing &amp; currency: Bookyay sets the allocation price in the event's base currency (<b>TBD — biz decides Wed, open #2</b>); ztor.com displays per the Ztor currency model — user display currency by registration IP, Ztor-controlled FX table, no live FX. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s1" style="color:var(--gold);font-weight:600">WF §1</a>〕</li>
 </ul>
 <h3>D · Fulfilment</h3>
 <ul>
@@ -134,7 +134,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li><b>BR-40</b> No buyer-facing refund offering. Requests handled <b>offline</b> via the Ztor CS mailbox; outcome communicated back to the buyer <b>by email</b>. System action = <b>void only</b>: admin voids → ticket/pickup code <code>voided</code> → void syncs to Bookyay. <b>Void is per line item (09-09, agreed with Bookyay)</b> — a bundle's ticket leg or merch leg can be voided individually; refund amount = manual ops calculation, executed on the <b>gateway console</b> (Stripe/Antom) — the system never moves money. <i>(Supersedes the whole-bundle-only rule.)</i> Buyer-facing copy says <b>取消</b>, never 退款 (09-03). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s6" style="color:var(--gold);font-weight:600">WF §6</a>〕</li>
 <li><b>BR-41</b> Order statuses: paid, fulfilled, refunded, <code>voided</code>, <code>cancelled</code> — visible in CS order lookup. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s6" style="color:var(--gold);font-weight:600">WF §6</a>〕</li>
 <li><b>BR-42</b> Event change (Bookyay BO edit) → arrives via the hourly auto-pull / manual sync (BR-10) → listing/CS auto-update → buyers notified (<b>email minimum</b>; in-app optional Phase 1), wallet refreshes. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s5" style="color:var(--gold);font-weight:600">WF §5</a>〕</li>
-<li><b>BR-43</b> Event cancel (Bookyay BO) → push → pause + delist → all Ztor tickets voided, voids sync back; buyer refunds executed by ops on the gateway (BR-40 model). Bundle merch on cancel: <b>TBD — biz decides Wed (open #2)</b>. <i>(Ztor-originated cancel evaluated &amp; rejected 09-04 — future co-sale keeps Bookyay the lifecycle owner. Closed; don't reopen.)</i> 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s5" style="color:var(--gold);font-weight:600">WF §5</a>〕</li>
+<li><b>BR-43</b> Event cancel (Bookyay BO) → push → pause + delist → all Ztor tickets voided, voids sync back; buyer refunds executed by ops on the gateway (BR-40 model). Bundle merch on cancel: <b>TBD — biz decides Wed (open #1)</b>. <i>(Ztor-originated cancel evaluated &amp; rejected 09-04 — future co-sale keeps Bookyay the lifecycle owner. Closed; don't reopen.)</i> 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s5" style="color:var(--gold);font-weight:600">WF §5</a>〕</li>
 </ul>
 <h3>F · Inventory lifecycle</h3>
 <ul>
@@ -145,7 +145,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 </ul>
 <h3>G · Sync &amp; reporting</h3>
 <ul>
-<li><b>BR-60</b> <code>sync_back</code> one-way, batch: <b>auto daily + manual sync button in CS admin</b> (09-07, same pattern as BR-10). Payload = the three BR-63 record types — <b>ticket status · ticket inventory (burn-down) · transaction details</b> — each with <code>ztor_tag</code>. Idempotent + replayable. <b>Void propagation must beat the venue scan</b> — technical solution owned by Eric (open #8); candidate: CS void action calls Bookyay's void API directly (synchronous, ops-plane — checkout path stays call-free); fallback: manual sync on event day. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s6" style="color:var(--gold);font-weight:600">WF §6</a>〕</li>
+<li><b>BR-60</b> <code>sync_back</code> one-way, batch: <b>auto daily + manual sync button in CS admin</b> (09-07, same pattern as BR-10). Payload = the three BR-63 record types — <b>ticket status · ticket inventory (burn-down) · transaction details</b> — each with <code>ztor_tag</code>. Idempotent + replayable. <b>Void propagation must beat the venue scan</b> — technical solution owned by Eric (open #7); candidate: CS void action calls Bookyay's void API directly (synchronous, ops-plane — checkout path stays call-free); fallback: manual sync on event day. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s6" style="color:var(--gold);font-weight:600">WF §6</a>〕</li>
 <li><b>BR-61</b> <b>No buyer personal data crosses to Bookyay</b>: the sync-back carries order refs, quantities and amounts only — never the buyer's name, email, or phone number. Buyer data lives only on Ztor; when Bookyay ops needs details on an escalation, they look it up in CS instead of receiving it in the feed.</li>
 <li><b>BR-62</b> Ztor = system of record for Ztor sales. <b>MVP day-to-day reporting home = Bookyay BO</b> (fed by the daily sync, 09-07); CS keeps order lookup for support (eShop Transaction UI extension). <b>Creator sales reports on ztor.com in December</b> (milestone rev 09-02). 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s7" style="color:var(--gold);font-weight:600">WF §7</a>〕</li>
 <li><b>BR-63</b> <code>sync_back</code> payload (specced 09-07) — three record types per batch; envelope = batch id + generated_at (drives BR-60 idempotent replay): 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s6" style="color:var(--gold);font-weight:600">WF §6</a>〕</li>
@@ -156,7 +156,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>Ticket inventory (burn-down)</td><td>event</td><td>event id · allocation qty · assigned · voided · returned · remaining sellable · as-of</td></tr>
 <tr><td>Transaction details</td><td>order</td><td>order ref · event id · <code>ztor_tag</code> · sale_item type (solo / bundle) · ticket qty · amount + currency · status (paid / refunded / voided / cancelled) · paid_at / refunded_at</td></tr>
 </table></div>
-<p>  No buyer personal data in any record (BR-61). Bundle amount attribution — report full bundle price or ticket-leg only: <b>TBD</b> (open #11, Jeff + Bookyay finance).</p>
+<p>  No buyer personal data in any record (BR-61). Bundle amount attribution — report full bundle price or ticket-leg only: <b>TBD</b> (open #10, Jeff + Bookyay finance).</p>
 <ul>
 <li><b>BR-64</b> <b>Scan-status feed</b> (Bookyay → Ztor, read-only; ruled 09-07 — closes C1): per imported event, per-ticket check-in status (<code>redeemed</code> / pending). CS event detail shows <b>已入場 / 未入場 lists, read-only</b> — no scan actions in CS (scanning stays in the Organizer App, BR-31). Refresh rides the hourly pull + manual sync (BR-10); event-day freshness = manual sync. 〔<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html#s5" style="color:var(--gold);font-weight:600">WF §5</a>〕</li>
 </ul>
@@ -210,38 +210,37 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <p><b>Decide at the biz walkthrough (Wed 09-09):</b></p>
 <div class="tblwrap"><table>
 <tr><th>#</th><th>Item</th><th>Owner</th></tr>
-<tr><td>1</td><td>Per-buyer cap: the number AND where enforced — Bookyay has native 限購 settings (per-account · per-order · order count); use those as source of truth, or enforce on Ztor? (BR-22)</td><td>Biz + Bookyay ops</td></tr>
-<tr><td>2</td><td>Bundle merch on event cancel (BR-43)</td><td>Biz</td></tr>
-<tr><td>3</td><td><b>Pricing &amp; currency model</b> (BR-25) — Bookyay sets base (HKD); (a) Store converts + per-currency price-adjust UI in CS (rounding), sync-back reports in HKD · (b) placeholder price in Bookyay, price lives on Ztor only · (c) Bookyay adds native multi-currency support (heaviest Bookyay-side build). Affects API/system design — <b>blocks dev kickoff</b></td><td>Agnes + Biz</td></tr>
-<tr><td>4</td><td>FE event page: 線上演唱會 category + <b>Watch Party</b> placement — in the Phase 1 event listing, or separate entrances? (09-08 lean: separate)</td><td>Jeff + L</td></tr>
-<tr><td>5</td><td><b>Field mapping confirm</b> — pull / skip / Ztor-side per field (<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-field-mapping-2026-09-08.html" style="color:var(--gold);font-weight:600">draft table</a>)</td><td>Biz + Jesse</td></tr>
+<tr><td>1</td><td>Bundle merch on event cancel (BR-43)</td><td>Biz</td></tr>
+<tr><td>2</td><td><b>Pricing &amp; currency model</b> (BR-25) — Bookyay sets base (HKD); (a) Store converts + per-currency price-adjust UI in CS (rounding), sync-back reports in HKD · (b) placeholder price in Bookyay, price lives on Ztor only · (c) Bookyay adds native multi-currency support (heaviest Bookyay-side build). Affects API/system design — <b>blocks dev kickoff</b></td><td>Agnes + Biz</td></tr>
+<tr><td>3</td><td>FE event page: 線上演唱會 category + <b>Watch Party</b> placement — in the Phase 1 event listing, or separate entrances? (09-08 lean: separate)</td><td>Jeff + L</td></tr>
+<tr><td>4</td><td><b>Field mapping confirm</b> — pull / skip / Ztor-side per field (<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-field-mapping-2026-09-08.html" style="color:var(--gold);font-weight:600">draft table</a>)</td><td>Biz + Jesse</td></tr>
 </table></div>
 <p><b>Bookyay confirmations (due before the 09-16 dev brief):</b></p>
 <div class="tblwrap"><table>
 <tr><th>#</th><th>Item</th><th>Owner</th></tr>
-<tr><td>6</td><td>organizer_login scoping feasibility (BR-31); if no → ops fallback (dedicated device / gate list)</td><td>Bookyay + ops</td></tr>
-<tr><td>7</td><td>Merch-pickup QR flow design (merch QR → Ztor scanner)</td><td>Ops + Eric</td></tr>
+<tr><td>5</td><td>organizer_login scoping feasibility (BR-31); if no → ops fallback (dedicated device / gate list)</td><td>Bookyay + ops</td></tr>
+<tr><td>6</td><td>Merch-pickup QR flow design (merch QR → Ztor scanner)</td><td>Ops + Eric</td></tr>
 </table></div>
 <p><b>Dev / Eric:</b></p>
 <div class="tblwrap"><table>
 <tr><th>#</th><th>Item</th><th>Owner</th></tr>
-<tr><td>8</td><td>Void propagation under daily sync (BR-60): candidate = CS void calls Bookyay's void API directly; fallback = event-day final sync</td><td>Eric</td></tr>
-<tr><td>9</td><td>Auto-import remainder: Bookyay-side edit/delete propagation · <b>removing a wrongly-allocated event</b> (de-allocate on Bookyay → disappears via feed, or a CS hide flag?) · faster path for <b>cancel</b> than the hourly pull?</td><td>Eric + Bookyay</td></tr>
-<tr><td>10</td><td>Mass-refund path on event cancel: gateway bulk refund vs per-order manual (BR-43)</td><td>Eric + ops</td></tr>
-<tr><td>11</td><td>Bundle amount in sync-back transactions: full bundle price or ticket-leg attribution (BR-63)</td><td>Jeff + Bookyay finance</td></tr>
+<tr><td>7</td><td>Void propagation under daily sync (BR-60): candidate = CS void calls Bookyay's void API directly; fallback = event-day final sync</td><td>Eric</td></tr>
+<tr><td>8</td><td>Auto-import remainder: Bookyay-side edit/delete propagation · <b>removing a wrongly-allocated event</b> (de-allocate on Bookyay → disappears via feed, or a CS hide flag?) · faster path for <b>cancel</b> than the hourly pull?</td><td>Eric + Bookyay</td></tr>
+<tr><td>9</td><td>Mass-refund path on event cancel: gateway bulk refund vs per-order manual (BR-43)</td><td>Eric + ops</td></tr>
+<tr><td>10</td><td>Bundle amount in sync-back transactions: full bundle price or ticket-leg attribution (BR-63)</td><td>Jeff + Bookyay finance</td></tr>
 </table></div>
 <p><b>Biz / legal follow-ups:</b></p>
 <div class="tblwrap"><table>
 <tr><th>#</th><th>Item</th><th>Owner</th></tr>
-<tr><td>12</td><td>Event-ticket platform fee rate: designer default 10% vs platform-fees BRD — reconcile</td><td>Jeff + Biz</td></tr>
+<tr><td>11</td><td>Event-ticket platform fee rate: designer default 10% vs platform-fees BRD — reconcile</td><td>Jeff + Biz</td></tr>
 </table></div>
 <p><b>Design (blocks the 09-16 dev brief):</b></p>
 <div class="tblwrap"><table>
 <tr><th>#</th><th>Item</th><th>Owner</th></tr>
-<tr><td>13</td><td>creator_mapping in CS: ops flow (who maps · creator search) + publish-gate screens + pending-account invitation</td><td>Yves + Jeff</td></tr>
-<tr><td>14</td><td>FE buyer side (G1–G3): My Wallet QR + states · ticket checkout (cap-aware qty) · bundle as real sale_item</td><td>花花 / Dolly</td></tr>
-<tr><td>15</td><td>FE/CS copy: remove 對號座 · single-currency tags · 退款 → 取消 relabel (BR-40)</td><td>花花 + Yves</td></tr>
-<tr><td>16</td><td>App transition UX (BR-23): web handoff + read-only order visibility — align full-visibility vs minimal-app split</td><td>花花 + L + Jeff</td></tr>
+<tr><td>12</td><td>creator_mapping in CS: ops flow (who maps · creator search) + publish-gate screens + pending-account invitation</td><td>Yves + Jeff</td></tr>
+<tr><td>13</td><td>FE buyer side (G1–G3): My Wallet QR + states · ticket checkout (cap-aware qty) · bundle as real sale_item</td><td>花花 / Dolly</td></tr>
+<tr><td>14</td><td>FE/CS copy: remove 對號座 · single-currency tags · 退款 → 取消 relabel (BR-40)</td><td>花花 + Yves</td></tr>
+<tr><td>15</td><td>App transition UX (BR-23): web handoff + read-only order visibility — align full-visibility vs minimal-app split</td><td>花花 + L + Jeff</td></tr>
 </table></div>
 <h2>11 · Milestones</h2>
 <p>Sept: design + dev → <b>early-Nov: web rollout (~10 events)</b> → <b>Dec: creator sales reports on ztor.com</b> → app support after web proves smooth. <i>(Revised 2026-09-02: rollout moved end-Oct → early-Nov, reports Nov → Dec.)</i></p>
@@ -252,7 +251,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li>3. Buyer completes checkout with Bookyay API unreachable.</li>
 <li>4. On capture: ticket assigned atomically; QR in my_wallet + email; Organizer App scans it under the event's scoped login and rejects it for any other event.</li>
 <li>5. CS void → ticket <code>voided</code> + void in Bookyay within one sync window; voided QR rejected at scan. (Money refund runs on the gateway console, outside the system.)</li>
-<li>6. Event cancel → delist + all tickets voided; buyer refunds by ops per BR-40; bundle merch per resolved policy #2.</li>
+<li>6. Event cancel → delist + all tickets voided; buyer refunds by ops per BR-40; bundle merch per resolved policy #1.</li>
 <li>7. Reduce mid-sale → capped at unsold; racing sale wins; zero remaining shows <code>sold_out</code> (listed).</li>
 <li>8. Release-back returns exactly (allocation − assigned).</li>
 <li>9. Every Ztor transaction visible in Bookyay reporting with <code>ztor_tag</code> within one sync window; no buyer personal data in the payload.</li>
@@ -262,8 +261,8 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <h2>13 · Resolved log (reference — details live in the cited BRs)</h2>
 <p><b>In progress (tasks, not open questions):</b> design rulings file r1 — drafted, gated on Jeff's review → forward to Yves · timeline note to the group — drafted 09-07, Jeff sending.</p>
 <ul>
-<li><b>09-09</b> Bookyay alignment (Jesse · Agnes · Cheryl): <b>static QR Phase 1</b> ruled (#7 closed) · <b>per-item void</b> agreed (BR-40 supersedes whole-bundle) · single-session events only · daily sync + manual button confirmed in-room · app = browser handoff accepted (no in-app orders needed per Iris) · creator reports = offline/admin-download initially · T&amp;C = reuse Bookyay per-event field (BR-14) · field-mapping doc handed to Jesse (EN version to follow)</li>
-<li><b>09-08</b> standup: Bookyay-as-engine reaffirmed ("Store 不自建 Ticketing Engine") · Phase 1 events sell <b>only on Ztor</b>, not co-listed on bookyay.com (fits take-all, BR-02) · Bookyay natively supports <b>per-tier sale windows</b> — no two-page workaround needed · CS covers most Bookyay fields; FE not yet aligned → field-mapping confirm = open #5 · <b>creator self-serve removal re-confirmed</b> in the 09-08 dev sync (L-confirm closed) · <b>refund cutoff dropped, BR-44 removed</b> — no buyer refunds; void = manual ops action, outcome by email</li>
+<li><b>09-09</b> Bookyay alignment (Jesse · Agnes · Cheryl): <b>buyer cap = Bookyay native settings, pulled via the feed</b> (BR-22 closed) · <b>static QR Phase 1</b> ruled (#6 closed) · <b>per-item void</b> agreed (BR-40 supersedes whole-bundle) · single-session events only · daily sync + manual button confirmed in-room · app = browser handoff accepted (no in-app orders needed per Iris) · creator reports = offline/admin-download initially · T&amp;C = reuse Bookyay per-event field (BR-14) · field-mapping doc handed to Jesse (EN version to follow)</li>
+<li><b>09-08</b> standup: Bookyay-as-engine reaffirmed ("Store 不自建 Ticketing Engine") · Phase 1 events sell <b>only on Ztor</b>, not co-listed on bookyay.com (fits take-all, BR-02) · Bookyay natively supports <b>per-tier sale windows</b> — no two-page workaround needed · CS covers most Bookyay fields; FE not yet aligned → field-mapping confirm = open #4 · <b>creator self-serve removal re-confirmed</b> in the 09-08 dev sync (L-confirm closed) · <b>refund cutoff dropped, BR-44 removed</b> — no buyer refunds; void = manual ops action, outcome by email</li>
 </ul>
 <ul>
 <li><b>09-07</b> <code>store_tag</code> → <code>ztor_tag</code> · refunds = offline request + void-only, money moves on gateway console (BR-40) · sync transport = hourly CS auto-pull + manual sync button (BR-10) · <b>allocation = take-all</b> for MVP (BR-02) · sync-back cadence = <b>daily</b>, MVP reporting home = Bookyay BO (BR-60/62) · sync-back payload = 3 record types (BR-63) · <b>presentation-field override in CS allowed</b> (name/description/lineup; BR-10) · <b>no creator binding — flat event feed, per-event creator_mapping in CS</b> (BR-10/11) · <b>C1 closed: CS shows read-only 已入場/未入場 lists via a Bookyay scan-status feed</b> (BR-64)</li>

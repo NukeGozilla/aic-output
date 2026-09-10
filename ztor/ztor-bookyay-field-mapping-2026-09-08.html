@@ -80,7 +80,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><th>Field <span class="zhh">欄位</span></th><th>Pull? <span class="zhh">拉取</span></th><th>Ztor use <span class="zhh">用途</span></th><th>Authority <span class="zhh">權威</span></th><th>Notes <span class="zhh">備註</span></th></tr>
 <tr><td>event id</td><td><b>Must pull</b></td><td>Reconciliation key (import / sync-back / void)</td><td>feed-locked</td><td>The key that guarantees each event is imported once</td></tr>
 <tr><td>Event name</td><td><b>Must pull</b></td><td>FE card + detail · CS</td><td>feed · <b>override allowed</b> (display name)</td><td>BR-10</td></tr>
-<tr><td>Event type</td><td><b>Must pull</b></td><td>FE category filter · CS tag</td><td>feed-locked (source value) · FE three-category <b>mapping = Ztor-owned</b></td><td>線上演唱會 (online concert) / Watch Party placement = Wed decision #4</td></tr>
+<tr><td>Event type</td><td><b>Must pull</b></td><td>FE category filter · CS tag</td><td>feed-locked (source value) · FE three-category <b>mapping = Ztor-owned</b></td><td>線上演唱會 (online concert) / Watch Party placement = Wed decision #3</td></tr>
 <tr><td>Description</td><td><b>Must pull</b></td><td>FE detail</td><td>feed · <b>override allowed</b></td><td>Ztor UI layout differs (09-08: fields adjusted to fit UI/UX)</td></tr>
 <tr><td>Organizer name</td><td><b>Must pull</b></td><td>CS clue for creator mapping</td><td>feed-locked</td><td>Bookyay has no creator profile — text only</td></tr>
 <tr><td>Lineup / performers</td><td><b>Must pull</b></td><td>FE detail</td><td>feed · <b>override allowed</b> (display text) · links to Ztor accounts = <b>Ztor-owned</b></td><td></td></tr>
@@ -109,7 +109,8 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <div class="tblwrap"><table>
 <tr><th>Field <span class="zhh">欄位</span></th><th>Pull? <span class="zhh">拉取</span></th><th>Ztor use <span class="zhh">用途</span></th><th>Authority <span class="zhh">權威</span></th><th>Notes <span class="zhh">備註</span></th></tr>
 <tr><td>Allocation quantity</td><td><b>Must pull</b></td><td>CS read-only capacity</td><td>feed-locked</td><td>MVP = full event inventory (take-all); top-ups / reductions follow the feed</td></tr>
-<tr><td>Tier structure (name / price / quantity)</td><td><b>Must pull</b></td><td>Basis for CS sale_items · FE ticket section</td><td>feed-locked</td><td>Ticket price currency = Wed decision #3</td></tr>
+<tr><td>Tier structure (name / price / quantity)</td><td><b>Must pull</b></td><td>Basis for CS sale_items · FE ticket section</td><td>feed-locked</td><td>Ticket price currency = Wed decision #2</td></tr>
+<tr><td>Purchase caps (per-account / per-order / order count)</td><td><b>Must pull</b></td><td>Checkout cap enforcement</td><td>feed-locked</td><td>Ruled 09-09: caps configured in Bookyay, Ztor pulls &amp; enforces</td></tr>
 <tr><td><b>Per-tier sale window</b></td><td><b>Must pull</b></td><td>FE on-sale / off-sale · CS</td><td>feed-locked</td><td>09-08 confirmed: Bookyay natively supports per-tier windows — no "two pages per event" workaround needed</td></tr>
 <tr><td>Pre-issued QR payload</td><td><b>Must pull</b></td><td>Wallet ticket issuance</td><td>feed-locked</td><td>BR-02/30 · <b>ticket-level</b>: delivered once at allocation time, not part of the hourly event pull — a separate API surface</td></tr>
 <tr><td>Per-ticket scan status (checked-in / not)</td><td><b>Must pull</b></td><td>CS read-only 已入場/未入場 list</td><td>feed-locked</td><td>BR-04/64 · §6b (09-07) · scanning happens in the Bookyay Organizer App; Ztor reads, never writes</td></tr>
@@ -165,7 +166,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
 <tr><td>event id</td><td><b>必拉</b></td><td>對帳鍵（匯入 / 回寫 / 作廢）</td><td>feed 鎖定</td><td>同一場只帶入一次的鍵</td></tr>
 <tr><td>活動名稱</td><td><b>必拉</b></td><td>FE 卡片+詳情 · CS</td><td>feed，<b>可覆寫</b>（顯示名稱）</td><td>BR-10</td></tr>
-<tr><td>活動類型</td><td><b>必拉</b></td><td>FE 分類篩選 · CS 標籤</td><td>feed 鎖定（來源值）· FE 三分類<b>對應表 = Ztor 自建</b></td><td>線上演唱會 / Watch Party 歸屬 = 週三決策 #4</td></tr>
+<tr><td>活動類型</td><td><b>必拉</b></td><td>FE 分類篩選 · CS 標籤</td><td>feed 鎖定（來源值）· FE 三分類<b>對應表 = Ztor 自建</b></td><td>線上演唱會 / Watch Party 歸屬 = 週三決策 #3</td></tr>
 <tr><td>描述</td><td><b>必拉</b></td><td>FE 詳情</td><td>feed，<b>可覆寫</b></td><td>Ztor UI 版面不同（09-08：欄位調整以符合 UI/UX）</td></tr>
 <tr><td>主辦方名稱</td><td><b>必拉</b></td><td>CS 對應創作者的線索</td><td>feed 鎖定</td><td>無 creator 檔案 — 僅文字</td></tr>
 <tr><td>Lineup / 表演者</td><td><b>必拉</b></td><td>FE 詳情</td><td>feed，<b>可覆寫</b>（顯示文字）· Ztor 帳號連結 = <b>Ztor 自建</b></td><td></td></tr>
@@ -194,7 +195,8 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <div class="tblwrap"><table>
 <tr><th>欄位</th><th>拉取？</th><th>Ztor 用途</th><th>權威</th><th>備註</th></tr>
 <tr><td>allocation 數量</td><td><b>必拉</b></td><td>CS 唯讀容量</td><td>feed 鎖定</td><td>MVP = 整場庫存（take-all）；增減隨 feed</td></tr>
-<tr><td>票種結構（名稱/價格/數量）</td><td><b>必拉</b></td><td>CS sale_item 基礎 · FE 票區</td><td>feed 鎖定</td><td>票價幣別 = 週三決策 #3</td></tr>
+<tr><td>票種結構（名稱/價格/數量）</td><td><b>必拉</b></td><td>CS sale_item 基礎 · FE 票區</td><td>feed 鎖定</td><td>票價幣別 = 週三決策 #2</td></tr>
+<tr><td>購買上限設定（每人 / 每單 / 次數）</td><td><b>必拉</b></td><td>結帳限購檢查</td><td>feed 鎖定</td><td>09-09 定案：上限在 Bookyay 設定，Ztor 拉取並執行</td></tr>
 <tr><td><b>各票種販售時窗</b></td><td><b>必拉</b></td><td>FE 開賣/停售 · CS</td><td>feed 鎖定</td><td>09-08 確認：Bookyay 原生支援逐票種時窗 — 不需要「同活動開兩頁」的變通</td></tr>
 <tr><td>預開 QR payload</td><td><b>必拉</b></td><td>Wallet 出票</td><td>feed 鎖定</td><td>BR-02/30 · <b>票券層級</b>：於 allocation 時一次交付，不在每小時活動拉取內 — 另一個 API 介面</td></tr>
 <tr><td>各票券掃描狀態（已入場/未入場）</td><td><b>必拉</b></td><td>CS 唯讀名單（已入場/未入場）</td><td>feed 鎖定</td><td>BR-04/64 · §6b（09-07）· 掃描在 Bookyay Organizer App，Ztor 只讀不寫</td></tr>
