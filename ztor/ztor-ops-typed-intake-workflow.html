@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ops Request Intake — Typed Workflow v1</title>
+<title>Ops Request Intake — Typed Workflow v1.7</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
@@ -41,7 +41,7 @@
   /* ---------- flow: intake ---------- */
   .funnel { display:flex; flex-direction:column; align-items:center; }
   .intake {
-    background:#fff; border:1.5px solid #c4cddd; border-radius:10px; padding:16px 26px; text-align:center; min-width:430px;
+    background:#fff; border:1.5px solid #c4cddd; border-radius:10px; padding:16px 26px; text-align:center; min-width:430px; max-width:780px;
     box-shadow:0 1px 2px rgba(20,24,36,.05);
   }
   .intake .t { font-size:14.5px; font-weight:700; color:#141824; }
@@ -51,6 +51,19 @@
   }
   .triage .t { font-size:13.5px; font-weight:700; color:#8a5a1f; }
   .triage .s { font-size:11.5px; color:#7a6240; margin-top:5px; line-height:1.5; }
+  .intake .boards { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:13px; }
+  .bchip { display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:650; padding:6px 11px 6px 6px; border-radius:6px; border:1.5px solid; text-decoration:none; color:#2a3040; background:#fff; }
+  .bchip:hover { background:#f6f8fc; }
+  .bchip .pfx { font-size:9.5px; font-weight:800; letter-spacing:1px; padding:2px 6px; border-radius:4px; color:#fff; }
+  .bchip .an { font-size:10px; color:#8a93a6; font-weight:500; }
+  .bchip.cm { border-color:#dcbf8c; } .bchip.cm .pfx { background:#b07c3a; }
+  .bchip.cr { border-color:#9dc3ea; } .bchip.cr .pfx { background:#2576c7; } .bchip.cr .pfx.nfx { background:#6d40c9; margin-left:-4px; }
+  .bchip.bf { border-color:#eaaaaa; } .bchip.bf .pfx { background:#cc2f2f; }
+  .intake .later { font-size:11px; color:#8a93a6; margin-top:11px; font-style:italic; }
+  .sla a { color:inherit; text-decoration:none; border-bottom:1px dotted currentColor; }
+  .sla a:hover { color:#141824; }
+  td a, .card a { color:#2576c7; text-decoration:none; border-bottom:1px dotted #9dc3ea; }
+  td a:hover, .card a:hover { border-bottom-style:solid; }
   .down { width:2px; height:26px; background:#c2cadb; position:relative; }
   .down::after { content:""; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid #c2cadb; }
   .split { width:78%; height:2px; background:#c2cadb; margin-top:26px; position:relative; }
@@ -177,21 +190,14 @@
 <body>
 
 <div class="header">
-  <h1>Ops Request Intake — Typed Workflow<span class="badge">DRAFT v1</span></h1>
-  <p class="sub">A redraw of the ops-manager request flow. The original diagram was a <strong style="color:#8a5a1f">campaign-launch</strong> flow — one path, one approver, no build step. This version keeps that path intact as the <strong style="color:#8a5a1f">CM</strong> lane and adds three more, so New Feature / Change Request / Bug Fix each get the artifact, approver and SLA they actually need.</p>
-  <p class="meta">Ztor · Operations × IT · 2026-09-10 · for review by Jeff / Alex / Ops</p>
+  <h1>Ops Request Intake — Typed Workflow<span class="badge">DRAFT v1.7</span></h1>
+  <p class="meta">Ztor · Operations × IT · 2026-09-11 · for review by Agnes</p>
   <div class="tabs">
-    <button class="on" data-b="flow">Flow</button>
-    <button data-b="tax">Type Taxonomy</button>
-    <button data-b="prio">Priority Axis</button>
-    <button data-b="rules">Rules &amp; Open Questions</button>
+    <button class="on" data-b="flow">Workflow</button>
+    <button data-b="tax">Request Type</button>
+    <button data-b="prio">Priority</button>
+    <button data-b="rules">Rules</button>
   </div>
-</div>
-
-<div class="why">
-  <b>Why the legend is a routing decision, not decoration</b>
-  <p>If all four types still walk the same six boxes, the labels add nothing. A type is only worth naming when it changes something: <em>different required artifact, different approver, different SLA, different path.</em> That is what each lane below encodes.</p>
-  <p>The type that was missing from the original is <em>Campaign / Content</em> — which is what the original diagram actually is. Without naming it, everything gets mislabelled "change request."</p>
 </div>
 
 <!-- ============ FLOW ============ -->
@@ -201,13 +207,20 @@
 
   <div class="funnel">
     <div class="intake">
-      <div class="t">Intake Form — one door for everything</div>
-      <div class="s">Requester · region · what &amp; why · desired date · evidence<br>→ auto-creates one Asana ticket with a type prefix</div>
+      <div class="t">Asana ticket — one board per request type</div>
+      <div class="s">Requester opens the task directly on the matching board.<br>Requester · region · what &amp; why · desired date · evidence go in the task description.</div>
+      <div class="boards">
+        <a class="bchip cm" href="https://app.asana.com/1/1201357017636456/project/1213986660768794/calendar/1213986660768819" target="_blank" rel="noopener"><span class="pfx">CM</span>Campaign request <span class="an">Ztor. Ops Events</span></a>
+        <a class="bchip cr" href="https://app.asana.com/1/1201357017636456/project/1209435607276590/list/1209439265768352" target="_blank" rel="noopener"><span class="pfx">CR</span><span class="pfx nfx">NF</span>Change / new feature request <span class="an">Ztor. Change &amp; Feature Requests</span></a>
+        <a class="bchip bf" href="https://app.asana.com/1/1201357017636456/project/1209435606242106/list/1209435662772355" target="_blank" rel="noopener"><span class="pfx">BF</span>Production bug <span class="an">Ztor. Production Bug Tracking</span></a>
+        <a class="bchip bf" href="https://app.asana.com/1/1201357017636456/project/1216739157561005/list/1216740054761094" target="_blank" rel="noopener"><span class="pfx">BF</span>UAT bug <span class="an">Ztor. UAT Bug Tracking</span></a>
+      </div>
+      <div class="later">Intake form for auto-submission comes later — until then the four boards are the door.</div>
     </div>
     <div class="down"></div>
     <div class="triage">
-      <div class="t">Ops Manager triage — classify &amp; assign</div>
-      <div class="s">Sets <b>type</b> (CM / CR / NF / BF) + <b>priority</b> (P0–P3) + <b>one named owner</b> · ticket ID issued here</div>
+      <div class="t">Triage — Agnes &amp; Cheryl · confirm type, set priority &amp; owner</div>
+      <div class="s">Board = type (CR vs NF set in the <b>Type</b> field on the shared board) · wrong board → <b>move the task</b>, don't re-create · sets <b>priority</b> (Critical / High / Medium / Low) + <b>one named owner</b> · the Asana task URL is the ticket ID</div>
     </div>
     <div class="split"></div>
   </div>
@@ -223,6 +236,7 @@
         <div class="sla">
           <span>Approver <b>Alex</b></span>
           <span>SLA <b>14 days</b></span>
+          <span>Board <b><a href="https://app.asana.com/1/1201357017636456/project/1213986660768794/calendar/1213986660768819" target="_blank" rel="noopener">Ops Events ↗</a></b></span>
         </div>
       </div>
       <div class="lane-body">
@@ -253,6 +267,7 @@
         <div class="sla">
           <span>Approver <b>Ops Mgr + IT lead</b></span>
           <span>SLA <b>3–5 days / sprint</b></span>
+          <span>Board <b><a href="https://app.asana.com/1/1201357017636456/project/1209435607276590/list/1209439265768352" target="_blank" rel="noopener">CR + NF board ↗</a></b></span>
         </div>
       </div>
       <div class="lane-body">
@@ -260,7 +275,7 @@
         <div class="vgap"></div>
         <div class="step"><span class="n">STEP 1</span><span class="h">Sizing by Ops Mgr + IT lead</span><span class="d">Config-only or code change? Estimate dev-days.</span></div>
         <div class="vgap"></div>
-        <div class="step gate"><span class="n">GATE</span><span class="h">Threshold check</span><span class="d">Over <b style="color:#8a5a1f">N dev-days</b> or has budget impact → escalate to Alex. Otherwise no exec approval needed.</span></div>
+        <div class="step gate"><span class="n">GATE</span><span class="h">Threshold check</span><span class="d">Ops Mgr + IT lead judge case-by-case whether it needs Alex — no fixed dev-day number. Most CRs need no exec approval.</span></div>
         <div class="vgap lbl"><span class="tag">sized — clock starts</span></div>
         <div class="step"><span class="n">STEP 2</span><span class="h">Config or build</span><span class="d">Config-only → 3–5 working days · code → next sprint slot</span></div>
         <div class="vgap"></div>
@@ -279,18 +294,19 @@
         <div class="nm">New Feature</div>
         <div class="ex">Something that doesn't exist yet — new screen, new capability, new integration</div>
         <div class="sla">
-          <span>Approver <b>Alex + Product</b></span>
+          <span>Approver <b>Alex</b> · Product joins case-by-case</span>
           <span>SLA <b>roadmap cycle</b></span>
+          <span>Board <b><a href="https://app.asana.com/1/1201357017636456/project/1209435607276590/list/1209439265768352" target="_blank" rel="noopener">CR + NF board ↗</a></b></span>
         </div>
       </div>
       <div class="lane-body">
-        <div class="step art"><span class="n">ARTIFACT</span><span class="h">BRD (required)</span><span class="d">Problem · user · business case · requirements. <b style="color:#56309f">This is the step the original flow has no room for.</b></span></div>
+        <div class="step art"><span class="n">ARTIFACT</span><span class="h">BRD (required)</span><span class="d">Problem · user · business case · requirements.</span></div>
         <div class="vgap"></div>
         <div class="step"><span class="n">STEP 1</span><span class="h">One-pager → BRD</span><span class="d">Idea qualifies before anyone writes a full BRD</span></div>
         <div class="vgap"></div>
         <div class="step"><span class="n">STEP 2</span><span class="h">Feasibility &amp; sizing</span><span class="d">IT + Product. T-shirt size, dependencies, risk.</span></div>
         <div class="vgap"></div>
-        <div class="step gate"><span class="n">GATE</span><span class="h">Roadmap slot decision</span><span class="d">Alex + Product. Into a named release, or backlog. <b style="color:#8a5a1f">Not a date promise — a slot.</b></span></div>
+        <div class="step gate"><span class="n">GATE</span><span class="h">Roadmap slot decision</span><span class="d">Alex, with Product where relevant. Into a named release, or backlog. <b style="color:#8a5a1f">Not a date promise — a slot.</b></span></div>
         <div class="vgap lbl"><span class="tag">slotted</span></div>
         <div class="step"><span class="n">STEP 3</span><span class="h">Design → Dev → QA</span><span class="d">Normal delivery cycle</span></div>
         <div class="vgap"></div>
@@ -307,10 +323,11 @@
       <div class="lane-head">
         <span class="pfx">BF</span>
         <div class="nm">Bug Fix</div>
-        <div class="ex">Something built is not behaving as specified</div>
+        <div class="ex">Something built is not behaving as specified — on the live site → Production board · during release testing → UAT board</div>
         <div class="sla">
           <span>Approver <b>none — IT triage</b></span>
           <span>SLA <b>by priority</b></span>
+          <span>Board <b><a href="https://app.asana.com/1/1201357017636456/project/1209435606242106/list/1209435662772355" target="_blank" rel="noopener">Production ↗</a> · <a href="https://app.asana.com/1/1201357017636456/project/1216739157561005/list/1216740054761094" target="_blank" rel="noopener">UAT ↗</a></b></span>
         </div>
       </div>
       <div class="lane-body">
@@ -320,7 +337,7 @@
         <div class="vgap"></div>
         <div class="step gate"><span class="n">GATE</span><span class="h">Not-a-bug check</span><span class="d">Behaves as specified? → re-route to <b style="color:#8a5a1f">CR</b> lane, don't close silently.</span></div>
         <div class="vgap lbl"><span class="tag">triaged</span></div>
-        <div class="step"><span class="n">STEP 2</span><span class="h">Route by priority</span><span class="d">P0 / P1 → hotfix rail below · P2 / P3 → sprint or backlog</span></div>
+        <div class="step"><span class="n">STEP 2</span><span class="h">Route by priority</span><span class="d">Critical → hotfix rail below · High → same/next day · Medium → sprint · Low → backlog</span></div>
         <div class="vgap"></div>
         <div class="step"><span class="n">STEP 3</span><span class="h">Fix &amp; verify</span><span class="d">Reporter verifies the fix, not the developer</span></div>
         <div class="vgap"></div>
@@ -334,7 +351,7 @@
 
   <div class="emg">
     <div class="hd">
-      <span class="pfx">P0 BYPASS</span>
+      <span class="pfx">CRITICAL</span>
       <h3>Emergency hotfix rail</h3>
       <span class="note">Site down · payment broken · data loss · security. Bypasses intake, triage and every approval gate.</span>
     </div>
@@ -345,11 +362,11 @@
       <div class="ra"></div>
       <div class="rn"><b>Verify &amp; confirm</b>Reporter + IT</div>
       <div class="ra"></div>
-      <div class="rn"><b>Ticket filed within 24h</b>Retroactive, not optional</div>
+      <div class="rn"><b>Ticket filed within 24h</b>Retroactive, on the Production Bug board</div>
       <div class="ra"></div>
       <div class="rn"><b>Post-incident note</b>Root cause + prevention</div>
     </div>
-    <p class="note-blk"><b>Why this must be on the diagram:</b> a P0 will bypass the process whether or not you draw it. If the emergency lane isn't official, ops will just Slack IT directly — and you lose the paper trail exactly when you most need it. Drawing it makes the shortcut auditable.</p>
+    <p class="note-blk"><b>Critical only.</b> Site down, payment broken, data loss or a security exposure — anything less is High or below and takes the Bug Fix lane. The retroactive ticket within 24h is not optional; it is what keeps the incident traceable.</p>
   </div>
 
 </div>
@@ -359,50 +376,54 @@
   <h2>The four types — what actually differs</h2>
   <table>
     <thead>
-      <tr><th>Type</th><th>Use when</th><th>Required artifact</th><th>Approver</th><th>Lead time</th><th>Path</th></tr>
+      <tr><th>Type</th><th>Asana board</th><th>Use when</th><th>Required artifact</th><th>Approver</th><th>Lead time</th><th>Path</th></tr>
     </thead>
     <tbody>
       <tr>
         <td><span class="pill p-cm">CM</span><br><b style="display:inline-block;margin-top:6px">Campaign / Content</b></td>
+        <td><a href="https://app.asana.com/1/1201357017636456/project/1213986660768794/calendar/1213986660768819" target="_blank" rel="noopener">Ztor. Ops Events</a><br><span class="mut">calendar view · one task per campaign</span></td>
         <td>Running a promo, content drop, seasonal push, pricing event. <span class="mut">Nothing new is built — things are configured and scheduled.</span></td>
         <td><b>Campaign brief</b><br><span class="mut">KPI · budget · launch date · assets ready-by</span></td>
         <td><b>Alex</b><br><span class="mut">cc Agnes</span></td>
         <td><b>14 days</b><br><span class="mut">from approval, not from proposal</span></td>
-        <td>The original six steps, unchanged</td>
+        <td>Propose → assess → approve → set up → launch → weekly review</td>
       </tr>
       <tr>
         <td><span class="pill p-cr">CR</span><br><b style="display:inline-block;margin-top:6px">Change Request</b></td>
+        <td><a href="https://app.asana.com/1/1201357017636456/project/1209435607276590/list/1209439265768352" target="_blank" rel="noopener">Change / feature request board</a><br><span class="mut">shared with NF · tag = CR</span></td>
         <td>Changing something that already exists — copy, threshold, rule, config, layout tweak.</td>
         <td><b>CR form + impact note</b><br><span class="mut">what · why · blast radius · rollback</span></td>
-        <td><b>Ops Mgr + IT lead</b><br><span class="mut">Alex only above the threshold</span></td>
+        <td><b>Ops Mgr + IT lead</b><br><span class="mut">escalate to Alex, case-by-case</span></td>
         <td><b>3–5 working days</b> (config)<br><b>Next sprint</b> (code)</td>
         <td>Skips the Alex pitch — goes straight to sizing → build → UAT</td>
       </tr>
       <tr>
         <td><span class="pill p-nf">NF</span><br><b style="display:inline-block;margin-top:6px">New Feature</b></td>
+        <td><a href="https://app.asana.com/1/1201357017636456/project/1209435607276590/list/1209439265768352" target="_blank" rel="noopener">Change / feature request board</a><br><span class="mut">shared with CR · tag = NF</span></td>
         <td>The capability doesn't exist yet. New screen, new integration, new business rule.</td>
         <td><b>BRD</b><br><span class="mut">non-negotiable — this is the gate</span></td>
-        <td><b>Alex + Product</b></td>
+        <td><b>Alex</b><br><span class="mut">Product joins case-by-case</span></td>
         <td><b>Roadmap cycle</b><br><span class="mut">a slot, not a date</span></td>
         <td>Different flow entirely: BRD → feasibility → roadmap slot → dev → UAT</td>
       </tr>
       <tr>
         <td><span class="pill p-bf">BF</span><br><b style="display:inline-block;margin-top:6px">Bug Fix</b></td>
+        <td><a href="https://app.asana.com/1/1201357017636456/project/1209435606242106/list/1209435662772355" target="_blank" rel="noopener">Ztor. Production Bug Tracking</a><br><a href="https://app.asana.com/1/1201357017636456/project/1216739157561005/list/1216740054761094" target="_blank" rel="noopener">Ztor. UAT Bug Tracking</a><br><span class="mut">live site vs release testing</span></td>
         <td>Something built is not behaving as specified.</td>
         <td><b>Repro steps + severity</b><br><span class="mut">env · account · evidence · expected vs actual</span></td>
         <td><b>None</b><br><span class="mut">IT triage owns it</span></td>
-        <td><b>P0 same-day → P3 backlog</b></td>
-        <td>Straight to the bug board. P0 takes the bypass rail.</td>
+        <td><b>Critical same-day → Low backlog</b></td>
+        <td>Straight to the bug board. Critical takes the hotfix rail.</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Boundary cases — how to classify when it's not obvious</h2>
+  <h2>Definitions</h2>
   <div class="cards">
-    <div class="card"><h4><span class="k">CR vs NF</span></h4><p>Ask: <b>does the screen already exist?</b> Changing a value, rule or label on an existing surface is CR. Anything that needs a new screen, new data model or new integration is NF — even if it "feels small."</p></div>
-    <div class="card"><h4><span class="k">BF vs CR</span></h4><p>Ask: <b>does it match the spec?</b> If it behaves as specified but the spec is wrong, that's a CR, not a bug. Re-route it — never close a bug ticket as "working as intended" without opening the CR.</p></div>
-    <div class="card"><h4><span class="k">CM vs CR</span></h4><p>A campaign that needs a <b>new</b> capability to run is two tickets, not one: a CM for the campaign and an NF/CR for the capability, with the CM blocked on it. This is where the 14-day SLA usually breaks.</p></div>
-    <div class="card"><h4><span class="k">Regional splits</span></h4><p>Same campaign in HK + TW + SEA = <b>one CM ticket with regional subtasks</b>, not three tickets — otherwise IT sizes the same work three times and the reconciliation in Step 6 can't roll up.</p></div>
+    <div class="card"><h4><span class="k" style="background:#b07c3a;color:#fff">CM</span> Campaign / Content</h4><p>A time-boxed push that uses only what already exists — a promo, content drop, seasonal event, or pricing change. Nothing new is built; things are configured, scheduled and launched against a date. A campaign that needs a <b>new</b> capability to run is two tickets, not one — a CM for the campaign, an NF/CR for the capability, with the CM blocked on it. Same campaign across HK + TW + SEA is <b>one CM ticket with regional subtasks</b>, not three.</p></div>
+    <div class="card"><h4><span class="k" style="background:#2576c7;color:#fff">CR</span> Change Request</h4><p>A change to something that already exists on a live surface — a copy, a rule, a threshold, a config value, a layout tweak. The screen or capability is already there; only its behavior or content changes.</p></div>
+    <div class="card"><h4><span class="k" style="background:#6d40c9;color:#fff">NF</span> New Feature</h4><p>A capability that doesn't exist yet — a new screen, a new data model, a new integration, or a new business rule. Needs a BRD before anything else happens, even if it "feels small."</p></div>
+    <div class="card"><h4><span class="k" style="background:#cc2f2f;color:#fff">BF</span> Bug Fix</h4><p>Something built is not behaving as specified. If it behaves as specified but the spec itself is wrong, that's a Change Request, not a bug — re-route it, never close as "working as intended."</p></div>
   </div>
 </div>
 
@@ -411,26 +432,26 @@
   <h2>Priority is a second axis — not a fifth type</h2>
   <div class="why" style="margin:0 0 22px">
     <b>Two axes, never merged</b>
-    <p><em>Type</em> = what kind of work it is, and therefore which path it walks. <em>Priority</em> = how urgent it is, and therefore how fast that path runs. Every ticket carries both. "Urgent" is not a type, and a New Feature can be P1 without becoming a bug.</p>
+    <p><em>Type</em> = what kind of work it is, and therefore which path it walks. <em>Priority</em> = how urgent it is, and therefore how fast that path runs. Every ticket carries both. "Urgent" is not a type, and a New Feature can be High without becoming a bug. Critical is reserved for incidents, not urgency.</p>
   </div>
   <div class="prio">
     <div class="pcard p0">
-      <div class="lv">P0</div><div class="nm">Critical — bypass</div>
-      <div class="d">Site down · payment failing · data loss · security exposure. Revenue is stopping right now.</div>
-      <div class="r"><b>Response:</b> immediate, hotfix rail<br><b>Set by:</b> anyone · <b>Ticket:</b> within 24h</div>
+      <div class="lv">CRITICAL</div><div class="nm">Site-down incident — bypass</div>
+      <div class="d">Site down · payment failing · data loss · security exposure. Revenue is stopping right now. Skips the form entirely and takes the hotfix rail.</div>
+      <div class="r"><b>Response:</b> immediate<br><b>Set by:</b> anyone raises it · triage confirms · <b>Ticket:</b> within 24h</div>
     </div>
     <div class="pcard p1">
-      <div class="lv">P1</div><div class="nm">High</div>
-      <div class="d">Major function broken with no workaround, or a dated campaign will miss its launch.</div>
+      <div class="lv">HIGH</div><div class="nm">Broken, blocked, or a launch at risk</div>
+      <div class="d">Major function broken with no workaround, or a dated campaign will miss its launch. Not an incident — goes through the normal lane, just faster.</div>
       <div class="r"><b>Response:</b> same/next working day<br><b>Set by:</b> Ops Mgr or IT lead</div>
     </div>
     <div class="pcard p2">
-      <div class="lv">P2</div><div class="nm">Normal</div>
-      <div class="d">The default. Broken but workaroundable, or planned work with a real but non-urgent date.</div>
+      <div class="lv">MEDIUM</div><div class="nm">The default</div>
+      <div class="d">Broken but workaroundable, or planned work with a real but non-urgent date.</div>
       <div class="r"><b>Response:</b> current or next sprint<br><b>Set by:</b> triage</div>
     </div>
     <div class="pcard p3">
-      <div class="lv">P3</div><div class="nm">Low / backlog</div>
+      <div class="lv">LOW</div><div class="nm">Backlog</div>
       <div class="d">Cosmetic, nice-to-have, or a good idea with no date attached.</div>
       <div class="r"><b>Response:</b> backlog, reviewed monthly<br><b>Set by:</b> triage</div>
     </div>
@@ -438,45 +459,32 @@
 
   <h2>Guardrail</h2>
   <div class="cards">
-    <div class="card warn"><h4><span class="k">P0/P1 inflation</span></h4><p>If everything is P1, nothing is. Only <b>Ops Mgr or IT lead</b> can set P0/P1 — requesters propose, triage decides. Review the P1 count monthly; if it's more than ~20% of tickets, the scale has stopped meaning anything.</p></div>
-    <div class="card warn"><h4><span class="k">Priority ≠ queue-jumping approval</span></h4><p>A P1 New Feature still needs a BRD and a roadmap slot. Priority speeds up the path; it doesn't delete the gates. The only true bypass is P0, and only for bugs.</p></div>
+    <div class="card warn"><h4><span class="k">Critical / High inflation</span></h4><p>If everything is Critical or High, nothing is. Only <b>Ops Mgr or IT lead</b> can set High, and only an actual incident is Critical — requesters propose, triage decides. Review the count monthly; if it's more than ~20% of tickets, the scale has stopped meaning anything.</p></div>
+    <div class="card warn"><h4><span class="k">Priority ≠ queue-jumping approval</span></h4><p>A High New Feature still needs a BRD and a roadmap slot. Priority speeds up the path; it doesn't delete the gates. The only true bypass is Critical, and only for bugs.</p></div>
   </div>
 </div>
 
 <!-- ============ RULES ============ -->
 <div class="board" id="b-rules">
-  <h2>IT lead-time rules — carried over from the original</h2>
+  <h2>IT lead-time rules</h2>
   <div class="cards">
-    <div class="card warn"><h4><span class="k">14 DAYS</span> New campaign</h4><p>Reserve at least <b>14 days</b> for IT preparation. <span class="mut">Clarified: the clock starts at <b>approval</b> (Step 3), not at proposal — and IT confirms the achievable date back to the requester at Step 1 so nobody plans against a date IT never agreed to.</span></p></div>
+    <div class="card warn"><h4><span class="k">14 DAYS</span> New campaign</h4><p>Reserve at least <b>14 days</b> for IT preparation. The clock starts at <b>approval</b> (Step 3), not at proposal. IT confirms the achievable date back to the requester at Step 1, so nobody plans against a date IT never agreed to.</p></div>
     <div class="card warn"><h4><span class="k">3 DAYS</span> Out-of-hours support</h4><p>Special arrangement for IT support outside working hours must be raised at least <b>3 days</b> before the event.</p></div>
-    <div class="card warn"><h4><span class="k">3 DAYS</span> Video conversion</h4><p>Video converting takes <b>3 working days</b>. <span class="mut">Belongs on the campaign brief as an assets-ready-by dependency, not discovered at Step 4.</span></p></div>
+    <div class="card warn"><h4><span class="k">3 DAYS</span> Video conversion</h4><p>Video converting takes <b>3 working days</b>. Put it on the campaign brief as an assets-ready-by date — don't discover it at Step 4.</p></div>
   </div>
 
-  <h2>Gaps in the original — fixed in this version</h2>
+  <h2>Working rules — apply to every ticket</h2>
   <div class="cards">
-    <div class="card gap"><h4><span class="k">1</span> No ticket ID</h4><p>Labels only work if every request has one. <b>One intake form → one ticket</b>, prefixed <code style="color:#8a5a1f">CM-</code> / <code style="color:#8a5a1f">CR-</code> / <code style="color:#8a5a1f">NF-</code> / <code style="color:#8a5a1f">BF-</code>. Otherwise the legend lives only on the diagram and never in Asana.</p></div>
-    <div class="card gap"><h4><span class="k">2</span> Unbounded decline loop</h4><p>"Revisit the details" had no round limit and no terminal state. Now: <b>max 2 amend rounds</b>, then the ticket moves to <b>Parked / Won't Do</b> with a reason. Requests should die out loud, not quietly.</p></div>
-    <div class="card gap"><h4><span class="k">3</span> "cc Agnes" is not an owner</h4><p>Every ticket names <b>one accountable owner</b> at triage who carries it end-to-end. cc is visibility; it is not accountability.</p></div>
-    <div class="card gap"><h4><span class="k">4</span> SLA clock had no start</h4><p>14 days from <b>approval</b>, stated on the ticket. Ambiguity here is what turns a lead-time rule into an argument.</p></div>
-    <div class="card gap"><h4><span class="k">5</span> Step 6 had no exit</h4><p>Weekly review with no kill/extend criteria reviews forever. Now: <b>hit KPI → extend · miss 2 consecutive cycles → kill or re-scope.</b></p></div>
-    <div class="card gap"><h4><span class="k">6</span> No build step for features</h4><p>The original went approval → UAT with nothing in between. Fine for a campaign IT only configures; impossible for a feature. The NF lane inserts BRD → feasibility → slot → dev → QA.</p></div>
-  </div>
-
-  <h2>Open questions — need a decision before this goes live</h2>
-  <div class="cards">
-    <div class="card q"><h4><span class="k">Q1</span> Who owns triage?</h4><p>One named ops manager must own classification, or types will drift within a month. Who, and who covers when they're out?</p></div>
-    <div class="card q"><h4><span class="k">Q2</span> What's the CR escalation threshold?</h4><p>"Over N dev-days or has budget impact → Alex." <b>N = ?</b> and is there a dollar figure? Without a number, everything escalates and CR collapses back into CM.</p></div>
-    <div class="card q"><h4><span class="k">Q3</span> Where does the intake form live?</h4><p>Asana form is the obvious answer since the ticket lands there anyway. Confirm — and confirm whether regional teams get separate forms or one shared form with a region field.</p></div>
-    <div class="card q"><h4><span class="k">Q4</span> Does Alex approve NF alone?</h4><p>The NF lane assumes Alex + Product jointly hold the roadmap slot. If it's Alex alone, the "Product" box comes off the diagram.</p></div>
-    <div class="card q"><h4><span class="k">Q5</span> Regional autonomy</h4><p>Can HK / TW / SEA each run CM lanes in parallel against the same IT capacity, or is there one shared queue with a cap? This determines whether the 14-day SLA is per-request or per-region.</p></div>
-    <div class="card q"><h4><span class="k">Q6</span> Colour-coding in Asana</h4><p>Cheapest win: mirror these four colours as Asana tags so the type is readable in the board, not just here.</p></div>
+    <div class="card gap"><h4><span class="k">1</span> One request = one ticket</h4><p>Every request is <b>one Asana task on the matching board</b>. The task URL is the ID and the board is the type. CR and NF share a board, so the <b>Type</b> field on that board (Change Request / Feature) carries the split.</p></div>
+    <div class="card gap"><h4><span class="k">2</span> One accountable owner</h4><p>Every ticket names <b>one owner</b> at triage who carries it end-to-end. cc is visibility; it is not accountability.</p></div>
   </div>
 </div>
 
 <div class="foot">
-  <b>Source:</b> redraw of the ops-manager request-workflow diagram shared 2026-09-10. Original six-step campaign path preserved as the CM lane. &nbsp;·&nbsp;
-  <b>Status:</b> DRAFT — nothing here is agreed. The six open questions are the blocking items. &nbsp;·&nbsp;
-  <b>Next:</b> walk this with Alex + Ops, settle Q1–Q6, then encode the four types as Asana tags + one intake form.
+  <b>Status:</b> DRAFT — no outstanding open questions. &nbsp;·&nbsp;
+  <b>Triage:</b> Agnes &amp; Cheryl. &nbsp;·&nbsp;
+  <b>Decided 2026-09-11:</b> CR escalation and NF Product involvement are Ops Mgr / Alex judgment calls, not fixed rules. CR/NF board renamed to <b>Ztor. Change &amp; Feature Requests</b>. &nbsp;·&nbsp;
+  <b>Next:</b> make the <b>Type</b> field required on the shared board, then layer the auto-submission form on top of the four boards.
 </div>
 
 <script>
