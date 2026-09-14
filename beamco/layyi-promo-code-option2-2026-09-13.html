@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LAYYI Promo Codes — Option 2 Prototype (Artist Portal)</title>
+<title>LAYYI Promo Codes — Artist Portal</title>
 <style>
   /* ── Noir Pink tokens (design-systems/noir-pink.md) ─────────────────── */
   :root{
@@ -135,8 +135,6 @@
   .card li code{font-family:var(--mono);font-size:12px;color:var(--t1);background:var(--bg2);padding:1px 5px;border-radius:4px}
   .card h4{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:14px 0 6px}
   .card h4:first-of-type{margin-top:0}
-  .cmp td:first-child{color:var(--t1);font-weight:600;white-space:nowrap}
-  .cmp th:nth-child(3),.cmp td:nth-child(3){background:rgba(246,143,166,.05)}
   footer{margin-top:36px;color:var(--muted);font-size:12px;text-align:center}
 
   @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -146,13 +144,13 @@
 <div class="wrap">
 
 <header class="hero">
-  <div class="kicker">Beamco artist portal · DBR-340 · Option 2 prototype · 2026-09-13</div>
-  <h1>LAYYI promo codes — Option 2: extend today's Promo Code setting</h1>
-  <p class="lede">Three small additions on top of the existing shop-wide promo code. Internal-use UI, no polish. The right panel proves the fans-side business logic on the LAYYI item list (example codes and quantities are placeholders — real values come from Dan's sheet).</p>
+  <div class="kicker">Beamco artist portal · DBR-340 · agreed design · updated 2026-09-14</div>
+  <h1>LAYYI promo codes — extend today's Promo Code setting</h1>
+  <p class="lede">Agreed with dev 14 Sep: the rules live in the artist portal, not hard-coded. Internal-use UI, no polish. The right panel proves the fans-side business logic on the LAYYI item list (example codes and quantities are placeholders — real values come from Dan's sheet).</p>
   <ul class="chips" aria-label="What changes">
     <li class="chip new">Discount type · percentage or fixed amount</li>
-    <li class="chip new">Applies to · all products (today) or selected items</li>
-    <li class="chip new">Max redemptions · optional cap per code</li>
+    <li class="chip new">Applies to · all products, or selected events / single items / bundles</li>
+    <li class="chip new">One discount per order · lands on the highest-priced eligible item</li>
     <li class="chip keep">Dates · 8–20 char code · Auto-Generate · one code per checkout</li>
   </ul>
 </header>
@@ -171,13 +169,13 @@
       <button class="btn primary" type="button" onclick="document.getElementById('gen').scrollIntoView({behavior:'smooth',block:'start'})">Generate</button>
       <div class="tablewrap" style="margin-top:12px">
         <table aria-label="Valid promotion codes">
-          <thead><tr><th>Promo Code</th><th>Type<span class="new-badge">NEW</span></th><th class="num">Value</th><th>Applies to<span class="new-badge">NEW</span></th><th class="num">Used / Limit<span class="new-badge">NEW</span></th><th>Status</th></tr></thead>
+          <thead><tr><th>Promo Code</th><th>Type<span class="new-badge">NEW</span></th><th class="num">Value</th><th>Applies to<span class="new-badge">NEW</span></th><th>Status</th></tr></thead>
           <tbody id="codes-body"></tbody>
         </table>
       </div>
       <div class="section-label">Invalid Promotion Codes</div>
-      <p class="help" style="margin-bottom:8px">Expired or fully redeemed codes move here (unchanged behaviour).</p>
-      <div class="tablewrap"><table aria-label="Invalid promotion codes"><thead><tr><th>Promo Code</th><th>Type</th><th class="num">Value</th><th>Applies to</th><th class="num">Used / Limit</th><th>Window</th></tr></thead><tbody id="invalid-body"><tr><td colspan="6" class="muted" style="text-align:center;padding:18px">No Data</td></tr></tbody></table></div>
+      <p class="help" style="margin-bottom:8px">Expired codes move here (unchanged behaviour).</p>
+      <div class="tablewrap"><table aria-label="Invalid promotion codes"><thead><tr><th>Promo Code</th><th>Type</th><th class="num">Value</th><th>Applies to</th><th>Window</th></tr></thead><tbody id="invalid-body"><tr><td colspan="5" class="muted" style="text-align:center;padding:18px">No Data</td></tr></tbody></table></div>
     </div>
 
     <!-- Generate drawer -->
@@ -202,21 +200,16 @@
         <div class="field">
           <label class="req" for="f-value" id="l-value">Discount Rate (%)</label>
           <div class="adorned"><input class="input" id="f-value" type="number" min="0" step="1" placeholder="Enter discount percentage" inputmode="decimal"><span class="adorn" id="adorn" aria-hidden="true">%</span></div>
-          <div class="hint" id="h-value">Percentage of each eligible line. Fixed amounts apply once per order to the eligible subtotal and never go below $0.00.</div>
+          <div class="hint" id="h-value">One discount per order. It lands on the single highest-priced eligible product in the cart — percentage off that product's price, or the fixed amount capped at that price. Quantity never raises the cap.</div>
         </div>
 
         <fieldset class="field">
           <legend class="req">Applies to<span class="new-badge">NEW</span></legend>
           <label class="radio"><input type="radio" name="applies" value="all" checked><span>All products in store<small>Today's behaviour — unchanged default</small></span></label>
-          <label class="radio"><input type="radio" name="applies" value="items"><span>Selected items only<small>Pick from this shop's tickets, bundles and merchandise</small></span></label>
+          <label class="radio"><input type="radio" name="applies" value="items"><span>Selected items only<small>Pick from this shop's events, single items and bundle packages</small></span></label>
           <div class="items" id="items-box" hidden></div>
+          <div class="hint" id="bundle-hint" hidden>A bundle package is its own product. Selecting a single item does <b>not</b> cover a bundle that contains it, and selecting a bundle does <b>not</b> cover its parts sold separately — tick each one you want covered.</div>
         </fieldset>
-
-        <div class="field">
-          <label for="f-max">Max Redemptions<span class="new-badge">NEW</span></label>
-          <input class="input" id="f-max" type="number" min="1" step="1" placeholder="Unlimited" inputmode="numeric">
-          <div class="hint">Optional. Counts paid orders. Leave blank for no cap.</div>
-        </div>
 
         <div class="field">
           <label class="req" for="f-code">Promo Code</label>
@@ -263,7 +256,7 @@
       </div>
       <div class="hint">Fee rate is still open (5% vs 10%, see 07-29 ADR); the point being proven is the <b>basis</b>: post-discount, never list price. Processing-fee component omitted.</div>
 
-      <div class="actions" style="margin-top:12px"><button class="btn" type="button" id="b-order">Place order (simulate) → increments Used / Limit</button></div>
+      <div class="actions" style="margin-top:12px"><button class="btn" type="button" id="b-order">Place order (simulate)</button></div>
 
       <h3 style="margin-top:16px">What the order record stores <span class="muted small">(reporting fields from the ticket)</span></h3>
       <div class="record" id="record" aria-label="Order record preview"></div>
@@ -274,76 +267,81 @@
 <!-- ══════════════════ NOTES ══════════════════ -->
 <section class="notes" aria-label="Dev notes">
   <div class="card">
-    <h2>Dev delta (Option 2)</h2>
+    <h2>Dev delta</h2>
     <h4>Data model — promo_code</h4>
     <ul>
       <li><code>discount_type</code> enum <code>percent | fixed</code> (today: percent only)</li>
       <li><code>discount_value</code> decimal (today: rate %)</li>
       <li><code>applies_to</code> enum <code>all | items</code>, default <code>all</code></li>
-      <li><code>promo_code_items</code> (promo_id, product_id / ticket_type_id) — empty when <code>all</code></li>
-      <li><code>max_redemptions</code> int nullable · <code>redemption_count</code> int</li>
+      <li><code>promo_code_items</code> (promo_id, target_type <code>event | item | bundle</code>, target_id) — empty when <code>all</code></li>
+    </ul>
+    <h4>Admin rule — enforce at config time</h4>
+    <ul>
+      <li>Fixed amount ≤ price of the highest-priced selected product — portal pulls the catalogue and blocks Save above it</li>
+      <li>A bundle is its own product: selecting a single item never covers a bundle containing it, and selecting a bundle never covers its parts sold separately</li>
     </ul>
     <h4>Checkout rule — enforce server-side at order creation</h4>
     <ul>
       <li>Code active in window, case-insensitive, one code per order (existing)</li>
       <li>Eligible lines = all lines if <code>all</code>, else lines whose item ∈ <code>promo_code_items</code></li>
       <li>No eligible line → reject: <i>"Promo code is not valid for items in your cart."</i></li>
-      <li>percent → Σ eligible line totals × rate · fixed → min(value, Σ eligible line totals)</li>
-      <li>Cap → reject when <code>redemption_count ≥ max_redemptions</code>: <i>"Sorry, promo code has met capacity."</i> · increment on paid order</li>
-      <li>Bundle = its own SKU: eligible only when explicitly selected</li>
+      <li><b>One discount per order, on the highest-priced eligible product</b> — percent → <code>price × rate</code> · fixed → <code>min(value, price)</code>. Quantity never raises it; ties resolve to catalogue order</li>
+      <li>Order stores <code>discount_applied_to</code> so reporting and the fan see the same line</li>
     </ul>
     <h4>Platform fee — separate ticket, platform-wide</h4>
     <ul>
       <li><code>platform_fee = (subtotal − discount) × rate</code> — changes the basis for every shop, not just LAYYI → needs effective date, forward-only</li>
       <li>Order stores: original subtotal · code · discount amount · post-discount subtotal · fee</li>
     </ul>
-    <h4>Decide before build</h4>
-    <ul>
-      <li>Fixed amount: once per order (shown here) vs per unit</li>
-      <li>Rounding: 2 dp half-up, or whole-dollar (Dan's ID-02)</li>
-      <li>Fee rate 5% vs 10%</li>
-    </ul>
   </div>
 
   <div class="card">
-    <h2>Option 1 vs Option 2 — at a glance</h2>
-    <div class="tablewrap"><table class="cmp" aria-label="Option comparison">
-      <thead><tr><th></th><th>Option 1 · hard-code</th><th>Option 2 · extend setting</th></tr></thead>
-      <tbody>
-        <tr><td>Where rules live</td><td>Source code</td><td>promo_code rows, set in portal</td></tr>
-        <tr><td>Waiting on biz</td><td>Blocks build: codes, items, prices must be final first</td><td>Dev builds schema now; biz fills values whenever ready</td></tr>
-        <tr><td>Testability</td><td>QA edits code to vary cases</td><td>QA / biz create test codes in UAT portal</td></tr>
-        <tr><td>Mid-campaign change (steeper codes, ID-04)</td><td>Code change + deploy</td><td>Add a row</td></tr>
-        <tr><td>Product IDs</td><td>Baked in — re-created product silently breaks code</td><td>Picked from live catalogue</td></tr>
-        <tr><td>After LAYYI</td><td>Throwaway</td><td>Same rule model Ztor eShop needs (discount codes on hold pending Jeff + Yves)</td></tr>
-        <tr><td>UI work</td><td>None</td><td>3 fields + 3 list columns, internal quality</td></tr>
-        <tr><td>Shared either way</td><td colspan="2">Post-discount platform fee · eligibility enforced server-side · reporting fields on the order</td></tr>
-      </tbody>
-    </table></div>
+    <h2>Agreed 14 Sep · still open</h2>
+    <h4>Agreed with dev</h4>
+    <ul>
+      <li>Rules live in the artist portal, not hard-coded — easier to test and adjust</li>
+      <li>Two discount types: percentage and fixed amount</li>
+      <li>Multi-select applicable products — dev confirms no significant added complexity</li>
+      <li>Targets are events, single items and bundle packages; a bundle is a distinct product</li>
+      <li>One code per order, no stacking; discount lands on the highest-priced eligible product</li>
+      <li>Fixed amount capped at that product's price, enforced in the portal</li>
+      <li>Promo entry stays at checkout, not the cart — unchanged</li>
+    </ul>
+    <h4>Confirm with client Wed 16 Sep</h4>
+    <ul>
+      <li><b>Percentage across several eligible items.</b> Under the agreed rule a 10% code on a cart with three eligible tickets discounts <i>one</i> of them, not all three. Confirm that is intended — it is the one rule the meeting agreed to document and sign off before locking.</li>
+      <li><b>Rounding</b> — 2 dp half-up, or whole-dollar (Dan's ID-02)</li>
+    </ul>
+    <h4>Tracked elsewhere</h4>
+    <ul>
+      <li>Platform fee <b>rate</b> 5% vs 10% — separate platform-wide ticket (07-29 ADR). The <b>basis</b> is settled: post-discount, never list price</li>
+      <li>LAYYI nice-to-haves not in this build: per-user redemption cap (ID 5), global redemption cap (ID 6), phased ticket sales (ID 1)</li>
+    </ul>
     <p class="hint" style="margin-top:10px">Full review: <code>beamco-docs/layyi-promo-code-solution-arch-2026-09-13.md</code> · Ticket ingest: <code>beamco-docs/layyi-promo-code-ingest-2026-09-13.md</code></p>
   </div>
 </section>
 
-<footer>Visual system: Noir Pink (design-systems/noir-pink.md) · Source: Asana DBR-340 + LAYYI requirements sheet · Example codes, quantities and fee rate are placeholders</footer>
+<footer>Visual system: Noir Pink (design-systems/noir-pink.md) · Source: Asana DBR-340 + LAYYI requirements sheet + dev meeting 2026-09-14 · Example codes, quantities and fee rate are placeholders</footer>
 </div>
 
 <script>
 (function(){
   const TODAY = '2026-10-20';
   const ITEMS = [
-    {id:'early-bird',   cat:'Tickets', name:'Early Bird',     price:28},
-    {id:'general-entry',cat:'Tickets', name:'General Entry',  price:38},
-    {id:'door',         cat:'Tickets', name:'Door',           price:58},
-    {id:'priority',     cat:'Tickets', name:'Priority Entry', price:68},
-    {id:'vip-1',        cat:'Bundles', name:'VIP Tier 1',     price:118, note:'Priority Entry + VIP Area + Vinyl + Signed Polaroid'},
-    {id:'vip-2',        cat:'Bundles', name:'VIP Tier 2',     price:null, note:'Priority Entry + Meet & Greet + Signed Polaroid'},
-    {id:'vinyl',        cat:'Merchandise', name:'Vinyl',      price:60},
-    {id:'stickers',     cat:'Merchandise', name:'Stickers',   price:null},
+    {id:'early-bird',   cat:'Events',          name:'Early Bird',     price:28},
+    {id:'general-entry',cat:'Events',          name:'General Entry',  price:38},
+    {id:'door',         cat:'Events',          name:'Door',           price:58},
+    {id:'priority',     cat:'Events',          name:'Priority Entry', price:68},
+    {id:'vip-1',        cat:'Bundle packages', name:'VIP Tier 1',     price:118, note:'Priority Entry + VIP Area + Vinyl + Signed Polaroid'},
+    {id:'vip-2',        cat:'Bundle packages', name:'VIP Tier 2',     price:null, note:'Priority Entry + Meet & Greet + Signed Polaroid'},
+    {id:'vinyl',        cat:'Single items',    name:'Vinyl',          price:60},
+    {id:'stickers',     cat:'Single items',    name:'Stickers',       price:null},
   ];
   const CODES = [
-    {code:'EARLYFAN10', type:'percent', value:10, applies:'items', items:['early-bird','general-entry'], max:100,  used:37,  start:'2026-10-15', end:'2026-10-26'},
-    {code:'VINYLLOVE15',type:'fixed',   value:15, applies:'items', items:['vinyl','vip-1'],             max:null, used:12,  start:'2026-10-15', end:'2026-10-26'},
-    {code:'LAYYIFAM5',  type:'percent', value:5,  applies:'all',   items:[],                            max:200,  used:200, start:'2026-10-15', end:'2026-10-26'},
+    {code:'EARLYFAN10', type:'percent', value:10, applies:'items', items:['early-bird','general-entry'], start:'2026-10-15', end:'2026-10-26'},
+    {code:'VINYLONLY20',type:'fixed',   value:20, applies:'items', items:['vinyl'],                      start:'2026-10-15', end:'2026-10-26'},
+    {code:'VINYLLOVE15',type:'fixed',   value:15, applies:'items', items:['vinyl','vip-1'],              start:'2026-10-15', end:'2026-10-26'},
+    {code:'LAYYIFAM5',  type:'percent', value:5,  applies:'all',   items:[],                             start:'2026-10-15', end:'2026-10-26'},
   ];
   const cart = {'general-entry':1, 'vip-1':1, 'vinyl':1};
   let applied = null;
@@ -355,7 +353,6 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
   function status(c){
-    if (c.max!=null && c.used>=c.max) return ['At capacity','warn'];
     if (TODAY < c.start) return ['Scheduled','neutral'];
     if (TODAY > c.end) return ['Expired','err'];
     return ['Active','ok'];
@@ -369,7 +366,7 @@
   function renderCodes(){
     $('codes-body').innerHTML = CODES.map(c=>{
       const [s,k]=status(c);
-      return `<tr><td class="code">${esc(c.code)}</td><td>${c.type==='percent'?'Percentage':'Fixed $'}</td><td class="num">${valueText(c)}</td><td>${esc(appliesText(c))}</td><td class="num">${c.used} / ${c.max==null?'∞':c.max}</td><td><span class="pill ${k}">${s}</span><div class="small muted">${c.start.slice(5)} → ${c.end.slice(5)}</div></td></tr>`;
+      return `<tr><td class="code">${esc(c.code)}</td><td>${c.type==='percent'?'Percentage':'Fixed $'}</td><td class="num">${valueText(c)}</td><td>${esc(appliesText(c))}</td><td><span class="pill ${k}">${s}</span><div class="small muted">${c.start.slice(5)} → ${c.end.slice(5)}</div></td></tr>`;
     }).join('');
     $('code-list').innerHTML = CODES.map(c=>`<option value="${esc(c.code)}">`).join('');
   }
@@ -383,19 +380,24 @@
   function compute(){
     const lines = ITEMS.filter(i=>i.price!=null && (cart[i.id]||0)>0).map(i=>({...i, qty:cart[i.id], total:i.price*cart[i.id]}));
     const subtotal = r2(lines.reduce((s,l)=>s+l.total,0));
-    let discount=0, eligible=[], code=null;
+    let discount=0, eligible=[], code=null, target=null;
     if (applied){
       code = CODES.find(c=>c.code===applied);
-      eligible = lines.filter(l => code.applies==='all' || code.items.includes(l.id)).map(l=>l.id);
-      const eligSub = lines.filter(l=>eligible.includes(l.id)).reduce((s,l)=>s+l.total,0);
-      if (eligible.length){
-        discount = code.type==='percent' ? r2(eligSub*code.value/100) : Math.min(Number(code.value), eligSub);
+      const elig = lines.filter(l => code.applies==='all' || code.items.includes(l.id));
+      eligible = elig.map(l=>l.id);
+      if (elig.length){
+        /* One discount per order — it lands on the single highest-priced eligible product.
+           Ties resolve to catalogue order so the fan and the order record always agree. */
+        target = elig.reduce((best,l)=> l.price>best.price ? l : best, elig[0]);
+        discount = code.type==='percent'
+          ? r2(target.price * code.value/100)
+          : r2(Math.min(Number(code.value), target.price));  /* cap = product price, never the line total */
       }
     }
     const post = r2(subtotal - discount);
     const rate = parseFloat($('s-rate').value)||0;
     const fee = r2(post*rate/100);
-    return {lines, subtotal, discount, eligible, code, post, rate, fee, net:r2(post-fee)};
+    return {lines, subtotal, discount, eligible, target, code, post, rate, fee, net:r2(post-fee)};
   }
 
   function renderCart(){
@@ -404,12 +406,16 @@
       const q = cart[i.id]||0; const tbd = i.price==null;
       let promo = '<span class="muted">—</span>';
       if (applied && q>0 && !tbd){
-        promo = st.eligible.includes(i.id) ? '<span class="pill ok">eligible</span>' : '<span class="pill neutral">full price</span>';
+        if (st.target && st.target.id===i.id) promo = `<span class="pill ok">discounted −${money(st.discount)}</span>`;
+        else if (st.eligible.includes(i.id)) promo = '<span class="pill pink">eligible · not applied</span>';
+        else promo = '<span class="pill neutral">full price</span>';
       }
       return `<tr><td>${esc(i.name)}<div class="muted small">${i.cat}${i.note?' · '+esc(i.note):''}</div></td><td class="num">${tbd?'<span class="muted">TBD</span>':'$'+i.price.toFixed(2)}</td><td><div class="stepper"><button type="button" aria-label="Decrease ${esc(i.name)}" data-id="${i.id}" data-d="-1" ${tbd||q===0?'disabled':''}>−</button><span>${q}</span><button type="button" aria-label="Increase ${esc(i.name)}" data-id="${i.id}" data-d="1" ${tbd||q>=3?'disabled':''}>+</button></div></td><td class="num">${tbd||q===0?'<span class="muted">—</span>':'$'+(i.price*q).toFixed(2)}</td><td>${promo}</td></tr>`;
     }).join('');
     $('o-sub').textContent = money(st.subtotal);
-    $('o-disc-label').textContent = applied ? `Discount · ${applied}` : 'Discount';
+    $('o-disc-label').innerHTML = applied
+      ? `Discount · ${esc(applied)}` + (st.target ? ` <span class="muted">→ ${esc(st.target.name)}</span>` : '')
+      : 'Discount';
     $('o-disc').textContent = st.discount ? '−'+money(st.discount) : '−$0.00';
     $('o-post').textContent = money(st.post);
     $('o-fee-note').textContent = `@ ${st.rate}% of post-discount`;
@@ -420,12 +426,13 @@
   items_subtotal        ${st.subtotal.toFixed(2)}     <span class="muted">// original prices</span>
   promo_code            ${applied ? applied : 'null'}
   discount_type/value   ${st.code ? st.code.type+' / '+st.code.value : 'null'}
+  discount_applied_to   ${st.target ? st.target.id : 'null'}     <span class="muted">// highest-priced eligible product</span>
   discount_amount       ${st.discount.toFixed(2)}
   post_discount_subtotal ${st.post.toFixed(2)}
   platform_fee_rate     ${st.rate}%
   platform_fee          ${st.fee.toFixed(2)}     <span class="muted">// basis = post_discount_subtotal</span>
 <b>lines</b>
-${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padStart(8)}  ${applied?(st.eligible.includes(l.id)?'eligible':'full price'):''}`).join('\n') || '  (empty)'}`;
+${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padStart(8)}  ${applied?(st.target&&st.target.id===l.id?'discounted':(st.eligible.includes(l.id)?'eligible · not applied':'full price')):''}`).join('\n') || '  (empty)'}`;
   }
 
   function showMsg(el, kind, text){ el.className='msg '+kind; el.textContent=text; }
@@ -438,25 +445,21 @@ ${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padSt
     const c = CODES.find(x=>x.code===raw);
     if (!c){ showMsg($('sim-msg'),'err','Unknown promo code.'); applied=null; renderCart(); return; }
     if (TODAY < c.start || TODAY > c.end){ showMsg($('sim-msg'),'err','This promo code is not active right now.'); applied=null; renderCart(); return; }
-    if (c.max!=null && c.used>=c.max){ showMsg($('sim-msg'),'err','Sorry, promo code has met capacity.'); applied=null; renderCart(); return; }
     const lines = st.lines;
     const elig = lines.filter(l => c.applies==='all' || c.items.includes(l.id));
     if (!elig.length){ showMsg($('sim-msg'),'err','Promo code is not valid for items in your cart.'); applied=null; renderCart(); return; }
     applied = c.code;
     const after = compute();
-    showMsg($('sim-msg'),'ok',`${c.code} applied · ${elig.length} eligible line${elig.length>1?'s':''} · ${c.type==='percent'?c.value+'% off eligible lines':'$'+c.value+' off eligible subtotal'} · −${money(after.discount)}`);
+    showMsg($('sim-msg'),'ok',`${c.code} applied · ${elig.length} eligible line${elig.length>1?'s':''} · ${c.type==='percent'?c.value+'% off':'$'+c.value+' off, capped at the item price'}${after.target?' → '+after.target.name:''} · −${money(after.discount)}`);
     renderCart();
   }
 
   function placeOrder(){
     const st = compute();
     if (!st.lines.length){ showMsg($('sim-msg'),'err','Cart is empty.'); return; }
-    if (st.code){
-      st.code.used += 1;
-      showMsg($('sim-msg'),'ok',`Order placed · ${st.code.code} now ${st.code.used} / ${st.code.max==null?'∞':st.code.max}${st.code.max!=null&&st.code.used>=st.code.max?' → at capacity, next fan is rejected':''}`);
-    } else {
-      showMsg($('sim-msg'),'ok','Order placed without a promo code.');
-    }
+    showMsg($('sim-msg'),'ok', st.code && st.target
+      ? `Order placed · ${st.code.code} · −${money(st.discount)} on ${st.target.name} · fee on ${money(st.post)}`
+      : 'Order placed without a promo code.');
     applied=null; $('s-code').value='';
     renderCodes(); renderCart();
   }
@@ -467,9 +470,8 @@ ${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padSt
     const applies = document.querySelector('input[name=applies]:checked').value;
     const items = [...document.querySelectorAll('input[name=item]:checked')].map(i=>i.value);
     const value = parseFloat($('f-value').value);
-    const max = $('f-max').value.trim()==='' ? null : parseInt($('f-max').value,10);
     const code = $('f-code').value.trim().toUpperCase();
-    return {type, applies, items, value, max, code, start:$('f-start').value, end:$('f-end').value};
+    return {type, applies, items, value, code, start:$('f-start').value, end:$('f-end').value};
   }
   function validate(){
     const s = formState();
@@ -477,9 +479,16 @@ ${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padSt
     if (!(s.value>0)) errs.push('Discount value is required.');
     if (s.type==='percent' && s.value>100) errs.push('Percentage cannot exceed 100.');
     if (s.applies==='items' && !s.items.length) errs.push('Select at least one item.');
+    if (s.type==='fixed' && s.value>0){
+      /* Cap enforced here, at config time — dev pulls the catalogue so a code can never
+         be worth more than the product it discounts. */
+      const pool = (s.applies==='items' ? s.items.map(byId) : ITEMS).filter(i=>i && i.price!=null);
+      const cap = pool.reduce((b,i)=> !b || i.price>b.price ? i : b, null);
+      if (cap && s.value>cap.price) errs.push(`Fixed amount cannot exceed the highest-priced selected product — ${cap.name} at $${cap.price}.`);
+      if (s.applies==='items' && s.items.length && !pool.length) errs.push('Selected items have no price yet, so the fixed-amount cap cannot be checked.');
+    }
     if (!/^[A-Z0-9]{8,20}$/.test(s.code)) errs.push('Promo code: 8–20 letters/numbers, no special characters.');
     if (CODES.some(c=>c.code===s.code)) errs.push('That promo code already exists.');
-    if (s.max!=null && !(s.max>0)) errs.push('Max redemptions must be a positive number.');
     if (s.start && s.end && s.end < s.start) errs.push('End date must be after start date.');
     $('b-save').disabled = errs.length>0;
     return {s, errs};
@@ -494,6 +503,7 @@ ${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padSt
   function syncApplies(){
     const a = document.querySelector('input[name=applies]:checked').value;
     $('items-box').hidden = a!=='items';
+    $('bundle-hint').hidden = a!=='items';
   }
   function autoGen(){
     const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s='';
@@ -504,7 +514,7 @@ ${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padSt
     e.preventDefault();
     const {s, errs} = validate();
     if (errs.length){ showMsg($('gen-msg'),'err',errs[0]); return; }
-    CODES.push({code:s.code, type:s.type, value:s.value, applies:s.applies, items:s.items, max:s.max, used:0, start:s.start||'2026-10-15', end:s.end||'2026-10-26'});
+    CODES.push({code:s.code, type:s.type, value:s.value, applies:s.applies, items:s.items, start:s.start||'2026-10-15', end:s.end||'2026-10-26'});
     renderCodes();
     showMsg($('gen-msg'),'ok',`Saved · ${s.code} added to Valid Promotion Codes (${s.applies==='all'?'all products':s.items.length+' selected item'+(s.items.length>1?'s':'')}). Try it in the cart →`);
     $('f-code').value=''; validate();
@@ -515,7 +525,7 @@ ${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padSt
   document.querySelectorAll('input[name=type]').forEach(r=>r.addEventListener('change',()=>{syncType();validate();}));
   document.querySelectorAll('input[name=applies]').forEach(r=>r.addEventListener('change',()=>{syncApplies();validate();}));
   $('items-box').addEventListener('change',validate);
-  ['f-value','f-max','f-code','f-start','f-end'].forEach(id=>$(id).addEventListener('input',()=>{clearMsg($('gen-msg'));validate();}));
+  ['f-value','f-code','f-start','f-end'].forEach(id=>$(id).addEventListener('input',()=>{clearMsg($('gen-msg'));validate();}));
   $('b-auto').addEventListener('click',autoGen);
   $('gen-form').addEventListener('submit',save);
   $('cart-body').addEventListener('click',e=>{
