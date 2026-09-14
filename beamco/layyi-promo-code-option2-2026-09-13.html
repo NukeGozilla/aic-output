@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAYYI Promo Codes — Option 2 Prototype (Artist Portal)</title>
+<style>
+  /* ── Noir Pink tokens (design-systems/noir-pink.md) ─────────────────── */
+  :root{
+    --bg:#090a0a; --bg2:#191919; --card:#1f1f1f; --border:#292929; --subtle:#343434; --muted:#6c6c72;
+    --pink:#f68fa6; --pink-16:#f68fa629; --magenta:#f00396;
+    --t1:#f7f9fa; --t2:#e3e5e5; --t3:#cdcfd0;
+    --ok:#23c16b; --err:#ff5247; --warn:#ffb323; --info:#48a7f8;
+    --r:8px; --r-lg:12px;
+    --font:"Noto Sans TC","Noto Sans",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,"Segoe UI",Arial,Roboto,"PingFang SC","Hiragino Sans GB","Microsoft Yahei",sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{color-scheme:dark}
+  body{font-family:var(--font);background:var(--bg);color:var(--t2);font-size:14px;line-height:1.5;padding:32px 24px 64px}
+  a{color:var(--pink)}
+  h1,h2,h3{color:var(--t1);line-height:1.25}
+  h1{font-size:26px;font-weight:700}
+  h2{font-size:16px;font-weight:600;letter-spacing:.2px;margin-bottom:12px}
+  h3{font-size:14px;font-weight:600}
+  .wrap{max-width:1400px;margin:0 auto}
+
+  /* ── Hero ─────────────────────────────────────────────────────────── */
+  .hero{margin-bottom:28px}
+  .kicker{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+  .lede{color:var(--t3);max-width:820px;margin:8px 0 16px}
+  .chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--t2)}
+  .chip.new{border-color:var(--pink);background:var(--pink-16);color:var(--t1)}
+  .chip.new::before{content:"NEW";font-weight:700;color:var(--pink);margin-right:8px;font-size:10px;letter-spacing:.5px}
+  .chip.keep::before{content:"UNCHANGED";font-weight:700;color:var(--muted);margin-right:8px;font-size:10px;letter-spacing:.5px}
+
+  /* ── Layout ───────────────────────────────────────────────────────── */
+  .grid{display:grid;grid-template-columns:1fr;gap:24px}
+  @media (min-width:1100px){.grid{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}}
+  .col{display:flex;flex-direction:column;gap:20px;min-width:0}
+  .colhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+  .colhead .sub{font-size:12px;color:var(--muted)}
+
+  /* ── Drawer mock (matches portal side-sheet) ──────────────────────── */
+  .drawer{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 20px 22px;position:relative}
+  .drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .drawer-head h3{font-size:17px}
+  .x{width:32px;height:32px;border-radius:6px;border:0;background:transparent;color:var(--t3);font-size:18px;cursor:default}
+  .help{color:var(--muted);font-size:13px;margin-bottom:16px}
+  .section-label{font-size:14px;font-weight:600;color:var(--t1);margin:16px 0 8px}
+
+  /* ── Form controls ────────────────────────────────────────────────── */
+  .field{margin-bottom:14px}
+  .field label,.field legend{display:block;font-size:13px;font-weight:600;color:var(--t1);margin-bottom:6px}
+  .req::after{content:" *";color:var(--pink)}
+  .hint{font-size:12px;color:var(--muted);margin-top:5px}
+  .input{width:100%;height:42px;background:var(--bg2);border:1px solid var(--subtle);border-radius:var(--r);color:var(--t1);font:inherit;padding:0 12px}
+  .input::placeholder{color:var(--muted)}
+  .input:focus-visible,button:focus-visible,input[type=checkbox]:focus-visible,input[type=radio]:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+  .row2{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:end}
+  .row2 .dash{color:var(--muted);padding-bottom:12px;text-align:center}
+  .adorned{position:relative}
+  .adorned .input{padding-right:40px}
+  .adorned .adorn{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--t3);font-weight:600}
+  fieldset{border:0;min-width:0}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--bg2);padding:4px;border-radius:var(--r);border:1px solid var(--subtle)}
+  .seg label{position:relative;margin:0;display:flex;align-items:center;justify-content:center;height:36px;border-radius:6px;font-weight:600;font-size:13px;color:var(--t3);cursor:pointer}
+  .seg input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
+  .seg input:checked + span{color:#1a0b10}
+  .seg label:has(input:checked){background:var(--pink);color:#1a0b10}
+  .seg label:has(input:focus-visible){outline:2px solid var(--pink);outline-offset:2px}
+  .radio{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-weight:500;color:var(--t2);cursor:pointer}
+  .radio input{width:18px;height:18px;margin-top:2px;accent-color:var(--pink);flex:none}
+  .radio small{display:block;color:var(--muted);font-weight:400}
+  .items{border:1px solid var(--subtle);border-radius:var(--r);background:var(--bg2);padding:6px 12px 10px;margin-top:6px}
+  .items .grp{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:8px 0 2px}
+  .items label{display:flex;align-items:center;gap:10px;padding:6px 0;font-weight:400;color:var(--t2);cursor:pointer;margin:0;font-size:13px}
+  .items label input{width:16px;height:16px;accent-color:var(--pink)}
+  .items label .p{margin-left:auto;color:var(--t3);font-family:var(--mono);font-size:12px}
+  .items label.tbd{color:var(--muted)}
+  .btn{height:44px;border-radius:var(--r);border:1px solid var(--subtle);background:var(--bg2);color:var(--t1);font:inherit;font-weight:600;padding:0 16px;cursor:pointer;width:100%}
+  .btn.primary{background:var(--pink);color:#1a0b10;border-color:var(--pink)}
+  .btn.primary:hover{background:#f7a0b4}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.sm{height:36px;width:auto;font-size:13px;padding:0 12px}
+  .actions{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .msg{border-radius:var(--r);padding:10px 12px;font-size:13px;margin-top:10px;display:none}
+  .msg.ok{display:block;background:rgba(35,193,107,.12);border:1px solid rgba(35,193,107,.4);color:#8be0b4}
+  .msg.err{display:block;background:rgba(255,82,71,.12);border:1px solid rgba(255,82,71,.45);color:#ff9d96}
+  .msg.warn{display:block;background:rgba(255,179,35,.12);border:1px solid rgba(255,179,35,.45);color:#ffd48a}
+
+  /* ── Annotation badges ────────────────────────────────────────────── */
+  .new-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--pink);background:var(--pink-16);border:1px solid var(--pink);border-radius:999px;padding:2px 8px;vertical-align:middle;margin-left:8px}
+
+  /* ── Tables ───────────────────────────────────────────────────────── */
+  .tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:var(--bg2)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:460px}
+  th{text-align:left;color:var(--t1);font-weight:600;padding:10px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+  td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--t2);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  tbody tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+  .code{font-family:var(--mono);color:var(--t1);font-weight:600}
+  .num{font-family:var(--mono);text-align:right;white-space:nowrap}
+  th.num{text-align:right}
+  .pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
+  .pill.ok{background:rgba(35,193,107,.16);color:#8be0b4}
+  .pill.warn{background:rgba(255,179,35,.16);color:#ffd48a}
+  .pill.err{background:rgba(255,82,71,.16);color:#ff9d96}
+  .pill.neutral{background:var(--subtle);color:var(--t3)}
+  .pill.pink{background:var(--pink-16);color:var(--pink)}
+  .muted{color:var(--muted)}
+  .small{font-size:12px}
+
+  /* ── Simulator ────────────────────────────────────────────────────── */
+  .sim .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px}
+  .sim .toolbar .field{margin:0;flex:1 1 160px}
+  .stepper{display:inline-flex;align-items:center;gap:4px}
+  .stepper button{width:40px;height:40px;border-radius:6px;border:1px solid var(--subtle);background:var(--card);color:var(--t1);font-size:16px;cursor:pointer}
+  .stepper span{min-width:22px;text-align:center;font-family:var(--mono)}
+  .summary{margin-top:14px;border-top:1px solid var(--border);padding-top:12px}
+  .summary .r{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+  .summary .r .v{font-family:var(--mono);color:var(--t1)}
+  .summary .r.total{border-top:1px solid var(--border);margin-top:6px;padding-top:10px;font-weight:700;font-size:14px}
+  .summary .r.total .v{color:var(--pink)}
+  .record{margin-top:14px;background:var(--bg2);border:1px solid var(--subtle);border-radius:var(--r);padding:12px;font-family:var(--mono);font-size:12px;color:var(--t3);white-space:pre;overflow-x:auto}
+  .record b{color:var(--t1);font-weight:600}
+
+  /* ── Notes ────────────────────────────────────────────────────────── */
+  .notes{margin-top:32px;display:grid;grid-template-columns:1fr;gap:20px}
+  @media (min-width:1100px){.notes{grid-template-columns:1fr 1fr}}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px}
+  .card ul{padding-left:18px;color:var(--t2)}
+  .card li{margin:4px 0}
+  .card li code{font-family:var(--mono);font-size:12px;color:var(--t1);background:var(--bg2);padding:1px 5px;border-radius:4px}
+  .card h4{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:14px 0 6px}
+  .card h4:first-of-type{margin-top:0}
+  .cmp td:first-child{color:var(--t1);font-weight:600;white-space:nowrap}
+  .cmp th:nth-child(3),.cmp td:nth-child(3){background:rgba(246,143,166,.05)}
+  footer{margin-top:36px;color:var(--muted);font-size:12px;text-align:center}
+
+  @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Beamco artist portal · DBR-340 · Option 2 prototype · 2026-09-13</div>
+  <h1>LAYYI promo codes — Option 2: extend today's Promo Code setting</h1>
+  <p class="lede">Three small additions on top of the existing shop-wide promo code. Internal-use UI, no polish. The right panel proves the fans-side business logic on the LAYYI item list (example codes and quantities are placeholders — real values come from Dan's sheet).</p>
+  <ul class="chips" aria-label="What changes">
+    <li class="chip new">Discount type · percentage or fixed amount</li>
+    <li class="chip new">Applies to · all products (today) or selected items</li>
+    <li class="chip new">Max redemptions · optional cap per code</li>
+    <li class="chip keep">Dates · 8–20 char code · Auto-Generate · one code per checkout</li>
+  </ul>
+</header>
+
+<main class="grid">
+
+  <!-- ══════════════════ LEFT: ARTIST PORTAL ══════════════════ -->
+  <section class="col" aria-labelledby="h-portal">
+    <div class="colhead"><h2 id="h-portal">Artist portal · after</h2><span class="sub">Sales &amp; Fulfillment → Promo Code</span></div>
+
+    <!-- Promo Code Management list -->
+    <div class="drawer" aria-labelledby="h-list">
+      <div class="drawer-head"><h3 id="h-list">Promo Code Management</h3><button class="x" aria-label="Close (decorative)" tabindex="-1">✕</button></div>
+      <p class="help">Set up your promo codes. Each code applies to all products in your store, or only to the items you select.</p>
+      <div class="section-label">Valid Promotion Codes</div>
+      <button class="btn primary" type="button" onclick="document.getElementById('gen').scrollIntoView({behavior:'smooth',block:'start'})">Generate</button>
+      <div class="tablewrap" style="margin-top:12px">
+        <table aria-label="Valid promotion codes">
+          <thead><tr><th>Promo Code</th><th>Type<span class="new-badge">NEW</span></th><th class="num">Value</th><th>Applies to<span class="new-badge">NEW</span></th><th class="num">Used / Limit<span class="new-badge">NEW</span></th><th>Status · Window</th></tr></thead>
+          <tbody id="codes-body"></tbody>
+        </table>
+      </div>
+      <div class="section-label">Invalid Promotion Codes</div>
+      <p class="help" style="margin-bottom:8px">Expired or fully redeemed codes move here (unchanged behaviour).</p>
+      <div class="tablewrap"><table aria-label="Invalid promotion codes"><thead><tr><th>Promo Code</th><th>Type</th><th class="num">Value</th><th>Applies to</th><th class="num">Used / Limit</th><th>Window</th></tr></thead><tbody id="invalid-body"><tr><td colspan="6" class="muted" style="text-align:center;padding:18px">No Data</td></tr></tbody></table></div>
+    </div>
+
+    <!-- Generate drawer -->
+    <div class="drawer" id="gen" aria-labelledby="h-gen">
+      <div class="drawer-head"><h3 id="h-gen">Generate</h3><button class="x" aria-label="Close (decorative)" tabindex="-1">✕</button></div>
+      <p class="help">Set up your promo code. Choose whether it applies to all products or only to selected items.</p>
+      <form id="gen-form" novalidate>
+        <div class="row2">
+          <div class="field"><label for="f-start">Start Date</label><input class="input" id="f-start" type="date" value="2026-10-15"></div>
+          <div class="dash">–</div>
+          <div class="field"><label for="f-end">End Date</label><input class="input" id="f-end" type="date" value="2026-10-26"></div>
+        </div>
+
+        <fieldset class="field">
+          <legend class="req">Discount Type<span class="new-badge">NEW</span></legend>
+          <div class="seg" role="radiogroup" aria-label="Discount type">
+            <label><input type="radio" name="type" value="percent" checked><span>Percentage (%)</span></label>
+            <label><input type="radio" name="type" value="fixed"><span>Fixed amount ($)</span></label>
+          </div>
+        </fieldset>
+
+        <div class="field">
+          <label class="req" for="f-value" id="l-value">Discount Rate (%)</label>
+          <div class="adorned"><input class="input" id="f-value" type="number" min="0" step="1" placeholder="Enter discount percentage" inputmode="decimal"><span class="adorn" id="adorn" aria-hidden="true">%</span></div>
+          <div class="hint" id="h-value">Percentage of each eligible line. Fixed amounts apply once per order to the eligible subtotal and never go below $0.00.</div>
+        </div>
+
+        <fieldset class="field">
+          <legend class="req">Applies to<span class="new-badge">NEW</span></legend>
+          <label class="radio"><input type="radio" name="applies" value="all" checked><span>All products in store<small>Today's behaviour — unchanged default</small></span></label>
+          <label class="radio"><input type="radio" name="applies" value="items"><span>Selected items only<small>Pick from this shop's tickets, bundles and merchandise</small></span></label>
+          <div class="items" id="items-box" hidden></div>
+        </fieldset>
+
+        <div class="field">
+          <label for="f-max">Max Redemptions<span class="new-badge">NEW</span></label>
+          <input class="input" id="f-max" type="number" min="1" step="1" placeholder="Unlimited" inputmode="numeric">
+          <div class="hint">Optional. Counts paid orders. Leave blank for no cap.</div>
+        </div>
+
+        <div class="field">
+          <label class="req" for="f-code">Promo Code</label>
+          <input class="input" id="f-code" type="text" placeholder="8-20 characters, no special characters" maxlength="20" autocomplete="off" spellcheck="false" style="text-transform:uppercase">
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="button" id="b-auto">Auto-Generate</button>
+          <button class="btn primary" type="submit" id="b-save" disabled>Save</button>
+        </div>
+        <div class="msg" id="gen-msg" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ══════════════════ RIGHT: FANS SIDE SIMULATION ══════════════════ -->
+  <section class="col" aria-labelledby="h-fans">
+    <div class="colhead"><h2 id="h-fans">Fans side · checkout simulation</h2><span class="sub">business logic, not UI — simulated date <span class="code">2026-10-20</span></span></div>
+
+    <div class="drawer sim" aria-labelledby="h-cart">
+      <div class="drawer-head"><h3 id="h-cart">Cart · LAYYI shop</h3><span class="pill pink">one code per checkout</span></div>
+
+      <div class="tablewrap">
+        <table aria-label="Cart lines">
+          <thead><tr><th>Item</th><th class="num">Price</th><th>Qty</th><th class="num">Line</th><th>Promo</th></tr></thead>
+          <tbody id="cart-body"></tbody>
+        </table>
+      </div>
+
+      <div class="toolbar" style="margin-top:14px">
+        <div class="field"><label for="s-code">Promo code</label><input class="input" id="s-code" list="code-list" placeholder="EARLYFAN10" autocomplete="off" spellcheck="false" style="text-transform:uppercase"><datalist id="code-list"></datalist></div>
+        <button class="btn primary sm" type="button" id="b-apply" style="height:42px">Apply</button>
+        <button class="btn sm" type="button" id="b-remove" style="height:42px">Remove</button>
+        <div class="field" style="flex:0 1 150px"><label for="s-rate">Platform fee rate</label><div class="adorned"><input class="input" id="s-rate" type="number" min="0" max="100" step="0.5" value="5"><span class="adorn" aria-hidden="true">%</span></div></div>
+      </div>
+      <div class="msg" id="sim-msg" role="status" aria-live="polite"></div>
+
+      <div class="summary" aria-live="polite">
+        <div class="r"><span>Items subtotal</span><span class="v" id="o-sub">$0.00</span></div>
+        <div class="r"><span id="o-disc-label">Discount</span><span class="v" id="o-disc">−$0.00</span></div>
+        <div class="r"><span>Post-discount subtotal <span class="muted">(fan pays)</span></span><span class="v" id="o-post">$0.00</span></div>
+        <div class="r"><span>Platform fee <span class="muted" id="o-fee-note">@ 5% of post-discount</span></span><span class="v" id="o-fee">$0.00</span></div>
+        <div class="r total"><span>Artist net (before processing fee)</span><span class="v" id="o-net">$0.00</span></div>
+      </div>
+      <div class="hint">Fee rate is still open (5% vs 10%, see 07-29 ADR); the point being proven is the <b>basis</b>: post-discount, never list price. Processing-fee component omitted.</div>
+
+      <div class="actions" style="margin-top:12px"><button class="btn" type="button" id="b-order">Place order (simulate) → increments Used / Limit</button></div>
+
+      <h3 style="margin-top:16px">What the order record stores <span class="muted small">(reporting fields from the ticket)</span></h3>
+      <div class="record" id="record" aria-label="Order record preview"></div>
+    </div>
+  </section>
+</main>
+
+<!-- ══════════════════ NOTES ══════════════════ -->
+<section class="notes" aria-label="Dev notes">
+  <div class="card">
+    <h2>Dev delta (Option 2)</h2>
+    <h4>Data model — promo_code</h4>
+    <ul>
+      <li><code>discount_type</code> enum <code>percent | fixed</code> (today: percent only)</li>
+      <li><code>discount_value</code> decimal (today: rate %)</li>
+      <li><code>applies_to</code> enum <code>all | items</code>, default <code>all</code></li>
+      <li><code>promo_code_items</code> (promo_id, product_id / ticket_type_id) — empty when <code>all</code></li>
+      <li><code>max_redemptions</code> int nullable · <code>redemption_count</code> int</li>
+    </ul>
+    <h4>Checkout rule — enforce server-side at order creation</h4>
+    <ul>
+      <li>Code active in window, case-insensitive, one code per order (existing)</li>
+      <li>Eligible lines = all lines if <code>all</code>, else lines whose item ∈ <code>promo_code_items</code></li>
+      <li>No eligible line → reject: <i>"Promo code is not valid for items in your cart."</i></li>
+      <li>percent → Σ eligible line totals × rate · fixed → min(value, Σ eligible line totals)</li>
+      <li>Cap → reject when <code>redemption_count ≥ max_redemptions</code>: <i>"Sorry, promo code has met capacity."</i> · increment on paid order</li>
+      <li>Bundle = its own SKU: eligible only when explicitly selected</li>
+    </ul>
+    <h4>Platform fee — separate ticket, platform-wide</h4>
+    <ul>
+      <li><code>platform_fee = (subtotal − discount) × rate</code> — changes the basis for every shop, not just LAYYI → needs effective date, forward-only</li>
+      <li>Order stores: original subtotal · code · discount amount · post-discount subtotal · fee</li>
+    </ul>
+    <h4>Decide before build</h4>
+    <ul>
+      <li>Fixed amount: once per order (shown here) vs per unit</li>
+      <li>Rounding: 2 dp half-up, or whole-dollar (Dan's ID-02)</li>
+      <li>Fee rate 5% vs 10%</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Option 1 vs Option 2 — at a glance</h2>
+    <div class="tablewrap"><table class="cmp" aria-label="Option comparison">
+      <thead><tr><th></th><th>Option 1 · hard-code</th><th>Option 2 · extend setting</th></tr></thead>
+      <tbody>
+        <tr><td>Where rules live</td><td>Source code</td><td>promo_code rows, set in portal</td></tr>
+        <tr><td>Waiting on biz</td><td>Blocks build: codes, items, prices must be final first</td><td>Dev builds schema now; biz fills values whenever ready</td></tr>
+        <tr><td>Testability</td><td>QA edits code to vary cases</td><td>QA / biz create test codes in UAT portal</td></tr>
+        <tr><td>Mid-campaign change (steeper codes, ID-04)</td><td>Code change + deploy</td><td>Add a row</td></tr>
+        <tr><td>Product IDs</td><td>Baked in — re-created product silently breaks code</td><td>Picked from live catalogue</td></tr>
+        <tr><td>After LAYYI</td><td>Throwaway</td><td>Same rule model Ztor eShop needs (discount codes on hold pending Jeff + Yves)</td></tr>
+        <tr><td>UI work</td><td>None</td><td>3 fields + 3 list columns, internal quality</td></tr>
+        <tr><td>Shared either way</td><td colspan="2">Post-discount platform fee · eligibility enforced server-side · reporting fields on the order</td></tr>
+      </tbody>
+    </table></div>
+    <p class="hint" style="margin-top:10px">Full review: <code>outputs/architecture/solution-arch-2026-09-13-layyi-promo-code.md</code> · Ticket ingest: <code>beamco-docs/layyi-promo-code-ingest-2026-09-13.md</code></p>
+  </div>
+</section>
+
+<footer>Visual system: Noir Pink (design-systems/noir-pink.md) · Source: Asana DBR-340 + LAYYI requirements sheet · Example codes, quantities and fee rate are placeholders</footer>
+</div>
+
+<script>
+(function(){
+  const TODAY = '2026-10-20';
+  const ITEMS = [
+    {id:'early-bird',   cat:'Tickets', name:'Early Bird',     price:28},
+    {id:'general-entry',cat:'Tickets', name:'General Entry',  price:38},
+    {id:'door',         cat:'Tickets', name:'Door',           price:58},
+    {id:'priority',     cat:'Tickets', name:'Priority Entry', price:68},
+    {id:'vip-1',        cat:'Bundles', name:'VIP Tier 1',     price:118, note:'Priority Entry + VIP Area + Vinyl + Signed Polaroid'},
+    {id:'vip-2',        cat:'Bundles', name:'VIP Tier 2',     price:null, note:'Priority Entry + Meet & Greet + Signed Polaroid'},
+    {id:'vinyl',        cat:'Merchandise', name:'Vinyl',      price:60},
+    {id:'stickers',     cat:'Merchandise', name:'Stickers',   price:null},
+  ];
+  const CODES = [
+    {code:'EARLYFAN10', type:'percent', value:10, applies:'items', items:['early-bird','general-entry'], max:100,  used:37,  start:'2026-10-15', end:'2026-10-26'},
+    {code:'VINYLLOVE15',type:'fixed',   value:15, applies:'items', items:['vinyl','vip-1'],             max:null, used:12,  start:'2026-10-15', end:'2026-10-26'},
+    {code:'LAYYIFAM5',  type:'percent', value:5,  applies:'all',   items:[],                            max:200,  used:200, start:'2026-10-15', end:'2026-10-26'},
+  ];
+  const cart = {'general-entry':1, 'vip-1':1, 'vinyl':1};
+  let applied = null;
+
+  const $ = id => document.getElementById(id);
+  const money = n => (n<0?'−':'') + '$' + Math.abs(n).toFixed(2);
+  const r2 = n => Math.round(n*100)/100;
+  const byId = id => ITEMS.find(i=>i.id===id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  function status(c){
+    if (c.max!=null && c.used>=c.max) return ['At capacity','warn'];
+    if (TODAY < c.start) return ['Scheduled','neutral'];
+    if (TODAY > c.end) return ['Expired','err'];
+    return ['Active','ok'];
+  }
+  function appliesText(c){
+    if (c.applies==='all') return 'All products';
+    return c.items.map(id=>byId(id).name).join(', ');
+  }
+  function valueText(c){ return c.type==='percent' ? c.value+'%' : '$'+Number(c.value).toFixed(2); }
+
+  function renderCodes(){
+    $('codes-body').innerHTML = CODES.map(c=>{
+      const [s,k]=status(c);
+      return `<tr><td class="code">${esc(c.code)}</td><td>${c.type==='percent'?'Percentage':'Fixed $'}</td><td class="num">${valueText(c)}</td><td>${esc(appliesText(c))}</td><td class="num">${c.used} / ${c.max==null?'∞':c.max}</td><td><span class="pill ${k}">${s}</span><div class="small muted">${c.start.slice(5)} → ${c.end.slice(5)}</div></td></tr>`;
+    }).join('');
+    $('code-list').innerHTML = CODES.map(c=>`<option value="${esc(c.code)}">`).join('');
+  }
+
+  function renderItemsBox(){
+    const groups = [...new Set(ITEMS.map(i=>i.cat))];
+    $('items-box').innerHTML = groups.map(g => `<div class="grp">${g}</div>` + ITEMS.filter(i=>i.cat===g).map(i =>
+      `<label class="${i.price==null?'tbd':''}"><input type="checkbox" name="item" value="${i.id}"> ${esc(i.name)}${i.note?` <span class="muted small">· ${esc(i.note)}</span>`:''}<span class="p">${i.price==null?'TBD':'$'+i.price}</span></label>`).join('')).join('');
+  }
+
+  function compute(){
+    const lines = ITEMS.filter(i=>i.price!=null && (cart[i.id]||0)>0).map(i=>({...i, qty:cart[i.id], total:i.price*cart[i.id]}));
+    const subtotal = r2(lines.reduce((s,l)=>s+l.total,0));
+    let discount=0, eligible=[], code=null;
+    if (applied){
+      code = CODES.find(c=>c.code===applied);
+      eligible = lines.filter(l => code.applies==='all' || code.items.includes(l.id)).map(l=>l.id);
+      const eligSub = lines.filter(l=>eligible.includes(l.id)).reduce((s,l)=>s+l.total,0);
+      if (eligible.length){
+        discount = code.type==='percent' ? r2(eligSub*code.value/100) : Math.min(Number(code.value), eligSub);
+      }
+    }
+    const post = r2(subtotal - discount);
+    const rate = parseFloat($('s-rate').value)||0;
+    const fee = r2(post*rate/100);
+    return {lines, subtotal, discount, eligible, code, post, rate, fee, net:r2(post-fee)};
+  }
+
+  function renderCart(){
+    const st = compute();
+    $('cart-body').innerHTML = ITEMS.map(i=>{
+      const q = cart[i.id]||0; const tbd = i.price==null;
+      let promo = '<span class="muted">—</span>';
+      if (applied && q>0 && !tbd){
+        promo = st.eligible.includes(i.id) ? '<span class="pill ok">eligible</span>' : '<span class="pill neutral">full price</span>';
+      }
+      return `<tr><td>${esc(i.name)}<div class="muted small">${i.cat}${i.note?' · '+esc(i.note):''}</div></td><td class="num">${tbd?'<span class="muted">TBD</span>':'$'+i.price.toFixed(2)}</td><td><div class="stepper"><button type="button" aria-label="Decrease ${esc(i.name)}" data-id="${i.id}" data-d="-1" ${tbd||q===0?'disabled':''}>−</button><span>${q}</span><button type="button" aria-label="Increase ${esc(i.name)}" data-id="${i.id}" data-d="1" ${tbd||q>=3?'disabled':''}>+</button></div></td><td class="num">${tbd||q===0?'<span class="muted">—</span>':'$'+(i.price*q).toFixed(2)}</td><td>${promo}</td></tr>`;
+    }).join('');
+    $('o-sub').textContent = money(st.subtotal);
+    $('o-disc-label').textContent = applied ? `Discount · ${applied}` : 'Discount';
+    $('o-disc').textContent = st.discount ? '−'+money(st.discount) : '−$0.00';
+    $('o-post').textContent = money(st.post);
+    $('o-fee-note').textContent = `@ ${st.rate}% of post-discount`;
+    $('o-fee').textContent = money(st.fee);
+    $('o-net').textContent = money(st.net);
+    $('record').innerHTML =
+`<b>order</b>
+  items_subtotal        ${st.subtotal.toFixed(2)}     <span class="muted">// original prices</span>
+  promo_code            ${applied ? applied : 'null'}
+  discount_type/value   ${st.code ? st.code.type+' / '+st.code.value : 'null'}
+  discount_amount       ${st.discount.toFixed(2)}
+  post_discount_subtotal ${st.post.toFixed(2)}
+  platform_fee_rate     ${st.rate}%
+  platform_fee          ${st.fee.toFixed(2)}     <span class="muted">// basis = post_discount_subtotal</span>
+<b>lines</b>
+${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padStart(8)}  ${applied?(st.eligible.includes(l.id)?'eligible':'full price'):''}`).join('\n') || '  (empty)'}`;
+  }
+
+  function showMsg(el, kind, text){ el.className='msg '+kind; el.textContent=text; }
+  function clearMsg(el){ el.className='msg'; el.textContent=''; }
+
+  function applyCode(){
+    const raw = $('s-code').value.trim().toUpperCase();
+    const st = compute();
+    if (!raw){ showMsg($('sim-msg'),'err','Enter a promo code.'); return; }
+    const c = CODES.find(x=>x.code===raw);
+    if (!c){ showMsg($('sim-msg'),'err','Unknown promo code.'); applied=null; renderCart(); return; }
+    if (TODAY < c.start || TODAY > c.end){ showMsg($('sim-msg'),'err','This promo code is not active right now.'); applied=null; renderCart(); return; }
+    if (c.max!=null && c.used>=c.max){ showMsg($('sim-msg'),'err','Sorry, promo code has met capacity.'); applied=null; renderCart(); return; }
+    const lines = st.lines;
+    const elig = lines.filter(l => c.applies==='all' || c.items.includes(l.id));
+    if (!elig.length){ showMsg($('sim-msg'),'err','Promo code is not valid for items in your cart.'); applied=null; renderCart(); return; }
+    applied = c.code;
+    const after = compute();
+    showMsg($('sim-msg'),'ok',`${c.code} applied · ${elig.length} eligible line${elig.length>1?'s':''} · ${c.type==='percent'?c.value+'% off eligible lines':'$'+c.value+' off eligible subtotal'} · −${money(after.discount)}`);
+    renderCart();
+  }
+
+  function placeOrder(){
+    const st = compute();
+    if (!st.lines.length){ showMsg($('sim-msg'),'err','Cart is empty.'); return; }
+    if (st.code){
+      st.code.used += 1;
+      showMsg($('sim-msg'),'ok',`Order placed · ${st.code.code} now ${st.code.used} / ${st.code.max==null?'∞':st.code.max}${st.code.max!=null&&st.code.used>=st.code.max?' → at capacity, next fan is rejected':''}`);
+    } else {
+      showMsg($('sim-msg'),'ok','Order placed without a promo code.');
+    }
+    applied=null; $('s-code').value='';
+    renderCodes(); renderCart();
+  }
+
+  /* ── Generate form ── */
+  function formState(){
+    const type = document.querySelector('input[name=type]:checked').value;
+    const applies = document.querySelector('input[name=applies]:checked').value;
+    const items = [...document.querySelectorAll('input[name=item]:checked')].map(i=>i.value);
+    const value = parseFloat($('f-value').value);
+    const max = $('f-max').value.trim()==='' ? null : parseInt($('f-max').value,10);
+    const code = $('f-code').value.trim().toUpperCase();
+    return {type, applies, items, value, max, code, start:$('f-start').value, end:$('f-end').value};
+  }
+  function validate(){
+    const s = formState();
+    const errs = [];
+    if (!(s.value>0)) errs.push('Discount value is required.');
+    if (s.type==='percent' && s.value>100) errs.push('Percentage cannot exceed 100.');
+    if (s.applies==='items' && !s.items.length) errs.push('Select at least one item.');
+    if (!/^[A-Z0-9]{8,20}$/.test(s.code)) errs.push('Promo code: 8–20 letters/numbers, no special characters.');
+    if (CODES.some(c=>c.code===s.code)) errs.push('That promo code already exists.');
+    if (s.max!=null && !(s.max>0)) errs.push('Max redemptions must be a positive number.');
+    if (s.start && s.end && s.end < s.start) errs.push('End date must be after start date.');
+    $('b-save').disabled = errs.length>0;
+    return {s, errs};
+  }
+  function syncType(){
+    const t = document.querySelector('input[name=type]:checked').value;
+    $('adorn').textContent = t==='percent' ? '%' : '$';
+    $('l-value').textContent = t==='percent' ? 'Discount Rate (%)' : 'Discount Amount ($)';
+    $('f-value').placeholder = t==='percent' ? 'Enter discount percentage' : 'Enter dollar amount off';
+    $('f-value').step = t==='percent' ? '1' : '0.01';
+  }
+  function syncApplies(){
+    const a = document.querySelector('input[name=applies]:checked').value;
+    $('items-box').hidden = a!=='items';
+  }
+  function autoGen(){
+    const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s='';
+    for(let i=0;i<10;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+    $('f-code').value=s; validate();
+  }
+  function save(e){
+    e.preventDefault();
+    const {s, errs} = validate();
+    if (errs.length){ showMsg($('gen-msg'),'err',errs[0]); return; }
+    CODES.push({code:s.code, type:s.type, value:s.value, applies:s.applies, items:s.items, max:s.max, used:0, start:s.start||'2026-10-15', end:s.end||'2026-10-26'});
+    renderCodes();
+    showMsg($('gen-msg'),'ok',`Saved · ${s.code} added to Valid Promotion Codes (${s.applies==='all'?'all products':s.items.length+' selected item'+(s.items.length>1?'s':'')}). Try it in the cart →`);
+    $('f-code').value=''; validate();
+  }
+
+  /* ── Wire up ── */
+  renderCodes(); renderItemsBox(); renderCart(); syncType(); syncApplies();
+  document.querySelectorAll('input[name=type]').forEach(r=>r.addEventListener('change',()=>{syncType();validate();}));
+  document.querySelectorAll('input[name=applies]').forEach(r=>r.addEventListener('change',()=>{syncApplies();validate();}));
+  $('items-box').addEventListener('change',validate);
+  ['f-value','f-max','f-code','f-start','f-end'].forEach(id=>$(id).addEventListener('input',()=>{clearMsg($('gen-msg'));validate();}));
+  $('b-auto').addEventListener('click',autoGen);
+  $('gen-form').addEventListener('submit',save);
+  $('cart-body').addEventListener('click',e=>{
+    const b=e.target.closest('button[data-id]'); if(!b) return;
+    const id=b.dataset.id, d=parseInt(b.dataset.d,10);
+    cart[id]=Math.max(0,Math.min(3,(cart[id]||0)+d));
+    if (applied){ const st=compute(); if(!st.eligible.length){ showMsg($('sim-msg'),'err','Promo code is not valid for items in your cart.'); applied=null; } }
+    renderCart();
+  });
+  $('b-apply').addEventListener('click',applyCode);
+  $('s-code').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();applyCode();} });
+  $('b-remove').addEventListener('click',()=>{ applied=null; $('s-code').value=''; clearMsg($('sim-msg')); renderCart(); });
+  $('s-rate').addEventListener('input',renderCart);
+  $('b-order').addEventListener('click',placeOrder);
+})();
+</script>
+</body>
+</html>
