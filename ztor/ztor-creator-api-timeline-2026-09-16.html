@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator API — Phased Timeline · LLOUD Oct 30 → Ticketing Nov 20 → Loyalty Dec 11 → Tyson Dec 18</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3eee2; --paper2:#ece5d4; --card:#fffdf8; --ink:#241f18; --muted:#6f675a;
+    --gold:#b0894f; --gold-soft:#cbb085; --rule:#ddd4c0;
+    /* team lanes — categorical, validated (dataviz six checks, light surface #fffdf8) */
+    --pm:#c2255c;  --pm-bg:#f9e4ec;  --pm-ln:#e9b3c6;   /* Jeff + Nan · decisions & spec */
+    --cs:#e8590c;  --cs-bg:#fbe8dc;  --cs-ln:#f0bfa3;   /* Creator Studio team (超敏 · 超偉) */
+    --api:#0b6bcb; --api-bg:#e0ecf9; --api-ln:#a7c6ea;  /* Eric · Indonesia team */
+    --site:#2f9e44;--site-bg:#e3f2e6;--site-ln:#a9d6b3; /* L · lloud.club */
+    --ext:#6741d9; --ext-bg:#ebe5f9; --ext-ln:#c3b4ec;  /* Bookyay · vendor · Tyson's dev */
+    --warn:#b06b14; --warn-bg:#f8ecd4;
+    --bad:#a83232; --bad-bg:#f7e4e2;
+    --shadow:0 1px 0 rgba(0,0,0,.04),0 14px 40px -22px rgba(60,45,20,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Noto Sans TC",system-ui,sans-serif;color:var(--ink);line-height:1.6;
+    background:radial-gradient(120% 80% at 100% -10%,#fbf7ec 0%,transparent 55%),
+               radial-gradient(120% 80% at -10% 110%,#f0e7d3 0%,transparent 50%),var(--paper);
+    -webkit-font-smoothing:antialiased}
+  .wrap{position:relative;z-index:1;max-width:1260px;margin:0 auto;padding:44px 26px 90px}
+
+  html[lang="en"] .zh{display:none !important}
+  html[lang="zh-Hant"] .en{display:none !important}
+  .langsw{position:fixed;top:14px;right:14px;z-index:40;display:flex;gap:2px;padding:3px;border:1px solid var(--rule);
+    border-radius:999px;background:rgba(255,253,248,.94);backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+  .langsw button{font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:700;border:0;background:transparent;
+    color:var(--muted);padding:6px 14px;border-radius:999px;cursor:pointer;transition:.15s}
+  .langsw button.on{background:var(--gold);color:#fff}
+
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  h1{font-family:"Fraunces",serif;font-weight:900;font-size:clamp(30px,4.4vw,48px);line-height:1.04;letter-spacing:-.015em;margin:.3em 0 .2em;max-width:22ch}
+  h1 em{font-style:italic;color:var(--gold)}
+  .sub{font-size:15px;color:var(--muted);max-width:80ch}
+  .sub b{color:var(--ink)}
+  .meta{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted);margin-top:14px;display:flex;flex-wrap:wrap;gap:6px 18px}
+  .meta b{color:var(--ink);font-weight:700}
+  .goldrule{height:2px;margin:22px 0 0;background:linear-gradient(90deg,var(--gold),transparent 70%)}
+
+  h2{font-family:"Fraunces",serif;font-weight:700;font-size:23px;letter-spacing:-.01em;margin:46px 0 6px}
+  h2 .num{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--gold);font-weight:700;margin-right:10px;vertical-align:3px}
+  .lede{font-size:14px;color:var(--muted);margin-bottom:18px;max-width:82ch}
+
+  /* ---------- wave cards ---------- */
+  .answer{margin:26px 0 6px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  @media(max-width:1000px){.answer{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:640px){.answer{grid-template-columns:repeat(2,1fr)}}
+  .acard{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .acard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c,var(--gold))}
+  .acard .d{font-family:"JetBrains Mono",monospace;font-size:25px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .acard .dow{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-top:5px}
+  .acard .who{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:11px;color:var(--c,var(--gold))}
+  .acard .w{font-size:13px;margin-top:3px;line-height:1.45}
+
+  /* ---------- gantt ---------- */
+  .scroller{overflow-x:auto;margin-top:8px;padding-bottom:6px}
+  .gantt{min-width:1200px;background:var(--card);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px 18px}
+  .grid{position:relative;display:grid;grid-template-columns:176px repeat(28,1fr);align-items:center;grid-auto-rows:minmax(0,auto)}
+  .mon{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700;
+    text-align:left;height:20px;line-height:20px;padding:0 0 0 6px;border-left:1px solid var(--rule);grid-row:1;align-self:start}
+  .wk{position:relative;font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);text-align:center;height:34px;padding-top:3px;
+    border-left:1px solid var(--rule);grid-row:2;line-height:1.2;align-self:start}
+  .wk b{display:block;font-size:12px;color:var(--ink)}
+  .wk.today b{color:var(--gold)}
+  .wk small{position:absolute;right:4px;bottom:1px;font-size:8.5px;color:var(--bad);letter-spacing:.02em;font-weight:700}
+  .spacer{grid-column:1/-1;grid-row:3;height:18px}
+
+  .shade{position:absolute;top:54px;bottom:0;background:repeating-linear-gradient(135deg,rgba(168,50,50,.10),rgba(168,50,50,.10) 6px,rgba(168,50,50,.03) 6px,rgba(168,50,50,.03) 12px);
+    border-left:1px dashed #d9a7a7;border-right:1px dashed #d9a7a7;pointer-events:none;z-index:0}
+  .shade i{position:absolute;top:2px;left:3px;font-style:normal;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--bad);font-weight:700;white-space:nowrap}
+  .vline{position:absolute;top:54px;bottom:0;border-left:2px dashed;pointer-events:none;z-index:3}
+  .vline i{position:absolute;top:1px;left:4px;font-style:normal;font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:700;white-space:nowrap}
+  .vline.today{border-color:var(--gold)} .vline.today i{color:var(--gold)}
+  .vline.frz{border-color:var(--bad)} .vline.frz i{color:var(--bad)}
+  .vline.live{border-color:var(--gold);border-left-style:solid} .vline.live i{color:var(--gold)}
+  .vline.deck{border-color:#c9c0ab;border-left-width:1px} .vline.deck i{color:var(--muted)}
+
+  .lanehead{font-size:12px;font-weight:700;padding:8px 12px 8px 0;line-height:1.3;align-self:start;grid-column:1;border-top:1px solid #efe9db;margin-top:6px}
+  .lanehead span{display:block;font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+  .lanehead.pm{color:var(--pm)} .lanehead.cs{color:var(--cs)} .lanehead.api{color:var(--api)} .lanehead.site{color:var(--site)} .lanehead.ext{color:var(--ext)}
+  .lanehead.tbd{color:var(--muted)}
+
+  .bar{position:relative;z-index:1;height:27px;border-radius:7px;display:flex;align-items:center;padding:0 6px;font-size:11px;font-weight:500;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid;margin:3px 2px;cursor:default}
+  .bar span{overflow:hidden;text-overflow:ellipsis}
+  .bar.one{padding:0 2px;justify-content:center;font-size:10px}
+  .bar.one.crit{padding-left:0}
+  .bar.pm{background:var(--pm-bg);border-color:var(--pm-ln);color:#7a1a3d}
+  .bar.cs{background:var(--cs-bg);border-color:var(--cs-ln);color:#7d3208}
+  .bar.api{background:var(--api-bg);border-color:var(--api-ln);color:#0d3f78}
+  .bar.site{background:var(--site-bg);border-color:var(--site-ln);color:#1b5e2a}
+  .bar.ext{background:var(--ext-bg);border-color:var(--ext-ln);color:#3f2a86}
+  .bar.tbd{background:transparent;border-style:dashed;border-color:#b9b09a;color:var(--muted)}
+  .bar.uat{background:repeating-linear-gradient(45deg,var(--site-bg),var(--site-bg) 7px,#d3ecd8 7px,#d3ecd8 14px);font-weight:700}
+  .bar.uat.ext{background:repeating-linear-gradient(45deg,var(--ext-bg),var(--ext-bg) 7px,#ddd3f4 7px,#ddd3f4 14px)}
+  .bar.solid{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:700;justify-content:center;padding:0 4px}
+  .bar.alt{border-style:dashed;font-size:10.5px}
+  .bar.dim{opacity:.6;font-weight:400}
+  .bar.crit{border-left-width:5px;border-left-color:var(--gold)}
+  .bar:hover{filter:brightness(.97);box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--gold-soft)}
+
+  .gaterow{grid-column:2/-1;display:grid;grid-template-columns:repeat(28,1fr);grid-template-rows:auto auto auto auto;border-top:1px dashed var(--rule);margin-top:8px;padding-top:6px;row-gap:1px}
+  .gate{text-align:center;color:var(--gold);font-size:13px;line-height:1;grid-row:1}
+  .gate.bad{color:var(--bad)}
+  .glabel{font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:700;text-align:center;color:var(--gold);letter-spacing:.02em;line-height:1.15;white-space:nowrap}
+  .glabel.bad{color:var(--bad)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font-size:12px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:7px}
+  .sw{display:inline-block;flex:none;width:15px;height:11px;border-radius:3px;border:1px solid}
+  .sw.pm{background:var(--pm-bg);border-color:var(--pm-ln)} .sw.cs{background:var(--cs-bg);border-color:var(--cs-ln)}
+  .sw.api{background:var(--api-bg);border-color:var(--api-ln)} .sw.site{background:var(--site-bg);border-color:var(--site-ln)}
+  .sw.ext{background:var(--ext-bg);border-color:var(--ext-ln)} .sw.gd{background:var(--gold);border-color:var(--gold)}
+  .sw.tbd{background:transparent;border-style:dashed;border-color:#b9b09a}
+  .sw.crit{background:var(--card);border-color:var(--rule);border-left:5px solid var(--gold)}
+  .sw.hol{background:repeating-linear-gradient(135deg,rgba(168,50,50,.14),rgba(168,50,50,.14) 3px,transparent 3px,transparent 6px);border-color:#d9a7a7}
+
+  .tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:#fff;border-radius:9px;padding:9px 12px;font-size:12px;line-height:1.45;max-width:340px;
+    box-shadow:0 12px 30px -10px rgba(0,0,0,.5);opacity:0;transition:opacity .12s}
+  .tip.on{opacity:1}
+  .tip .td{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--gold-soft);letter-spacing:.06em}
+  .tip .tl{font-weight:700;margin-top:2px}
+  .tip .to{color:#cfc6b4;font-size:11px;margin-top:2px}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--rule);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);font-size:13px}
+  th{background:var(--paper2);text-align:left;padding:10px 13px;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--rule)}
+  td{padding:10px 13px;border-bottom:1px solid #efe9db;vertical-align:top;line-height:1.5}
+  tr:last-child td{border-bottom:0}
+  td.dt{font-family:"JetBrains Mono",monospace;font-weight:700;white-space:nowrap;font-size:12.5px}
+  td.dt small{display:block;font-weight:500;color:var(--muted);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+  .pill{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:5px;letter-spacing:.06em;white-space:nowrap;margin-right:4px}
+  .pill.pm{background:var(--pm-bg);color:var(--pm)} .pill.cs{background:var(--cs-bg);color:var(--cs)} .pill.api{background:var(--api-bg);color:var(--api)}
+  .pill.site{background:var(--site-bg);color:var(--site)} .pill.ext{background:var(--ext-bg);color:var(--ext)} .pill.gd{background:#f3e6cf;color:#8a6624}
+  .pill.tbd{background:#eee9dd;color:var(--muted)}
+  .wave td:first-child{font-family:"Fraunces",serif;font-weight:700;font-size:15px;white-space:nowrap}
+  .wave .no{color:var(--muted)}
+  .wave ul{padding-left:16px;margin:0}
+  .wave li{margin:1px 0}
+
+  /* ---------- decisions ---------- */
+  .dec{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  @media(max-width:900px){.dec{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.dec{grid-template-columns:1fr}}
+  .dcard{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:13px 15px;box-shadow:var(--shadow);font-size:13px;line-height:1.5}
+  .dcard .k{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--bad);font-weight:700}
+  .dcard .q{font-weight:700;margin:3px 0 4px;font-size:14px}
+  .dcard .o{color:var(--muted)}
+  .dcard .o b{color:var(--ink);font-weight:700}
+
+  .callout{margin:16px 0;padding:14px 18px;border-radius:12px;border:1px solid;font-size:13.5px;display:flex;gap:12px;align-items:flex-start;line-height:1.55}
+  .callout .ic{font-size:17px;line-height:1.35;flex:none}
+  .callout.warn{background:var(--warn-bg);border-color:#e2c584;color:#6b4a12}
+  .callout b{font-weight:700}
+
+  .foot{margin-top:52px;padding-top:18px;border-top:1px solid var(--rule);font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);line-height:1.7}
+  .foot b{color:var(--ink)}
+  @media(max-width:640px){.wrap{padding:34px 16px 70px}}
+</style>
+</head>
+<body>
+
+<div class="langsw">
+  <button id="b-en" class="on" onclick="setLang('en')">EN</button>
+  <button id="b-zh" onclick="setLang('zh-Hant')">中文</button>
+</div>
+<div class="tip" id="tip"></div>
+
+<div class="wrap">
+
+  <div class="eyebrow">Ztor · Creator Standalone Channel · Public Creator API</div>
+  <h1><span class="en">Creator API — a <em>phased</em> timeline that can hold</span><span class="zh">Creator API — <em>分階段</em>交付、守得住的時程</span></h1>
+  <p class="sub">
+    <span class="en">In the Sep 16 sync everyone agreed the full scope (eShop + fan club by end-Oct, every API by end-Nov) is not achievable. This plan keeps the <b>Oct 30 LLOUD launch</b> by cutting it to what already exists, then adds <b>ticketing (Nov 20)</b> and <b>loyalty / missions (Dec 11)</b> as separate waves. Tyson's site follows on <b>Dec 18</b>.</span>
+    <span class="zh">9/16 與 Eric、Nan 的討論中，大家都同意「十月底 eShop＋粉絲俱樂部、十一月底所有 API」做不到。本計畫把 <b>10/30 LLOUD 上線</b>縮到現有功能能撐住的範圍，再以獨立波次補上<b>售票（11/20）</b>與<b>積分／任務（12/11）</b>；Tyson 網站 <b>12/18</b> 接續上線。</span>
+  </p>
+  <div class="meta">
+    <span><b>Drafted</b> 2026-09-16 (Wed)</span>
+    <span><b>Status</b> DRAFT — for Jeff → L, dev team</span>
+    <span><b>Horizon</b> Sep 14 → Dec 20 · 14 wk</span>
+    <span><b>Sources</b> Notion sync note 09-16 · Granola “sync up with Eric” · 2.0 dev meeting 09-16 · SA reviews 09-14/15</span>
+  </div>
+  <div class="goldrule"></div>
+
+  <!-- ============ 01 WAVES ============ -->
+  <h2><span class="num">01</span><span class="en">Three waves, not one launch</span><span class="zh">三個波次，不是一次上線</span></h2>
+  <p class="lede">
+    <span class="en">Each wave exposes an API group only after the underlying Ztor feature exists — the flow Eric proposed. 10/31 is a Saturday, so the launch day is Fri Oct 30.</span>
+    <span class="zh">每個波次都等 Ztor 本身功能先完成、再開出對應 API（Eric 提的做法）。10/31 是週六，因此上線日訂為 10/30（五）。</span>
+  </p>
+  <div class="answer">
+    <div class="acard" style="--c:var(--pm)">
+      <div class="d">Sep 21</div><div class="dow">Monday</div>
+      <div class="who"><span class="en">Freeze</span><span class="zh">需求凍結</span></div>
+      <div class="w"><span class="en"><b>Wave-1 cut signed off</b>, owners named, spec v1 to Eric by Fri.</span><span class="zh"><b>第一波範圍定案</b>、指定負責人；週五前 spec v1 交 Eric。</span></div>
+    </div>
+    <div class="acard" style="--c:var(--gold)">
+      <div class="d">Oct 30</div><div class="dow">Friday · wave 1</div>
+      <div class="who"><span class="en">LLOUD live</span><span class="zh">LLOUD 上線</span></div>
+      <div class="w"><span class="en"><b>Sign-in · eShop · fan club (join) · gating · profile · media.</b> Same window as eShop 2.2.</span><span class="zh"><b>登入 · eShop · 粉絲俱樂部（加入）· 購買限制 · 個人頁 · 媒體。</b>與 eShop 2.2 同一窗口。</span></div>
+    </div>
+    <div class="acard" style="--c:var(--api)">
+      <div class="d">Nov 20</div><div class="dow">Friday · wave 2</div>
+      <div class="who"><span class="en">Ticketing API</span><span class="zh">售票 API</span></div>
+      <div class="w"><span class="en"><b>Bookyay tickets on lloud.club</b> — after ztor.com's own rollout (early Nov).</span><span class="zh"><b>lloud.club 可賣 Bookyay 票</b>——在 ztor.com 自己先上（11 月初）之後。</span></div>
+    </div>
+    <div class="acard" style="--c:var(--api)">
+      <div class="d">Dec 11</div><div class="dow">Friday · wave 3</div>
+      <div class="who"><span class="en">All API groups</span><span class="zh">全部 API 群組</span></div>
+      <div class="w"><span class="en"><b>Points · tiers · ranking · rewards · missions.</b> Needs a loyalty owner by Sep 30.</span><span class="zh"><b>積分 · 等級 · 排行 · 獎勵 · 任務。</b>9/30 前須有積分負責人。</span></div>
+    </div>
+    <div class="acard" style="--c:var(--ext)">
+      <div class="d">Dec 18</div><div class="dow">Friday</div>
+      <div class="who"><span class="en">Tyson live</span><span class="zh">Tyson 上線</span></div>
+      <div class="w"><span class="en"><b>Tyson's dev integrates + our review</b>, 2 weeks after wave 3.</span><span class="zh"><b>Tyson 團隊串接＋我方審查</b>，第三波後兩週。</span></div>
+    </div>
+  </div>
+
+  <!-- ============ 02 GANTT ============ -->
+  <h2><span class="num">02</span><span class="en">The 14 weeks</span><span class="zh">14 週全景</span></h2>
+  <p class="lede">
+    <span class="en">Half-week resolution. Gold-edged bars are the critical path to Oct 30. Red line = freeze · gold line = LLOUD live · grey line = the deck's original “all groups mid-Nov”. Hover a bar for dates and the full label.</span>
+    <span class="zh">半週為一格。金邊長條＝10/30 的關鍵路徑。紅線＝凍結，金線＝LLOUD 上線，灰線＝簡報原訂「11 月中全部完成」。滑過長條可看日期與完整說明。</span>
+  </p>
+
+  <div class="scroller">
+  <div class="gantt">
+    <div class="grid" id="grid"></div>
+    <div class="legend">
+      <span><i class="sw pm"></i><span class="en">Jeff + Nan · decisions & spec</span><span class="zh">Jeff＋Nan · 決策與規格</span></span>
+      <span><i class="sw cs"></i><span class="en">Creator Studio team (超敏 · 超偉)</span><span class="zh">Creator Studio 團隊（超敏 · 超偉）</span></span>
+      <span><i class="sw api"></i><span class="en">Eric · Indonesia team</span><span class="zh">Eric · 印尼團隊</span></span>
+      <span><i class="sw site"></i><span class="en">L · lloud.club</span><span class="zh">L · lloud.club</span></span>
+      <span><i class="sw ext"></i><span class="en">Bookyay · vendor · Tyson's dev</span><span class="zh">Bookyay · 供應商 · Tyson 開發</span></span>
+      <span><i class="sw tbd"></i><span class="en">option / no owner yet</span><span class="zh">選項／尚無負責人</span></span>
+      <span><i class="sw crit"></i><span class="en">critical path to Oct 30</span><span class="zh">10/30 關鍵路徑</span></span>
+      <span><i class="sw gd"></i><span class="en">go-live</span><span class="zh">上線</span></span>
+      <span><i class="sw hol"></i><span class="en">Golden Week Oct 1–8 (CN teams out)</span><span class="zh">國慶假期 10/1–10/8（內地團隊休假）</span></span>
+    </div>
+  </div>
+  </div>
+
+  <!-- ============ 03 WAVE TABLE ============ -->
+  <h2><span class="num">03</span><span class="en">What ships in each wave</span><span class="zh">各波次交付內容</span></h2>
+  <p class="lede">
+    <span class="en">Wave 1 is the SA launch cut with Points, tiers and Ticketing moved out — the deck's own de-scope, plus the calendar's.</span>
+    <span class="zh">第一波＝架構審查建議的上線範圍，把積分、等級、售票移出——簡報自己提的縮減，加上日曆逼出來的。</span>
+  </p>
+  <table class="wave">
+    <thead><tr>
+      <th><span class="en">Wave</span><span class="zh">波次</span></th>
+      <th><span class="en">On lloud.club</span><span class="zh">lloud.club 上可用</span></th>
+      <th><span class="en">API groups</span><span class="zh">API 群組</span></th>
+      <th><span class="en">Not yet</span><span class="zh">尚未</span></th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td>1 <span class="pill gd">Oct 30</span></td>
+        <td><ul>
+          <li><span class="en">Sign-in with Ztor identity (one account)</span><span class="zh">以 Ztor 帳號登入（單一身分）</span></li>
+          <li><span class="en">eShop: catalog, cart, orders — fulfilment per Sep 21 decision</span><span class="zh">eShop：商品、購物車、訂單——出貨方式依 9/21 決定</span></li>
+          <li><span class="en">Fan club = join (follow), member-only binary</span><span class="zh">粉絲俱樂部＝加入（追蹤），會員限定為二元</span></li>
+          <li><span class="en">Gating: presale window · purchase limit · region lock</span><span class="zh">購買限制：預售時段 · 限購 · 地區鎖</span></li>
+          <li><span class="en">Profile · media (CDN whitelist)</span><span class="zh">個人頁 · 媒體（CDN 白名單）</span></li>
+        </ul></td>
+        <td><span class="pill api">Identity</span><span class="pill api">Catalog + Content</span><span class="pill api">Commerce</span><span class="pill api">Gating (basic)</span><span class="pill api">Media</span><span class="pill cs">CS product mgmt</span></td>
+        <td class="no"><span class="en">Ticketing · points · tiers · ranking · rewards · missions · promo codes · micro-donations</span><span class="zh">售票 · 積分 · 等級 · 排行 · 獎勵 · 任務 · 折扣碼 · 微捐</span></td>
+      </tr>
+      <tr>
+        <td>2 <span class="pill api">Nov 20</span></td>
+        <td><ul>
+          <li><span class="en">Event listing + ticket purchase (Bookyay consignment, Ztor checkout)</span><span class="zh">活動列表＋購票（Bookyay 寄售、Ztor 結帳）</span></li>
+          <li><span class="en">Tickets in the fan's wallet</span><span class="zh">票券進粉絲錢包</span></li>
+          <li><span class="en">L integrates Nov 23–27</span><span class="zh">L 於 11/23–27 串接</span></li>
+        </ul></td>
+        <td><span class="pill api">Ticketing</span><span class="pill ext">Bookyay Ph1 feed</span></td>
+        <td class="no"><span class="en">Ticket + merch bundles on lloud.club</span><span class="zh">lloud.club 上的票＋周邊組合</span></td>
+      </tr>
+      <tr>
+        <td>3 <span class="pill api">Dec 11</span></td>
+        <td><ul>
+          <li><span class="en">Points ledger, 45-day decay, tiers, leaderboard (Ztor 08-14 model)</span><span class="zh">積分帳本、45 天衰減、等級、排行榜（Ztor 08-14 模型）</span></li>
+          <li><span class="en">Rewards unlock by tier / product / lifetime points</span><span class="zh">依等級／商品／累積積分解鎖獎勵</span></li>
+          <li><span class="en">Missions: submit proof → CS review → award (彩蛋)</span><span class="zh">任務：提交證明 → CS 審核 → 發放（彩蛋）</span></li>
+          <li><span class="en">L integrates Dec 7–18</span><span class="zh">L 於 12/7–18 串接</span></li>
+        </ul></td>
+        <td><span class="pill api">Points</span><span class="pill api">Rewards</span><span class="pill api">Missions</span><span class="pill cs">CS rules UI</span><span class="pill tbd">Webhooks (P2)</span></td>
+        <td class="no"><span class="en">Auction · paid membership (not specced)</span><span class="zh">拍賣 · 付費會員（未有規格）</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============ 04 GATES ============ -->
+  <h2><span class="num">04</span><span class="en">Gates — and what breaks if one slips</span><span class="zh">關卡——沒守住會斷在哪</span></h2>
+  <table>
+    <thead><tr>
+      <th><span class="en">Date</span><span class="zh">日期</span></th>
+      <th><span class="en">Gate</span><span class="zh">關卡</span></th>
+      <th><span class="en">Owner</span><span class="zh">負責</span></th>
+      <th><span class="en">If it slips</span><span class="zh">延誤後果</span></th>
+    </tr></thead>
+    <tbody>
+      <tr><td class="dt">Sep 21<small>Mon</small></td><td><span class="en">Wave-1 cut + owners + fulfilment + CDN decided</span><span class="zh">第一波範圍、負責人、出貨方式、CDN 定案</span></td><td><span class="pill pm">Jeff · Nan</span></td><td><span class="en">Indonesia has nothing to build in Golden Week; every date after moves 1:1.</span><span class="zh">印尼團隊在國慶假期無事可做；之後每個日期等量後移。</span></td></tr>
+      <tr><td class="dt">Sep 25<small>Fri</small></td><td><span class="en">Creator API spec v1 (login · eShop · ticketing) to Eric</span><span class="zh">Creator API spec v1（登入 · eShop · 售票）交 Eric</span></td><td><span class="pill pm">Jeff · Nan</span></td><td><span class="en">The Oct 1–8 build window is lost.</span><span class="zh">失去 10/1–8 的開發窗口。</span></td></tr>
+      <tr><td class="dt">Sep 28–29<small>Mon–Tue</small></td><td><span class="en">eShop 2.2 version handed to Eric to merge</span><span class="zh">eShop 2.2 版本交 Eric 合併</span></td><td><span class="pill cs">CS team</span></td><td><span class="en">No eShop to wrap; LLOUD's shop moves with it. Already slipped once (Oct 17 → end Oct).</span><span class="zh">沒有 eShop 可包；LLOUD 商店跟著延。已延過一次（10/17 → 10 月底）。</span></td></tr>
+      <tr><td class="dt">Sep 30<small>Wed</small></td><td><span class="en">Loyalty: vendor vs build, and an owner</span><span class="zh">積分：買或做，並指定負責人</span></td><td><span class="pill pm">Jeff</span></td><td><span class="en">Wave 3 has nobody to start it Nov 2 → Dec 11 becomes January.</span><span class="zh">第三波 11/2 無人啟動 → 12/11 變成一月。</span></td></tr>
+      <tr><td class="dt">Oct 16<small>Fri</small></td><td><span class="en">API doc + sandbox to L (identity · catalog · orders)</span><span class="zh">API 文件＋沙盒交 L（身分 · 商品 · 訂單）</span></td><td><span class="pill api">Eric</span></td><td><span class="en">L's live-integration window drops below two weeks.</span><span class="zh">L 的實際串接時間少於兩週。</span></td></tr>
+      <tr><td class="dt">Oct 28<small>Wed</small></td><td><span class="en">Go / no-go: integration test + our code review of lloud.club passed</span><span class="zh">Go／No-go：整合測試＋我方審查 lloud.club 通過</span></td><td><span class="pill pm">Jeff</span></td><td><span class="en">No-go = launch moves to Nov 6 as a block, not a daily slide.</span><span class="zh">No-go＝整體改 11/6，不逐日拖。</span></td></tr>
+      <tr><td class="dt">Oct 30<small>Fri</small></td><td><span class="en">LLOUD live (wave 1) · eShop 2.2 live</span><span class="zh">LLOUD 上線（第一波）· eShop 2.2 上線</span></td><td><span class="pill gd">all</span></td><td><span class="en">Double launch in one window; if 2.2's UAT date is still open on Sep 21, plan LLOUD for Nov 6.</span><span class="zh">同窗雙上線；若 9/21 時 2.2 的 UAT 日期仍未定，LLOUD 改排 11/6。</span></td></tr>
+      <tr><td class="dt">Nov 2–6<small>wk</small></td><td><span class="en">Bookyay Phase 1 live on ztor.com</span><span class="zh">Bookyay 第一階段在 ztor.com 上線</span></td><td><span class="pill api">Eric</span><span class="pill ext">Bookyay</span></td><td><span class="en">Wave 2 moves with it.</span><span class="zh">第二波跟著延。</span></td></tr>
+      <tr><td class="dt">Dec 11<small>Fri</small></td><td><span class="en">All API groups complete (wave 3)</span><span class="zh">全部 API 群組完成（第三波）</span></td><td><span class="pill api">Eric</span><span class="pill tbd">loyalty owner</span></td><td><span class="en">Tyson slips into January.</span><span class="zh">Tyson 延到一月。</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ============ 05 DECISIONS ============ -->
+  <h2><span class="num">05</span><span class="en">Six decisions the Sep 21 freeze needs</span><span class="zh">9/21 凍結前要定的六件事</span></h2>
+  <p class="lede">
+    <span class="en">Without these, the freeze is a date on a calendar. Each one changes what Eric's team builds in Golden Week.</span>
+    <span class="zh">沒有這六件事，凍結只是日曆上的一個日期。每一件都會改變印尼團隊在假期裡做什麼。</span>
+  </p>
+  <div class="dec">
+    <div class="dcard"><div class="k">01 · fulfilment</div>
+      <div class="q"><span class="en">How does a LLOUD order reach the fan?</span><span class="zh">LLOUD 訂單怎麼送到粉絲手上？</span></div>
+      <div class="o"><span class="en">lloud.club is a fashion drop with shipping; eShop 2.2 is <b>pickup-only</b>. Pick: shipping into 2.2/2.3 · pickup / pop-up only · Beamco-managed fulfilment.</span><span class="zh">lloud.club 是要寄送的服飾發售；eShop 2.2 <b>只有取貨</b>。三選一：寄送排進 2.2/2.3 · 只做取貨／快閃 · Beamco 代出貨。</span></div></div>
+    <div class="dcard"><div class="k">02 · facade + payment</div>
+      <div class="q"><span class="en">Who owns the public gateway and checkout?</span><span class="zh">對外閘道與結帳歸誰？</span></div>
+      <div class="o"><span class="en">Proposal: <b>Eric's team</b> owns the facade; eShop / Bookyay expose internal APIs only. Also: does Lisa's site settle to a <b>separate payment account</b> (order tagging)?</span><span class="zh">提案：<b>Eric 團隊</b>負責 facade，eShop／Bookyay 只開內部 API。另外：Lisa 網站是否用<b>獨立收款帳號</b>（訂單標記）？</span></div></div>
+    <div class="dcard"><div class="k">03 · loyalty</div>
+      <div class="q"><span class="en">Open Loyalty or build — and who owns it?</span><span class="zh">用 Open Loyalty 還是自建——誰負責？</span></div>
+      <div class="o"><span class="en">Vendor call by Sep 30: hosting, price, and whether it can do <b>percentile tiers + 45-day decay</b>. Build S2 ≈ 5–6 wk in Nov. Either way: <b>no points on Oct 30</b>; sync-back to Ztor stays ours.</span><span class="zh">9/30 前與供應商確認：託管、價格、能否做<b>百分位等級＋45 天衰減</b>。自建 S2 約 5–6 週（11 月）。無論哪條路：<b>10/30 沒有積分</b>；同步回 Ztor 仍由我方做。</span></div></div>
+    <div class="dcard"><div class="k">04 · cs team scope</div>
+      <div class="q"><span class="en">Does the CS team take Creator API groups too?</span><span class="zh">CS 團隊是否也接 Creator API？</span></div>
+      <div class="o"><span class="en">They already carry eShop 2.2 to Oct 30, then <b>Easter Egg / Missions</b> for 2.3. Adding API groups on top puts wave 1 at risk; keep them on eShop + missions.</span><span class="zh">他們已扛 eShop 2.2 到 10/30、之後接<b>彩蛋／任務</b>（2.3）。再加 API 會拖累第一波；建議只留 eShop＋任務。</span></div></div>
+    <div class="dcard"><div class="k">05 · cdn / domain</div>
+      <div class="q"><span class="en">Is a store.com image origin acceptable at launch?</span><span class="zh">上線時圖片來源顯示 store.com 可接受嗎？</span></div>
+      <div class="o"><span class="en"><b>Whitelist now</b> (origin visible in the inspector only); custom CDN domain later if Lisa wants the link hidden.</span><span class="zh"><b>先用白名單</b>（只在開發者工具看得到來源）；若 Lisa 要隱藏關聯，之後再做自訂 CDN 網域。</span></div></div>
+    <div class="dcard"><div class="k">06 · not in eshop yet</div>
+      <div class="q"><span class="en">Promo codes, micro-donations (微捐), region lock — in wave 1?</span><span class="zh">折扣碼、微捐、地區鎖——第一波要嗎？</span></div>
+      <div class="o"><span class="en">None exist in eShop today. Recommend <b>out of wave 1</b>; region lock only if it is already in 2.2. Official promo codes are being scoped with ops separately.</span><span class="zh">eShop 目前都沒有。建議<b>不進第一波</b>；地區鎖除非 2.2 已有。官方折扣碼正另與營運確認需求。</span></div></div>
+  </div>
+
+  <div class="callout warn"><span class="ic">⚠</span><div>
+    <span class="en"><b>Single point of failure:</b> design, site build, integration and acceptance of lloud.club all sit with L. Give L the frozen spec on Sep 25 and mocks, so the build starts before the live API exists — the same move that saved the 2.1 schedule.</span>
+    <span class="zh"><b>單點風險：</b>lloud.club 的設計、建站、串接、驗收都在 L 一人身上。9/25 把凍結的 spec 與 mock 交給 L，讓建站在 API 上線前就開始——這正是 2.1 時程救回來的做法。</span>
+  </div></div>
+
+  <div class="foot">
+    <b>Sources</b> Notion「創作者獨立網站與 Creator API 規劃討論」(09-16 sync, page 3dd9ca6e…9297) · Granola “sync up with Eric” summary (Nan, Jeff, Eric · 09-16) · Ztor 2.0 dev meeting 09-16 (eShop version to Eric Sep 28–29, Creator API spec + DB schema next week) · SA reviews 09-14 (DECIDED) / 09-15 (deck v1.2) · loyalty build-vs-buy 09-15<br>
+    <b>Companion</b> ztor-docs/outputs/architecture/creator-api-timeline-2026-09-16.md (assumptions, PM review, open items) · <b>Visual system</b> Ztor timeline house style (paper / gold), lane palette validated for colour-vision separation<br>
+    <b>Assumptions</b> “12/28–29” in the dev-meeting AI summary read as Sep 28–29 (transcript: “節前”, before Golden Week) · 10/31 = Saturday → Oct 30 · Golden Week Oct 1–8 per Eric · Indonesia team availability in October not verified
+  </div>
+
+</div>
+
+<script>
+function setLang(l){document.documentElement.lang=l;document.getElementById('b-en').classList.toggle('on',l==='en');document.getElementById('b-zh').classList.toggle('on',l!=='en');}
+
+/* ---------- calendar: 14 weeks from Mon Sep 14 2026, half-week columns (Mon–Wed · Thu–Sun) ---------- */
+const W0=Date.UTC(2026,8,14);
+const LBL=176, N=28;
+function hc(s){const p=s.split('-').map(Number);const days=Math.round((Date.UTC(p[0],p[1]-1,p[2])-W0)/864e5);const w=Math.floor(days/7);return w*2+((days-w*7)>=3?1:0);}
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmt(s){const p=s.split('-').map(Number);const d=new Date(Date.UTC(p[0],p[1]-1,p[2]));return MON[d.getUTCMonth()]+' '+d.getUTCDate();}
+function pct(n){return 'calc('+LBL+'px + (100% - '+LBL+'px) * '+n+' / '+N+')';}
+
+/* ---------- lanes: bars carry short labels; the tooltip carries the full text ---------- */
+const lanes=[
+ {cls:'pm',en:'Decisions & spec',zh:'決策與規格',sub:'Jeff · Nan',rows:[
+   [{f:'2026-09-16',t:'2026-09-20',en:'Lock cut',fen:'Lock the wave-1 cut · name owners · fulfilment · CDN (architecture + ops meeting Sep 17 → freeze Sep 21)',zh:'定範圍',fzh:'定第一波範圍 · 指定負責人 · 出貨方式 · CDN（9/17 架構會議 → 9/21 凍結）',crit:1},
+    {f:'2026-09-21',t:'2026-09-25',en:'Spec v1',fen:'Creator API spec v1: login · eShop · ticketing → Eric (so Indonesia can build through Golden Week)',zh:'Spec v1',fzh:'Creator API spec v1：登入 · eShop · 售票 → Eric（讓印尼團隊在國慶假期能開工）',crit:1},
+    {f:'2026-09-28',t:'2026-10-07',en:'v1.1: pay · DB',fen:'Spec v1.1: payment-account handling · DB schema doc (CS team → Eric) · promo / 微捐 scoping — "everything settled within three weeks"',zh:'v1.1 收款 · DB',fzh:'Spec v1.1：收款帳號處理 · DB 架構文件（CS 團隊 → Eric）· 折扣碼／微捐範圍——「三週內全部定下來」'},
+    {f:'2026-11-02',t:'2026-11-13',en:'Policy spec · tiers',fen:'Policy service spec: tier recompute cadence (weekly vs nightly) · rules-as-data · reason-code registry — ahead of wave 3',zh:'Policy 規格 · 等級',fzh:'Policy 服務規格：等級重算週期（每週 vs 每晚）· 規則即資料 · 原因碼註冊表——第三波之前'}],
+   [{f:'2026-09-17',t:'2026-09-20',en:'→ L',fen:'Communicate the phased plan to L (Granola next step, Jeff)',zh:'→ L',fzh:'向 L 說明分階段計畫（Granola 行動項目，Jeff）'},
+    {f:'2026-09-24',t:'2026-09-30',en:'Loyalty call',fen:'Open Loyalty call: hosting · pricing · percentile tiers + 45-day decay? → vendor vs build, and name an owner',zh:'積分決定',fzh:'Open Loyalty 確認：託管 · 價格 · 能否做百分位等級＋45 天衰減？→ 買或做，並指定負責人',alt:1,cls:'tbd'}]]},
+ {cls:'cs',en:'eShop 2.2',zh:'eShop 2.2',sub:'Creator Studio team · 超敏 · 超偉',rows:[
+   [{f:'2026-09-14',t:'2026-09-29',en:'Build → Eric Sep 28–29',fen:'eShop 2.2 build → version handed to Eric for merge Sep 28–29 (before Golden Week)',zh:'開發 → 9/28–29 交 Eric',fzh:'eShop 2.2 開發 → 9/28–29 交版本給 Eric 合併（國慶前）',crit:1},
+    {f:'2026-10-08',t:'2026-10-23',en:'Merge → ops UAT + fixes',fen:'Merged into Eric’s environment → ops-team UAT + fixes (team back Oct 8)',zh:'合併 → 營運 UAT＋修正',fzh:'合併到 Eric 環境 → 營運團隊 UAT＋修正（10/8 收假）',crit:1},
+    {f:'2026-10-26',t:'2026-10-28',en:'Prep',fen:'Release prep',zh:'準備',fzh:'上線準備'},
+    {f:'2026-10-30',t:'2026-10-30',en:'2.2',fen:'eShop 2.2 release (~end Oct, UAT date still open as of Sep 9)',zh:'2.2',fzh:'eShop 2.2 上線（約 10 月底，9/9 時 UAT 日期未定）',solid:1}]]},
+ {cls:'api',en:'Creator API · facade',zh:'Creator API · facade',sub:'Eric · Indonesia team',rows:[
+   [{f:'2026-09-28',t:'2026-10-09',en:'Facade · CORS · CDN',fen:'Facade: X-Channel-Key · CORS · domain allowlist · CDN whitelist for lloud.club',zh:'Facade · CORS · CDN',fzh:'Facade：X-Channel-Key · CORS · 網域白名單 · lloud.club 的 CDN 白名單',crit:1},
+    {f:'2026-10-12',t:'2026-10-23',en:'Gating · media · profile',fen:'Gating (presale window · purchase limit · region lock · member-only binary) · media · profile',zh:'限制 · 媒體 · 個人頁',fzh:'購買限制（預售時段 · 限購 · 地區鎖 · 會員二元）· 媒體 · 個人頁'},
+    {f:'2026-10-26',t:'2026-10-30',en:'Support',fen:'Launch support',zh:'支援',fzh:'上線支援',dim:1},
+    {f:'2026-11-09',t:'2026-11-20',en:'Ticketing API group',fen:'Ticketing API group on the Bookyay Phase 1 feed — after ztor.com’s own rollout',zh:'售票 API 群組',fzh:'售票 API 群組（Bookyay 第一階段資料）——ztor.com 自己先上之後'},
+    {f:'2026-11-23',t:'2026-12-11',en:'Points · rewards · missions APIs',fen:'Points · rewards · missions API groups (needs the loyalty engine + Policy spec)',zh:'積分 · 獎勵 · 任務 API',fzh:'積分 · 獎勵 · 任務 API 群組（需積分引擎＋Policy 規格）'}],
+   [{f:'2026-10-01',t:'2026-10-16',en:'Login/SSO + eShop groups',fen:'Login / SSO + eShop groups: identity · catalog · cart · orders — Indonesia team, through Golden Week; API doc + sandbox → L on Oct 16',zh:'登入／SSO＋eShop 群組',fzh:'登入／SSO＋eShop 群組：身分 · 商品 · 購物車 · 訂單——印尼團隊，跨國慶假期；10/16 API 文件＋沙盒 → L',crit:1},
+    {f:'2026-10-19',t:'2026-10-30',en:'Fixes · review lloud.club',fen:'Fixes from L’s integration · our code review / audit of lloud.club before production',zh:'修正 · 審查 lloud.club',fzh:'L 串接回饋修正 · 上線前審查 lloud.club 程式',crit:1},
+    {f:'2026-12-07',t:'2026-12-18',en:'Webhooks (P2)',fen:'Webhooks (P2): order paid · tier changed · reward unlocked',zh:'Webhooks（P2）',fzh:'Webhooks（P2）：訂單付款 · 等級變更 · 獎勵解鎖',dim:1}]]},
+ {cls:'site',en:'lloud.club',zh:'lloud.club',sub:'L · site build + integration',rows:[
+   [{f:'2026-09-28',t:'2026-10-09',en:'Build on spec v1 + mocks',fen:'Build against the frozen spec v1 with mocks (api-client.js is the only boundary)',zh:'依 spec v1＋mock 建站',fzh:'依凍結的 spec v1 用 mock 建站（api-client.js 為唯一邊界）',crit:1},
+    {f:'2026-10-12',t:'2026-10-23',en:'Wire live API · CS shop',fen:'Wire the live API · Lisa’s shop set up in Creator Studio (hide-on-Store toggle)',zh:'串接正式 API · CS 商店',fzh:'串接正式 API · 在 Creator Studio 建 Lisa 商店（Store 隱藏開關）',crit:1},
+    {f:'2026-10-26',t:'2026-10-28',en:'UAT',fen:'Integration test + LLOUD UAT → go / no-go Oct 28',zh:'UAT',fzh:'整合測試＋LLOUD UAT → 10/28 go／no-go',uat:1,crit:1},
+    {f:'2026-10-30',t:'2026-10-30',en:'LIVE',fen:'LLOUD live — wave 1 (fallback Nov 6)',zh:'上線',fzh:'LLOUD 上線——第一波（備案 11/6）',solid:1},
+    {f:'2026-11-23',t:'2026-11-27',en:'Ticketing',fen:'Ticketing on lloud.club (integrates the Nov 20 API group)',zh:'售票',fzh:'lloud.club 上線售票（串接 11/20 的 API 群組）'},
+    {f:'2026-12-07',t:'2026-12-18',en:'Points · missions',fen:'Tiers · points · rewards · missions on lloud.club (integrates the Dec 11 groups)',zh:'積分 · 任務',fzh:'lloud.club 上線等級 · 積分 · 獎勵 · 任務（串接 12/11 的群組）'}]]},
+ {cls:'ext',en:'Ticketing',zh:'售票',sub:'Bookyay · Eric',rows:[
+   [{f:'2026-09-14',t:'2026-10-30',en:'Bookyay Phase 1 build (consignment) — the parallel train',fen:'Bookyay Phase 1 build (consignment model) — runs in parallel on the same Eric team',zh:'Bookyay 第一階段開發（寄售）——平行列車',fzh:'Bookyay 第一階段開發（寄售模式）——同一 Eric 團隊平行進行',dim:1},
+    {f:'2026-11-02',t:'2026-11-06',en:'ztor.com',fen:'Bookyay Phase 1 web rollout on ztor.com (~10 events)',zh:'ztor.com',fzh:'Bookyay 第一階段 ztor.com 網頁上線（約 10 場）'}]]},
+ {cls:'tbd',en:'Loyalty engine',zh:'積分引擎',sub:'owner TBD',rows:[
+   [{f:'2026-10-12',t:'2026-10-23',en:'S1 ledger (optional)',fen:'S1 write-only ledger (1.5–2 wk, optional; needs a facade owner) — else backfill from order history in Nov',zh:'S1 帳本（選配）',fzh:'S1 只寫帳本（1.5–2 週，選配；需 facade 負責人）——否則 11 月從訂單歷史回填',cls:'tbd',dim:1},
+    {f:'2026-11-02',t:'2026-12-11',en:'Option A · build S2: ledger · decay · tiers · read APIs (5–6 wk)',fen:'Option A · build S2: ledger · 45-day decay · percentile tiers · read APIs, no UI (5–6 wk)',zh:'選項 A · 自建 S2：帳本 · 衰減 · 等級 · 讀取 API（5–6 週）',fzh:'選項 A · 自建 S2：帳本 · 45 天衰減 · 百分位等級 · 讀取 API，無 UI（5–6 週）',cls:'tbd'}],
+   [{f:'2026-11-02',t:'2026-11-27',en:'Option B · Open Loyalty → integrate + sync-back',fen:'Option B · Open Loyalty: contract → integration + sync-back to Ztor (3–4 wk of our work + vendor lead time)',zh:'選項 B · Open Loyalty → 串接＋同步回寫',fzh:'選項 B · Open Loyalty：簽約 → 串接＋同步回寫 Ztor（我方 3–4 週＋供應商前置）',cls:'ext',alt:1}]]},
+ {cls:'cs',en:'Easter Egg / Missions',zh:'彩蛋／任務',sub:'CS team · after 2.2',rows:[
+   [{f:'2026-09-21',t:'2026-09-25',en:'Reqs',fen:'Requirements for Easter Egg / Missions (Nan, "next week")',zh:'需求',fzh:'彩蛋／任務需求（Nan，「下週」）',cls:'pm'},
+    {f:'2026-10-12',t:'2026-10-30',en:'Design (after WP → Event)',fen:'Design — queue: Watch Party → Event → App / easter egg',zh:'設計（WP → 活動之後）',fzh:'設計——排程：Watch Party → 活動 → App／彩蛋',dim:1},
+    {f:'2026-11-02',t:'2026-11-27',en:'Build: vault · missions · CS review (2.3)',fen:'Build: media vault · missions (proof → CS review → award) · CS review queue — 2.3, late Nov',zh:'開發：媒體庫 · 任務 · CS 審核（2.3）',fzh:'開發：媒體庫 · 任務（證明 → CS 審核 → 發放）· CS 審核佇列——2.3，11 月底'}]]},
+ {cls:'ext',en:'Tyson Yoshi site',zh:'Tyson Yoshi 網站',sub:'Tyson’s FE dev',rows:[
+   [{f:'2026-11-02',t:'2026-11-13',en:'Stretch: wave-1 early',fen:'Stretch: integrate wave-1 groups early (front end is "basically done")',zh:'加分：提前接第一波',fzh:'加分項：提前串接第一波群組（前端「基本完成」）',alt:1,dim:1},
+    {f:'2026-11-30',t:'2026-12-11',en:'Integrate full API',fen:'Integrate the full API (+2 weeks after wave 3)',zh:'串接完整 API',fzh:'串接完整 API（第三波後＋2 週）'},
+    {f:'2026-12-14',t:'2026-12-16',en:'QA',fen:'Our code review / audit → go-live',zh:'審查',fzh:'我方審查 → 上線',uat:1},
+    {f:'2026-12-18',t:'2026-12-18',en:'LIVE',fen:'Tyson site live',zh:'上線',fzh:'Tyson 網站上線',solid:1}]]}
+];
+const gates=[
+ {d:'2026-09-21',en:'freeze',zh:'凍結',i:'◆'},{d:'2026-09-25',en:'spec v1',zh:'spec v1',i:'◆'},{d:'2026-09-28',en:'eShop→Eric · loyalty',zh:'eShop→Eric · 積分',i:'◆'},
+ {d:'2026-10-16',en:'API doc→L',zh:'API 文件→L',i:'◆'},{d:'2026-10-26',en:'go/no-go',zh:'go/no-go',i:'■',bad:1},
+ {d:'2026-10-30',en:'LLOUD + 2.2',zh:'LLOUD＋2.2',i:'★'},{d:'2026-11-02',en:'Bookyay live',zh:'Bookyay 上線',i:'◆'},{d:'2026-11-20',en:'ticketing',zh:'售票',i:'◆'},
+ {d:'2026-12-11',en:'all groups',zh:'全部群組',i:'◆'},{d:'2026-12-18',en:'Tyson live',zh:'Tyson 上線',i:'★'}
+];
+
+/* ---------- render ---------- */
+(function(){
+  const g=document.getElementById('grid');let h='';
+  const months=[['SEP',2,8],['OCT',8,16],['NOV',16,24],['DEC',24,30]];
+  months.forEach(m=>h+='<div class="mon" style="grid-column:'+m[1]+'/'+m[2]+'">'+m[0]+'</div>');
+  const weeks=['09-14','09-21','09-28','10-05','10-12','10-19','10-26','11-02','11-09','11-16','11-23','11-30','12-07','12-14'];
+  weeks.forEach((w,i)=>{const s=w.split('-');const lab=MON[+s[0]-1]+' '+(+s[1]);
+    const extra=i===1?'<small>9/25 中秋</small>':'';
+    h+='<div class="wk'+(i===0?' today':'')+'" style="grid-column:'+(2+2*i)+'/'+(4+2*i)+'"><b>'+lab+'</b>'+extra+'</div>';});
+  h+='<div class="spacer"></div>';
+  let row=4;
+  const esc=s=>s.replace(/"/g,'&quot;');
+  lanes.forEach(L=>{
+    const r0=row;
+    L.rows.forEach(bars=>{
+      bars.forEach(b=>{const a=hc(b.f),e=hc(b.t)+1;const cls=(b.cls||L.cls)+(b.solid?' solid':'')+(b.uat?' uat':'')+(b.alt?' alt':'')+(b.dim?' dim':'')+(b.crit?' crit':'')+(e-a===1?' one':'');
+        h+='<div class="bar '+cls+'" style="grid-column:'+(2+a)+'/'+(2+e)+';grid-row:'+row+'" data-f="'+b.f+'" data-t="'+b.t+'" data-en="'+esc(b.fen||b.en)+'" data-zh="'+esc(b.fzh||b.zh)+'" data-len="'+L.en+' · '+L.sub+'" data-lzh="'+L.zh+' · '+L.sub+'"><span class="en">'+b.en+'</span><span class="zh">'+b.zh+'</span></div>';});
+      row++;});
+    h+='<div class="lanehead '+L.cls+'" style="grid-row:'+r0+'/'+row+'"><span class="en">'+L.en+'<span>'+L.sub+'</span></span><span class="zh">'+L.zh+'<span>'+L.sub+'</span></span></div>';
+  });
+  // gates: icon on row 1 at its column; labels on rows 2–4, each spanning three columns centred on the icon,
+  // placed greedily on the first label row whose previous label is at least three columns away (no collisions)
+  h+='<div class="gaterow" style="grid-row:'+row+'">';
+  const last=[-9,-9,-9];
+  gates.forEach(x=>{const c=1+hc(x.d);const a=Math.max(1,c-1),e=Math.min(29,c+2);
+    let r=last.findIndex(v=>c-v>=3);if(r<0)r=2;last[r]=c;
+    h+='<div class="gate'+(x.bad?' bad':'')+'" style="grid-column:'+c+'">'+x.i+'</div>';
+    h+='<div class="glabel'+(x.bad?' bad':'')+'" style="grid-column:'+a+'/'+e+';grid-row:'+(2+r)+'"><span class="en">'+x.en+'</span><span class="zh">'+x.zh+'</span></div>';});
+  h+='</div>';
+  // shades + lines (absolute, fractional). Labels sit in the spacer row.
+  h+='<div class="shade" style="left:'+pct(hc('2026-10-01'))+';width:calc((100% - '+LBL+'px) * 2 / '+N+')"><i>Oct 1–8</i></div>';
+  h+='<div class="vline today" style="left:'+pct(hc('2026-09-16'))+'"><i>today</i></div>';
+  h+='<div class="vline frz" style="left:'+pct(hc('2026-09-21'))+'"><i>freeze</i></div>';
+  h+='<div class="vline live" style="left:'+pct(hc('2026-10-30')+1)+'"><i>LLOUD live</i></div>';
+  h+='<div class="vline deck" style="left:'+pct(hc('2026-11-13')+1)+'"><i>deck: all groups mid-Nov</i></div>';
+  g.innerHTML=h;
+  // hover layer
+  const tip=document.getElementById('tip');
+  g.addEventListener('mouseover',e=>{const b=e.target.closest('.bar');if(!b)return;const zh=document.documentElement.lang!=='en';
+    tip.innerHTML='<div class="td">'+fmt(b.dataset.f)+(b.dataset.f!==b.dataset.t?' → '+fmt(b.dataset.t):'')+'</div><div class="tl">'+(zh?b.dataset.zh:b.dataset.en)+'</div><div class="to">'+(zh?b.dataset.lzh:b.dataset.len)+'</div>';
+    tip.classList.add('on');});
+  g.addEventListener('mousemove',e=>{tip.style.left=Math.min(e.clientX+14,window.innerWidth-360)+'px';tip.style.top=(e.clientY+16)+'px';});
+  g.addEventListener('mouseout',e=>{if(e.target.closest('.bar'))tip.classList.remove('on');});
+})();
+</script>
+</body>
+</html>

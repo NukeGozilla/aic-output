@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ztor BO — 發行公司多合約 · Licensor Multi-Contract Wireframes</title>
+<style>
+:root{--bg:#f7f6f3;--panel:#fff;--line:#e2dfd8;--txt:#26231e;--muted:#847f74;--gold:#a97b2f;--gold-bg:#faf3e4;--teal:#2e7d5f;--teal-bg:#e9f4ef;--coral:#b4574a;--coral-bg:#f9ece9;--wf:#f1efe9;--r:12px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:14px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 24px 70px}
+h1{font-size:21px;margin:0 0 4px}
+h1:first-letter{color:var(--gold)}
+.sub{color:var(--muted);font-size:12.5px;margin-bottom:14px}
+.sub a{color:var(--gold);font-weight:600;text-decoration:none}
+nav{position:sticky;top:0;z-index:9;background:var(--bg);padding:10px 0;border-bottom:1.5px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
+nav a{border:1.5px solid var(--line);background:var(--panel);border-radius:20px;padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--txt);text-decoration:none}
+nav a:hover,nav a:focus-visible{border-color:var(--gold);background:var(--gold-bg);outline:none}
+section{margin-top:38px;scroll-margin-top:64px}
+.shead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:6px}
+.snum{background:var(--gold);color:#fff;border-radius:8px;padding:2px 10px;font-weight:800;font-size:13px}
+.shead h2{font-size:16px;margin:0;color:var(--gold)}
+.shead h2 small{color:var(--muted);font-weight:600;font-size:12px;margin-left:6px}
+.goal{color:var(--muted);font-size:12.5px;margin:0 0 12px}
+.stage{display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:start}
+@media(max-width:800px){.stage{grid-template-columns:1fr}}
+.wf{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:14px 16px 16px;box-shadow:0 1px 3px rgba(40,35,25,.05)}
+.states{display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-bottom:1.5px solid var(--line);padding-bottom:10px;margin-bottom:12px}
+.states .lbl{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.states button{border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
+.states button[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
+.states button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+[data-panel]{display:none}
+[data-panel].on{display:block}
+.box{border:1.5px dashed #c9c4b8;border-radius:8px;background:var(--wf);padding:10px;margin:8px 0;font-size:12.5px;color:var(--muted)}
+.box b{color:var(--txt)}
+.box.ok{border-color:var(--teal);background:var(--teal-bg);color:var(--txt)}
+.box.bad{border-color:var(--coral);background:var(--coral-bg);color:var(--txt)}
+.box small{display:block;color:var(--muted);margin-top:3px;font-size:11.5px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1;min-width:120px}
+.btn{display:inline-block;background:var(--txt);color:#fff;border-radius:8px;padding:8px 16px;font-weight:700;font-size:12.5px}
+.btn.ghost{background:var(--panel);color:var(--txt);border:1.5px solid var(--line)}
+.btn.gold{background:var(--gold)}
+.btn.dis{background:var(--wf);color:var(--muted);border:1.5px solid var(--line)}
+.pill{display:inline-block;border-radius:12px;padding:2px 10px;font-size:11px;font-weight:700;margin:2px 2px 2px 0;white-space:nowrap}
+.pill.ok{background:var(--teal-bg);color:var(--teal)}
+.pill.warn{background:var(--gold-bg);color:var(--gold)}
+.pill.bad{background:var(--coral-bg);color:var(--coral)}
+.pill.gray{background:var(--wf);color:var(--muted)}
+.pill.new{background:var(--gold);color:#fff}
+.notes{font-size:12.5px}
+.notes .chip{display:block;background:var(--panel);border:1.5px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:8px 10px;margin-bottom:8px}
+.notes .chip code{background:var(--gold-bg);border-radius:4px;padding:0 5px;font-size:11.5px;color:var(--coral)}
+.notes .decide{border-left-color:var(--coral);background:var(--coral-bg)}
+.notes .decide::before{content:"CONFIRM · ";font-weight:800;color:var(--coral);font-size:10.5px;letter-spacing:.5px}
+.notes .opt{border-left-color:var(--gold);background:var(--gold-bg)}
+.notes .opt::before{content:"OPTIONAL · ";font-weight:800;color:var(--gold);font-size:10.5px;letter-spacing:.5px}
+.screenlbl{display:inline-block;background:var(--txt);color:#fff;border-radius:6px 6px 0 0;padding:3px 12px;font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:-2px}
+.pagediv{display:flex;align-items:center;gap:10px;margin:16px 0 10px;color:var(--gold);font-size:11.5px;font-weight:700}
+.pagediv::before,.pagediv::after{content:"";flex:1;border-top:2px dashed var(--gold);opacity:.5}
+.flow{display:flex;gap:0;align-items:stretch;flex-wrap:wrap}
+.fstep{background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12px;margin:4px 0;flex:1;min-width:130px}
+.farr{align-self:center;color:var(--gold);font-weight:800;padding:0 6px}
+/* rule callout */
+.rule{background:var(--panel);border:2px solid var(--gold);border-radius:var(--r);padding:16px 18px;margin:8px 0 14px}
+.rule-big{font-size:17px;font-weight:800;line-height:1.35;margin-bottom:10px}
+.rule-big span{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px}
+.diff{border-left:4px solid var(--gold);background:var(--gold-bg);border-radius:8px;padding:8px 12px;font-size:12.5px;margin-top:10px}
+.diff code,.tbl code,.err code{background:#fff;border:1px solid var(--line);border-radius:4px;padding:0 5px;font-size:11.5px;color:var(--coral)}
+/* model diagram */
+.model{display:flex;gap:0;align-items:center;flex-wrap:wrap;margin:6px 0}
+.mnode{background:var(--wf);border:1.5px solid #c9c4b8;border-radius:8px;padding:8px 12px;font-size:12px;flex:1;min-width:150px;margin:4px 0}
+.mnode b{display:block;font-size:12.5px;color:var(--txt)}
+.mnode.k{border-color:var(--gold);background:var(--gold-bg)}
+.marr{color:var(--gold);font-weight:800;padding:0 8px;font-size:12px;white-space:nowrap}
+/* table */
+.tblwrap{overflow-x:auto;margin:8px 0}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:640px}
+.tbl th{background:var(--wf);color:var(--muted);font-size:11px;letter-spacing:.4px;text-transform:uppercase;text-align:left;padding:7px 8px;border-bottom:1.5px solid var(--line)}
+.tbl td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr.hl td{background:var(--gold-bg)}
+.tbl tr.dim td{color:var(--muted)}
+.tbl .act{color:var(--gold);font-weight:700;white-space:nowrap}
+/* form mock */
+.form{display:grid;grid-template-columns:90px 1fr 90px 1fr;gap:8px 10px;align-items:center;font-size:12.5px}
+@media(max-width:640px){.form{grid-template-columns:80px 1fr}}
+.form .lb{color:var(--muted);text-align:right;font-size:12px}
+.form .lb.req::before{content:"* ";color:var(--coral)}
+.form .fld{border:1.5px solid var(--line);border-radius:6px;background:var(--wf);padding:6px 9px;min-height:30px;color:var(--txt)}
+.form .fld.new{border-color:var(--gold);background:var(--gold-bg)}
+.form .full{grid-column:2 / -1}
+.form .fld.ta{min-height:44px;color:var(--muted)}
+.radio{display:inline-block;margin-right:12px}
+.radio::before{content:"◉ ";color:var(--gold)}
+.radio.off::before{content:"○ ";color:var(--muted)}
+.poster{display:inline-block;width:44px;height:62px;border-radius:4px;background:linear-gradient(160deg,#3a3630,#6b655c);vertical-align:middle;margin-right:6px;position:relative}
+.poster i{position:absolute;bottom:-16px;left:0;right:0;text-align:center;font-style:normal;font-size:10.5px;color:var(--txt)}
+.poster.bad{outline:2px solid var(--coral);outline-offset:2px}
+.err{border:1.5px solid var(--coral);background:var(--coral-bg);border-radius:8px;padding:10px 12px;font-size:12.5px;margin:12px 0 4px}
+.err b{color:var(--coral)}
+.err ul{margin:6px 0 6px 18px;padding:0}
+.err li{margin:2px 0}
+.warnbar{border:1.5px solid var(--gold);background:var(--gold-bg);border-radius:8px;padding:8px 12px;font-size:12px;margin:0 0 10px}
+.toast{display:inline-block;background:#111;color:#fff;border-radius:20px;padding:6px 14px;font-size:12px;margin-top:8px}
+.toast::before{content:"✕ ";color:#ff6b6b}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+/* matrix */
+.mx td:last-child{font-weight:700;white-space:nowrap}
+.mx .yes{color:var(--teal)}
+.mx .no{color:var(--coral)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:8px 0}
+.card{background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12.5px}
+.card h4{margin:0 0 6px;font-size:12.5px}
+.card.ok{border-top:4px solid var(--teal)}
+.card.bad{border-top:4px solid var(--coral)}
+.card ul{margin:4px 0 0 16px;padding:0}
+.card li{margin:2px 0}
+.open{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:12px 16px}
+.open ol{margin:6px 0 0 18px;padding:0}
+.open li{margin:5px 0;font-size:12.5px}
+.open li b{color:var(--txt)}
+footer{margin-top:44px;color:var(--muted);font-size:11.5px}
+footer a{color:var(--gold);text-decoration:none}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Ztor BO · 發行公司 — 一個帳號，多份合約</h1>
+<p class="sub">Asana <a href="https://app.asana.com/1/1201357017636456/project/1209435607276598/task/1217270526401119" target="_blank" rel="noopener">1217270526401119 · Add more contracts under licensor's account</a> · Wireframe <b>v2 DRAFT</b> · 2026-09-15 · answers the content team's 09-09 question (<b>per title</b>) · supersedes the 09-03 「one contract per territory」 rule</p>
+<nav>
+  <a href="#s0">0 · 規則 Rule</a>
+  <a href="#s1">1 · 發行公司列表</a>
+  <a href="#s2">2 · 合約列表</a>
+  <a href="#s3">3 · 合約 新增 / 編輯</a>
+  <a href="#s4">4 · 可否建立？矩陣</a>
+  <a href="#s5">5 · 變更紀錄</a>
+  <a href="#s6">開發前待確認</a>
+</nav>
+
+<!-- ───────────────────────── 0 · RULE ───────────────────────── -->
+<section id="s0">
+<div class="shead"><span class="snum">0</span><h2>規則 <small>The rule — one line, read the same way by dev and content</small></h2></div>
+<p class="goal">Everything below is a consequence of this one sentence.</p>
+<div class="rule">
+  <div class="rule-big">一部影片，在同一地區，同一時間，只能屬於一份啟用中的合約。<span>A title can sit in only one enabled contract per territory at a time. Uniqueness = <code>發行公司 × 影片 × 地區</code> + overlapping 合約日期.</span></div>
+  <div class="row">
+    <div class="box ok"><b>✅ 不同影片 → 永遠不互擋</b><small>New title → new contract, its own dates and 分潤比例. This is Quin's case: <b>yes, per title.</b></small></div>
+    <div class="box ok"><b>✅ 同影片 · 不同地區 → 可以</b><small>《新片 A》 HK contract and TW contract side by side.</small></div>
+    <div class="box ok"><b>✅ 同影片 · 同地區 · 日期不重疊 → 可以</b><small>Renewal entered before the current one ends.</small></div>
+    <div class="box bad"><b>❌ 同影片 · 同地區 · 日期重疊 → 擋</b><small>Error names the title and the conflicting contract.</small></div>
+    <div class="box bad"><b>❌ 全世界 對該影片雙向排他</b><small>Title under an enabled 全世界 contract → no 香港/台灣 contract for that title. Reverse also blocked.</small></div>
+  </div>
+  <div class="diff"><b>Changed from v1 (09-03):</b> uniqueness key was <code>發行公司 × 地區</code> → now <code>發行公司 × 影片 × 地區</code>. Under v1, the existing 全世界 contract for 《F》 (2026-08 → 2031-08) would have blocked every other contract on the account until 2031. Unchanged: multi-contract · edit after submit · audit trail · no auto-takedown at expiry.</div>
+</div>
+<div class="model">
+  <div class="mnode"><b>發行公司 Licensor</b>Doubtful Brothers Pictures Ltd.</div>
+  <div class="marr">1 ─▶ n</div>
+  <div class="mnode k"><b>合約 Contract</b>地區 · 合約日期 · 分潤比例 · 預付金 · 結算幣種 · 狀態 · 類型 · 詳情 / 備註</div>
+  <div class="marr">1 ─▶ n</div>
+  <div class="mnode"><b>影片 Titles</b>one or many · same title may appear in other contracts <b>only</b> for a different 地區 or a non-overlapping period</div>
+</div>
+</section>
+
+<!-- ───────────────────────── 1 · COMPANY LIST ───────────────────────── -->
+<section id="s1">
+<div class="shead"><span class="snum">1</span><h2>發行公司列表 <small>Company list — today vs new</small></h2></div>
+<p class="goal">Today the row carries one contract. New: the row summarises N contracts and opens the contracts panel.</p>
+<div class="stage">
+<div class="wf">
+  <div class="states"><span class="lbl">State</span>
+    <button aria-pressed="true" data-for="s1a">現況 Today</button>
+    <button aria-pressed="false" data-for="s1b">新版 New</button>
+  </div>
+  <div data-panel="s1a" class="on">
+    <span class="screenlbl">boadmin · 發行公司</span>
+    <div class="tblwrap"><table class="tbl">
+      <tr><th>名稱</th><th>合約</th><th>建立時間</th><th>操作</th></tr>
+      <tr><td>Public Television Service</td><td>—</td><td>2025-11-10</td><td class="act">新增合約</td></tr>
+      <tr class="hl"><td>Doubtful Brothers Pictures Limited</td><td><span style="color:var(--teal)">名稱：Doubtful Brothers Pictures Ltd. (F Season 1)<br>有效日期：2026-08-04 – 2031-08-03</span></td><td>2026-08-04</td><td class="act">新增合約</td></tr>
+    </table></div>
+    <div class="box bad"><b>點 新增合約 → 第二份被擋</b><br><span class="toast">已存在合約</span><small>Blanket rejection fires on the mere presence of any contract. No reason, no pointer.</small></div>
+  </div>
+  <div data-panel="s1b">
+    <span class="screenlbl">boadmin · 發行公司</span>
+    <div class="tblwrap"><table class="tbl">
+      <tr><th>名稱</th><th>合約</th><th>建立時間</th><th>操作</th></tr>
+      <tr><td>Public Television Service</td><td><span class="pill gray">0 份合約</span></td><td>2025-11-10</td><td class="act">新增合約</td></tr>
+      <tr class="hl"><td>Doubtful Brothers Pictures Limited</td><td><span class="pill ok">1 生效中</span><span class="pill warn">3 未開始</span><span class="pill gray">1 已到期</span><br><span class="act">查看合約 (5) ▸</span></td><td>2026-08-04</td><td class="act">新增合約</td></tr>
+    </table></div>
+    <div class="box ok"><b>新增合約 is always enabled.</b><small>Whether a contract can be saved is decided at save time, per title (→ section 3). 查看合約 opens the panel in section 2.</small></div>
+  </div>
+</div>
+<div class="notes">
+<span class="chip">Remove the one-contract-per-account block <code>R1</code></span>
+<span class="chip">Row summary = counts by status; no contract detail inline <code>R6</code></span>
+<span class="chip">Existing single-contract rows migrate as-is — they already carry a 地區 value <code>Open #2</code></span>
+</div>
+</div>
+</section>
+
+<!-- ───────────────────────── 2 · CONTRACTS PANEL ───────────────────────── -->
+<section id="s2">
+<div class="shead"><span class="snum">2</span><h2>合約列表 <small>Contracts panel — one licensor, all contracts</small></h2></div>
+<p class="goal">Worked example: Doubtful Brothers after Quin adds 《新片 A》 for HK and TW, plus the 《F》 renewal.</p>
+<div class="stage">
+<div class="wf">
+  <span class="screenlbl">boadmin · 發行公司 › Doubtful Brothers Pictures Limited › 合約</span>
+  <div class="box" style="margin-top:0"><b>篩選</b> · <span class="pill new">全部 5</span> <span class="pill ok">生效中 1</span> <span class="pill warn">未開始 3</span> <span class="pill gray">已到期 1</span> <span class="pill gray">禁用 0</span> <span style="float:right" class="btn gold">+ 新增合約</span></div>
+  <div class="tblwrap"><table class="tbl">
+    <tr><th>名稱</th><th>地區</th><th>合約日期</th><th>分潤比例</th><th>結算幣種</th><th>影片</th><th>狀態</th><th>操作</th></tr>
+    <tr><td>Doubtful Brothers Pictures Ltd. (F Season 1)</td><td>全世界</td><td>2026-08-04 – 2031-08-03</td><td>60%</td><td>HKD</td><td>F</td><td><span class="pill ok">生效中</span></td><td class="act">編輯 · 歷史</td></tr>
+    <tr><td>DBP — 新片 A (HK)</td><td>香港</td><td>2026-10-01 – 2028-09-30</td><td>55%</td><td>HKD</td><td>新片 A</td><td><span class="pill warn">未開始</span></td><td class="act">編輯 · 歷史</td></tr>
+    <tr><td>DBP — 新片 A (TW)</td><td>台灣</td><td>2026-10-01 – 2027-09-30</td><td>50%</td><td>TWD</td><td>新片 A</td><td><span class="pill warn">未開始</span></td><td class="act">編輯 · 歷史</td></tr>
+    <tr><td>DBP (F Season 1) 續約</td><td>全世界</td><td>2031-08-04 – 2033-08-03</td><td>60%</td><td>HKD</td><td>F</td><td><span class="pill warn">未開始</span></td><td class="act">編輯 · 歷史</td></tr>
+    <tr class="dim"><td>DBP 2024 舊約</td><td>香港</td><td>2024-01-01 – 2025-12-31</td><td>50%</td><td>HKD</td><td>舊片 B</td><td><span class="pill gray">已到期</span></td><td class="act">歷史</td></tr>
+  </table></div>
+  <div class="row">
+    <div class="box"><b>狀態 is derived, not typed</b><br>未開始 = start &gt; today · 生效中 = start ≤ today ≤ end · 已到期 = end &lt; today<br>禁用 = the existing manual 啟用/禁用 toggle, overrides the three above</div>
+    <div class="box"><b>Same title, three rows</b><br>《F》 全世界 now + 《F》 全世界 renewal later = legal (no overlap) · 《新片 A》 HK + TW = legal (different 地區)</div>
+  </div>
+</div>
+<div class="notes">
+<span class="chip">Each contract: one 地區, own 合約日期, own 分潤比例 / 預付金 / 結算幣種 <code>R2</code></span>
+<span class="chip">Status derived from dates + the existing 啟用/禁用 toggle <code>R6</code></span>
+<span class="chip">已到期 frees the slot automatically → renewals entered in advance <code>R3</code></span>
+<span class="chip">禁用 contracts are ignored by the overlap check <code>R3</code></span>
+<span class="chip decide">Sorting default — by 狀態 then start date? Content team to say.</span>
+</div>
+</div>
+</section>
+
+<!-- ───────────────────────── 3 · MODAL ───────────────────────── -->
+<section id="s3">
+<div class="shead"><span class="snum">3</span><h2>合約 · 新增 / 編輯 <small>Same modal as today — what changes is the check at 確定</small></h2></div>
+<p class="goal">Fields mirror the live modal from Quin's screenshot. Highlighted = new or changed.</p>
+<div class="stage">
+<div class="wf">
+  <div class="states"><span class="lbl">State</span>
+    <button aria-pressed="true" data-for="s3a">新增 Create</button>
+    <button aria-pressed="false" data-for="s3b">儲存衝突 Conflict</button>
+    <button aria-pressed="false" data-for="s3c">編輯 Edit</button>
+  </div>
+
+  <div data-panel="s3a" class="on">
+    <span class="screenlbl">Modal · 合約</span>
+    <div class="box" style="margin-top:0;background:#fff">
+      <div class="form">
+        <div class="lb req">名稱</div><div class="fld">DBP — 新片 A (HK)</div>
+        <div class="lb req">狀態</div><div class="fld"><span class="radio">啟用</span><span class="radio off">禁用</span></div>
+        <div class="lb req">地區</div><div class="fld new">香港 ▾ <small style="display:inline;color:var(--muted)">　options: 香港 · 台灣 · 全世界</small></div>
+        <div class="lb req">類型</div><div class="fld"><span class="radio">單影片合約</span><span class="radio off">多影片合約</span></div>
+        <div class="lb req">結算幣種</div><div class="fld">HKD ▾</div>
+        <div class="lb req">合約日期</div><div class="fld">2026-10-01 　–　 2028-09-30</div>
+        <div class="lb req">分潤比例</div><div class="fld">55 %</div>
+        <div class="lb">預付金</div><div class="fld" style="color:var(--muted)">請輸入預付金</div>
+        <div class="lb">詳情資訊</div><div class="fld ta full">請輸入詳情資訊</div>
+        <div class="lb">備註</div><div class="fld ta full">請輸入備註</div>
+        <div class="lb req">影片</div><div class="fld full">Search here to select a film… ▾</div>
+        <div></div><div class="full" style="padding:6px 0 18px"><span class="poster"><i>新片 A</i></span></div>
+      </div>
+      <div class="actions"><span class="btn ghost">取 消</span><span class="btn gold">確 定</span></div>
+    </div>
+    <div class="box ok"><b>確定 → passes.</b><small>《新片 A》 is not in any other enabled contract → save. Nothing about 《F》's 全世界 contract matters here — different title.</small></div>
+  </div>
+
+  <div data-panel="s3b">
+    <span class="screenlbl">Modal · 合約 — save rejected</span>
+    <div class="box" style="margin-top:0;background:#fff">
+      <div class="form">
+        <div class="lb req">名稱</div><div class="fld">DBP — F (HK 2027)</div>
+        <div class="lb req">狀態</div><div class="fld"><span class="radio">啟用</span><span class="radio off">禁用</span></div>
+        <div class="lb req">地區</div><div class="fld">香港 ▾</div>
+        <div class="lb req">類型</div><div class="fld"><span class="radio">單影片合約</span><span class="radio off">多影片合約</span></div>
+        <div class="lb req">結算幣種</div><div class="fld">HKD ▾</div>
+        <div class="lb req">合約日期</div><div class="fld">2027-01-01 　–　 2028-12-31</div>
+        <div class="lb req">分潤比例</div><div class="fld">65 %</div>
+        <div class="lb">預付金</div><div class="fld" style="color:var(--muted)">請輸入預付金</div>
+        <div class="lb req">影片</div><div class="fld full">Search here to select a film… ▾</div>
+        <div></div><div class="full" style="padding:6px 0 18px"><span class="poster bad"><i>F</i></span></div>
+      </div>
+      <div class="err"><b>無法儲存 — 以下影片在該地區已有啟用中的合約：</b>
+        <ul>
+          <li>《F》 · <b>全世界</b> · <code>Doubtful Brothers Pictures Ltd. (F Season 1)</code> · 2026-08-04 – 2031-08-03</li>
+        </ul>
+        <div style="color:var(--muted)">全世界 合約涵蓋 香港，因此不能為《F》另立 香港 合約。處理方式：移除《F》 · 將合約日期改到 2031-08-04 之後 · 或 <span class="act" style="color:var(--gold);font-weight:700">編輯該合約</span> 修改條款。</div>
+      </div>
+      <div class="actions"><span class="btn ghost">取 消</span><span class="btn dis">確 定</span></div>
+    </div>
+    <div class="row">
+      <div class="box"><b>Message must contain</b><br>title · 地區 of the conflicting contract · contract 名稱 · its 合約日期 · one line saying why (全世界 covers X / same 地區 overlap)</div>
+      <div class="box"><b>Multi-title contracts</b><br>list every conflicting title as its own bullet; non-conflicting titles are not mentioned; nothing is saved</div>
+    </div>
+  </div>
+
+  <div data-panel="s3c">
+    <span class="screenlbl">Modal · 合約 — edit existing</span>
+    <div class="warnbar">編輯會重新執行與新增相同的檢查（每部影片 × 地區 × 日期）。改 地區、改 合約日期、加 影片 都可能撞到另一份合約 — 在 確定 時擋。</div>
+    <div class="box" style="margin-top:0;background:#fff">
+      <div class="form">
+        <div class="lb req">名稱</div><div class="fld">Doubtful Brothers Pictures Ltd. (F Season 1)</div>
+        <div class="lb req">狀態</div><div class="fld"><span class="radio">啟用</span><span class="radio off">禁用</span></div>
+        <div class="lb req">地區</div><div class="fld new">全世界 ▾</div>
+        <div class="lb req">類型</div><div class="fld"><span class="radio off">單影片合約</span><span class="radio">多影片合約</span></div>
+        <div class="lb req">結算幣種</div><div class="fld">HKD ▾</div>
+        <div class="lb req">合約日期</div><div class="fld new">2026-08-04 　–　 2031-08-03</div>
+        <div class="lb req">分潤比例</div><div class="fld new">58 % <small style="display:inline;color:var(--coral)">　was 60%</small></div>
+        <div class="lb">預付金</div><div class="fld">—</div>
+        <div class="lb req">影片</div><div class="fld full new">Search here to select a film… ▾</div>
+        <div></div><div class="full" style="padding:6px 0 18px"><span class="poster"><i>F</i></span><span class="poster"><i>新片 C</i></span><small style="display:inline;margin-left:10px;color:var(--gold)">+ 新片 C added</small></div>
+      </div>
+      <div class="actions"><span class="btn ghost">變更紀錄</span><span class="btn ghost">取 消</span><span class="btn gold">儲 存</span></div>
+    </div>
+    <div class="row">
+      <div class="box ok"><b>Editable</b><br>影片 (add / remove) · 合約日期 · 分潤比例 · 預付金 · 結算幣種 · 地區 · 詳情 / 備註 / 文件</div>
+      <div class="box"><b>On 儲存</b><br>1. re-run the check for every title in the contract → block with the same error block if any conflict<br>2. write one 變更紀錄 line per changed field (→ section 5)</div>
+    </div>
+  </div>
+</div>
+<div class="notes">
+<span class="chip">Validation at save: for each 影片 in the contract, no other <b>enabled</b> contract of this licensor with the same 影片 and (same 地區 or 全世界) and overlapping 合約日期 <code>R3 R4</code></span>
+<span class="chip">Error names title + conflicting contract + its 地區 and dates; replaces the generic 「已存在合約」 toast <code>R5</code></span>
+<span class="chip">Same check on create and on edit <code>R7</code></span>
+<span class="chip opt">Inline hint under a picked poster (「已在 全世界 合約 2026-08-04 – 2031-08-03」) before 確定 — nice to have, not required</span>
+<span class="chip decide">類型 單影片 / 多影片 — still needed? Under the new rule any contract holds 1..n titles.</span>
+</div>
+</div>
+</section>
+
+<!-- ───────────────────────── 4 · MATRIX ───────────────────────── -->
+<section id="s4">
+<div class="shead"><span class="snum">4</span><h2>可否建立？ <small>Decision matrix + Quin's real case + why the rule exists</small></h2></div>
+<p class="goal">Given an existing enabled contract on the licensor, can the new (or edited) contract be saved?</p>
+<div class="wf">
+  <div class="tblwrap"><table class="tbl mx">
+    <tr><th>#</th><th>New contract contains…</th><th>地區 vs existing</th><th>合約日期</th><th>Result</th></tr>
+    <tr><td>1</td><td>a <b>different</b> title</td><td>any — same, other, or 全世界</td><td>any</td><td class="yes">✅ 可以</td></tr>
+    <tr><td>2</td><td>the <b>same</b> title</td><td>different territory (香港 vs 台灣)</td><td>overlap</td><td class="yes">✅ 可以</td></tr>
+    <tr><td>3</td><td>the <b>same</b> title</td><td>same territory</td><td><b>no</b> overlap (renewal)</td><td class="yes">✅ 可以</td></tr>
+    <tr><td>4</td><td>the <b>same</b> title</td><td>same territory</td><td>overlap</td><td class="no">❌ 擋 — names the conflict</td></tr>
+    <tr><td>5</td><td>the <b>same</b> title</td><td>existing 全世界 → new 香港 / 台灣</td><td>overlap</td><td class="no">❌ 擋 — 全世界 covers it</td></tr>
+    <tr><td>6</td><td>the <b>same</b> title</td><td>existing 香港 / 台灣 → new 全世界</td><td>overlap</td><td class="no">❌ 擋 — would double-cover</td></tr>
+    <tr><td>7</td><td>the <b>same</b> title</td><td>existing contract is <b>禁用</b> or <b>已到期</b></td><td>any</td><td class="yes">✅ 可以 — not enabled / not overlapping</td></tr>
+  </table></div>
+  <div class="box"><b>Overlap test</b> = <code>new.start ≤ existing.end</code> AND <code>new.end ≥ existing.start</code> (inclusive). Never "does another contract exist".</div>
+
+  <div class="pagediv">Quin's account · Doubtful Brothers Pictures Limited · existing: 《F》 全世界 2026-08-04 – 2031-08-03 · 60% · HKD</div>
+  <div class="cards">
+    <div class="card ok"><h4>A · New title, any territory</h4>《新片 A》 香港 2026-10 → 2028-09<ul><li>✅ creatable</li><li>matrix #1 — different title</li><li><b>this is the case that was blocked with 「已存在合約」</b></li></ul></div>
+    <div class="card bad"><h4>B · 《F》 again, HK, overlapping</h4>《F》 香港 2027-01 → 2028-12<ul><li>❌ blocked — matrix #5</li><li>error names 《F》 · 全世界 · F Season 1 · 2026-08-04 – 2031-08-03</li><li>route: 編輯 the F Season 1 contract</li></ul></div>
+    <div class="card ok"><h4>C · 《F》 renewal</h4>《F》 全世界 2031-08-04 → 2033-08-03<ul><li>✅ creatable today, shows as 未開始</li><li>matrix #3 — no overlap</li></ul></div>
+  </div>
+
+  <div class="pagediv">Why the rule exists — the royalty report must find exactly one contract</div>
+  <div class="flow">
+    <div class="fstep"><b>Revenue event</b><br>影片 · viewer 地區 · date</div><div class="farr">▶</div>
+    <div class="fstep"><b>Find enabled contracts</b><br>of the title's licensor, containing the 影片</div><div class="farr">▶</div>
+    <div class="fstep"><b>Filter</b><br>地區 = viewer 地區 <b>or</b> 全世界 · date within 合約日期</div><div class="farr">▶</div>
+    <div class="fstep" style="border-color:var(--gold);background:var(--gold-bg)"><b>0 or 1 match — by construction</b><br>apply that contract's 分潤比例 / 結算幣種</div>
+  </div>
+  <div class="box"><b>This is the May concern answered.</b> The 05-14 / 05-19 ADRs rejected multi-contract because "which contract applies to film X in region Y" looked ambiguous. The per-title × territory uniqueness rule makes the lookup deterministic, so no resolution logic is needed beyond the filter above.</div>
+</div>
+</section>
+
+<!-- ───────────────────────── 5 · HISTORY ───────────────────────── -->
+<section id="s5">
+<div class="shead"><span class="snum">5</span><h2>變更紀錄 <small>Change history — every edit to a contract is traceable</small></h2></div>
+<p class="goal">Contract terms feed the Licensor Royalty Report; an amendment has to be explainable later.</p>
+<div class="stage">
+<div class="wf">
+  <span class="screenlbl">Drawer · 合約 › Doubtful Brothers Pictures Ltd. (F Season 1) › 變更紀錄</span>
+  <div class="tblwrap"><table class="tbl">
+    <tr><th>時間</th><th>操作者</th><th>欄位</th><th>變更前</th><th>變更後</th></tr>
+    <tr><td>2026-09-20 14:02</td><td>Quin</td><td>影片</td><td>F</td><td>F · 新片 C</td></tr>
+    <tr><td>2026-09-20 14:02</td><td>Quin</td><td>分潤比例</td><td>60%</td><td>58%</td></tr>
+    <tr><td>2026-09-20 14:02</td><td>Quin</td><td>備註</td><td>—</td><td>Amendment #1 signed 2026-09-18</td></tr>
+    <tr class="dim"><td>2026-08-04 17:10</td><td>Quin</td><td>建立合約</td><td>—</td><td>全世界 · 2026-08-04 – 2031-08-03 · 60% · HKD · F</td></tr>
+  </table></div>
+  <div class="row">
+    <div class="box"><b>One row per changed field per save</b> · same timestamp groups them · 建立 is the first row</div>
+    <div class="box"><b>Read-only</b> · opened from the contract row 歷史 or the modal's 變更紀錄 button · no delete</div>
+  </div>
+</div>
+<div class="notes">
+<span class="chip">Audit trail: who · when · field · before → after <code>R8</code></span>
+<span class="chip">Covers 影片, 合約日期, 分潤比例, 預付金, 結算幣種, 地區, 狀態, 詳情 / 備註 / 文件 <code>R8</code></span>
+<span class="chip decide">Amended 分潤比例 mid-term — forward-only from the save date (PPV / Tastemaker precedent) or restate history? Report-side ruling, not BO.</span>
+<span class="chip opt">Export of 變更紀錄 — not in this ticket</span>
+</div>
+</div>
+</section>
+
+<!-- ───────────────────────── 6 · OPEN ───────────────────────── -->
+<section id="s6">
+<div class="shead"><span class="snum">!</span><h2>開發前待確認 <small>Open before development · Not in scope</small></h2></div>
+<div class="stage">
+<div class="open">
+  <b>Open</b>
+  <ol>
+    <li><b>地區 list</b> — 香港 · 台灣 · 全世界 confirmed. Anything else for v1 (新加坡, given SGD is a settlement currency)? No region groups in between.</li>
+    <li><b>Legacy contracts</b> — existing ones already carry a 地區 (often 全世界 by default). Content team to review legacy 全世界 contracts whose titles are really territory-limited. Under per-title this no longer blocks new contracts for other titles.</li>
+    <li><b>Amended 分潤比例</b> — forward-only or retroactive? (see section 5)</li>
+    <li><b>No matching contract</b> — title licensed for 香港 only, 台灣 viewer pays: unattributed, or fall back? Report-side.</li>
+    <li><b>Royalty report grouping</b> — 地區 becomes the natural group once a licensor has several contracts; decide before that report ships.</li>
+    <li><b>Expiry auto-detect</b> (Eric) — does a ~1-month-before-takedown routine exist today? Keep or disable, so there is one takedown path.</li>
+    <li><b>類型 單影片 / 多影片</b> — keep, or drop now that any contract holds 1..n titles?</li>
+  </ol>
+</div>
+<div class="open" style="border-color:var(--coral)">
+  <b style="color:var(--coral)">Not in scope</b>
+  <ol>
+    <li>Contract expiry does <b>not</b> take content down — takedown runs off the takedown date entered at upload (confirmed 08-31). No expiry check.</li>
+    <li>Contract 地區 does <b>not</b> geo-block playback — it is a royalty-attribution dimension. <span class="pill bad">confirm</span></li>
+    <li>Bulk import / export of contracts.</li>
+    <li>Licensor-facing view of contracts in the Film Owner Portal.</li>
+  </ol>
+</div>
+</div>
+</section>
+
+<footer>Wireframes for direction alignment only — visual design follows the BO design system · Ticket <a href="https://app.asana.com/1/1201357017636456/project/1209435607276598/task/1217270526401119" target="_blank" rel="noopener">1217270526401119</a> · v2 DRAFT 2026-09-15 · requirement text: ztor-docs/outputs/specs/ztor-req-2026-09-15-licensor-multi-contract-per-title.md · Visual system: Ztor wireframe house style (matches ztor-bookyay-ticketing-wireframes-2026-09-09)</footer>
+</div>
+<script>
+document.querySelectorAll('.states').forEach(function(group){
+  group.querySelectorAll('button[data-for]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var wf = group.parentElement;
+      group.querySelectorAll('button[data-for]').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+      btn.setAttribute('aria-pressed','true');
+      wf.querySelectorAll('[data-panel]').forEach(function(p){ p.classList.remove('on'); });
+      wf.querySelector('[data-panel="'+btn.dataset.for+'"]').classList.add('on');
+    });
+  });
+});
+</script>
+</body>
+</html>
