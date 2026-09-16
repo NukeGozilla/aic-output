@@ -39,6 +39,7 @@
     { "source": "/wireframe-crawler-dashboard.html", "destination": "/ztor/wireframe-crawler-dashboard.html", "permanent": true },
     { "source": "/wireframe-movie-dashboard.html", "destination": "/ztor/wireframe-movie-dashboard.html", "permanent": true },
     { "source": "/wireframe-topic-source-management.html", "destination": "/ztor/wireframe-topic-source-management.html", "permanent": true },
-    { "source": "/wireframe-ztor-bo-movie.html", "destination": "/ztor/wireframe-ztor-bo-movie.html", "permanent": true }
+    { "source": "/wireframe-ztor-bo-movie.html", "destination": "/ztor/wireframe-ztor-bo-movie.html", "permanent": true },
+    { "source": "/open-loyalty-vendor-research-2026-09-15.html", "destination": "/ztor/open-loyalty-vendor-research-2026-09-15.html", "permanent": true }
   ]
 }

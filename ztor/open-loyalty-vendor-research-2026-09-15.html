@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Loyalty — Vendor Research · Ztor Loyalty Engine Candidate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    
+    /* Dark Theme (Default - Noir Slate) */
+    --bg: #090a0f;
+    --bg-surface: #12141c;
+    --bg-card: #181b26;
+    --bg-card-hover: #1f2332;
+    --border: #262a3b;
+    --border-light: #32384e;
+    
+    --text-primary: #f3f5fa;
+    --text-secondary: #9ea5bd;
+    --text-muted: #6b728d;
+    
+    /* Accent Palette */
+    --primary: #c084fc;       /* Lavender / Ztor Purple */
+    --primary-dim: rgba(192, 132, 252, 0.12);
+    --primary-border: rgba(192, 132, 252, 0.35);
+    
+    --accent: #f472b6;        /* Pink accent */
+    --accent-dim: rgba(244, 114, 182, 0.12);
+    
+    --amber: #fbbf24;         /* Warning / Divergence */
+    --amber-dim: rgba(251, 191, 36, 0.12);
+    --amber-border: rgba(251, 191, 36, 0.3);
+    
+    --green: #34d399;         /* Success / Match */
+    --green-dim: rgba(52, 211, 153, 0.12);
+    --green-border: rgba(52, 211, 153, 0.3);
+    
+    --rose: #fb7185;          /* Risk / Block */
+    --rose-dim: rgba(251, 113, 133, 0.12);
+    --rose-border: rgba(251, 113, 133, 0.3);
+    
+    --blue: #60a5fa;          /* Info / Doc */
+    --blue-dim: rgba(96, 165, 250, 0.12);
+    --blue-border: rgba(96, 165, 250, 0.3);
+    
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.45);
+  }
+
+  [data-theme="light"] {
+    --bg: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-card: #f1f5f9;
+    --bg-card-hover: #e2e8f0;
+    --border: #e2e8f0;
+    --border-light: #cbd5e1;
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    
+    --primary: #8b5cf6;
+    --primary-dim: rgba(139, 92, 246, 0.08);
+    --primary-border: rgba(139, 92, 246, 0.3);
+    
+    --accent: #ec4899;
+    --accent-dim: rgba(236, 72, 153, 0.08);
+    
+    --amber: #d97706;
+    --amber-dim: rgba(217, 119, 6, 0.08);
+    --amber-border: rgba(217, 119, 6, 0.3);
+    
+    --green: #059669;
+    --green-dim: rgba(5, 150, 105, 0.08);
+    --green-border: rgba(5, 150, 105, 0.3);
+    
+    --rose: #e11d48;
+    --rose-dim: rgba(225, 29, 72, 0.08);
+    --rose-border: rgba(225, 29, 72, 0.3);
+    
+    --blue: #2563eb;
+    --blue-dim: rgba(37, 99, 235, 0.08);
+    --blue-border: rgba(37, 99, 235, 0.3);
+    
+    --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 15px; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-secondary);
+    line-height: 1.65;
+    padding: 32px 20px 80px;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+  }
+
+  /* Topbar Navigation */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .back-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  .btn-nav:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-dim);
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-tool {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn-tool:hover {
+    color: var(--text-primary);
+    border-color: var(--border-light);
+  }
+
+  /* Header Section */
+  .header-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--blue));
+  }
+
+  .eyebrow-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .badge-purple { background: var(--primary-dim); color: var(--primary); border: 1px solid var(--primary-border); }
+  .badge-amber  { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
+  .badge-green  { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+  .badge-rose   { background: var(--rose-dim); color: var(--rose); border: 1px solid var(--rose-border); }
+  .badge-blue   { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue-border); }
+  .badge-muted  { background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border); }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: 14.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+  .subtitle b { color: var(--text-primary); }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .meta-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+    font-weight: 600;
+  }
+  .meta-val {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  /* Quick Nav Pills */
+  .quick-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    margin-bottom: 28px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .quick-nav a {
+    white-space: nowrap;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .quick-nav a:hover {
+    color: var(--text-primary);
+    border-color: var(--primary);
+    background: var(--primary-dim);
+  }
+
+  /* Callout & Summary Panels */
+  .callout {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .callout.warn {
+    border-left: 4px solid var(--amber);
+    background: linear-gradient(90deg, var(--amber-dim) 0%, var(--bg-surface) 30%);
+  }
+  .callout.risk {
+    border-left: 4px solid var(--rose);
+    background: linear-gradient(90deg, var(--rose-dim) 0%, var(--bg-surface) 30%);
+  }
+  .callout.info {
+    border-left: 4px solid var(--blue);
+    background: linear-gradient(90deg, var(--blue-dim) 0%, var(--bg-surface) 30%);
+  }
+  .callout.decision {
+    border-left: 4px solid var(--primary);
+    background: linear-gradient(90deg, var(--primary-dim) 0%, var(--bg-surface) 30%);
+  }
+  .callout-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Section Styling */
+  .section-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.01em;
+  }
+  .sec-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary-dim);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid var(--primary-border);
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 20px 0 10px;
+  }
+
+  p {
+    margin-bottom: 14px;
+    color: var(--text-secondary);
+  }
+  p b, p strong {
+    color: var(--text-primary);
+  }
+
+  ul, ol {
+    margin: 10px 0 16px 20px;
+  }
+  li {
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+  }
+  li b, li strong {
+    color: var(--text-primary);
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--primary);
+  }
+
+  a {
+    color: var(--blue);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  /* Table styling */
+  .table-responsive {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    margin: 16px 0 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    text-align: left;
+  }
+
+  th {
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  td b, td strong {
+    color: var(--text-primary);
+  }
+
+  .cell-highlight {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  /* Checklist Component */
+  .checklist-group {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .checklist-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+  }
+  .check-item:last-child {
+    border-bottom: none;
+  }
+  .check-box {
+    margin-top: 3px;
+    width: 17px;
+    height: 17px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border-light);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    background: var(--bg-surface);
+  }
+  .check-item.done .check-box {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  .check-item.done .check-box::after {
+    content: "✓";
+    font-size: 11px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .check-item.done .check-text {
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+  .check-text {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+  }
+
+  /* Architectural Boundary Diagram Box */
+  .boundary-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  @media (max-width: 768px) {
+    .boundary-box { grid-template-columns: 1fr; }
+  }
+  .boundary-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    background: var(--bg-card);
+  }
+  .boundary-card.ztor {
+    border-color: var(--primary-border);
+    background: linear-gradient(180deg, var(--primary-dim) 0%, var(--bg-card) 60%);
+  }
+  .boundary-card.vendor {
+    border-color: var(--blue-border);
+    background: linear-gradient(180deg, var(--blue-dim) 0%, var(--bg-card) 60%);
+  }
+  .boundary-header {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .boundary-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .boundary-list li {
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .boundary-list li:last-child {
+    border-bottom: none;
+  }
+
+  /* Open Questions Cards */
+  .oq-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .oq-card:hover {
+    border-color: var(--border-light);
+  }
+  .oq-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+  .oq-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+  .oq-body {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  @media print {
+    body { background: #fff; color: #000; padding: 0; }
+    .topbar, .quick-nav, .topbar-actions { display: none; }
+    .section-card, .header-card { box-shadow: none; border-color: #ddd; page-break-inside: avoid; }
+    a { color: #000; text-decoration: underline; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="back-group">
+      <a class="btn-nav" href="../index.html">← AIC Output Hub</a>
+      <a class="btn-nav" href="https://github.com/NukeGozilla/ztor-docs/blob/main/outputs/research/open-loyalty-vendor-research-2026-09-15.md" target="_blank" rel="noopener">📄 Markdown on GitHub</a>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-tool" onclick="toggleTheme()" id="themeBtn">🌓 Theme</button>
+      <button class="btn-tool" onclick="copyShareUrl()" id="copyBtn">🔗 Share Link</button>
+    </div>
+  </div>
+
+  <!-- Header Card -->
+  <div class="header-card">
+    <div class="eyebrow-row">
+      <span class="badge badge-purple">Ztor 2.0 · White Label</span>
+      <span class="badge badge-amber">Research Notes · No Decision</span>
+      <span class="badge badge-blue">Candidate: Open Loyalty</span>
+    </div>
+    <h1>Open Loyalty — Vendor Research</h1>
+    <p class="subtitle">
+      Evaluation of Open Loyalty as a loyalty engine candidate for the <b>Creator Standalone Channel</b> (deck v1.2) architecture. Analyzes dev surface, published capabilities, pricing structure, and critical divergence vs. our locked percentile/decay scoring model.
+    </p>
+
+    <div class="meta-grid">
+      <div class="meta-item">
+        <span class="meta-label">Date & Status</span>
+        <span class="meta-val">2026-09-15 · Phase TBD</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Workstream Scope</span>
+        <span class="meta-val">Loyalty Service · Fan Club / Points / Tiers</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Vendor Model</span>
+        <span class="meta-val">SaaS · Quote-based per Active Member</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Primary Risk</span>
+        <span class="meta-val">Scoring Semantics (Percentile vs Fixed, Decay vs Expiry)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Nav Pills -->
+  <div class="quick-nav">
+    <a href="#why">Why This Exists</a>
+    <a href="#surface">1. Dev Surface</a>
+    <a href="#features">2. Feature Set</a>
+    <a href="#pricing">3. Pricing</a>
+    <a href="#fit">4. Fit vs Locked Model</a>
+    <a href="#checklist">5. Ask Vendor</a>
+    <a href="#open-questions">6. Internal Forks</a>
+  </div>
+
+  <!-- Why This Exists & Related Docs -->
+  <div class="section-card" id="why">
+    <div class="section-header">
+      <h2>Context & Why This Exists</h2>
+      <span class="badge badge-muted">Decision Framing</span>
+    </div>
+    <p>
+      Deck v1.2 draws six services behind the facade; <b>Loyalty</b> is one of them, and every capability that depends on it — Fan Club, Points, Ranking, Rewards, Missions — is still phase <b>TBD</b>. The deck's own de-scope proposal is:
+    </p>
+    <div class="callout decision">
+      <div class="callout-title">💡 Deck v1.2 De-scope Proposal</div>
+      <p style="margin:0; font-size:14px;">
+        <em>"A fan club does not require the loyalty engine."</em> Binary membership can ship first; tiering and point-burn can follow.
+      </p>
+    </div>
+    <p>
+      So the question on the table is whether we <b>build</b> that engine, <b>buy</b> it, or <b>defer</b> it past the 10/31 LLOUD launch. This research is the buy-side homework: what Open Loyalty actually offers, what it costs, and where it does and doesn't fit what we already locked.
+    </p>
+
+    <h3>Related Documents</h3>
+    <ul style="margin-left: 22px;">
+      <li><code>outputs/specs/ztor-loyalty-points-model-2026-08-14.md</code> — <b>Our locked points math</b> (the authoritative math model any vendor must satisfy)</li>
+      <li><code>outputs/research/whitelabel-deck-v1.2-ingest-2026-09-15.md</code> — Loyalty service &amp; TBD phasing review</li>
+      <li><code>outputs/architecture/solution-arch-2026-09-15-whitelabel-deck-v1.2-review.md</code> — §12 confirming the points spec applies as-is to White Label</li>
+      <li><code>prototypes/creator-standalone-channel/spec/api-v1.md</code> — <code>/points</code>, <code>/rewards</code>, <code>/missions</code> route group specification</li>
+    </ul>
+  </div>
+
+  <!-- 1. Developer Surface -->
+  <div class="section-card" id="surface">
+    <div class="section-header">
+      <h2><span class="sec-num">1</span> Developer Surface</h2>
+      <span class="badge badge-green">Public Docs</span>
+    </div>
+    <p>
+      Both key technical documentation portals are fully public without requiring an enterprise sales login or NDA:
+    </p>
+
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Resource</th>
+            <th>URL & Access</th>
+            <th>Coverage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-highlight">API Reference</td>
+            <td><a href="https://apidocs.openloyalty.io/" target="_blank" rel="noopener">https://apidocs.openloyalty.io/</a></td>
+            <td>REST API endpoints, request/response JSON schemas, error codes, HTTP auth headers</td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Developer &amp; Technical Guide</td>
+            <td><a href="https://help.openloyalty.io/technical-guide" target="_blank" rel="noopener">https://help.openloyalty.io/technical-guide</a></td>
+            <td>Integration architecture, token lifecycle, webhooks, batch imports, API fundamentals</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:0;">
+      ✓ Sufficient public developer documentation exists to audit endpoint schemas and payload structures prior to commercial kickoff.
+    </p>
+  </div>
+
+  <!-- 2. Feature Set -->
+  <div class="section-card" id="features">
+    <div class="section-header">
+      <h2><span class="sec-num">2</span> Published Feature Set</h2>
+      <span class="badge badge-amber">Vendor Claims (Unverified)</span>
+    </div>
+    
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Independent Verification Notice</div>
+      <p style="margin:0; font-size:13px;">
+        Everything in this table is <b>vendor-published marketing / documentation copy</b> fetched 2026-09-15. Nothing has been independently tested in a sandbox or validated in code.
+      </p>
+    </div>
+
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>What Open Loyalty Offers</th>
+            <th>Surface Assessment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-highlight">Points Engine</td>
+            <td>Earn/burn, expiry rules, purchase-based and behaviour-based accrual</td>
+            <td><span class="badge badge-green">Standard</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Wallets &amp; Balances</td>
+            <td>Member wallets, pending points, balance updates, manual adjustments, expiration</td>
+            <td><span class="badge badge-green">Standard</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Tiers &amp; Ranks</td>
+            <td>Fan levels, progression, upgrade/downgrade rules, tier-based benefits</td>
+            <td><span class="badge badge-amber">Risk (§4)</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Rewards &amp; Coupons</td>
+            <td>Reward catalogues, locked/unlocked rewards, coupons, redemption flows</td>
+            <td><span class="badge badge-green">Standard</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Campaign Engine</td>
+            <td>Campaigns driven by purchases, SKUs, segments, behaviour, custom events</td>
+            <td><span class="badge badge-green">Broad</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Custom Event Triggers</td>
+            <td>Arbitrary events — login, watch, vault unlock, event attendance, purchase, creator engagement</td>
+            <td><span class="badge badge-green">Flexible</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Referrals</td>
+            <td>Including multi-level referral campaigns (<a href="https://help.openloyalty.io/campaigns/campaigns/campaigns-and-referral-campaigns/creating-campaigns/referral-campaign" target="_blank" rel="noopener">docs</a>)</td>
+            <td><span class="badge badge-blue">Add-on</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Missions &amp; Challenges</td>
+            <td>Behavioural tasks, campaign-style engagement mechanics</td>
+            <td><span class="badge badge-green">Relevant</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Badges &amp; Achievements</td>
+            <td>Recognition from transactions, custom events, behaviours</td>
+            <td><span class="badge badge-green">Relevant</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Leaderboards / Rankings</td>
+            <td>Competitive member ranking within a campaign or tier</td>
+            <td><span class="badge badge-amber">Verify Semantics</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Games of Chance</td>
+            <td>Spin the Wheel, Scratch &amp; Win, lotteries, raffles</td>
+            <td><span class="badge badge-muted">Optional</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Admin UI</td>
+            <td>Marketers configure campaigns and multipliers without engineering intervention</td>
+            <td><span class="badge badge-green">High Value</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">API + Webhooks</td>
+            <td>REST API, outbound webhooks, Postman/OpenAPI resources; API-first positioning</td>
+            <td><span class="badge badge-green">Fit</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Data Exchange</td>
+            <td>REST, webhooks, AWS S3 batch export (<a href="https://www.openloyalty.io/technology/loyalty-program-api" target="_blank" rel="noopener">source</a>)</td>
+            <td><span class="badge badge-blue">Audit Log</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Multi-Tenant</td>
+            <td>One installation claimed to support multiple tenants/projects/countries with isolated data (<a href="https://www.openloyalty.io/pricing" target="_blank" rel="noopener">source</a>)</td>
+            <td><span class="badge badge-amber">Verify Cost (§4)</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Security &amp; Compliance</td>
+            <td>ISO 27001, ISO 9001, GDPR/CCPA positioning, encryption at rest/transit, AWS hosting (<a href="https://www.openloyalty.io/" target="_blank" rel="noopener">source</a>)</td>
+            <td><span class="badge badge-green">Standard</span></td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">Support &amp; SLA</td>
+            <td>99.99% uptime claim, 24/7 monitoring, P1 response &lt; 30 min (<a href="https://www.openloyalty.io/pricing" target="_blank" rel="noopener">source</a>)</td>
+            <td><span class="badge badge-blue">Enterprise</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. Pricing -->
+  <div class="section-card" id="pricing">
+    <div class="section-header">
+      <h2><span class="sec-num">3</span> Commercial &amp; Pricing Model</h2>
+      <span class="badge badge-rose">Quote-Based Only</span>
+    </div>
+    
+    <p>
+      <b>No credible public MSRP exists.</b> Open Loyalty pricing is strictly custom and negotiated via sales:
+    </p>
+
+    <div class="callout info">
+      <div class="callout-title">💳 Published Billing Structure</div>
+      <p style="margin-bottom:8px;">
+        <b>Two-Part Tariff:</b> <code>Platform Fee</code> (fixed annual/monthly base) + <code>Allowance Fee</code> (variable, scaled on monthly Active Members).
+      </p>
+      <p style="margin:0; font-size:13px;">
+        <b>Definition of Active Member:</b> A registered member with <i>at least one loyalty event</i> in that calendar month (<a href="https://www.openloyalty.io/pricing" target="_blank" rel="noopener">source</a>).
+      </p>
+    </div>
+
+    <h3>Community &amp; Industry Consensus</h3>
+    <ul style="margin-left: 22px;">
+      <li><b><a href="https://trophy.so/blog/trophy-vs-open-loyalty" target="_blank" rel="noopener">Trophy comparison</a>:</b> Confirms quote-based enterprise pricing with sales demo required.</li>
+      <li><b><a href="https://www.opia.com/insights/best-customer-loyalty-software/" target="_blank" rel="noopener">Opia Review</a>:</b> Lists pricing as "Contact Open Loyalty for custom quote".</li>
+      <li><b><a href="https://www.voucherify.io/blog/best-loyalty-management-software-review" target="_blank" rel="noopener">Voucherify Comparison</a>:</b> Notes pricing is "Custom — SaaS or on-premise deployment".</li>
+      <li>
+        <b>On the "Free Community Edition" claim:</b> Some legacy martech blogs (<a href="https://aboutmartech.com/blog/best-customer-loyalty-platforms/" target="_blank" rel="noopener">e.g. AboutMartech</a>) cite a self-hosted community edition with no license fee. Open Loyalty's live pricing page explicitly states the modern platform is <b>pure SaaS and closed source</b>. Treat all CE claims as outdated.
+      </li>
+    </ul>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Crucial Negotiation Lever for Fan Clubs</div>
+      <p style="margin:0; font-size:13.5px;">
+        Artist fan clubs have a massive <b>long tail of dormant or low-activity fans</b>. If "active member" triggers on passive events (e.g. weekly tier recalculation, login, automated email trigger), we will pay an enterprise bill for dead accounts. We must establish in writing what specific events qualify an account as "Active".
+      </p>
+    </div>
+  </div>
+
+  <!-- 4. Fit Against Locked Model -->
+  <div class="section-card" id="fit">
+    <div class="section-header">
+      <h2><span class="sec-num">4</span> Fit Against What We Already Locked</h2>
+      <span class="badge badge-rose">Core Semantic Divergence</span>
+    </div>
+    
+    <p>
+      Our points model (<code>ztor-loyalty-points-model-2026-08-14</code>, locked with L on 08-13/14) is <b>not a generic e-commerce loyalty system</b>. The critical areas requiring vendor confirmation:
+    </p>
+
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Our Locked Requirement</th>
+            <th>Why Default SaaS Engines Fail It</th>
+            <th>Call Checklist &amp; Test</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-highlight">
+              <b>Per-Creator Programs</b><br>
+              <span style="font-size:12px; color:var(--text-muted)">Same fan is Inner Circle for Artist A, but non-member for Artist B</span>
+            </td>
+            <td>
+              Most engines assume 1 Brand = 1 Program. Supporting hundreds of creators inside one platform often triggers per-tenant licensing multiplier.
+            </td>
+            <td>
+              Can one installation host <i>N creator programs</i> under one parent commercial contract without multiplying allowance fees?
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">
+              <b>Percentile Tiers</b><br>
+              <span style="font-size:12px; color:var(--text-muted)">Top 1% (Tier 1), Top 10% (Tier 2), Top 30% (Tier 3), Rest (Base)</span>
+            </td>
+            <td>
+              Standard engines use <b>fixed point thresholds</b> (e.g. &gt;1,000 pts = Gold). Percentile tiers require relative population sorting &amp; dynamic cutoffs.
+            </td>
+            <td>
+              Can tier placement be assigned via external rank/webhook, or is the engine strictly limited to static numeric thresholds?
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">
+              <b>45-Day Half-Life Decay</b><br>
+              <span style="font-size:12px; color:var(--text-muted)">Continuous time-weighted decay over rolling 90-day window</span>
+            </td>
+            <td>
+              <b>Expiry ≠ Decay.</b> Standard engines support cliff expiration (e.g. points expire after 12 months). Continuous exponential decay is rare off-the-shelf.
+            </td>
+            <td>
+              Does the engine natively support mathematical time-decay on ledger balances, or only discrete point expiration dates?
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">
+              <b>Weekly Recompute + 14d Grace</b><br>
+              <span style="font-size:12px; color:var(--text-muted)">Scheduled batch re-sort with asymmetric promotion/demotion grace</span>
+            </td>
+            <td>
+              Requires custom scheduled cron logic with stateful grace counters for demotions.
+            </td>
+            <td>
+              Is this workflow configurable within their rule engine, or must Ztor cron jobs push tier updates via API?
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">
+              <b>Auditable Reversible Ledger</b><br>
+              <span style="font-size:12px; color:var(--text-muted)">Every single point traces to an immutable external event ID</span>
+            </td>
+            <td>
+              Usually supported, but idempotency guarantees and transaction rollback ergonomics vary.
+            </td>
+            <td>
+              Confirm idempotency key handling, audit-log export fidelity, and automated reversal hooks for refunded orders.
+            </td>
+          </tr>
+          <tr>
+            <td class="cell-highlight">
+              <b>Waterfall Spend Scoring</b><br>
+              <span style="font-size:12px; color:var(--text-muted)">Different purchase categories (PPV, Merch, Tickets) yield different points</span>
+            </td>
+            <td>
+              Needs flexible multiplier rules tied to SKU metadata and product categories.
+            </td>
+            <td>
+              Confirm SKU/category payload parsing in their campaign multiplier engine.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Synthesis: The Real Buy-Side Reality -->
+    <div class="callout info">
+      <div class="callout-title">🎯 Synthesis: What Are We Actually Buying?</div>
+      <p style="margin-bottom:8px;">
+        Their feature set matches our <b>surface needs</b> (points, wallet, rewards catalogue, admin UI, webhooks). But because our <b>scoring semantics</b> (percentile rank, 45-day decay) are non-standard, an off-the-shelf engine will almost certainly force us to compute the score ourselves and push it in.
+      </p>
+      <p style="margin:0; font-size:13.5px;">
+        <b>If so, we are buying a Ledger + Rewards Catalogue + Admin UI, not a Scoring Engine.</b> That may still save months of frontend and admin tooling, but it fundamentally re-indexes the price we should be willing to pay.
+      </p>
+    </div>
+
+    <!-- Architectural Boundary -->
+    <h3>Architectural Boundary (Holds Regardless of Vendor Selection)</h3>
+    <p>
+      Open Loyalty would strictly operate as a leaf microservice behind the facade. <b>All authoritative business policy remains with Ztor:</b>
+    </p>
+
+    <div class="boundary-box">
+      <div class="boundary-card ztor">
+        <div class="boundary-header">
+          <span>🔒 Owned by Ztor (Non-Negotiable)</span>
+          <span class="badge badge-purple">Core SOT</span>
+        </div>
+        <ul class="boundary-list">
+          <li><b>Identity &amp; Auth:</b> Member accounts, SSO, sessions</li>
+          <li><b>Creator &amp; Channel Rules:</b> Channel boundaries, artist settings</li>
+          <li><b>Commerce &amp; Checkout:</b> Orders, fiat gateway, refunds, splits</li>
+          <li><b>Vault &amp; Entitlements:</b> Media vault access, ticket tokens</li>
+          <li><b>Policy Service:</b> Authoritative gatekeeper (e.g. <i>"May this user view this right now?"</i>)</li>
+        </ul>
+      </div>
+
+      <div class="boundary-card vendor">
+        <div class="boundary-header">
+          <span>⚙️ Delegated to Open Loyalty (Vendor)</span>
+          <span class="badge badge-blue">Leaf Logic</span>
+        </div>
+        <ul class="boundary-list">
+          <li><b>Ledger Accounting:</b> Member point balance, transaction records</li>
+          <li><b>Rewards Catalogue:</b> Reward tiers, digital coupons, redemption claims</li>
+          <li><b>Admin Campaign UI:</b> Marketer point promotions &amp; bonus events</li>
+          <li><b>Engagement Missions:</b> Task completion tracking &amp; badges</li>
+          <li><b>Event Log Ingest:</b> Raw ingest of purchase and activity webhooks</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Vendor Call Checklist -->
+  <div class="section-card" id="checklist">
+    <div class="section-header">
+      <h2><span class="sec-num">5</span> Vendor Call Checklist</h2>
+      <span class="badge badge-green">Take to Meeting Verbatim</span>
+    </div>
+    <p>
+      Interactive checklist to evaluate Open Loyalty on technical integration and commercial terms:
+    </p>
+
+    <div class="checklist-group">
+      <div class="checklist-title">🛠️ Technical Access &amp; Integration</div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Provide developer sandbox access with full admin privileges</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Review official OpenAPI / Swagger spec or Postman collection</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Verify sample payloads: purchase accrual, custom engagement event, tier upgrade, refund reversal</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Review webhook retry policy, signature verification, and delivery latency SLA</div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-title">💰 Commercial &amp; Licensing</div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Formal quote against estimated monthly active members (obtain exact written definition of "Active")</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Multi-creator model: clarify how many separate creator programs can run under one parent tier</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Documented SLA terms backing the 99.99% uptime claim and P1 incident escalation paths</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Total onboarding &amp; implementation services fee (vendor engineering vs our integration time)</div>
+      </div>
+    </div>
+
+    <div class="checklist-group">
+      <div class="checklist-title">🎯 Algorithmic Fit (Section 4 Table)</div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Can tier qualification be pushed from an external ranking worker instead of static thresholds?</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Does the ledger calculate half-life time-decay, or will we have to calculate decay balances ourselves?</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Can transaction idempotency keys be bound directly to external Ztor order and event IDs?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Open Questions For Us -->
+  <div class="section-card" id="open-questions">
+    <div class="section-header">
+      <h2><span class="sec-num">6</span> Open Questions for Us (Not the Vendor)</h2>
+      <span class="badge badge-amber">Internal Strategic Forks</span>
+    </div>
+    <p>
+      Before signing any vendor contract or scheduling extended technical reviews, these internal forks must be resolved:
+    </p>
+
+    <div class="oq-card">
+      <div class="oq-num">FORK 01</div>
+      <div class="oq-title">Does the 10/31 LLOUD launch need a loyalty engine at all?</div>
+      <div class="oq-body">
+        Deck v1.2 already suggests that Fan Club can launch as simple binary membership (paid/free subscriber) without dynamic points or tiers. If so, the entire vendor evaluation can be deferred past 10/31 without blocking launch, saving critical timeline and focus.
+      </div>
+    </div>
+
+    <div class="oq-card">
+      <div class="oq-num">FORK 02</div>
+      <div class="oq-title">Who owns the Loyalty workstream?</div>
+      <div class="oq-body">
+        The Solution Architect review flagged that none of the six white-label workstreams currently has an assigned tech or product owner. Evaluating a vendor without an owner results in pricing quotes that languish with no implementation plan.
+      </div>
+    </div>
+
+    <div class="oq-card">
+      <div class="oq-num">FORK 03</div>
+      <div class="oq-title">Build vs. buy has not been costed on the build side.</div>
+      <div class="oq-body">
+        We already have a mathematically locked model (<code>ztor-loyalty-points-model-2026-08-14.md</code>), and the score is purely used to sort fans within an artist. That is a narrow, well-bounded ledger and batch job. A 1-page engineering estimate for building the ledger in-house is required so any vendor quote can be measured against a real internal baseline.
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div>
+      <b>Ztor 2.0 Product &amp; Architecture</b> · Source: <code>ztor-docs/outputs/research/open-loyalty-vendor-research-2026-09-15.md</code>
+    </div>
+    <div>
+      Refreshed 2026-09-15 · Rendered for AIC Output
+    </div>
+  </footer>
+</div>
+
+<script>
+  // Theme Toggle with LocalStorage
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    try { localStorage.setItem('aic-theme', next); } catch(e){}
+  }
+
+  // Load Saved Theme
+  try {
+    const saved = localStorage.getItem('aic-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  } catch(e){}
+
+  // Copy URL Helper
+  function copyShareUrl() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = document.getElementById('copyBtn');
+      const original = btn.innerText;
+      btn.innerText = '✓ Copied!';
+      btn.style.color = 'var(--green)';
+      setTimeout(() => {
+        btn.innerText = original;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  // Interactive Checklist with Persistence
+  function toggleCheck(el) {
+    el.classList.toggle('done');
+    saveChecklist();
+  }
+
+  function saveChecklist() {
+    const states = [];
+    document.querySelectorAll('.check-item').forEach((item, idx) => {
+      states.push(item.classList.contains('done'));
+    });
+    try { localStorage.setItem('open-loyalty-checklist', JSON.stringify(states)); } catch(e){}
+  }
+
+  function loadChecklist() {
+    try {
+      const raw = localStorage.getItem('open-loyalty-checklist');
+      if (raw) {
+        const states = JSON.parse(raw);
+        document.querySelectorAll('.check-item').forEach((item, idx) => {
+          if (states[idx]) item.classList.add('done');
+        });
+      }
+    } catch(e){}
+  }
+  loadChecklist();
+</script>
+
+</body>
+</html>
