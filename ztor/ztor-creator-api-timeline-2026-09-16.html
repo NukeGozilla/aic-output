@@ -159,6 +159,10 @@
   .dcard .q{font-weight:700;margin:3px 0 4px;font-size:14px}
   .dcard .o{color:var(--muted)}
   .dcard .o b{color:var(--ink);font-weight:700}
+  .dcard ul{padding-left:15px;margin:3px 0 0;color:var(--muted)}
+  .dcard li{margin:3px 0;line-height:1.45}
+  .dcard li b{color:var(--ink);font-weight:700}
+  .dcard .h{font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin-top:8px}
 
   .tbdtag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:8.5px;font-weight:700;letter-spacing:.08em;background:var(--warn-bg);color:var(--warn);border:1px solid #e2c584;border-radius:4px;padding:0 4px;line-height:14px;vertical-align:middle;font-style:normal;white-space:nowrap}
   .bar .tbdtag{flex:none;margin-right:5px}
@@ -172,6 +176,11 @@
   .callout.warn{background:var(--warn-bg);border-color:#e2c584;color:#6b4a12}
   .callout b{font-weight:700}
 
+  .notes{margin-top:44px;padding-top:16px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
+  .notes .h{font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  .notes ul{padding-left:16px;margin:6px 0 0}
+  .notes li{margin:4px 0;line-height:1.5}
+  .notes b{color:var(--ink)}
   .foot{margin-top:52px;padding-top:18px;border-top:1px solid var(--rule);font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted);line-height:1.7}
   .foot b{color:var(--ink)}
   @media(max-width:640px){.wrap{padding:34px 16px 70px}}
@@ -190,23 +199,14 @@
   <div class="eyebrow">Ztor · Creator API · headless API for artist sites</div>
   <h1><span class="en">Creator API — <em>four releases</em>, then the creator sites</span><span class="zh">Creator API — <em>四個 release</em>，再上創作者網站</span></h1>
   <p class="sub">
-    <span class="en">Each release exposes an API group right after the Ztor feature it wraps is ready: <b>existing features Oct 5</b>, <b>eShop Oct 12</b>, <b>ticketing and loyalty Nov 20</b>. LLOUD goes live on the first two on <b>Oct 30</b>; Tyson's site follows on all four on <b>Dec 11</b>.</span>
-    <span class="zh">每個 release 都在對應的 Ztor 功能就緒後立刻開出 API 群組：<b>既有功能 10/5</b>、<b>eShop 10/12</b>、<b>售票與積分 11/20</b>。LLOUD 於 <b>10/30</b> 以前兩個 release 上線；Tyson 網站於 <b>12/11</b> 以全部四個上線。</span>
+    <span class="en">Each release exposes an API group right after the Ztor feature it wraps is ready. LLOUD goes live on the first two; Tyson's site follows on all four.</span>
+    <span class="zh">每個 release 都在對應的 Ztor 功能就緒後立刻開出 API 群組。LLOUD 以前兩個 release 上線，Tyson 網站以全部四個上線。</span>
   </p>
-  <div class="meta">
-    <span><b>Drafted</b> 2026-09-16 · <b>Revised</b> 2026-09-18 (Jeff's feedback: releases, one delivery lane, sites lane)</span>
-    <span><b>Status</b> DRAFT — for Jeff → L, dev team</span>
-    <span><b>Horizon</b> Sep 14 → Dec 20 · 14 wk</span>
-    <span><b>Sources</b> Notion sync note 09-16 · Granola “sync up with Eric” · 2.0 dev meeting 09-16 · SA reviews 09-14/15</span>
-  </div>
   <div class="goldrule"></div>
 
   <!-- ============ 01 RELEASES ============ -->
   <h2><span class="num">01</span><span class="en">Four releases</span><span class="zh">四個 release</span></h2>
-  <p class="lede">
-    <span class="en">Feature first, then its API — the flow Eric proposed. Ticketing and loyalty land together on Nov 20 because both wait on a November prerequisite: Bookyay UAT and the Open Loyalty integration.</span>
-    <span class="zh">功能先完成、再開 API（Eric 提的做法）。售票與積分同在 11/20，因為兩者都等 11 月的前置條件：Bookyay UAT 與 Open Loyalty 串接。</span>
-  </p>
+  <p class="lede"><span class="en">Feature first, then its API (Eric’s rule). Ticketing and loyalty share Nov 20 because both wait on a November prerequisite.</span><span class="zh">功能先完成、再開 API（Eric 的原則）。售票與積分同在 11/20，因為兩者都等 11 月的前置條件。</span></p>
   <div class="answer">
     <div class="acard" style="--c:var(--api)">
       <div class="d">Oct 5</div><div class="dow">Monday · release 1</div>
@@ -237,10 +237,7 @@
 
   <!-- ============ 02 GANTT ============ -->
   <h2><span class="num">02</span><span class="en">The 14 weeks</span><span class="zh">14 週全景</span></h2>
-  <p class="lede">
-    <span class="en">Top lane: Creator API + the Ztor feature each release wraps. Bottom lane: the creator sites that consume it. Half-week resolution; gold-edged bars are the critical path to Oct 30. Hover a bar for dates and the full label.</span>
-    <span class="zh">上方泳道：Creator API 與各 release 對應的 Ztor 功能。下方泳道：使用 API 的創作者網站。半週為一格；金邊長條＝10/30 的關鍵路徑。滑過長條可看日期與完整說明。</span>
-  </p>
+  <p class="lede"><span class="en">Top lane: Creator API + the Ztor feature each release wraps. Bottom lane: the creator sites. Gold-edged bars = critical path to Oct 30. Hover a bar for dates.</span><span class="zh">上方泳道：Creator API 與各 release 對應的 Ztor 功能。下方泳道：創作者網站。金邊長條＝10/30 關鍵路徑。滑過長條可看日期。</span></p>
 
   <div class="scroller">
   <div class="gantt">
@@ -337,39 +334,64 @@
 
   <!-- ============ 05 DECISIONS ============ -->
   <h2><span class="num">05</span><span class="en">Five decisions the Sep 21 freeze needs</span><span class="zh">9/21 凍結前要定的五件事</span></h2>
-  <p class="lede">
-    <span class="en">Without these, the freeze is a date on a calendar. Each one changes what Eric's team builds in Golden Week.</span>
-    <span class="zh">沒有這五件事，凍結只是日曆上的一個日期。每一件都會改變印尼團隊在假期裡做什麼。</span>
-  </p>
+  <p class="lede"><span class="en">Each one changes what Eric’s team builds in Golden Week.</span><span class="zh">每一件都會改變印尼團隊在國慶假期裡做什麼。</span></p>
   <div class="dec">
     <div class="dcard"><div class="k">01 · fulfilment</div>
       <div class="q"><span class="en">How does a LLOUD order reach the fan?</span><span class="zh">LLOUD 訂單怎麼送到粉絲手上？</span></div>
-      <div class="o"><span class="en">lloud.club is a fashion drop with shipping; eShop 2.2 is <b>pickup-only</b>. Pick: shipping into 2.2/2.3 · pickup / pop-up only · Beamco-managed fulfilment.</span><span class="zh">lloud.club 是要寄送的服飾發售；eShop 2.2 <b>只有取貨</b>。三選一：寄送排進 2.2/2.3 · 只做取貨／快閃 · Beamco 代出貨。</span></div></div>
+      <ul>
+        <li><span class="en">lloud.club is a fashion drop <b>with shipping</b></span><span class="zh">lloud.club 是要<b>寄送</b>的服飾發售</span></li>
+        <li><span class="en">eShop 2.2 is <b>pickup-only</b></span><span class="zh">eShop 2.2 <b>只有取貨</b></span></li>
+        <li><span class="en">Pick one: shipping into 2.2 / 2.3 · pickup or pop-up only · Beamco-managed fulfilment</span><span class="zh">三選一：寄送排進 2.2／2.3 · 只做取貨／快閃 · Beamco 代出貨</span></li>
+      </ul>
+</div>
     <div class="dcard"><div class="k">02 · facade + payment</div>
       <div class="q"><span class="en">Who owns the public gateway and checkout?</span><span class="zh">對外閘道與結帳歸誰？</span></div>
-      <div class="o"><span class="en">Proposal: <b>Eric's team</b> owns the facade; eShop / Bookyay expose internal APIs only. Also: does Lisa's site settle to a <b>separate payment account</b> (order tagging)?</span><span class="zh">提案：<b>Eric 團隊</b>負責 facade，eShop／Bookyay 只開內部 API。另外：Lisa 網站是否用<b>獨立收款帳號</b>（訂單標記）？</span></div></div>
+      <ul>
+        <li><span class="en">Proposal: <b>Eric’s team</b> owns the facade</span><span class="zh">提案：<b>Eric 團隊</b>負責 facade</span></li>
+        <li><span class="en">eShop and Bookyay expose <b>internal APIs only</b></span><span class="zh">eShop 與 Bookyay <b>只開內部 API</b></span></li>
+        <li><span class="en">Does Lisa’s site settle to a <b>separate payment account</b>? If yes, orders need a tag</span><span class="zh">Lisa 網站是否用<b>獨立收款帳號</b>？若是，訂單需要標記</span></li>
+      </ul>
+</div>
     <div class="dcard"><div class="k">03 · open loyalty<i class="tbdtag">TBD</i></div>
       <div class="q"><span class="en">Can Open Loyalty run our scoring model, and who owns loyalty?</span><span class="zh">Open Loyalty 能跑我們的計分模型嗎？誰負責積分？</span></div>
-      <div class="o"><span class="en">On the call: <b>percentile tiers + 45-day decay</b>, per-creator programs under one contract, "active member" definition in writing. Contract by <b>Oct 23</b> or release 4 misses Nov 20. Sync-back to Ztor stays ours.</span><span class="zh">通話確認：<b>百分位等級＋45 天衰減</b>、單一合約下的每創作者方案、「活躍會員」定義白紙黑字。<b>10/23</b> 前簽約，否則 release 4 趕不上 11/20。同步回 Ztor 仍由我方做。</span></div></div>
+      <div class="h"><span class="en">Confirm on the call</span><span class="zh">通話確認</span></div>
+      <ul>
+        <li><span class="en"><b>Percentile tiers + 45-day decay</b></span><span class="zh"><b>百分位等級＋45 天衰減</b></span></li>
+        <li><span class="en">Per-creator programs under <b>one contract</b></span><span class="zh">單一合約下的<b>每創作者方案</b></span></li>
+        <li><span class="en">“Active member” definition <b>in writing</b></span><span class="zh">「活躍會員」定義<b>白紙黑字</b></span></li>
+      </ul>
+      <div class="h"><span class="en">Then</span><span class="zh">然後</span></div>
+      <ul>
+        <li><span class="en">Contract by <b>Oct 23</b> (Plan A) or <b>Oct 9</b> (Option B)</span><span class="zh"><b>10/23</b>（方案 A）或 <b>10/9</b>（選項 B）前簽約</span></li>
+        <li><span class="en">Name a loyalty owner</span><span class="zh">指定積分負責人</span></li>
+        <li><span class="en">Sync-back to Ztor stays ours</span><span class="zh">同步回 Ztor 仍由我方做</span></li>
+      </ul>
+</div>
     <div class="dcard"><div class="k">04 · cs team scope</div>
       <div class="q"><span class="en">Does the CS team take Creator API groups too?</span><span class="zh">CS 團隊是否也接 Creator API？</span></div>
-      <div class="o"><span class="en">They carry eShop 2.2 through UAT and production to Oct 30. Adding API groups on top puts release 2 at risk; Creator API stays with Eric's team.</span><span class="zh">他們要扛 eShop 2.2 的 UAT 與正式上線到 10/30。再加 API 會拖累 release 2；Creator API 留在 Eric 團隊。</span></div></div>
+      <ul>
+        <li><span class="en">They carry eShop 2.2 through UAT and production to <b>Oct 30</b></span><span class="zh">他們要扛 eShop 2.2 的 UAT 與正式上線到 <b>10/30</b></span></li>
+        <li><span class="en">Adding API groups on top puts <b>release 2 at risk</b></span><span class="zh">再加 API 會<b>拖累 release 2</b></span></li>
+        <li><span class="en">Creator API stays with <b>Eric’s team</b></span><span class="zh">Creator API 留在 <b>Eric 團隊</b></span></li>
+      </ul>
+</div>
     <div class="dcard"><div class="k">05 · cdn / domain</div>
       <div class="q"><span class="en">Is a ztor.com image origin acceptable at launch?</span><span class="zh">上線時圖片來源顯示 ztor.com 可接受嗎？</span></div>
-      <div class="o"><span class="en"><b>Whitelist now</b> (origin visible in the inspector only); custom CDN domain later if Lisa wants the link hidden.</span><span class="zh"><b>先用白名單</b>（只在開發者工具看得到來源）；若 Lisa 要隱藏關聯，之後再做自訂 CDN 網域。</span></div></div>
+      <ul>
+        <li><span class="en"><b>Whitelist now</b>: origin visible in the inspector only</span><span class="zh"><b>先用白名單</b>：只在開發者工具看得到來源</span></li>
+        <li><span class="en">Custom CDN domain later if Lisa wants the link hidden</span><span class="zh">若 Lisa 要隱藏關聯，之後再做自訂 CDN 網域</span></li>
+      </ul>
+</div>
   </div>
 
   <div class="callout warn"><span class="ic">⚠</span><div>
-    <span class="en"><b>Single point of failure:</b> design, site build, integration and acceptance of lloud.club all sit with L. Give L the frozen spec on Sep 25 and mocks, so the build starts before release 1 exists — the same move that saved the 2.1 schedule.</span>
-    <span class="zh"><b>單點風險：</b>lloud.club 的設計、建站、串接、驗收都在 L 一人身上。9/25 把凍結的 spec 與 mock 交給 L，讓建站在 release 1 之前就開始——這正是 2.1 時程救回來的做法。</span>
+    <span class="en"><b>Single point of failure:</b> lloud.club design, build, integration and acceptance all sit with L. Hand L the frozen spec + mocks on Sep 25 so the build starts before release 1.</span>
+    <span class="zh"><b>單點風險：</b>lloud.club 的設計、建站、串接、驗收都在 L 一人身上。9/25 把凍結的 spec＋mock 交給 L，讓建站在 release 1 之前就開始。</span>
   </div></div>
 
   <!-- ============ 06 OPTION B ============ -->
   <h2><span class="num">06</span><span class="en">Option B — lloud.club integrates Open Loyalty directly</span><span class="zh">選項 B——lloud.club 直接串接 Open Loyalty</span><i class="tbdtag"><span class="en">TBD · every item pending confirmation with Open Loyalty</span><span class="zh">TBD · 每項皆待與 Open Loyalty 確認</span></i></h2>
-  <p class="lede">
-    <span class="en">Plan A routes loyalty through Ztor: Open Loyalty → Ztor → release 4 → lloud.club, live on lloud.club <b>Dec 7</b>. Option B: sign the Open Loyalty contract by Oct 9, <b>start integration Oct 12</b>, and let lloud.club call Open Loyalty directly while Ztor does its own integration in parallel. Loyalty is live on lloud.club <b>Nov 13</b>, a week before release 4 and 24 days before Plan A. Two specs make it safe: how the direct integration works, and how it merges back into Ztor later.</span>
-    <span class="zh">方案 A 的積分經 Ztor 中轉：Open Loyalty → Ztor → release 4 → lloud.club，lloud.club 於 <b>12/7</b> 上線。選項 B：10/9 前與 Open Loyalty 簽約、<b>10/12 開始串接</b>，lloud.club 直接呼叫 Open Loyalty，Ztor 同時做自己的串接。lloud.club 積分 <b>11/13</b> 上線，比 release 4 早一週、比方案 A 早 24 天。需要兩份規格把它做穩：直接串接怎麼做，以及之後怎麼併回 Ztor。</span>
-  </p>
+  <p class="lede"><span class="en">Plan A: Open Loyalty → Ztor → release 4 → lloud.club, live <b>Dec 7</b>. Option B: contract by Oct 9, integration from Oct 12, lloud.club calls Open Loyalty directly, live <b>Nov 13</b>. Two specs make it safe.</span><span class="zh">方案 A：Open Loyalty → Ztor → release 4 → lloud.club，<b>12/7</b> 上線。選項 B：10/9 前簽約、10/12 開始串接，lloud.club 直接呼叫 Open Loyalty，<b>11/13</b> 上線。兩份規格把它做穩。</span></p>
   <div class="scroller">
   <div class="gantt">
     <div class="grid" id="grid2"></div>
@@ -388,20 +410,62 @@
   <div class="dec">
     <div class="dcard"><div class="k">spec 1 · direct integration<i class="tbdtag">TBD</i></div>
       <div class="q"><span class="en">How lloud.club talks to Open Loyalty without Ztor in the middle</span><span class="zh">lloud.club 如何不經 Ztor 直接與 Open Loyalty 溝通</span></div>
-      <div class="o"><span class="en"><b>Identity:</b> member id = Ztor user id, created by Ztor at sign-in. <b>One writer of points:</b> Ztor posts order and refund events (orders live in Ztor eShop); lloud.club only reads balance, ledger, tier, rewards and submits mission proofs. <b>Credentials:</b> per-member tokens from Open Loyalty's customer API, or a thin Ztor proxy; never the admin key in a browser. <b>Sync-back:</b> Open Loyalty → Ztor webhook (points, tier) into the Policy service for gating and the Media Vault. <b>Owner:</b> Jeff · Nan with Eric, written Oct 12–16 against the vendor docs.</span><span class="zh"><b>身分：</b>會員 id＝Ztor user id，由 Ztor 於登入時建立。<b>唯一寫入方：</b>Ztor 送出訂單與退款事件（訂單在 Ztor eShop）；lloud.club 只讀餘額、帳本、等級、獎勵，並提交任務證明。<b>憑證：</b>Open Loyalty 客戶端 API 的會員 token，或 Ztor 輕量代理；絕不把 admin key 放在瀏覽器。<b>同步回寫：</b>Open Loyalty → Ztor webhook（積分、等級）進 Policy 服務，供購買限制與媒體庫。<b>負責：</b>Jeff · Nan 與 Eric，10/12–16 依供應商文件撰寫。</span></div></div>
+      <ul>
+        <li><span class="en"><b>Identity:</b> member id = Ztor user id, created by Ztor at sign-in</span><span class="zh"><b>身分：</b>會員 id＝Ztor user id，由 Ztor 於登入時建立</span></li>
+        <li><span class="en"><b>One writer of points:</b> Ztor posts order + refund events</span><span class="zh"><b>唯一寫入方：</b>Ztor 送出訂單＋退款事件</span></li>
+        <li><span class="en">lloud.club only <b>reads</b> balance · ledger · tier · rewards, and submits mission proofs</span><span class="zh">lloud.club 只<b>讀</b>餘額 · 帳本 · 等級 · 獎勵，並提交任務證明</span></li>
+        <li><span class="en"><b>Credentials:</b> per-member tokens (OL customer API) or a thin Ztor proxy; never the admin key in a browser</span><span class="zh"><b>憑證：</b>會員 token（OL 客戶端 API）或 Ztor 輕量代理；絕不把 admin key 放在瀏覽器</span></li>
+        <li><span class="en"><b>Sync-back:</b> OL → Ztor webhook (points, tier) → Policy service for gating + Media Vault</span><span class="zh"><b>同步回寫：</b>OL → Ztor webhook（積分、等級）→ Policy 服務，供購買限制＋媒體庫</span></li>
+      </ul>
+      <div class="h"><span class="en">Owner · when</span><span class="zh">負責 · 時間</span></div>
+      <ul>
+        <li><span class="en">Jeff · Nan with Eric · <b>Oct 12–16</b>, against the vendor docs</span><span class="zh">Jeff · Nan 與 Eric · <b>10/12–16</b>，依供應商文件撰寫</span></li>
+      </ul>
+</div>
     <div class="dcard"><div class="k">spec 2 · merge back to ztor<i class="tbdtag">TBD</i></div>
       <div class="q"><span class="en">How lloud.club moves onto release 4 later without losing anything</span><span class="zh">lloud.club 之後如何無損改接 release 4</span></div>
-      <div class="o"><span class="en"><b>No data migration:</b> both paths use the same Open Loyalty program, member ids and ledger, so the merge is a client switch, not a data move. <b>Cutover:</b> a per-channel flag in api-client.js swaps the loyalty endpoints from Open Loyalty to the Creator API; run both read paths for a week, compare, then retire the Open Loyalty tokens. <b>Ops:</b> LLOUD loyalty administration moves from Open Loyalty's admin into Creator Studio at cutover. <b>Owner:</b> Jeff · Nan with Eric, written Nov 9–13; cutover Dec 7–18.</span><span class="zh"><b>不搬資料：</b>兩條路徑用同一個 Open Loyalty 方案、會員 id 與帳本，併回只是切換客戶端，不是搬資料。<b>切換：</b>api-client.js 內的 channel 旗標把積分端點由 Open Loyalty 換成 Creator API；雙讀一週比對後，回收 Open Loyalty token。<b>營運：</b>切換時 LLOUD 積分管理由 Open Loyalty 後台移到 Creator Studio。<b>負責：</b>Jeff · Nan 與 Eric，11/9–13 撰寫；12/7–18 切換。</span></div></div>
+      <ul>
+        <li><span class="en"><b>No data migration:</b> same OL program, member ids and ledger on both paths</span><span class="zh"><b>不搬資料：</b>兩條路徑用同一個 OL 方案、會員 id 與帳本</span></li>
+        <li><span class="en"><b>Cutover:</b> a per-channel flag in api-client.js swaps the loyalty endpoints to the Creator API</span><span class="zh"><b>切換：</b>api-client.js 內的 channel 旗標把積分端點換成 Creator API</span></li>
+        <li><span class="en"><b>Dual-read</b> for a week, compare, then retire the OL tokens</span><span class="zh"><b>雙讀</b>一週比對後，回收 OL token</span></li>
+        <li><span class="en"><b>Ops:</b> LLOUD loyalty admin moves from OL admin → Creator Studio</span><span class="zh"><b>營運：</b>LLOUD 積分管理由 OL 後台移到 Creator Studio</span></li>
+      </ul>
+      <div class="h"><span class="en">Owner · when</span><span class="zh">負責 · 時間</span></div>
+      <ul>
+        <li><span class="en">Jeff · Nan with Eric · written <b>Nov 9–13</b> · cutover <b>Dec 7–18</b></span><span class="zh">Jeff · Nan 與 Eric · <b>11/9–13</b> 撰寫 · <b>12/7–18</b> 切換</span></li>
+      </ul>
+</div>
     <div class="dcard"><div class="k">what it buys · what it costs<i class="tbdtag">TBD</i></div>
       <div class="q"><span class="en">Nov 13 instead of Dec 7, decoupled from release 4</span><span class="zh">11/13 而非 12/7，不受 release 4 牽制</span></div>
-      <div class="o"><span class="en"><b>Buys:</b> 24 days on lloud.club, and LLOUD loyalty no longer waits on the Creator API. <b>Costs:</b> two specs, a second client integration by L that overlaps the Oct 30 launch prep, the Ztor order-event feed and webhook pulled forward to Oct 19–Nov 6, and a December cutover. <b>Condition:</b> the vendor call must confirm per-member tokens (or we build the proxy) and the contract must be signed by Oct 9.</span><span class="zh"><b>換到：</b>lloud.club 提早 24 天，LLOUD 積分不再等 Creator API。<b>代價：</b>兩份規格、L 多做一套與 10/30 上線準備重疊的客戶端串接、Ztor 的訂單事件與 webhook 提前到 10/19–11/6、12 月一次切換。<b>前提：</b>供應商通話確認會員 token（否則我方做代理），且 10/9 前簽約。</span></div></div>
+      <div class="h"><span class="en">Buys</span><span class="zh">換到</span></div>
+      <ul>
+        <li><span class="en"><b>24 days</b> on lloud.club</span><span class="zh">lloud.club 提早 <b>24 天</b></span></li>
+        <li><span class="en">LLOUD loyalty no longer waits on the Creator API</span><span class="zh">LLOUD 積分不再等 Creator API</span></li>
+      </ul>
+      <div class="h"><span class="en">Costs</span><span class="zh">代價</span></div>
+      <ul>
+        <li><span class="en">Two specs</span><span class="zh">兩份規格</span></li>
+        <li><span class="en">A second client integration by L, overlapping the Oct 30 launch prep</span><span class="zh">L 多做一套客戶端串接，與 10/30 上線準備重疊</span></li>
+        <li><span class="en">Ztor order-event feed + webhook pulled forward to Oct 19–Nov 6</span><span class="zh">Ztor 訂單事件＋webhook 提前到 10/19–11/6</span></li>
+        <li><span class="en">A December cutover</span><span class="zh">12 月一次切換</span></li>
+      </ul>
+      <div class="h"><span class="en">Condition</span><span class="zh">前提</span></div>
+      <ul>
+        <li><span class="en">Vendor call confirms <b>per-member tokens</b> (else we build the proxy)</span><span class="zh">供應商通話確認<b>會員 token</b>（否則我方做代理）</span></li>
+        <li><span class="en">Contract signed by <b>Oct 9</b></span><span class="zh"><b>10/9</b> 前簽約</span></li>
+      </ul>
+</div>
   </div>
 
-  <div class="foot">
-    <b>Sources</b> Notion「創作者獨立網站與 Creator API 規劃討論」(09-16 sync, page 3dd9ca6e…9297) · Granola “sync up with Eric” summary (Nan, Jeff, Eric · 09-16) · Ztor 2.0 dev meeting 09-16 (eShop version to Eric Sep 28–29) · SA reviews 09-14 (DECIDED) / 09-15 (deck v1.2) · loyalty build-vs-buy 09-15 · Jeff's release breakdown 09-18<br>
-    <b>Companion</b> ztor-docs/outputs/architecture/creator-api-timeline-2026-09-16.md (assumptions, PM review, open items) · <b>Visual system</b> Ztor timeline house style (paper / gold), lane palette validated for colour-vision separation<br>
-    <b>TBD</b> = still to be confirmed with Open Loyalty on the vendor call: per-member tokens · per-creator programs under one contract · percentile tiers · 45-day decay · pricing (active-member definition) · hosting · contract date<br>
-    <b>Assumptions</b> “12/28–29” in the dev-meeting AI summary read as Sep 28–29 (transcript: “節前”, before Golden Week) · 10/31 = Saturday → Oct 30 · Golden Week Oct 1–8 per Eric · Open Loyalty contract by Oct 23 · Indonesia team availability in October not verified
+  <div class="notes">
+    <div class="h"><span class="en">Notes</span><span class="zh">備註</span></div>
+    <ul>
+      <li><span class="en"><b>TBD</b> = pending confirmation with Open Loyalty: per-member tokens · per-creator programs under one contract · percentile tiers · 45-day decay · pricing (active-member definition) · hosting · contract date</span><span class="zh"><b>TBD</b>＝待與 Open Loyalty 確認：會員 token · 單一合約下的每創作者方案 · 百分位等級 · 45 天衰減 · 價格（活躍會員定義）· 託管 · 簽約日期</span></li>
+      <li><span class="en"><b>10/31 is a Saturday</b>, so LLOUD launches Fri Oct 30; fallback Nov 6 if eShop 2.2 slips</span><span class="zh"><b>10/31 是週六</b>，LLOUD 改 10/30（五）上線；eShop 2.2 延誤則備案 11/6</span></li>
+      <li><span class="en"><b>eShop 2.2 version to Eric Sep 28–29</b> (the dev-meeting summary’s “12/28–29” is a transcription slip; the transcript says before Golden Week)</span><span class="zh"><b>eShop 2.2 版本 9/28–29 交 Eric</b>（會議摘要的「12/28–29」是轉錄錯誤；逐字稿說的是國慶前）</span></li>
+      <li><span class="en"><b>Golden Week Oct 1–8</b> per Eric; Indonesia team availability in October not yet verified</span><span class="zh"><b>國慶假期 10/1–8</b>（Eric）；印尼團隊 10 月的人力尚未確認</span></li>
+      <li><span class="en">Reasoning, sources and open items: ztor-docs / outputs / architecture / creator-api-timeline-2026-09-16.md</span><span class="zh">推導、來源與待辦：ztor-docs / outputs / architecture / creator-api-timeline-2026-09-16.md</span></li>
+    </ul>
   </div>
 
 </div>
