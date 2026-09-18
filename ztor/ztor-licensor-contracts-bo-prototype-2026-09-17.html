@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>boadmin · 發行公司 — 多合約互動原型</title>
+<style>
+/* ── tokens: mirrors the live boadmin dark theme ─────────────────────── */
+:root{
+  --bg:#141414;--panel:#1d1d1d;--panel2:#262626;--panel3:#2e2e2e;--line:#3a3a3a;--line2:#4a4a4a;
+  --txt:#e6e3dd;--muted:#9a968f;--gold:#c9a063;--gold-btn:#8c6d47;--gold-dim:#5a4630;
+  --green:#5ec26a;--red:#e5533d;--amber:#e0a33a;--amber-bg:#3a2e14;--red-bg:#3a1f1a;--green-bg:#1c3320;
+  --r:6px;--focus:#e6c98a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1280px;margin:0 auto;padding:18px 20px 80px}
+
+/* ── doc chrome (not part of the BO) ──────────────────────────────────── */
+.docnav{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.docnav a{display:inline-block;border:1.5px solid var(--line2);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none}
+.docnav a.on{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
+.docnav a:hover{border-color:var(--gold)}
+.doctitle{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+.doctitle b{color:var(--txt)}
+.doctitle a{color:var(--gold);text-decoration:none;font-weight:700}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin-bottom:14px}
+.toolbar .lbl{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-right:2px}
+.scn{border:1px solid var(--line2);background:var(--panel2);border-radius:16px;padding:6px 12px;font-size:12px;font-weight:700;min-height:32px}
+.scn:hover{border-color:var(--gold);color:var(--gold)}
+.scn.reset{margin-left:auto;color:var(--muted)}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer;min-height:32px}
+.switch input{appearance:none;width:34px;height:18px;border-radius:9px;background:var(--line2);position:relative;margin:0;cursor:pointer}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .15s}
+.switch input:checked{background:var(--gold)}
+.switch input:checked::after{transform:translateX(16px)}
+
+/* annotations */
+.an{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--gold);color:#141414;font-size:11px;font-weight:800;margin-left:6px;vertical-align:middle;line-height:1}
+body:not(.anno) .an,body:not(.anno) .legend,body:not(.anno) .an-dash{display:none}
+.an-dash{outline:1.5px dashed var(--gold);outline-offset:2px;border-radius:4px}
+.legend{background:var(--panel);border:1px solid var(--gold-dim);border-left:4px solid var(--gold);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;font-size:12.5px}
+.legend summary{cursor:pointer;font-weight:800;color:var(--gold);font-size:12.5px}
+.legend ol{margin:8px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:4px 18px}
+.legend li{display:flex;gap:8px;align-items:flex-start;padding:2px 0}
+.legend li .an{margin:2px 0 0;flex:none}
+.legend code{background:var(--panel3);border-radius:3px;padding:0 5px;font-size:11.5px;color:var(--gold)}
+.legend .cf{color:var(--amber);font-weight:800;font-size:10.5px;letter-spacing:.4px}
+
+/* ── BO page ───────────────────────────────────────────────────────────── */
+.crumb{font-size:12.5px;color:var(--muted);margin:0 0 8px}
+.crumb b{color:var(--txt);font-weight:600}
+.bo{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:960px}
+th{background:var(--panel2);color:var(--txt);text-align:left;font-weight:700;font-size:13px;padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:13px}
+tr.co>td{background:var(--panel)}
+tr.co.open>td{background:var(--panel2)}
+.chev{width:28px;height:28px;border:1px solid var(--line2);background:transparent;border-radius:4px;color:var(--muted);font-size:11px;padding:0}
+.chev[aria-expanded="true"]{color:var(--gold);border-color:var(--gold)}
+.sum{color:var(--green);font-size:12.5px;line-height:1.45}
+.sum .n{color:var(--muted)}
+.sum .w{color:var(--amber)}
+.sum .x{color:var(--muted)}
+.st{color:var(--gold);font-size:12.5px}
+.st::before{content:"✎ ";font-size:11px}
+.btn{border:1px solid transparent;border-radius:var(--r);padding:7px 14px;font-size:13px;font-weight:600;min-height:34px;white-space:nowrap}
+.btn.gold{background:var(--gold-btn);color:#fff}
+.btn.gold:hover{background:#a07d51}
+.btn.ghost{background:transparent;border-color:var(--line2);color:var(--txt)}
+.btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn.sm{padding:5px 10px;font-size:12.5px;min-height:30px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.acts{display:flex;gap:8px;align-items:center;justify-content:flex-end}
+.lnk{background:none;border:0;padding:4px 6px;font-size:12.5px;font-weight:600;color:var(--gold);min-height:30px;white-space:nowrap}
+.lnk.red{color:var(--red)}
+.lnk:hover{text-decoration:underline}
+
+/* expanded panel */
+tr.panel>td{background:#181818;padding:0 12px 16px 40px;border-bottom:1px solid var(--line2)}
+.tabs{display:flex;gap:22px;border-bottom:1px solid var(--line);margin:0 0 12px}
+.tab{background:none;border:0;padding:12px 2px 9px;font-size:14px;font-weight:700;color:var(--txt);border-bottom:2px solid transparent;margin-bottom:-1px;min-height:44px}
+.tab[aria-selected="true"]{color:var(--gold);border-bottom-color:var(--gold)}
+.ptool{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line2);background:transparent;border-radius:14px;padding:4px 11px;font-size:12px;font-weight:600;color:var(--muted);min-height:28px}
+.chip[aria-pressed="true"]{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
+.sub{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.sub table{min-width:1080px}
+.sub th{font-size:12.5px;background:var(--panel2)}
+.sub td{font-size:12.5px}
+.sub td.nw{white-space:nowrap}
+.pill{display:inline-block;border-radius:3px;padding:1px 8px;font-size:12px;font-weight:700;white-space:nowrap}
+.pill.on{color:var(--green);background:var(--green-bg)}
+.pill.soon{color:var(--amber);background:var(--amber-bg)}
+.pill.exp{color:var(--muted);background:var(--panel3)}
+.pill.off{color:var(--red);background:var(--red-bg)}
+.films{display:flex;gap:4px;flex-wrap:wrap}
+.film{display:inline-block;border:1px solid var(--line2);border-radius:3px;padding:0 6px;font-size:11.5px;color:var(--txt);white-space:nowrap}
+.empty{padding:26px 14px;text-align:center;color:var(--muted);font-size:13px}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px 14px;font-size:13px;max-width:560px;padding:6px 0 4px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+
+/* ── modal ─────────────────────────────────────────────────────────────── */
+dialog{border:1px solid var(--line2);border-radius:8px;background:var(--panel);color:var(--txt);padding:0;width:min(940px,96vw);max-height:92vh}
+dialog::backdrop{background:rgba(0,0,0,.65)}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:16px 22px 8px}
+.mh h2{margin:0;font-size:17px;font-weight:700}
+.mh .x{background:none;border:0;color:var(--muted);font-size:20px;width:36px;height:36px;border-radius:4px}
+.mh .x:hover{color:var(--txt)}
+.mb{padding:6px 22px 18px;overflow:auto;max-height:calc(92vh - 130px)}
+.form{display:grid;grid-template-columns:88px 1fr 88px 1fr;gap:14px 12px;align-items:center}
+@media(max-width:720px){.form{grid-template-columns:88px 1fr}.form .full,.form .rt{grid-column:1 / -1}.form .full{grid-column:2 / -1}}
+.form label,.form .lb{color:var(--txt);font-size:13px;text-align:right}
+.req::before{content:"* ";color:var(--red)}
+.form .full{grid-column:2 / -1}
+.in{width:100%;background:var(--panel3);border:1px solid var(--line2);border-radius:var(--r);padding:8px 11px;min-height:38px;color:var(--txt)}
+.in::placeholder{color:#6f6b64}
+.in:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 2px rgba(201,160,99,.25)}
+select.in{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 16px) 16px,calc(100% - 11px) 16px;background-size:5px 5px;background-repeat:no-repeat;padding-right:30px}
+textarea.in{min-height:56px;resize:vertical}
+.rg{display:flex;gap:18px;align-items:center;min-height:38px}
+.rg label{display:inline-flex;gap:6px;align-items:center;text-align:left;cursor:pointer}
+.rg input{accent-color:var(--gold);width:16px;height:16px;margin:0}
+.dates{display:flex;gap:8px;align-items:center}
+.dates .in{flex:1;min-width:0}
+.pct{position:relative}
+.pct .in{padding-right:28px}
+.pct::after{content:"%";position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fpick{display:flex;gap:8px}
+.fpick .in{flex:1}
+.fchips{display:flex;gap:14px 18px;flex-wrap:wrap;padding:12px 0 4px}
+.fc{display:flex;flex-direction:column;align-items:center;gap:4px;width:92px;position:relative}
+.poster{width:78px;height:106px;border-radius:5px;background:linear-gradient(160deg,#3a3630,#5d574d);border:1px solid var(--line2);display:flex;align-items:flex-end;justify-content:center;padding:6px;font-size:11px;color:#fff;text-align:center}
+.fc.warn .poster{border-color:var(--amber);box-shadow:0 0 0 2px var(--amber-bg)}
+.fc .nm{font-size:11.5px;text-align:center;line-height:1.3}
+.fc .hint{font-size:10.5px;color:var(--amber);text-align:center;line-height:1.3}
+.fc .rm{position:absolute;top:-6px;right:2px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line2);background:var(--panel2);color:var(--txt);font-size:12px;padding:0;line-height:1}
+.fc .rm:hover{border-color:var(--red);color:var(--red)}
+.err{grid-column:1 / -1;border:1px solid var(--red);background:var(--red-bg);border-radius:var(--r);padding:12px 14px;font-size:13px}
+.err h3{margin:0 0 6px;font-size:13px;color:#ff8a76}
+.err ul{margin:0 0 6px 18px;padding:0}
+.err li{margin:3px 0}
+.err code{background:rgba(255,255,255,.08);border-radius:3px;padding:0 5px;font-size:12px;color:var(--gold)}
+.err .why{color:var(--muted);font-size:12.5px}
+.err .fix{margin-top:6px;font-size:12.5px}
+.err .fix button{margin-right:6px}
+.mf{display:flex;gap:10px;justify-content:flex-end;align-items:center;padding:12px 22px 18px;border-top:1px solid var(--line)}
+.mf .left{margin-right:auto}
+.hint-old{font-size:12px;color:var(--muted)}
+/* history */
+.hist table{min-width:0}
+.hist td,.hist th{font-size:12.5px}
+.hist .grp td{border-top:2px solid var(--line2)}
+.hist .del{color:var(--muted)}
+.hist .add{color:var(--green)}
+/* confirm */
+.confirm p{margin:0 0 10px;font-size:13px}
+.confirm .warn{color:var(--amber);font-size:12.5px}
+/* toast */
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#0d0d0d;border:1px solid var(--line2);color:#fff;border-radius:20px;padding:9px 18px;font-size:13px;opacity:0;pointer-events:none;transition:all .18s;z-index:50;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok::before{content:"✓ ";color:var(--green)}
+.toast.bad::before{content:"✕ ";color:var(--red)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.totop{position:fixed;right:22px;bottom:22px;width:40px;height:40px;border-radius:4px;background:var(--gold-btn);border:0;color:#fff;font-size:16px}
+footer{margin-top:28px;color:var(--muted);font-size:11.5px}
+footer a{color:var(--gold);text-decoration:none}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body class="anno">
+<div class="wrap">
+
+<nav class="docnav" aria-label="Documents">
+  <a class="on" href="ztor-licensor-contracts-bo-prototype-2026-09-17.html" aria-current="page">互動原型 Prototype</a>
+  <a href="ztor-licensor-multi-contract-wireframe-2026-09-15.html">規則 · 決策矩陣 Wireframe notes</a>
+  <a href="https://app.asana.com/1/1201357017636456/project/1209435607276598/task/1217270526401119" target="_blank" rel="noopener">Asana 1217270526401119 ↗</a>
+</nav>
+<p class="doctitle"><b>boadmin · 發行公司 — 一個帳號多份合約</b> · interactive wireframe on top of the live layout · v2 DRAFT 2026-09-17 · rule: <b>一部影片，在同一地區，同一時間，只能屬於一份啟用中的合約</b> · demo date fixed at 2026-09-17</p>
+
+<div class="toolbar" role="group" aria-label="Demo controls">
+  <span class="lbl">情境 Scenario</span>
+  <button class="scn" data-scn="A">A · 新片 A → 香港</button>
+  <button class="scn" data-scn="B">B · 《F》再開 香港（重疊）</button>
+  <button class="scn" data-scn="C">C · 《F》全世界 續約</button>
+  <button class="scn" data-scn="D">D · 編輯 F Season 1</button>
+  <label class="switch"><input type="checkbox" id="annoT" checked> 顯示註解 Annotations</label>
+  <button class="scn reset" id="resetB">重設 Reset</button>
+</div>
+
+<details class="legend" open>
+  <summary>註解 — what is new versus today's screen (numbers match the badges)</summary>
+  <ol>
+    <li><span class="an">1</span><span>添加合約 is always enabled — the one-contract-per-account block is removed <code>R1</code></span></li>
+    <li><span class="an">2</span><span>New column 地區 — one territory per contract (the modal already has the field) <code>R2</code></span></li>
+    <li><span class="an">3</span><span>New column 影片 — the uniqueness unit is 影片 × 地區, so titles must be visible in the list <code>R3</code></span></li>
+    <li><span class="an">4</span><span>狀態 is derived from 有效日期 (未開始 / 生效中 / 已到期); 禁用 stays the manual toggle <code>R6</code></span></li>
+    <li><span class="an">5</span><span>確定 runs the per-title check; an inline error block replaces the 「已存在合約」 toast <code>R3 R4 R5</code></span></li>
+    <li><span class="an">6</span><span>編輯 re-runs the same check and writes 變更紀錄 on save <code>R7 R8</code></span></li>
+    <li><span class="an">7</span><span>紀錄 — audit trail, one row per changed field per save <code>R8</code></span></li>
+    <li><span class="an">8</span><span>刪除 exists today — recommend 禁用 instead once a contract has settled royalty <span class="cf">CONFIRM</span></span></li>
+    <li><span class="an">9</span><span>Summary column shows counts by status instead of one contract's name and dates</span></li>
+    <li><span class="an">10</span><span>地區 options 香港 · 台灣 · 全世界 — 新加坡? <span class="cf">OPEN #1</span></span></li>
+    <li><span class="an">11</span><span>Poster hint before 確定 (「已在 全世界 合約」) — optional, the block at 確定 is the requirement</span></li>
+  </ol>
+</details>
+
+<!-- ── the BO page ─────────────────────────────────────────────────────── -->
+<main>
+<p class="crumb">boadmin.ztor.com › <b>發行公司</b></p>
+<div class="bo">
+  <div class="tw">
+  <table id="coTable" aria-label="發行公司列表">
+    <thead><tr>
+      <th style="width:36px"></th>
+      <th>公司名稱</th>
+      <th>英文名稱</th>
+      <th>合約<span class="an">9</span></th>
+      <th>建立時間</th>
+      <th>狀態</th>
+      <th style="text-align:right">操作</th>
+    </tr></thead>
+    <tbody id="coBody"></tbody>
+  </table>
+  </div>
+</div>
+</main>
+
+<footer>Interactive wireframe for direction alignment — layout mirrors the live boadmin 發行公司 page (2026-09-17 screenshot); visual design follows the BO design system · rule set + decision matrix in the <a href="ztor-licensor-multi-contract-wireframe-2026-09-15.html">wireframe notes</a> · requirement text: ztor-docs/outputs/specs/ztor-req-2026-09-15-licensor-multi-contract-per-title.md · Visual system: boadmin dark theme (Ant Design-style admin)</footer>
+</div>
+
+<button class="totop" aria-label="回到頂部" onclick="window.scrollTo({top:0,behavior:'smooth'})">▲</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ── contract modal ──────────────────────────────────────────────────── -->
+<dialog id="dlg" aria-labelledby="dlgT">
+  <form method="dialog" id="cform" novalidate>
+    <div class="mh"><h2 id="dlgT">合約</h2><button type="button" class="x" id="dlgX" aria-label="關閉">×</button></div>
+    <div class="mb">
+      <div class="form">
+        <label for="f-name" class="req">名稱</label><input class="in" id="f-name" placeholder="請輸入合約名稱">
+        <span class="lb req" id="lb-en">狀態</span>
+        <div class="rg rt" role="radiogroup" aria-labelledby="lb-en"><label><input type="radio" name="f-en" value="1" checked>啟用</label><label><input type="radio" name="f-en" value="0">禁用</label></div>
+
+        <label for="f-terr" class="req">地區<span class="an">10</span></label>
+        <select class="in" id="f-terr"><option>香港</option><option>台灣</option><option>全世界</option></select>
+        <span class="lb req" id="lb-ty">類型</span>
+        <div class="rg rt" role="radiogroup" aria-labelledby="lb-ty"><label><input type="radio" name="f-ty" value="單影片" checked>單影片合約</label><label><input type="radio" name="f-ty" value="多影片">多影片合約</label></div>
+
+        <label for="f-cur" class="req">結算幣種</label>
+        <select class="in" id="f-cur"><option>HKD</option><option>TWD</option><option>USD</option><option>SGD</option></select>
+        <span class="lb req" id="lb-dt">合約日期</span>
+        <div class="dates rt"><input class="in" type="date" id="f-start" aria-label="合約開始日"><span aria-hidden="true">–</span><input class="in" type="date" id="f-end" aria-label="合約結束日"></div>
+
+        <label for="f-share" class="req">分潤比例</label><div class="pct"><input class="in" type="number" id="f-share" min="0" max="100" step="1" placeholder="0"></div>
+        <span class="lb" id="lb-adv">預付金</span>
+        <div class="two rt"><input class="in" type="number" id="f-adv" placeholder="請輸入預付金" aria-label="預付金"><input class="in" type="number" id="f-advbal" placeholder="預付金餘額" aria-label="預付金餘額"></div>
+
+        <label for="f-detail">詳情資訊</label><textarea class="in full" id="f-detail" placeholder="請輸入詳情資訊"></textarea>
+        <label for="f-note">備註</label><textarea class="in full" id="f-note" placeholder="請輸入備註"></textarea>
+
+        <label for="f-film" class="req">影片</label>
+        <div class="full">
+          <div class="fpick"><select class="in" id="f-film" aria-describedby="film-help"><option value="">Search here to select a film…</option></select></div>
+          <span id="film-help" class="sr">選擇後會加入下方清單，可再移除</span>
+          <div class="fchips" id="f-chips"></div>
+        </div>
+
+        <div class="err" id="f-err" role="alert" hidden></div>
+      </div>
+    </div>
+    <div class="mf">
+      <span class="left hint-old" id="mf-hint"></span>
+      <button type="button" class="lnk" id="histLink" hidden>變更紀錄<span class="an">7</span></button>
+      <button type="button" class="btn ghost" id="cancelB">取 消</button>
+      <button type="submit" class="btn gold" id="saveB">確 定<span class="an">5</span></button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ── history drawer ──────────────────────────────────────────────────── -->
+<dialog id="hdlg" aria-labelledby="hdlgT" class="hist">
+  <div class="mh"><h2 id="hdlgT">變更紀錄</h2><button type="button" class="x" id="hdlgX" aria-label="關閉">×</button></div>
+  <div class="mb">
+    <p class="hint-old" id="hSub"></p>
+    <div class="tw"><table aria-label="變更紀錄">
+      <thead><tr><th>時間</th><th>操作者</th><th>欄位</th><th>變更前</th><th>變更後</th></tr></thead>
+      <tbody id="hBody"></tbody>
+    </table></div>
+  </div>
+  <div class="mf"><span class="left hint-old">Read-only · one row per changed field per save</span><button type="button" class="btn ghost" id="hClose">關 閉</button></div>
+</dialog>
+
+<!-- ── delete confirm ──────────────────────────────────────────────────── -->
+<dialog id="cdlg" aria-labelledby="cdlgT" class="confirm">
+  <div class="mh"><h2 id="cdlgT">刪除合約？</h2><button type="button" class="x" id="cdlgX" aria-label="關閉">×</button></div>
+  <div class="mb"><p id="cMsg"></p><p class="warn">⚠ 合約條款會進入授權報表。已有結算紀錄的合約建議改為 <b>禁用</b> 而非刪除。<span class="an">8</span></p></div>
+  <div class="mf"><button type="button" class="btn ghost" id="cNo">取 消</button><button type="button" class="btn ghost" id="cDisable">改為禁用</button><button type="button" class="btn gold" id="cYes" style="background:#8a3a2e">刪 除</button></div>
+</dialog>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   Demo data — fixed "today" so statuses are deterministic
+   ═══════════════════════════════════════════════════════════════════════ */
+const TODAY = '2026-09-17';
+const FILMS = { F:'F《我要衝線》', A:'新片 A', C:'新片 C', B:'舊片 B', D:'紀錄片 D', E:'短片 E' };
+const LABEL = { name:'名稱', enabled:'狀態', terr:'地區', type:'類型', cur:'結算幣種', start:'合約日期（起）', end:'合約日期（迄）', share:'分潤比例', adv:'預付金', advBal:'預付金餘額', detail:'詳情資訊', note:'備註', films:'影片' };
+
+function seed(){
+  return [
+    { id:'c1', zh:'畀次機會影視文化有限公司', en:'One Shot Entertainment', created:'2025-05-14 15:21:38',
+      user:{ acct:'oneshot_ent', email:'ops@oneshot.example', linked:'2025-05-14', invite:'已完成' },
+      contracts:[
+        { id:'k1', name:'A款合約', type:'多影片', terr:'全世界', films:['D','E'], adv:1000000, advBal:998990.3, share:50, cur:'HKD', start:'2024-01-01', end:'2050-01-01', enabled:true, detail:'', note:'',
+          history:[{ t:'2025-05-14 15:21', who:'Quin', field:'建立合約', before:'—', after:'全世界 · 2024-01-01 ~ 2050-01-01 · 50% · HKD · 紀錄片 D, 短片 E' }] }
+      ] },
+    { id:'c2', zh:'Doubtful Brothers Pictures Limited', en:'', created:'2026-08-04 17:10:22',
+      user:{ acct:'doubtful_bros', email:'licensing@dbp.example', linked:'2026-08-04', invite:'已完成' },
+      contracts:[
+        { id:'k2', name:'Doubtful Brothers Pictures Ltd. (F Season 1)', type:'單影片', terr:'全世界', films:['F'], adv:null, advBal:null, share:60, cur:'HKD', start:'2026-08-04', end:'2031-08-03', enabled:true, detail:'', note:'',
+          history:[{ t:'2026-08-04 17:10', who:'Quin', field:'建立合約', before:'—', after:'全世界 · 2026-08-04 ~ 2031-08-03 · 60% · HKD · F《我要衝線》' }] },
+        { id:'k3', name:'DBP 2024 舊約', type:'多影片', terr:'香港', films:['B'], adv:500000, advBal:0, share:50, cur:'HKD', start:'2024-01-01', end:'2025-12-31', enabled:true, detail:'', note:'',
+          history:[{ t:'2024-01-05 10:02', who:'eve', field:'建立合約', before:'—', after:'香港 · 2024-01-01 ~ 2025-12-31 · 50% · HKD · 舊片 B' }] }
+      ] },
+    { id:'c3', zh:'Public Television Service', en:'', created:'2025-11-10 12:09:30',
+      user:{ acct:'pts_hk', email:'—', linked:'—', invite:'待邀請' }, contracts:[] }
+  ];
+}
+
+let S = { cos: seed(), open:{ c2:true }, tab:{ c2:'contracts' }, filter:{}, editing:null, clock:0 };
+let nextId = 10;
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Domain rules
+   ═══════════════════════════════════════════════════════════════════════ */
+function statusOf(k){
+  if(!k.enabled) return '禁用';
+  if(k.start > TODAY) return '未開始';
+  if(k.end < TODAY) return '已到期';
+  return '生效中';
+}
+const PILL = { '生效中':'on', '未開始':'soon', '已到期':'exp', '禁用':'off' };
+function overlap(a,b){ return a.start <= b.end && a.end >= b.start; }   // inclusive, ISO strings compare lexically
+
+/* Per-title × territory check. Returns [{film, other, why}] */
+function conflictsFor(co, draft, excludeId){
+  const out = [];
+  draft.films.forEach(f => {
+    co.contracts.forEach(o => {
+      if(o.id === excludeId || !o.enabled || !o.films.includes(f)) return;
+      const sameT = o.terr === draft.terr, oWW = o.terr === '全世界', nWW = draft.terr === '全世界';
+      if(!(sameT || oWW || nWW)) return;
+      if(!overlap(draft, o)) return;
+      let why;
+      if(sameT) why = `同地區（${o.terr}）日期重疊`;
+      else if(oWW) why = `全世界 合約已涵蓋 ${draft.terr}`;
+      else why = `新合約為 全世界，會與 ${o.terr} 合約重複涵蓋`;
+      out.push({ film:f, other:o, why });
+    });
+  });
+  return out;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Rendering
+   ═══════════════════════════════════════════════════════════════════════ */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = sel => document.querySelector(sel);
+const fmtN = n => (n === null || n === undefined || n === '') ? '—' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
+
+function summaryHTML(co){
+  if(!co.contracts.length) return '<span class="sum x">尚無合約</span>';
+  const c = { '生效中':0, '未開始':0, '已到期':0, '禁用':0 };
+  co.contracts.forEach(k => c[statusOf(k)]++);
+  const parts = [];
+  if(c['生效中']) parts.push(`生效中 ${c['生效中']}`);
+  if(c['未開始']) parts.push(`<span class="w">未開始 ${c['未開始']}</span>`);
+  if(c['已到期']) parts.push(`<span class="x">已到期 ${c['已到期']}</span>`);
+  if(c['禁用']) parts.push(`<span class="x">禁用 ${c['禁用']}</span>`);
+  return `<div class="sum">${parts.join(' · ')}<br><span class="n">共 ${co.contracts.length} 份合約</span></div>`;
+}
+
+function contractsHTML(co){
+  const f = S.filter[co.id] || '全部';
+  const rows = co.contracts.filter(k => f === '全部' || statusOf(k) === f);
+  const counts = { '全部':co.contracts.length, '生效中':0, '未開始':0, '已到期':0, '禁用':0 };
+  co.contracts.forEach(k => counts[statusOf(k)]++);
+  const chips = ['全部','生效中','未開始','已到期','禁用'].map(n =>
+    `<button class="chip" data-flt="${n}" data-co="${co.id}" aria-pressed="${f===n}">${n} ${counts[n]}</button>`).join('');
+  const body = rows.length ? rows.map(k => {
+    const st = statusOf(k);
+    return `<tr>
+      <td>${esc(k.name)}</td>
+      <td class="nw">${k.type}</td>
+      <td class="nw">${k.terr}</td>
+      <td><div class="films">${k.films.map(x => `<span class="film">${esc(FILMS[x])}</span>`).join('')}</div></td>
+      <td>${fmtN(k.adv)}</td>
+      <td>${fmtN(k.advBal)}</td>
+      <td>${k.share}%</td>
+      <td>${k.cur}</td>
+      <td style="white-space:nowrap">${k.start} ~ ${k.end}</td>
+      <td><span class="pill ${PILL[st]}">${st}</span></td>
+      <td><div class="acts">
+        <button class="lnk" data-act="edit" data-co="${co.id}" data-k="${k.id}">✎ 編輯</button>
+        <button class="lnk" data-act="hist" data-co="${co.id}" data-k="${k.id}">🕓 紀錄</button>
+        <button class="lnk red" data-act="del" data-co="${co.id}" data-k="${k.id}">🗑 刪除</button>
+      </div></td></tr>`;
+  }).join('') : `<tr><td colspan="11" class="empty">${f==='全部' ? '尚未有合約 — 點 添加合約 建立第一份' : `沒有 ${f} 的合約`}</td></tr>`;
+
+  return `
+    <div class="ptool">
+      <button class="btn gold" data-act="add" data-co="${co.id}">⊕ 添加合約<span class="an">1</span></button>
+      <div class="chips" role="group" aria-label="依狀態篩選">${chips}</div>
+    </div>
+    <div class="sub"><div class="tw"><table aria-label="${esc(co.zh)} 合約">
+      <thead><tr><th>名稱</th><th>類型</th><th>地區<span class="an">2</span></th><th>影片<span class="an">3</span></th><th>預付金</th><th>預付金餘額</th><th>分潤比例</th><th>幣種</th><th>有效日期</th><th>狀態<span class="an">4</span></th><th style="text-align:right">操作<span class="an">6</span></th></tr></thead>
+      <tbody>${body}</tbody></table></div></div>`;
+}
+
+function userHTML(co){
+  const u = co.user;
+  return `<dl class="kv"><dt>Store 帳號</dt><dd>${esc(u.acct)}</dd><dt>Email</dt><dd>${esc(u.email)}</dd><dt>關聯日期</dt><dd>${u.linked}</dd><dt>邀請狀態</dt><dd>${u.invite}</dd></dl><p class="hint-old">Unchanged by this ticket — shown for layout only.</p>`;
+}
+
+function render(){
+  const tb = $('#coBody');
+  tb.innerHTML = S.cos.map(co => {
+    const open = !!S.open[co.id];
+    const tab = S.tab[co.id] || 'contracts';
+    let html = `<tr class="co ${open?'open':''}">
+      <td><button class="chev" aria-expanded="${open}" aria-controls="p-${co.id}" aria-label="${open?'收合':'展開'} ${esc(co.zh)}" data-act="toggle" data-co="${co.id}">${open?'▼':'▶'}</button></td>
+      <td>${esc(co.zh)}</td>
+      <td>${esc(co.en) || '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${summaryHTML(co)}</td>
+      <td style="white-space:nowrap">${co.created}</td>
+      <td><span class="st">啟用</span></td>
+      <td><div class="acts"><button class="btn gold sm" type="button" title="公司資料編輯 — 不在本票範圍">編輯</button><button class="btn ghost sm" data-act="contracts" data-co="${co.id}">合約</button></div></td>
+    </tr>`;
+    if(open){
+      html += `<tr class="panel"><td colspan="7" id="p-${co.id}">
+        <div class="tabs" role="tablist" aria-label="${esc(co.zh)}">
+          <button class="tab" role="tab" aria-selected="${tab==='user'}" data-act="tab" data-co="${co.id}" data-tab="user">用戶</button>
+          <button class="tab" role="tab" aria-selected="${tab==='contracts'}" data-act="tab" data-co="${co.id}" data-tab="contracts">合約</button>
+        </div>
+        <div role="tabpanel">${tab==='user' ? userHTML(co) : contractsHTML(co)}</div>
+      </td></tr>`;
+    }
+    return html;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Modal
+   ═══════════════════════════════════════════════════════════════════════ */
+const dlg = $('#dlg');
+let draftFilms = [];
+
+function fillFilmSelect(){
+  const sel = $('#f-film');
+  sel.innerHTML = '<option value="">Search here to select a film…</option>' +
+    Object.keys(FILMS).filter(id => !draftFilms.includes(id)).map(id => `<option value="${id}">${esc(FILMS[id])}</option>`).join('');
+}
+
+function readForm(){
+  return {
+    name: $('#f-name').value.trim(),
+    enabled: document.querySelector('input[name="f-en"]:checked').value === '1',
+    terr: $('#f-terr').value,
+    type: document.querySelector('input[name="f-ty"]:checked').value,
+    cur: $('#f-cur').value,
+    start: $('#f-start').value, end: $('#f-end').value,
+    share: $('#f-share').value === '' ? null : Number($('#f-share').value),
+    adv: $('#f-adv').value === '' ? null : Number($('#f-adv').value),
+    advBal: $('#f-advbal').value === '' ? null : Number($('#f-advbal').value),
+    detail: $('#f-detail').value, note: $('#f-note').value,
+    films: draftFilms.slice()
+  };
+}
+
+function writeForm(k){
+  $('#f-name').value = k.name || '';
+  document.querySelector(`input[name="f-en"][value="${k.enabled===false?'0':'1'}"]`).checked = true;
+  $('#f-terr').value = k.terr || '香港';
+  document.querySelector(`input[name="f-ty"][value="${k.type||'單影片'}"]`).checked = true;
+  $('#f-cur').value = k.cur || 'HKD';
+  $('#f-start').value = k.start || ''; $('#f-end').value = k.end || '';
+  $('#f-share').value = k.share ?? '';
+  $('#f-adv').value = k.adv ?? ''; $('#f-advbal').value = k.advBal ?? '';
+  $('#f-detail').value = k.detail || ''; $('#f-note').value = k.note || '';
+  draftFilms = (k.films || []).slice();
+  fillFilmSelect(); renderChips(); hideErr();
+}
+
+function renderChips(){
+  const co = S.cos.find(c => c.id === S.editing.coId);
+  const d = readForm();
+  $('#f-chips').innerHTML = draftFilms.map(f => {
+    const cf = conflictsFor(co, { ...d, films:[f] }, S.editing.kId);
+    const hint = cf.length ? `<span class="hint">已在 ${cf[0].other.terr} 合約<br>${cf[0].other.start} ~ ${cf[0].other.end}<span class="an">11</span></span>` : '';
+    return `<div class="fc ${cf.length?'warn':''}"><div class="poster" aria-hidden="true">ztor.</div><span class="nm">${esc(FILMS[f])}</span>${hint}<button type="button" class="rm" data-rm="${f}" aria-label="移除 ${esc(FILMS[f])}">×</button></div>`;
+  }).join('');
+}
+
+function showErr(html){ const e = $('#f-err'); e.innerHTML = html; e.hidden = false; e.scrollIntoView({ block:'nearest' }); }
+function hideErr(){ const e = $('#f-err'); e.hidden = true; e.innerHTML = ''; }
+
+function openModal(coId, kId, prefill){
+  const co = S.cos.find(c => c.id === coId);
+  const k = kId ? co.contracts.find(x => x.id === kId) : null;
+  S.editing = { coId, kId: kId || null, original: k ? JSON.parse(JSON.stringify(k)) : null };
+  $('#dlgT').textContent = k ? '合約 — 編輯' : '合約';
+  $('#saveB').firstChild.textContent = k ? '儲 存' : '確 定';
+  $('#histLink').hidden = !k;
+  $('#mf-hint').textContent = k ? '編輯會重新執行與新增相同的檢查' : (co.contracts.length ? `此帳號已有 ${co.contracts.length} 份合約 — 仍可新增` : '');
+  writeForm(Object.assign({}, k || { terr:'香港', type:'單影片', cur:'HKD', enabled:true }, prefill || {}));
+  dlg.showModal();
+  $('#f-name').focus();
+}
+
+function closeModal(){ dlg.close(); S.editing = null; }
+
+function tick(){ S.clock++; const m = String(2 + S.clock).padStart(2,'0'); return `${TODAY} 14:${m}`; }
+
+function save(){
+  const co = S.cos.find(c => c.id === S.editing.coId);
+  const d = readForm();
+  const errs = [];
+  if(!d.name) errs.push('名稱 為必填');
+  if(!d.start || !d.end) errs.push('合約日期 為必填');
+  else if(d.start > d.end) errs.push('合約結束日不可早於開始日');
+  if(d.share === null || d.share < 0 || d.share > 100) errs.push('分潤比例 需在 0–100 之間');
+  if(!d.films.length) errs.push('至少選擇一部 影片');
+  if(errs.length){ showErr(`<h3>請修正以下欄位</h3><ul>${errs.map(e=>`<li>${e}</li>`).join('')}</ul>`); return; }
+
+  const cf = d.enabled ? conflictsFor(co, d, S.editing.kId) : [];
+  if(cf.length){
+    const items = cf.map(c => `<li><b>${esc(FILMS[c.film])}</b> · <b>${c.other.terr}</b> · <code>${esc(c.other.name)}</code> · ${c.other.start} ~ ${c.other.end}<div class="why">${c.why}</div></li>`).join('');
+    const first = cf[0];
+    showErr(`<h3>無法儲存 — 以下影片在該地區已有啟用中的合約：</h3><ul>${items}</ul>
+      <div class="fix">處理方式：
+        <button type="button" class="btn ghost sm" data-fix="rm" data-f="${first.film}">移除 ${esc(FILMS[first.film])}</button>
+        <button type="button" class="btn ghost sm" data-fix="date" data-d="${first.other.end}">日期改到 ${first.other.end} 之後</button>
+        <button type="button" class="btn ghost sm" data-fix="edit" data-k="${first.other.id}">編輯該合約</button>
+      </div>`);
+    return;
+  }
+
+  if(S.editing.kId){
+    const k = co.contracts.find(x => x.id === S.editing.kId);
+    const o = S.editing.original, t = tick(), rows = [];
+    Object.keys(LABEL).forEach(f => {
+      const a = f === 'films' ? o.films.map(x=>FILMS[x]).join(', ') : f === 'enabled' ? (o.enabled?'啟用':'禁用') : f === 'share' ? o.share + '%' : (o[f] ?? '—');
+      const b = f === 'films' ? d.films.map(x=>FILMS[x]).join(', ') : f === 'enabled' ? (d.enabled?'啟用':'禁用') : f === 'share' ? d.share + '%' : (d[f] ?? '—');
+      if(String(a) !== String(b)) rows.push({ t, who:'Quin', field:LABEL[f], before:String(a||'—'), after:String(b||'—') });
+    });
+    Object.assign(k, d);
+    k.history = (k.history || []).concat(rows);
+    toast(rows.length ? `合約已儲存 · 寫入 ${rows.length} 筆變更紀錄` : '合約已儲存 · 無變更', 'ok');
+  } else {
+    const k = Object.assign({ id:'k' + (nextId++), history:[] }, d);
+    k.history.push({ t:tick(), who:'Quin', field:'建立合約', before:'—', after:`${d.terr} · ${d.start} ~ ${d.end} · ${d.share}% · ${d.cur} · ${d.films.map(x=>FILMS[x]).join(', ')}` });
+    co.contracts.push(k);
+    S.open[co.id] = true; S.tab[co.id] = 'contracts'; S.filter[co.id] = '全部';
+    toast(`合約已建立 · 狀態 ${statusOf(k)}`, 'ok');
+  }
+  closeModal(); render();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   History / delete / toast
+   ═══════════════════════════════════════════════════════════════════════ */
+function openHistory(coId, kId){
+  const co = S.cos.find(c => c.id === coId), k = co.contracts.find(x => x.id === kId);
+  $('#hSub').textContent = `${co.zh} › ${k.name}`;
+  const rows = (k.history || []).slice().reverse();
+  let last = null;
+  $('#hBody').innerHTML = rows.map(r => {
+    const grp = r.t !== last; last = r.t;
+    return `<tr class="${grp?'grp':''}"><td style="white-space:nowrap">${grp?r.t:''}</td><td>${grp?esc(r.who):''}</td><td>${esc(r.field)}</td><td class="del">${esc(r.before)}</td><td class="add">${esc(r.after)}</td></tr>`;
+  }).join('') || '<tr><td colspan="5" class="empty">尚無紀錄</td></tr>';
+  $('#hdlg').showModal();
+}
+
+let pendingDel = null;
+function askDelete(coId, kId){
+  const co = S.cos.find(c => c.id === coId), k = co.contracts.find(x => x.id === kId);
+  pendingDel = { coId, kId };
+  $('#cMsg').innerHTML = `確定刪除 <b>${esc(k.name)}</b>（${k.terr} · ${k.start} ~ ${k.end}）？`;
+  $('#cdlg').showModal();
+}
+
+let toastT;
+function toast(msg, kind){
+  const t = $('#toast'); t.className = 'toast show ' + (kind || 'ok'); t.textContent = msg;
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Scenarios
+   ═══════════════════════════════════════════════════════════════════════ */
+const SCN = {
+  A: () => openModal('c2', null, { name:'DBP — 新片 A (HK)', terr:'香港', type:'單影片', cur:'HKD', start:'2026-10-01', end:'2028-09-30', share:55, films:['A'] }),
+  B: () => openModal('c2', null, { name:'DBP — F (HK 2027)', terr:'香港', type:'單影片', cur:'HKD', start:'2027-01-01', end:'2028-12-31', share:65, films:['F'] }),
+  C: () => openModal('c2', null, { name:'DBP (F Season 1) 續約', terr:'全世界', type:'單影片', cur:'HKD', start:'2031-08-04', end:'2033-08-03', share:60, films:['F'] }),
+  D: () => { openModal('c2', 'k2'); $('#f-share').value = 58; draftFilms = ['F','C']; $('#f-note').value = 'Amendment #1 signed 2026-09-15'; document.querySelector('input[name="f-ty"][value="多影片"]').checked = true; fillFilmSelect(); renderChips(); }
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Events
+   ═══════════════════════════════════════════════════════════════════════ */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  const { act, co, k, tab } = b.dataset;
+  if(act === 'toggle'){ S.open[co] = !S.open[co]; render(); }
+  else if(act === 'contracts'){ S.open[co] = true; S.tab[co] = 'contracts'; render(); document.getElementById('p-' + co)?.scrollIntoView({ block:'nearest', behavior:'smooth' }); }
+  else if(act === 'tab'){ S.tab[co] = tab; render(); }
+  else if(act === 'add'){ openModal(co, null); }
+  else if(act === 'edit'){ openModal(co, k); }
+  else if(act === 'hist'){ openHistory(co, k); }
+  else if(act === 'del'){ askDelete(co, k); }
+});
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-flt]'); if(!c) return;
+  S.filter[c.dataset.co] = c.dataset.flt; render();
+});
+document.querySelectorAll('.scn[data-scn]').forEach(b => b.addEventListener('click', () => SCN[b.dataset.scn]()));
+$('#resetB').addEventListener('click', () => { S = { cos:seed(), open:{ c2:true }, tab:{ c2:'contracts' }, filter:{}, editing:null, clock:0 }; render(); toast('已重設示範資料', 'ok'); });
+$('#annoT').addEventListener('change', e => document.body.classList.toggle('anno', e.target.checked));
+
+/* modal */
+$('#cform').addEventListener('submit', e => { e.preventDefault(); save(); });
+$('#cancelB').addEventListener('click', closeModal);
+$('#dlgX').addEventListener('click', closeModal);
+dlg.addEventListener('cancel', e => { e.preventDefault(); closeModal(); });
+$('#histLink').addEventListener('click', () => openHistory(S.editing.coId, S.editing.kId));
+$('#f-film').addEventListener('change', e => { if(!e.target.value) return; draftFilms.push(e.target.value); fillFilmSelect(); renderChips(); hideErr(); });
+$('#f-chips').addEventListener('click', e => { const r = e.target.closest('[data-rm]'); if(!r) return; draftFilms = draftFilms.filter(f => f !== r.dataset.rm); fillFilmSelect(); renderChips(); hideErr(); });
+['f-terr','f-start','f-end'].forEach(id => $('#' + id).addEventListener('change', () => { renderChips(); hideErr(); }));
+document.querySelectorAll('input[name="f-en"]').forEach(r => r.addEventListener('change', hideErr));
+$('#f-err').addEventListener('click', e => {
+  const b = e.target.closest('[data-fix]'); if(!b) return;
+  if(b.dataset.fix === 'rm'){ draftFilms = draftFilms.filter(f => f !== b.dataset.f); fillFilmSelect(); renderChips(); hideErr(); }
+  else if(b.dataset.fix === 'date'){ const d = new Date(b.dataset.d + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 1); const s = d.toISOString().slice(0,10); $('#f-start').value = s; const e2 = new Date(s + 'T00:00:00Z'); e2.setUTCFullYear(e2.getUTCFullYear() + 2); e2.setUTCDate(e2.getUTCDate() - 1); $('#f-end').value = e2.toISOString().slice(0,10); renderChips(); hideErr(); }
+  else if(b.dataset.fix === 'edit'){ const coId = S.editing.coId; closeModal(); openModal(coId, b.dataset.k); }
+});
+
+/* history + delete dialogs */
+$('#hdlgX').addEventListener('click', () => $('#hdlg').close());
+$('#hClose').addEventListener('click', () => $('#hdlg').close());
+$('#cdlgX').addEventListener('click', () => $('#cdlg').close());
+$('#cNo').addEventListener('click', () => $('#cdlg').close());
+$('#cYes').addEventListener('click', () => { const co = S.cos.find(c => c.id === pendingDel.coId); co.contracts = co.contracts.filter(x => x.id !== pendingDel.kId); $('#cdlg').close(); render(); toast('合約已刪除', 'bad'); });
+$('#cDisable').addEventListener('click', () => { const co = S.cos.find(c => c.id === pendingDel.coId); const k = co.contracts.find(x => x.id === pendingDel.kId); k.enabled = false; k.history.push({ t:tick(), who:'Quin', field:'狀態', before:'啟用', after:'禁用' }); $('#cdlg').close(); render(); toast('已改為禁用 · 不再參與重疊檢查', 'ok'); });
+
+render();
+</script>
+</body>
+</html>
