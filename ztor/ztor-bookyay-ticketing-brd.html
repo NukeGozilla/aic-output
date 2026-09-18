@@ -39,6 +39,25 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <tr><td>Sources</td><td>Kickoff 08-12 · biz decisions doc · standups 08-13/08-19/<b>09-03</b> · alignments 08-21 &amp; <b>08-27 (Approach C confirmed, long-term)</b> · <b>09-04 rulings</b> · designer CS spec suite (<a href="https://github.com/ztor20/Features/blob/main/draft/bookyay-ticketing/cs-design-spec-review-2026-09-04.md" style="color:var(--gold);font-weight:600">review</a>) · <b>09-16 requirement alignment (Jesse · Agnes · Cheryl · 花花 · Yves)</b></td></tr>
 <tr><td>Companions</td><td><a href="https://aic-output.vercel.app/ztor/ztor-bookyay-ticketing-wireframes-2026-09-09.html" style="color:var(--gold);font-weight:600">Feature wireframes</a> · <a href="https://aic-output.vercel.app/ztor/ztor-bookyay-integration-2026-08-06.html" style="color:var(--gold);font-weight:600">One-pager</a> · <a href="https://github.com/ztor20/Features/blob/main/draft/bookyay-ticketing/ztor-bookyay-integration-kickoff-material-2026-08-06.md" style="color:var(--gold);font-weight:600">material doc S1–S12</a> · <a href="https://github.com/ztor20/Features/blob/main/draft/bookyay-ticketing/solution-arch-2026-09-01-ztor-bookyay-ticketing-brd.md" style="color:var(--gold);font-weight:600">SA review</a></td></tr>
 </table></div>
+<h2>Changelog — what the latest update changed</h2>
+<p><b>rev 2026-09-17 · from the 09-16 requirement alignment (Bookyay biz + design) + Jeff's 09-17 confirmations:</b></p>
+<ul>
+<li><b>Pricing ruled (BR-25)</b> — Bookyay sets <b>HKD base price</b> (feed-locked) → Ztor converts via the FX table → <b>CS rounds per currency</b> (1818 → 1800); band size = open #2 (Agnes). Sync-back money reports in HKD</li>
+<li><b>Webhook sync added (BR-04)</b> — real-time push for publish / back-to-draft (auto-delist) / cancel / void / inventory; hourly pull + manual button stay as the full-data backstop. Only 普通活動模式 events sync</li>
+<li><b>Void direction flipped (BR-40/60)</b> — void now executes in <b>Bookyay BO</b> → webhook to Ztor → wallet 已取消 + auto buyer email; CS transactions become <b>read-only</b>. Old open #7 (void race) closed by construction</li>
+<li><b>Pre-order availability check (BR-21)</b> — take-all stands, but checkout verifies against the Bookyay API before placing an order; payment capture still never calls Bookyay</li>
+<li><b>"Add, never edit" gains exceptions (BR-10)</b> — <b>event name editable</b> in CS (mixed EN/ZH + sponsor titles; revertible); images stay Ztor re-uploads; more exceptions may surface from the FE prototype</li>
+<li><b>One organizer account per artist (BR-31)</b> — old open #5 closed</li>
+<li><b>Store-only mechanism defined (BR-20)</b> — hidden listing + private link; the link auto-invalidates on going public. FE entry = shop left-side category</li>
+<li><b>Ticket face &amp; download (BR-30)</b> — Ztor default template (no editor Phase 1); buyer can download the ticket as PDF / image</li>
+<li><b>Change notices go manual (BR-42)</b> — event-change notification = ops email, no automation MVP</li>
+<li><b>Sync-back record extended (BR-63)</b> — adds Ztor order id · pseudonymous user id · order type (solo / bundle); BR-61 no-personal-data rule unchanged</li>
+<li><b>Field facts from Jesse</b> — Bookyay has no Lineup field (Ztor-built) · doors pulled but FE-hidden · multi-session UI hidden · end time optional (<a href="https://aic-output.vercel.app/ztor/ztor-bookyay-field-mapping-2026-09-08.html" style="color:var(--gold);font-weight:600">field-mapping table</a> updated row by row)</li>
+<li><b>FE rulings</b> — checkout-done as a full page · orders 全部/活動 tabs · 取票方式 free-text field · <b>no 搶票 flow MVP</b></li>
+<li><b>Bundle</b> — both modes required (① creator-preset listings · ② user-configured ticket + spec); setup is artist-operated; detailed UI = designer scoping, next meeting</li>
+<li><b>Open register renumbered 16 → 14</b> — #2 is now the pricing band; old #5 and #7 closed (§10 · full decision detail in §13)</li>
+</ul>
+<p><i>Earlier revisions:</i> 09-09/09-10 §6b imported-event mode + add-never-edit + open-register restructure · 09-02 v1.2 milestone shift · 09-01 v1.1 SA-reviewed. Dated decision history lives in §13.</p>
 <h2>1 · Purpose</h2>
 <p>Sell Bookyay-origin event tickets on ztor.com — solo tickets and ticket+merch bundles — with the entire customer experience (brand, checkout, wallet, support) on Ztor, while Bookyay remains the system of record for events and inventory. Consignment model: <b>Bookyay wholesales, Ztor retails.</b> Confirmed 2026-08-27 as the <b>permanent</b> operating model (no self-serve, ever).</p>
 <h2>2 · Vocabulary (contract — reuse verbatim everywhere)</h2>
