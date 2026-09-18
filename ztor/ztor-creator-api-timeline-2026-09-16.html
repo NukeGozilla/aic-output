@@ -359,13 +359,14 @@
   <!-- ============ 06 OPTION B ============ -->
   <h2><span class="num">06</span><span class="en">Option B — lloud.club integrates Open Loyalty directly</span><span class="zh">選項 B——lloud.club 直接串接 Open Loyalty</span></h2>
   <p class="lede">
-    <span class="en">Plan A routes loyalty through Ztor: Open Loyalty → Ztor → release 4 → lloud.club, live on lloud.club <b>Dec 7</b>. If L must ship loyalty by end of November, lloud.club can call Open Loyalty directly while Ztor does its own integration in parallel; lloud.club moves onto release 4 later. Live <b>Nov 27</b>, decoupled from release 4, at the cost of a second integration and the five items below.</span>
-    <span class="zh">方案 A 的積分經 Ztor 中轉：Open Loyalty → Ztor → release 4 → lloud.club，lloud.club 於 <b>12/7</b> 上線。若 L 必須在 11 月底前推出積分，lloud.club 可直接呼叫 Open Loyalty，Ztor 同時做自己的串接；lloud.club 之後再改接 release 4。<b>11/27</b> 上線、不受 release 4 牽制，代價是多一次串接與下列五件待解。</span>
+    <span class="en">Plan A routes loyalty through Ztor: Open Loyalty → Ztor → release 4 → lloud.club, live on lloud.club <b>Dec 7</b>. Option B: sign the Open Loyalty contract by Oct 9, <b>start integration Oct 12</b>, and let lloud.club call Open Loyalty directly while Ztor does its own integration in parallel. Loyalty is live on lloud.club <b>Nov 13</b>, a week before release 4 and 24 days before Plan A. Two specs make it safe: how the direct integration works, and how it merges back into Ztor later.</span>
+    <span class="zh">方案 A 的積分經 Ztor 中轉：Open Loyalty → Ztor → release 4 → lloud.club，lloud.club 於 <b>12/7</b> 上線。選項 B：10/9 前與 Open Loyalty 簽約、<b>10/12 開始串接</b>，lloud.club 直接呼叫 Open Loyalty，Ztor 同時做自己的串接。lloud.club 積分 <b>11/13</b> 上線，比 release 4 早一週、比方案 A 早 24 天。需要兩份規格把它做穩：直接串接怎麼做，以及之後怎麼併回 Ztor。</span>
   </p>
   <div class="scroller">
   <div class="gantt">
     <div class="grid" id="grid2"></div>
     <div class="legend">
+      <span><i class="sw pm"></i><span class="en">Jeff · Nan · Eric · specs</span><span class="zh">Jeff · Nan · Eric · 規格</span></span>
       <span><i class="sw ext"></i><span class="en">Open Loyalty (vendor)</span><span class="zh">Open Loyalty（供應商）</span></span>
       <span><i class="sw api"></i><span class="en">Eric · Ztor side</span><span class="zh">Eric · Ztor 端</span></span>
       <span><i class="sw site"></i><span class="en">L · lloud.club</span><span class="zh">L · lloud.club</span></span>
@@ -376,24 +377,15 @@
   </div>
   </div>
   <div class="dec">
-    <div class="dcard"><div class="k">B1 · identity</div>
-      <div class="q"><span class="en">Who creates the Open Loyalty member?</span><span class="zh">誰建立 Open Loyalty 會員？</span></div>
-      <div class="o"><span class="en">Member id = <b>Ztor user id</b>, created by Ztor at sign-in. lloud.club never creates members, so one fan is one member across ztor.com and every creator site.</span><span class="zh">會員 id＝<b>Ztor user id</b>，由 Ztor 於登入時建立。lloud.club 不建會員，一個粉絲在 ztor.com 與所有創作者網站只有一個身分。</span></div></div>
-    <div class="dcard"><div class="k">B2 · one writer of points</div>
-      <div class="q"><span class="en">Orders live in Ztor eShop, so who posts them to Open Loyalty?</span><span class="zh">訂單在 Ztor eShop，誰把它們送進 Open Loyalty？</span></div>
-      <div class="o"><span class="en"><b>Ztor posts order and refund events</b>; lloud.club only reads balance, tier and ledger, and submits mission proofs. This is Eric's desync warning: two writers means bought-but-not-credited.</span><span class="zh"><b>由 Ztor 送出訂單與退款事件</b>；lloud.club 只讀餘額、等級、帳本，並提交任務證明。這正是 Eric 提的不同步風險：兩個寫入方會出現「買了卻沒加分」。</span></div></div>
-    <div class="dcard"><div class="k">B3 · keys</div>
-      <div class="q"><span class="en">Can a browser-side site hold Open Loyalty credentials?</span><span class="zh">前端網站能拿 Open Loyalty 金鑰嗎？</span></div>
-      <div class="o"><span class="en">Not the admin key. Needs <b>per-member tokens</b> from Open Loyalty's customer API, or a thin Ztor proxy endpoint. Confirm on the vendor call.</span><span class="zh">不能拿 admin key。需要 Open Loyalty 客戶端 API 的<b>會員層級 token</b>，或由 Ztor 提供輕量代理端點。通話時確認。</span></div></div>
-    <div class="dcard"><div class="k">B4 · sync-back</div>
-      <div class="q"><span class="en">Gating and the Media Vault need points and tier inside Ztor</span><span class="zh">購買限制與媒體庫需要 Ztor 內有積分與等級</span></div>
-      <div class="o"><span class="en">An <b>Open Loyalty → Ztor webhook</b> (points, tier changes) feeds the Policy service. Needed in Plan A too, so it is not extra work, but it sits on the Nov 27 path.</span><span class="zh"><b>Open Loyalty → Ztor 的 webhook</b>（積分、等級變更）餵給 Policy 服務。方案 A 也需要，不算額外工作，但落在 11/27 的路徑上。</span></div></div>
-    <div class="dcard"><div class="k">B5 · migration + ops</div>
-      <div class="q"><span class="en">Two integrations until lloud.club moves to release 4</span><span class="zh">在 lloud.club 改接 release 4 之前要維護兩套串接</span></div>
-      <div class="o"><span class="en">Ops sees LLOUD loyalty in <b>Open Loyalty's admin</b>, not Creator Studio, until the migration (Dec–Jan). Any rule change is made twice.</span><span class="zh">遷移前（12 月至 1 月）營運要在 <b>Open Loyalty 後台</b>看 LLOUD 積分，而非 Creator Studio。規則改動要做兩次。</span></div></div>
-    <div class="dcard"><div class="k">verdict</div>
-      <div class="q"><span class="en">Saves ~10 days on lloud.club; adds risk on Ztor's side</span><span class="zh">lloud.club 省約 10 天；風險移到 Ztor 端</span></div>
-      <div class="o"><span class="en">Worth it only if Nov 27 is a hard business date for Lisa. Otherwise Plan A (Dec 7) is one integration, one admin, and no migration. Decide after the Open Loyalty call answers B3.</span><span class="zh">只有在 11/27 是 Lisa 的硬性商業日期時才值得。否則方案 A（12/7）只有一次串接、一個後台、不用遷移。等 Open Loyalty 通話回答 B3 後再決定。</span></div></div>
+    <div class="dcard"><div class="k">spec 1 · direct integration</div>
+      <div class="q"><span class="en">How lloud.club talks to Open Loyalty without Ztor in the middle</span><span class="zh">lloud.club 如何不經 Ztor 直接與 Open Loyalty 溝通</span></div>
+      <div class="o"><span class="en"><b>Identity:</b> member id = Ztor user id, created by Ztor at sign-in. <b>One writer of points:</b> Ztor posts order and refund events (orders live in Ztor eShop); lloud.club only reads balance, ledger, tier, rewards and submits mission proofs. <b>Credentials:</b> per-member tokens from Open Loyalty's customer API, or a thin Ztor proxy; never the admin key in a browser. <b>Sync-back:</b> Open Loyalty → Ztor webhook (points, tier) into the Policy service for gating and the Media Vault. <b>Owner:</b> Jeff · Nan with Eric, written Oct 12–16 against the vendor docs.</span><span class="zh"><b>身分：</b>會員 id＝Ztor user id，由 Ztor 於登入時建立。<b>唯一寫入方：</b>Ztor 送出訂單與退款事件（訂單在 Ztor eShop）；lloud.club 只讀餘額、帳本、等級、獎勵，並提交任務證明。<b>憑證：</b>Open Loyalty 客戶端 API 的會員 token，或 Ztor 輕量代理；絕不把 admin key 放在瀏覽器。<b>同步回寫：</b>Open Loyalty → Ztor webhook（積分、等級）進 Policy 服務，供購買限制與媒體庫。<b>負責：</b>Jeff · Nan 與 Eric，10/12–16 依供應商文件撰寫。</span></div></div>
+    <div class="dcard"><div class="k">spec 2 · merge back to ztor</div>
+      <div class="q"><span class="en">How lloud.club moves onto release 4 later without losing anything</span><span class="zh">lloud.club 之後如何無損改接 release 4</span></div>
+      <div class="o"><span class="en"><b>No data migration:</b> both paths use the same Open Loyalty program, member ids and ledger, so the merge is a client switch, not a data move. <b>Cutover:</b> a per-channel flag in api-client.js swaps the loyalty endpoints from Open Loyalty to the Creator API; run both read paths for a week, compare, then retire the Open Loyalty tokens. <b>Ops:</b> LLOUD loyalty administration moves from Open Loyalty's admin into Creator Studio at cutover. <b>Owner:</b> Jeff · Nan with Eric, written Nov 9–13; cutover Dec 7–18.</span><span class="zh"><b>不搬資料：</b>兩條路徑用同一個 Open Loyalty 方案、會員 id 與帳本，併回只是切換客戶端，不是搬資料。<b>切換：</b>api-client.js 內的 channel 旗標把積分端點由 Open Loyalty 換成 Creator API；雙讀一週比對後，回收 Open Loyalty token。<b>營運：</b>切換時 LLOUD 積分管理由 Open Loyalty 後台移到 Creator Studio。<b>負責：</b>Jeff · Nan 與 Eric，11/9–13 撰寫；12/7–18 切換。</span></div></div>
+    <div class="dcard"><div class="k">what it buys · what it costs</div>
+      <div class="q"><span class="en">Nov 13 instead of Dec 7, decoupled from release 4</span><span class="zh">11/13 而非 12/7，不受 release 4 牽制</span></div>
+      <div class="o"><span class="en"><b>Buys:</b> 24 days on lloud.club, and LLOUD loyalty no longer waits on the Creator API. <b>Costs:</b> two specs, a second client integration by L that overlaps the Oct 30 launch prep, the Ztor order-event feed and webhook pulled forward to Oct 19–Nov 6, and a December cutover. <b>Condition:</b> the vendor call must confirm per-member tokens (or we build the proxy) and the contract must be signed by Oct 9.</span><span class="zh"><b>換到：</b>lloud.club 提早 24 天，LLOUD 積分不再等 Creator API。<b>代價：</b>兩份規格、L 多做一套與 10/30 上線準備重疊的客戶端串接、Ztor 的訂單事件與 webhook 提前到 10/19–11/6、12 月一次切換。<b>前提：</b>供應商通話確認會員 token（否則我方做代理），且 10/9 前簽約。</span></div></div>
   </div>
 
   <div class="foot">
@@ -462,23 +454,26 @@ const gates=[
 
 /* ---------- Option B: lloud.club → Open Loyalty directly ---------- */
 const lanesB=[
+ {cls:'pm',en:'Specs',zh:'規格',sub:'Jeff · Nan · Eric',rows:[
+   [{f:'2026-10-12',t:'2026-10-16',en:'Spec 1 · direct integration',fen:'Spec 1 — direct integration: identity, single writer of points, per-member tokens or proxy, read surface, mission proofs, webhook (written against the vendor docs)',zh:'規格 1 · 直接串接',fzh:'規格 1——直接串接：身分、唯一寫入方、會員 token 或代理、讀取範圍、任務證明、webhook（依供應商文件撰寫）'},
+    {f:'2026-11-09',t:'2026-11-13',en:'Spec 2 · merge back to Ztor',fen:'Spec 2 — merge back: same program + ledger so no data migration; per-channel endpoint flag; dual-read week; retire tokens; ops moves to Creator Studio',zh:'規格 2 · 併回 Ztor',fzh:'規格 2——併回：同一方案＋帳本、不搬資料；channel 端點旗標；雙讀一週；回收 token；營運移到 Creator Studio'}]]},
  {cls:'api',en:'Ztor · Open Loyalty',zh:'Ztor · Open Loyalty',sub:'Eric · FE',rows:[
-   [{f:'2026-09-24',t:'2026-10-23',en:'Open Loyalty: call → scoring fit → contract',fen:'Open Loyalty: call (percentile tiers · 45-day decay · per-member tokens · pricing) → contract signed by Oct 23',zh:'Open Loyalty：通話 → 計分確認 → 簽約',fzh:'Open Loyalty：通話（百分位等級 · 45 天衰減 · 會員 token · 價格）→ 10/23 前簽約',cls:'ext',alt:1},
-    {f:'2026-10-26',t:'2026-10-30',en:'Program set-up',fen:'Open Loyalty program set up for LLOUD (Ztor config: γ weights, tiers, rewards)',zh:'方案設定',fzh:'為 LLOUD 設定 Open Loyalty 方案（Ztor 設定：γ 權重、等級、獎勵）',cls:'ext'},
+   [{f:'2026-09-24',t:'2026-10-09',en:'Open Loyalty: call → contract by Oct 9',fen:'Open Loyalty: call (per-member tokens · percentile tiers · 45-day decay · pricing) → contract signed by Oct 9',zh:'Open Loyalty：通話 → 10/9 前簽約',fzh:'Open Loyalty：通話（會員 token · 百分位等級 · 45 天衰減 · 價格）→ 10/9 前簽約',cls:'ext',alt:1},
+    {f:'2026-10-12',t:'2026-10-16',en:'Program set-up',fen:'Open Loyalty program set up for LLOUD (Ztor config: γ weights, tiers, rewards); sandbox + tokens issued',zh:'方案設定',fzh:'為 LLOUD 設定 Open Loyalty 方案（Ztor 設定：γ 權重、等級、獎勵）；發放沙盒與 token',cls:'ext'},
     {f:'2026-11-02',t:'2026-11-13',en:'Ztor integration + FE (2 wk)',fen:'Ztor-side Open Loyalty integration + ztor.com FE build, 2 weeks (unchanged from Plan A)',zh:'Ztor 串接＋前端（2 週）',fzh:'Ztor 端 Open Loyalty 串接＋ztor.com 前端開發，2 週（與方案 A 相同）',cls:'ext'}],
-   [{f:'2026-11-02',t:'2026-11-13',en:'Order events + member sync → OL',fen:'Ztor posts order / refund events and creates members in Open Loyalty (one writer of points — B1, B2)',zh:'訂單事件＋會員同步 → OL',fzh:'Ztor 送出訂單／退款事件並在 Open Loyalty 建立會員（唯一寫入方——B1、B2）'},
-    {f:'2026-11-16',t:'2026-11-20',en:'OL → Ztor webhook',fen:'Open Loyalty → Ztor webhook: points and tier changes feed the Policy service for gating + Media Vault (B4)',zh:'OL → Ztor webhook',fzh:'Open Loyalty → Ztor webhook：積分與等級變更餵給 Policy 服務，供購買限制＋媒體庫（B4）'}],
-   [{f:'2026-11-09',t:'2026-11-18',en:'Creator API · loyalty (ztor.com)',fen:'Creator API loyalty group — release 4 for ztor.com and later sites; lloud.club migrates onto it after launch',zh:'Creator API · 積分（ztor.com）',fzh:'Creator API 積分群組——release 4 供 ztor.com 與後續網站；lloud.club 上線後再遷移過來'},
-    {f:'2026-11-20',t:'2026-11-20',en:'R4',fen:'Release 4 — loyalty API (Nov 20), unchanged',zh:'R4',fzh:'Release 4——積分 API（11/20），不變',solid:1}]]},
+   [{f:'2026-10-19',t:'2026-10-30',en:'Order events + member sync → OL',fen:'Ztor posts order / refund events and creates members in Open Loyalty — the only writer of points (pulled forward from Nov)',zh:'訂單事件＋會員同步 → OL',fzh:'Ztor 送出訂單／退款事件並在 Open Loyalty 建立會員——唯一寫入方（由 11 月提前）'},
+    {f:'2026-11-02',t:'2026-11-06',en:'OL → Ztor webhook',fen:'Open Loyalty → Ztor webhook: points and tier changes feed the Policy service for gating + Media Vault',zh:'OL → Ztor webhook',fzh:'Open Loyalty → Ztor webhook：積分與等級變更餵給 Policy 服務，供購買限制＋媒體庫'}],
+   [{f:'2026-11-09',t:'2026-11-18',en:'Creator API · loyalty (ztor.com)',fen:'Creator API loyalty group — release 4 for ztor.com and later sites; lloud.club merges onto it in December',zh:'Creator API · 積分（ztor.com）',fzh:'Creator API 積分群組——release 4 供 ztor.com 與後續網站；lloud.club 12 月併回',cls:'api'},
+    {f:'2026-11-20',t:'2026-11-20',en:'R4',fen:'Release 4 — loyalty API (Nov 20), unchanged',zh:'R4',fzh:'Release 4——積分 API（11/20），不變',solid:1,cls:'api'}]]},
  {cls:'site',en:'lloud.club · direct',zh:'lloud.club · 直接串接',sub:'L',rows:[
-   [{f:'2026-10-26',t:'2026-10-30',en:'OL docs + sandbox',fen:'L reads Open Loyalty API docs, gets sandbox + per-member token flow (B3)',zh:'OL 文件＋沙盒',fzh:'L 研讀 Open Loyalty API 文件，取得沙盒與會員 token 流程（B3）'},
-    {f:'2026-11-02',t:'2026-11-20',en:'Direct integration: points · tiers · rewards · missions',fen:'lloud.club calls Open Loyalty directly: balance · ledger · tier · rewards · mission proof submission (read + proofs only)',zh:'直接串接：積分 · 等級 · 獎勵 · 任務',fzh:'lloud.club 直接呼叫 Open Loyalty：餘額 · 帳本 · 等級 · 獎勵 · 任務證明提交（只讀＋證明）'},
-    {f:'2026-11-23',t:'2026-11-25',en:'UAT',fen:'Loyalty UAT on lloud.club + our review',zh:'UAT',fzh:'lloud.club 積分 UAT＋我方審查',uat:1},
-    {f:'2026-11-27',t:'2026-11-27',en:'LIVE',fen:'Loyalty live on lloud.club (Nov 27) — ten days before Plan A',zh:'上線',fzh:'lloud.club 積分上線（11/27）——比方案 A 早十天',solid:1}],
-   [{f:'2026-12-07',t:'2026-12-18',en:'Migrate to release 4',fen:'Migrate lloud.club loyalty from direct Open Loyalty calls to the Creator API (release 4) — retire the second integration (B5)',zh:'遷移到 release 4',fzh:'將 lloud.club 積分由直接呼叫 Open Loyalty 改為 Creator API（release 4）——退役第二套串接（B5）',dim:1}]]}
+   [{f:'2026-10-12',t:'2026-10-16',en:'OL docs + sandbox',fen:'L reads Open Loyalty API docs, gets sandbox + per-member token flow',zh:'OL 文件＋沙盒',fzh:'L 研讀 Open Loyalty API 文件，取得沙盒與會員 token 流程'},
+    {f:'2026-10-19',t:'2026-11-06',en:'Direct integration: points · tiers · rewards · missions',fen:'lloud.club calls Open Loyalty directly: balance · ledger · tier · rewards · mission proof submission (read + proofs only) — overlaps the Oct 30 launch prep',zh:'直接串接：積分 · 等級 · 獎勵 · 任務',fzh:'lloud.club 直接呼叫 Open Loyalty：餘額 · 帳本 · 等級 · 獎勵 · 任務證明提交（只讀＋證明）——與 10/30 上線準備重疊'},
+    {f:'2026-11-09',t:'2026-11-11',en:'UAT',fen:'Loyalty UAT on lloud.club + our review',zh:'UAT',fzh:'lloud.club 積分 UAT＋我方審查',uat:1},
+    {f:'2026-11-13',t:'2026-11-13',en:'LIVE',fen:'Loyalty live on lloud.club (Fri Nov 13, mid-November) — 24 days before Plan A',zh:'上線',fzh:'lloud.club 積分上線（11/13 週五，11 月中）——比方案 A 早 24 天',solid:1}],
+   [{f:'2026-12-07',t:'2026-12-18',en:'Merge back → release 4',fen:'Cutover per spec 2: flip the channel flag to Creator API endpoints, dual-read week, retire Open Loyalty tokens',zh:'併回 → release 4',fzh:'依規格 2 切換：channel 旗標改指 Creator API 端點，雙讀一週，回收 Open Loyalty token',dim:1}]]}
 ];
 const gatesB=[
- {d:'2026-10-23',en:'OL contract',zh:'OL 簽約',i:'◆'},{d:'2026-11-20',en:'R4',zh:'R4',i:'◆',api:1},{d:'2026-11-27',en:'LLOUD loyalty',zh:'LLOUD 積分',i:'★'},{d:'2026-12-07',en:'Plan A date',zh:'方案 A 日期',i:'◇'}
+ {d:'2026-10-09',en:'OL contract',zh:'OL 簽約',i:'◆'},{d:'2026-11-13',en:'LLOUD loyalty',zh:'LLOUD 積分',i:'★'},{d:'2026-11-20',en:'R4',zh:'R4',i:'◆',api:1},{d:'2026-12-07',en:'Plan A date',zh:'方案 A 日期',i:'◇'}
 ];
 
 /* ---------- render ---------- */
@@ -527,7 +522,7 @@ render('grid',lanes,gates,{holiday:true,lines:[
   {cls:'today',d:'2026-09-18',label:'today'},{cls:'frz',d:'2026-09-21',label:'freeze'},
   {cls:'live',d:'2026-10-30',after:1,label:'LLOUD live'},{cls:'live',d:'2026-11-20',after:1,label:'all API groups'}]});
 render('grid2',lanesB,gatesB,{holiday:false,lines:[
-  {cls:'frz',d:'2026-10-23',after:1,label:'OL contract'},{cls:'live',d:'2026-11-27',after:1,label:'Option B'},
+  {cls:'frz',d:'2026-10-12',label:'integration starts'},{cls:'live',d:'2026-11-13',after:1,label:'Option B'},
   {cls:'deck',d:'2026-12-07',label:'Plan A'}]});
 </script>
 </body>
