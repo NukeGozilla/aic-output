@@ -328,10 +328,10 @@
   </table>
 
   <!-- ============ 05 DECISIONS ============ -->
-  <h2><span class="num">05</span><span class="en">Six decisions the Sep 21 freeze needs</span><span class="zh">9/21 凍結前要定的六件事</span></h2>
+  <h2><span class="num">05</span><span class="en">Five decisions the Sep 21 freeze needs</span><span class="zh">9/21 凍結前要定的五件事</span></h2>
   <p class="lede">
     <span class="en">Without these, the freeze is a date on a calendar. Each one changes what Eric's team builds in Golden Week.</span>
-    <span class="zh">沒有這六件事，凍結只是日曆上的一個日期。每一件都會改變印尼團隊在假期裡做什麼。</span>
+    <span class="zh">沒有這五件事，凍結只是日曆上的一個日期。每一件都會改變印尼團隊在假期裡做什麼。</span>
   </p>
   <div class="dec">
     <div class="dcard"><div class="k">01 · fulfilment</div>
@@ -347,11 +347,8 @@
       <div class="q"><span class="en">Does the CS team take Creator API groups too?</span><span class="zh">CS 團隊是否也接 Creator API？</span></div>
       <div class="o"><span class="en">They carry eShop 2.2 through UAT and production to Oct 30. Adding API groups on top puts release 2 at risk; Creator API stays with Eric's team.</span><span class="zh">他們要扛 eShop 2.2 的 UAT 與正式上線到 10/30。再加 API 會拖累 release 2；Creator API 留在 Eric 團隊。</span></div></div>
     <div class="dcard"><div class="k">05 · cdn / domain</div>
-      <div class="q"><span class="en">Is a store.com image origin acceptable at launch?</span><span class="zh">上線時圖片來源顯示 store.com 可接受嗎？</span></div>
+      <div class="q"><span class="en">Is a ztor.com image origin acceptable at launch?</span><span class="zh">上線時圖片來源顯示 ztor.com 可接受嗎？</span></div>
       <div class="o"><span class="en"><b>Whitelist now</b> (origin visible in the inspector only); custom CDN domain later if Lisa wants the link hidden.</span><span class="zh"><b>先用白名單</b>（只在開發者工具看得到來源）；若 Lisa 要隱藏關聯，之後再做自訂 CDN 網域。</span></div></div>
-    <div class="dcard"><div class="k">06 · not in eshop yet</div>
-      <div class="q"><span class="en">Promo codes, micro-donations (微捐), region lock — in release 2?</span><span class="zh">折扣碼、微捐、地區鎖——進 release 2 嗎？</span></div>
-      <div class="o"><span class="en">None exist in eShop today. Recommend <b>out of release 2</b>; region lock only if it is already in 2.2. Official promo codes are being scoped with ops separately.</span><span class="zh">eShop 目前都沒有。建議<b>不進 release 2</b>；地區鎖除非 2.2 已有。官方折扣碼正另與營運確認需求。</span></div></div>
   </div>
 
   <div class="callout warn"><span class="ic">⚠</span><div>
@@ -445,7 +442,7 @@ const lanes=[
  {group:1,en:'Creator sites',zh:'創作者網站',sub:'L · Tyson’s dev'},
  {cls:'site',en:'LLOUD · lloud.club',zh:'LLOUD · lloud.club',sub:'L · site build + integration',rows:[
    [{f:'2026-09-28',t:'2026-10-09',en:'Build on spec v1 + mocks',fen:'Build against the frozen spec v1 with mocks (api-client.js is the only boundary); switch to release 1 from Oct 5',zh:'依 spec v1＋mock 建站',fzh:'依凍結的 spec v1 用 mock 建站（api-client.js 為唯一邊界）；10/5 起切換到 release 1',crit:1},
-    {f:'2026-10-12',t:'2026-10-23',en:'Integrate R1 + R2 · CS shop',fen:'Integrate releases 1 + 2 · Lisa’s shop set up in Creator Studio (hide-on-Store toggle)',zh:'串接 R1＋R2 · CS 商店',fzh:'串接 release 1＋2 · 在 Creator Studio 建 Lisa 商店（Store 隱藏開關）',crit:1},
+    {f:'2026-10-12',t:'2026-10-23',en:'Integrate R1 + R2 · CS shop',fen:'Integrate releases 1 + 2 · Lisa’s shop set up in Creator Studio (hide-on-ztor.com toggle)',zh:'串接 R1＋R2 · CS 商店',fzh:'串接 release 1＋2 · 在 Creator Studio 建 Lisa 商店（ztor.com 隱藏開關）',crit:1},
     {f:'2026-10-26',t:'2026-10-28',en:'UAT',fen:'Integration test + LLOUD UAT → go / no-go Oct 28',zh:'UAT',fzh:'整合測試＋LLOUD UAT → 10/28 go／no-go',uat:1,crit:1},
     {f:'2026-10-30',t:'2026-10-30',en:'LIVE',fen:'LLOUD live on releases 1–2 (fallback Nov 6)',zh:'上線',fzh:'LLOUD 以 release 1–2 上線（備案 11/6）',solid:1},
     {f:'2026-11-23',t:'2026-12-04',en:'Add ticketing · loyalty',fen:'Integrate releases 3 + 4: ticketing · points · rewards · missions on lloud.club',zh:'加上售票 · 積分',fzh:'串接 release 3＋4：lloud.club 上線售票 · 積分 · 獎勵 · 任務'},
