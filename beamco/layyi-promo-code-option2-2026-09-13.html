@@ -144,14 +144,15 @@
 <div class="wrap">
 
 <header class="hero">
-  <div class="kicker">Beamco artist portal · DBR-340 · agreed design · updated 2026-09-14</div>
+  <div class="kicker">Beamco artist portal · DBR-340 · agreed design · client-confirmed 2026-09-16</div>
   <h1>LAYYI promo codes — extend today's Promo Code setting</h1>
-  <p class="lede">Agreed with dev 14 Sep: the rules live in the artist portal, not hard-coded. Internal-use UI, no polish. The right panel proves the fans-side business logic on the LAYYI item list (example codes and quantities are placeholders — real values come from Dan's sheet).</p>
+  <p class="lede">Agreed with dev 14 Sep, confirmed by the client 16 Sep (Listings tab): the rules live in the artist portal, not hard-coded. Internal-use UI, no polish. The right panel proves the fans-side business logic on the LAYYI item list — items, prices and eligibility are from the sheet; the 10% / 20% code names are placeholders.</p>
   <ul class="chips" aria-label="What changes">
-    <li class="chip new">Discount type · percentage or fixed amount</li>
-    <li class="chip new">Applies to · all products, or selected events / single items / bundles</li>
-    <li class="chip new">One discount per order · lands on the highest-priced eligible item</li>
-    <li class="chip keep">Dates · 8–20 char code · Auto-Generate · one code per checkout</li>
+    <li class="chip new">Discount type · percentage (LAYYI) — fixed amount available, unused</li>
+    <li class="chip new">Applies to · selected events / single items / bundles</li>
+    <li class="chip new">Discount applies to every eligible unit in the order</li>
+    <li class="chip new">Per-order limit · max 4 per ticket type</li>
+    <li class="chip keep">Dates · 8–20 char code · Auto-Generate · one code per checkout · single-use per customer</li>
   </ul>
 </header>
 
@@ -200,7 +201,7 @@
         <div class="field">
           <label class="req" for="f-value" id="l-value">Discount Rate (%)</label>
           <div class="adorned"><input class="input" id="f-value" type="number" min="0" step="1" placeholder="Enter discount percentage" inputmode="decimal"><span class="adorn" id="adorn" aria-hidden="true">%</span></div>
-          <div class="hint" id="h-value">One discount per order. It lands on the single highest-priced eligible product in the cart — percentage off that product's price, or the fixed amount capped at that price. Quantity never raises the cap.</div>
+          <div class="hint" id="h-value">Applies to every eligible unit in the order — percentage off each eligible line. LAYYI uses percentage only; a fixed amount would come off the eligible subtotal and never take it below $0.00.</div>
         </div>
 
         <fieldset class="field">
@@ -230,7 +231,7 @@
     <div class="colhead"><h2 id="h-fans">Fans side · checkout simulation</h2><span class="sub">business logic, not UI — simulated date <span class="code">2026-10-20</span></span></div>
 
     <div class="drawer sim" aria-labelledby="h-cart">
-      <div class="drawer-head"><h3 id="h-cart">Cart · LAYYI shop</h3><span class="pill pink">one code per checkout</span></div>
+      <div class="drawer-head"><h3 id="h-cart">Cart · LAYYI shop</h3><span><span class="pill pink">one code per checkout</span> <span class="pill neutral">max 4 per ticket type</span></span></div>
 
       <div class="tablewrap">
         <table aria-label="Cart lines">
@@ -277,16 +278,16 @@
     </ul>
     <h4>Admin rule — enforce at config time</h4>
     <ul>
-      <li>Fixed amount ≤ price of the highest-priced selected product — portal pulls the catalogue and blocks Save above it</li>
       <li>A bundle is its own product: selecting a single item never covers a bundle containing it, and selecting a bundle never covers its parts sold separately</li>
     </ul>
     <h4>Checkout rule — enforce server-side at order creation</h4>
     <ul>
-      <li>Code active in window, case-insensitive, one code per order (existing)</li>
+      <li>Code active in window, case-insensitive, one code per order, single-use per customer (existing)</li>
       <li>Eligible lines = all lines if <code>all</code>, else lines whose item ∈ <code>promo_code_items</code></li>
       <li>No eligible line → reject: <i>"Promo code is not valid for items in your cart."</i></li>
-      <li><b>One discount per order, on the highest-priced eligible product</b> — percent → <code>price × rate</code> · fixed → <code>min(value, price)</code>. Quantity never raises it; ties resolve to catalogue order</li>
-      <li>Order stores <code>discount_applied_to</code> so reporting and the fan see the same line</li>
+      <li><b>Discount applies to every eligible unit in the order</b> — percent → <code>Σ eligible line totals × rate</code> · fixed (unused for LAYYI) → <code>min(value, Σ eligible line totals)</code>. Client-confirmed 16 Sep, Listings note 1</li>
+      <li>Order stores an eligible flag per line so reporting shows which lines were discounted</li>
+      <li><b>Per-order quantity limit per ticket type (max 4)</b> — the product form already carries Purchase limit (S35 · 每人限購); dev to confirm it enforces per <i>order</i>, not only per customer</li>
     </ul>
     <h4>Platform fee — separate ticket, platform-wide</h4>
     <ul>
@@ -296,54 +297,59 @@
   </div>
 
   <div class="card">
-    <h2>Agreed 14 Sep · still open</h2>
+    <h2>Agreed 14 Sep · confirmed 16 Sep</h2>
     <h4>Agreed with dev</h4>
     <ul>
       <li>Rules live in the artist portal, not hard-coded — easier to test and adjust</li>
-      <li>Two discount types: percentage and fixed amount</li>
+      <li>Discount type: percentage (fixed amount built but unused for LAYYI)</li>
       <li>Multi-select applicable products — dev confirms no significant added complexity</li>
       <li>Targets are events, single items and bundle packages; a bundle is a distinct product</li>
-      <li>One code per order, no stacking; discount lands on the highest-priced eligible product</li>
-      <li>Fixed amount capped at that product's price, enforced in the portal</li>
+      <li>One code per order, no stacking</li>
       <li>Promo entry stays at checkout, not the cart — unchanged</li>
     </ul>
-    <h4>Confirm with client Wed 16 Sep</h4>
+    <h4>Confirmed by client 16 Sep — Listings tab</h4>
     <ul>
-      <li><b>Percentage across several eligible items.</b> Under the agreed rule a 10% code on a cart with three eligible tickets discounts <i>one</i> of them, not all three. Confirm that is intended — it is the one rule the meeting agreed to document and sign off before locking.</li>
-      <li><b>Rounding</b> — 2 dp half-up, or whole-dollar (Dan's ID-02)</li>
+      <li><b>Discount applies to the entire eligible quantity</b>, not a single item — 3 General Entry with the 100% code = all 3 free. Replaces Monday's highest-priced-item rule</li>
+      <li>Three percentage codes: <b>100%</b> on General Entry + Door · <b>10%</b> and <b>20%</b> on General Entry + Door + Vinyl + Stickers. Early Bird, Priority Entry and every bundle excluded</li>
+      <li>No fixed-amount and no store-wide discounts needed</li>
+      <li>Per-order limit of 4 per ticket type; each code single-use per customer</li>
     </ul>
-    <h4>Tracked elsewhere</h4>
+    <h4>Dev to confirm before build</h4>
     <ul>
-      <li>Platform fee <b>rate</b> 5% vs 10% — separate platform-wide ticket (07-29 ADR). The <b>basis</b> is settled: post-discount, never list price</li>
-      <li>LAYYI nice-to-haves not in this build: per-user redemption cap (ID 5), global redemption cap (ID 6), phased ticket sales (ID 1)</li>
+      <li>Purchase limit enforces per <i>order</i> (sheet note 2) — or only per customer today</li>
+      <li>Single-use per customer is live on artist-portal promo codes — biz relies on it as the only ceiling on the 100% code</li>
+      <li>100% × entire quantity × no redemption cap: one order can take up to 4 General Entry + 4 Door free ($384). Biz controls exposure through who receives the code</li>
     </ul>
     <p class="hint" style="margin-top:10px">Full review: <code>beamco-docs/layyi-promo-code-solution-arch-2026-09-13.md</code> · Ticket ingest: <code>beamco-docs/layyi-promo-code-ingest-2026-09-13.md</code></p>
   </div>
 </section>
 
-<footer>Visual system: Noir Pink (design-systems/noir-pink.md) · Source: Asana DBR-340 + LAYYI requirements sheet + dev meeting 2026-09-14 · Example codes, quantities and fee rate are placeholders</footer>
+<footer>Visual system: Noir Pink (design-systems/noir-pink.md) · Source: Asana DBR-340 + LAYYI Listings tab (16 Sep) + dev meeting 2026-09-14 · 10% / 20% code names, cart quantities and fee rate are placeholders</footer>
 </div>
 
 <script>
 (function(){
   const TODAY = '2026-10-20';
+  const MAX_PER_ORDER = 4;   /* Listings note 2 — per-order limit per ticket type */
+  /* Items, prices and eligibility from the LAYYI Listings tab (16 Sep). TBD = price not set yet. */
   const ITEMS = [
     {id:'early-bird',   cat:'Events',          name:'Early Bird',     price:28},
     {id:'general-entry',cat:'Events',          name:'General Entry',  price:38},
     {id:'door',         cat:'Events',          name:'Door',           price:58},
     {id:'priority',     cat:'Events',          name:'Priority Entry', price:68},
+    {id:'bff',          cat:'Bundle packages', name:'BFF Bundle',     price:null, note:'4 tickets — standalone product, platform cannot bundle the same item'},
     {id:'vip-1',        cat:'Bundle packages', name:'VIP Tier 1',     price:118, note:'Priority Entry + VIP Area + Vinyl + Signed Polaroid'},
     {id:'vip-2',        cat:'Bundle packages', name:'VIP Tier 2',     price:null, note:'Priority Entry + Meet & Greet + Signed Polaroid'},
     {id:'vinyl',        cat:'Single items',    name:'Vinyl',          price:60},
     {id:'stickers',     cat:'Single items',    name:'Stickers',       price:null},
   ];
+  /* The three LAYYI codes — eligibility = Listings columns E / F / G. FREE4U is the sheet's example; LAYYI10 / LAYYI20 are placeholder names. */
   const CODES = [
-    {code:'EARLYFAN10', type:'percent', value:10, applies:'items', items:['early-bird','general-entry'], start:'2026-10-15', end:'2026-10-26'},
-    {code:'VINYLONLY20',type:'fixed',   value:20, applies:'items', items:['vinyl'],                      start:'2026-10-15', end:'2026-10-26'},
-    {code:'VINYLLOVE15',type:'fixed',   value:15, applies:'items', items:['vinyl','vip-1'],              start:'2026-10-15', end:'2026-10-26'},
-    {code:'LAYYIFAM5',  type:'percent', value:5,  applies:'all',   items:[],                             start:'2026-10-15', end:'2026-10-26'},
+    {code:'FREE4U',  type:'percent', value:100, applies:'items', items:['general-entry','door'],                     start:'2026-10-15', end:'2026-10-26'},
+    {code:'LAYYI10', type:'percent', value:10,  applies:'items', items:['general-entry','door','vinyl','stickers'], start:'2026-10-15', end:'2026-10-26'},
+    {code:'LAYYI20', type:'percent', value:20,  applies:'items', items:['general-entry','door','vinyl','stickers'], start:'2026-10-15', end:'2026-10-26'},
   ];
-  const cart = {'general-entry':1, 'vip-1':1, 'vinyl':1};
+  const cart = {'general-entry':3, 'door':1, 'vinyl':1};
   let applied = null;
 
   const $ = id => document.getElementById(id);
@@ -380,24 +386,23 @@
   function compute(){
     const lines = ITEMS.filter(i=>i.price!=null && (cart[i.id]||0)>0).map(i=>({...i, qty:cart[i.id], total:i.price*cart[i.id]}));
     const subtotal = r2(lines.reduce((s,l)=>s+l.total,0));
-    let discount=0, eligible=[], code=null, target=null;
+    let discount=0, eligible=[], code=null;
     if (applied){
       code = CODES.find(c=>c.code===applied);
       const elig = lines.filter(l => code.applies==='all' || code.items.includes(l.id));
       eligible = elig.map(l=>l.id);
+      const eligSub = elig.reduce((s,l)=>s+l.total,0);
       if (elig.length){
-        /* One discount per order — it lands on the single highest-priced eligible product.
-           Ties resolve to catalogue order so the fan and the order record always agree. */
-        target = elig.reduce((best,l)=> l.price>best.price ? l : best, elig[0]);
-        discount = code.type==='percent'
-          ? r2(target.price * code.value/100)
-          : r2(Math.min(Number(code.value), target.price));  /* cap = product price, never the line total */
+        /* Client-confirmed 16 Sep (Listings note 1): the discount applies to every eligible unit in the
+           order, not a single item. Percent off each eligible line; fixed (unused for LAYYI) caps at the
+           eligible subtotal so it never goes below $0.00. */
+        discount = code.type==='percent' ? r2(eligSub*code.value/100) : r2(Math.min(Number(code.value), eligSub));
       }
     }
     const post = r2(subtotal - discount);
     const rate = parseFloat($('s-rate').value)||0;
     const fee = r2(post*rate/100);
-    return {lines, subtotal, discount, eligible, target, code, post, rate, fee, net:r2(post-fee)};
+    return {lines, subtotal, discount, eligible, code, post, rate, fee, net:r2(post-fee)};
   }
 
   function renderCart(){
@@ -406,15 +411,16 @@
       const q = cart[i.id]||0; const tbd = i.price==null;
       let promo = '<span class="muted">—</span>';
       if (applied && q>0 && !tbd){
-        if (st.target && st.target.id===i.id) promo = `<span class="pill ok">discounted −${money(st.discount)}</span>`;
-        else if (st.eligible.includes(i.id)) promo = '<span class="pill pink">eligible · not applied</span>';
-        else promo = '<span class="pill neutral">full price</span>';
+        if (st.eligible.includes(i.id)){
+          const lineOff = st.code.type==='percent' ? r2(i.price*q*st.code.value/100) : null;
+          promo = `<span class="pill ok">discounted${lineOff!=null?' −'+money(lineOff):''}</span>`;
+        } else promo = '<span class="pill neutral">full price</span>';
       }
-      return `<tr><td>${esc(i.name)}<div class="muted small">${i.cat}${i.note?' · '+esc(i.note):''}</div></td><td class="num">${tbd?'<span class="muted">TBD</span>':'$'+i.price.toFixed(2)}</td><td><div class="stepper"><button type="button" aria-label="Decrease ${esc(i.name)}" data-id="${i.id}" data-d="-1" ${tbd||q===0?'disabled':''}>−</button><span>${q}</span><button type="button" aria-label="Increase ${esc(i.name)}" data-id="${i.id}" data-d="1" ${tbd||q>=3?'disabled':''}>+</button></div></td><td class="num">${tbd||q===0?'<span class="muted">—</span>':'$'+(i.price*q).toFixed(2)}</td><td>${promo}</td></tr>`;
+      return `<tr><td>${esc(i.name)}<div class="muted small">${i.cat}${i.note?' · '+esc(i.note):''}</div></td><td class="num">${tbd?'<span class="muted">TBD</span>':'$'+i.price.toFixed(2)}</td><td><div class="stepper"><button type="button" aria-label="Decrease ${esc(i.name)}" data-id="${i.id}" data-d="-1" ${tbd||q===0?'disabled':''}>−</button><span>${q}</span><button type="button" aria-label="Increase ${esc(i.name)}" data-id="${i.id}" data-d="1" ${tbd||q>=MAX_PER_ORDER?'disabled':''}>+</button></div></td><td class="num">${tbd||q===0?'<span class="muted">—</span>':'$'+(i.price*q).toFixed(2)}</td><td>${promo}</td></tr>`;
     }).join('');
     $('o-sub').textContent = money(st.subtotal);
     $('o-disc-label').innerHTML = applied
-      ? `Discount · ${esc(applied)}` + (st.target ? ` <span class="muted">→ ${esc(st.target.name)}</span>` : '')
+      ? `Discount · ${esc(applied)} <span class="muted">· ${st.eligible.length} eligible line${st.eligible.length===1?'':'s'}</span>`
       : 'Discount';
     $('o-disc').textContent = st.discount ? '−'+money(st.discount) : '−$0.00';
     $('o-post').textContent = money(st.post);
@@ -426,13 +432,12 @@
   items_subtotal        ${st.subtotal.toFixed(2)}     <span class="muted">// original prices</span>
   promo_code            ${applied ? applied : 'null'}
   discount_type/value   ${st.code ? st.code.type+' / '+st.code.value : 'null'}
-  discount_applied_to   ${st.target ? st.target.id : 'null'}     <span class="muted">// highest-priced eligible product</span>
-  discount_amount       ${st.discount.toFixed(2)}
+  discount_amount       ${st.discount.toFixed(2)}     <span class="muted">// across every eligible unit</span>
   post_discount_subtotal ${st.post.toFixed(2)}
   platform_fee_rate     ${st.rate}%
   platform_fee          ${st.fee.toFixed(2)}     <span class="muted">// basis = post_discount_subtotal</span>
 <b>lines</b>
-${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padStart(8)}  ${applied?(st.target&&st.target.id===l.id?'discounted':(st.eligible.includes(l.id)?'eligible · not applied':'full price')):''}`).join('\n') || '  (empty)'}`;
+${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padStart(8)}  ${applied?(st.eligible.includes(l.id)?'discounted':'full price'):''}`).join('\n') || '  (empty)'}`;
   }
 
   function showMsg(el, kind, text){ el.className='msg '+kind; el.textContent=text; }
@@ -450,15 +455,15 @@ ${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padSt
     if (!elig.length){ showMsg($('sim-msg'),'err','Promo code is not valid for items in your cart.'); applied=null; renderCart(); return; }
     applied = c.code;
     const after = compute();
-    showMsg($('sim-msg'),'ok',`${c.code} applied · ${elig.length} eligible line${elig.length>1?'s':''} · ${c.type==='percent'?c.value+'% off':'$'+c.value+' off, capped at the item price'}${after.target?' → '+after.target.name:''} · −${money(after.discount)}`);
+    showMsg($('sim-msg'),'ok',`${c.code} applied · ${elig.length} eligible line${elig.length>1?'s':''} · ${c.type==='percent'?c.value+'% off every eligible unit':'$'+c.value+' off the eligible subtotal'} · −${money(after.discount)}`);
     renderCart();
   }
 
   function placeOrder(){
     const st = compute();
     if (!st.lines.length){ showMsg($('sim-msg'),'err','Cart is empty.'); return; }
-    showMsg($('sim-msg'),'ok', st.code && st.target
-      ? `Order placed · ${st.code.code} · −${money(st.discount)} on ${st.target.name} · fee on ${money(st.post)}`
+    showMsg($('sim-msg'),'ok', st.code
+      ? `Order placed · ${st.code.code} · −${money(st.discount)} across ${st.eligible.length} eligible line${st.eligible.length===1?'':'s'} · fee on ${money(st.post)} · code now used for this customer`
       : 'Order placed without a promo code.');
     applied=null; $('s-code').value='';
     renderCodes(); renderCart();
@@ -479,14 +484,6 @@ ${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padSt
     if (!(s.value>0)) errs.push('Discount value is required.');
     if (s.type==='percent' && s.value>100) errs.push('Percentage cannot exceed 100.');
     if (s.applies==='items' && !s.items.length) errs.push('Select at least one item.');
-    if (s.type==='fixed' && s.value>0){
-      /* Cap enforced here, at config time — dev pulls the catalogue so a code can never
-         be worth more than the product it discounts. */
-      const pool = (s.applies==='items' ? s.items.map(byId) : ITEMS).filter(i=>i && i.price!=null);
-      const cap = pool.reduce((b,i)=> !b || i.price>b.price ? i : b, null);
-      if (cap && s.value>cap.price) errs.push(`Fixed amount cannot exceed the highest-priced selected product — ${cap.name} at $${cap.price}.`);
-      if (s.applies==='items' && s.items.length && !pool.length) errs.push('Selected items have no price yet, so the fixed-amount cap cannot be checked.');
-    }
     if (!/^[A-Z0-9]{8,20}$/.test(s.code)) errs.push('Promo code: 8–20 letters/numbers, no special characters.');
     if (CODES.some(c=>c.code===s.code)) errs.push('That promo code already exists.');
     if (s.start && s.end && s.end < s.start) errs.push('End date must be after start date.');
@@ -531,7 +528,7 @@ ${st.lines.map(l=>`  ${l.name.padEnd(16)} ×${l.qty}  ${l.total.toFixed(2).padSt
   $('cart-body').addEventListener('click',e=>{
     const b=e.target.closest('button[data-id]'); if(!b) return;
     const id=b.dataset.id, d=parseInt(b.dataset.d,10);
-    cart[id]=Math.max(0,Math.min(3,(cart[id]||0)+d));
+    cart[id]=Math.max(0,Math.min(MAX_PER_ORDER,(cart[id]||0)+d));
     if (applied){ const st=compute(); if(!st.eligible.length){ showMsg($('sim-msg'),'err','Promo code is not valid for items in your cart.'); applied=null; } }
     renderCart();
   });
