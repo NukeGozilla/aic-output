@@ -160,6 +160,13 @@
   .dcard .o{color:var(--muted)}
   .dcard .o b{color:var(--ink);font-weight:700}
 
+  .tbdtag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:8.5px;font-weight:700;letter-spacing:.08em;background:var(--warn-bg);color:var(--warn);border:1px solid #e2c584;border-radius:4px;padding:0 4px;line-height:14px;vertical-align:middle;font-style:normal;white-space:nowrap}
+  .bar .tbdtag{flex:none;margin-right:5px}
+  .bar.tbd{outline:1px dashed var(--warn);outline-offset:-2px}
+  .bar.solid.tbd{border-style:dashed;box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--warn);outline:0}
+  .glabel.tbd,.gate.tbd{color:var(--warn)}
+  h2 .tbdtag{font-size:10px;margin-left:10px;vertical-align:3px}
+  .acard .tbdtag,.dcard .tbdtag,td .tbdtag{margin-left:6px}
   .callout{margin:16px 0;padding:14px 18px;border-radius:12px;border:1px solid;font-size:13.5px;display:flex;gap:12px;align-items:flex-start;line-height:1.55}
   .callout .ic{font-size:17px;line-height:1.35;flex:none}
   .callout.warn{background:var(--warn-bg);border-color:#e2c584;color:#6b4a12}
@@ -218,7 +225,7 @@
     </div>
     <div class="acard" style="--c:var(--api)">
       <div class="d">Nov 20</div><div class="dow">Friday · release 4</div>
-      <div class="who"><span class="en">Loyalty</span><span class="zh">積分</span></div>
+      <div class="who"><span class="en">Loyalty</span><span class="zh">積分</span><i class="tbdtag">TBD</i></div>
       <div class="w"><span class="en"><b>Points · rewards · missions.</b> After the 2-week Open Loyalty integration + FE build, done 2nd week of Nov.</span><span class="zh"><b>積分 · 獎勵 · 任務。</b>Open Loyalty 串接＋前端開發 2 週，11 月第二週完成之後。</span></div>
     </div>
     <div class="acard" style="--c:var(--gold)">
@@ -247,6 +254,7 @@
       <span><i class="sw rel"></i><span class="en">API release</span><span class="zh">API release</span></span>
       <span><i class="sw gd"></i><span class="en">site go-live</span><span class="zh">網站上線</span></span>
       <span><i class="sw alt"></i><span class="en">not yet contracted</span><span class="zh">尚未簽約</span></span>
+      <span><i class="tbdtag">TBD</i><span class="en">pending confirmation with Open Loyalty</span><span class="zh">待與 Open Loyalty 確認</span></span>
       <span><i class="sw crit"></i><span class="en">critical path to Oct 30</span><span class="zh">10/30 關鍵路徑</span></span>
       <span><i class="sw hol"></i><span class="en">Golden Week Oct 1–8 (CN teams out)</span><span class="zh">國慶假期 10/1–10/8（內地團隊休假）</span></span>
     </div>
@@ -291,7 +299,7 @@
         <td><span class="en"><b>Nov 20</b></span><span class="zh"><b>11/20</b></span></td>
       </tr>
       <tr>
-        <td>4 <span class="pill rel">Nov 20</span></td>
+        <td>4 <span class="pill rel">Nov 20</span><i class="tbdtag">TBD</i></td>
         <td><ul>
           <li><span class="en">Open Loyalty contract by Oct 23 (call: scoring fit · pricing · hosting)</span><span class="zh">Open Loyalty 於 10/23 前簽約（確認：計分模型 · 價格 · 託管）</span></li>
           <li><span class="en">Integration + FE build, 2 weeks, done 2nd week of Nov</span><span class="zh">串接＋前端開發 2 週，11 月第二週完成</span></li>
@@ -318,11 +326,11 @@
       <tr><td class="dt">Oct 5<small>Mon</small></td><td><span class="en">Release 1: facade · login/SSO · gating · profile · media</span><span class="zh">Release 1：facade · 登入/SSO · 購買限制 · 個人頁 · 媒體</span></td><td><span class="pill api">Eric</span></td><td><span class="en">L keeps building on mocks; the live-integration window for Oct 30 shrinks.</span><span class="zh">L 只能繼續用 mock；10/30 前的實際串接時間縮短。</span></td></tr>
       <tr><td class="dt">Oct 9<small>Fri</small></td><td><span class="en">eShop 2.2 UAT complete (first week of Oct)</span><span class="zh">eShop 2.2 UAT 完成（10 月第一週）</span></td><td><span class="pill cs">CS team</span><span class="pill api">Eric</span></td><td><span class="en">Release 2 slips 1:1.</span><span class="zh">Release 2 等量後移。</span></td></tr>
       <tr><td class="dt">Oct 12<small>Mon</small></td><td><span class="en">Release 2: eShop API (catalog · cart · orders)</span><span class="zh">Release 2：eShop API（商品 · 購物車 · 訂單）</span></td><td><span class="pill api">Eric</span></td><td><span class="en">LLOUD's Oct 30 shop is at risk; fallback Nov 6.</span><span class="zh">LLOUD 10/30 商店有風險；備案 11/6。</span></td></tr>
-      <tr><td class="dt">Oct 23<small>Fri</small></td><td><span class="en">Open Loyalty contract signed (scoring fit confirmed on the call)</span><span class="zh">Open Loyalty 簽約（通話確認計分模型可行）</span></td><td><span class="pill pm">Jeff</span></td><td><span class="en">The 2-week integration cannot start Nov 2; release 4 misses Nov 20.</span><span class="zh">2 週串接無法於 11/2 開始；release 4 趕不上 11/20。</span></td></tr>
+      <tr><td class="dt">Oct 23<small>Fri</small></td><td><span class="en">Open Loyalty contract signed (scoring fit confirmed on the call)</span><span class="zh">Open Loyalty 簽約（通話確認計分模型可行）</span><i class="tbdtag">TBD</i></td><td><span class="pill pm">Jeff</span></td><td><span class="en">The 2-week integration cannot start Nov 2; release 4 misses Nov 20.</span><span class="zh">2 週串接無法於 11/2 開始；release 4 趕不上 11/20。</span></td></tr>
       <tr><td class="dt">Oct 28<small>Wed</small></td><td><span class="en">LLOUD go / no-go: integration test + our code review passed</span><span class="zh">LLOUD go／no-go：整合測試＋我方審查通過</span></td><td><span class="pill pm">Jeff</span></td><td><span class="en">No-go = launch moves to Nov 6 as a block, not a daily slide.</span><span class="zh">No-go＝整體改 11/6，不逐日拖。</span></td></tr>
       <tr><td class="dt">Oct 30<small>Fri</small></td><td><span class="en">LLOUD live (releases 1–2) · eShop 2.2 live</span><span class="zh">LLOUD 上線（release 1–2）· eShop 2.2 上線</span></td><td><span class="pill gd">all</span></td><td><span class="en">Double launch in one window; if 2.2's UAT date slips, plan LLOUD for Nov 6.</span><span class="zh">同窗雙上線；若 2.2 的 UAT 延誤，LLOUD 改排 11/6。</span></td></tr>
       <tr><td class="dt">Nov 6<small>Fri</small></td><td><span class="en">Bookyay ticketing UAT complete (first week of Nov)</span><span class="zh">Bookyay 售票 UAT 完成（11 月第一週）</span></td><td><span class="pill api">Eric</span><span class="pill ext">Bookyay</span></td><td><span class="en">Release 3 slips 1:1.</span><span class="zh">Release 3 等量後移。</span></td></tr>
-      <tr><td class="dt">Nov 20<small>Fri</small></td><td><span class="en">Releases 3 + 4: ticketing · loyalty APIs</span><span class="zh">Release 3＋4：售票 · 積分 API</span></td><td><span class="pill api">Eric</span></td><td><span class="en">Tyson's Dec 11 and LLOUD's ticketing/loyalty slip with it.</span><span class="zh">Tyson 的 12/11 與 LLOUD 的售票／積分跟著延。</span></td></tr>
+      <tr><td class="dt">Nov 20<small>Fri</small></td><td><span class="en">Releases 3 + 4: ticketing · loyalty APIs</span><span class="zh">Release 3＋4：售票 · 積分 API</span><i class="tbdtag">R4 TBD</i></td><td><span class="pill api">Eric</span></td><td><span class="en">Tyson's Dec 11 and LLOUD's ticketing/loyalty slip with it.</span><span class="zh">Tyson 的 12/11 與 LLOUD 的售票／積分跟著延。</span></td></tr>
       <tr><td class="dt">Dec 11<small>Fri</small></td><td><span class="en">Tyson site live (all four releases)</span><span class="zh">Tyson 網站上線（四個 release）</span></td><td><span class="pill ext">Tyson's dev</span><span class="pill api">Eric</span></td><td><span class="en">Slips past the end-of-year window.</span><span class="zh">超出年底窗口。</span></td></tr>
     </tbody>
   </table>
@@ -340,7 +348,7 @@
     <div class="dcard"><div class="k">02 · facade + payment</div>
       <div class="q"><span class="en">Who owns the public gateway and checkout?</span><span class="zh">對外閘道與結帳歸誰？</span></div>
       <div class="o"><span class="en">Proposal: <b>Eric's team</b> owns the facade; eShop / Bookyay expose internal APIs only. Also: does Lisa's site settle to a <b>separate payment account</b> (order tagging)?</span><span class="zh">提案：<b>Eric 團隊</b>負責 facade，eShop／Bookyay 只開內部 API。另外：Lisa 網站是否用<b>獨立收款帳號</b>（訂單標記）？</span></div></div>
-    <div class="dcard"><div class="k">03 · open loyalty</div>
+    <div class="dcard"><div class="k">03 · open loyalty<i class="tbdtag">TBD</i></div>
       <div class="q"><span class="en">Can Open Loyalty run our scoring model, and who owns loyalty?</span><span class="zh">Open Loyalty 能跑我們的計分模型嗎？誰負責積分？</span></div>
       <div class="o"><span class="en">On the call: <b>percentile tiers + 45-day decay</b>, per-creator programs under one contract, "active member" definition in writing. Contract by <b>Oct 23</b> or release 4 misses Nov 20. Sync-back to Ztor stays ours.</span><span class="zh">通話確認：<b>百分位等級＋45 天衰減</b>、單一合約下的每創作者方案、「活躍會員」定義白紙黑字。<b>10/23</b> 前簽約，否則 release 4 趕不上 11/20。同步回 Ztor 仍由我方做。</span></div></div>
     <div class="dcard"><div class="k">04 · cs team scope</div>
@@ -357,7 +365,7 @@
   </div></div>
 
   <!-- ============ 06 OPTION B ============ -->
-  <h2><span class="num">06</span><span class="en">Option B — lloud.club integrates Open Loyalty directly</span><span class="zh">選項 B——lloud.club 直接串接 Open Loyalty</span></h2>
+  <h2><span class="num">06</span><span class="en">Option B — lloud.club integrates Open Loyalty directly</span><span class="zh">選項 B——lloud.club 直接串接 Open Loyalty</span><i class="tbdtag"><span class="en">TBD · every item pending confirmation with Open Loyalty</span><span class="zh">TBD · 每項皆待與 Open Loyalty 確認</span></i></h2>
   <p class="lede">
     <span class="en">Plan A routes loyalty through Ztor: Open Loyalty → Ztor → release 4 → lloud.club, live on lloud.club <b>Dec 7</b>. Option B: sign the Open Loyalty contract by Oct 9, <b>start integration Oct 12</b>, and let lloud.club call Open Loyalty directly while Ztor does its own integration in parallel. Loyalty is live on lloud.club <b>Nov 13</b>, a week before release 4 and 24 days before Plan A. Two specs make it safe: how the direct integration works, and how it merges back into Ztor later.</span>
     <span class="zh">方案 A 的積分經 Ztor 中轉：Open Loyalty → Ztor → release 4 → lloud.club，lloud.club 於 <b>12/7</b> 上線。選項 B：10/9 前與 Open Loyalty 簽約、<b>10/12 開始串接</b>，lloud.club 直接呼叫 Open Loyalty，Ztor 同時做自己的串接。lloud.club 積分 <b>11/13</b> 上線，比 release 4 早一週、比方案 A 早 24 天。需要兩份規格把它做穩：直接串接怎麼做，以及之後怎麼併回 Ztor。</span>
@@ -373,17 +381,18 @@
       <span><i class="sw rel"></i><span class="en">API release</span><span class="zh">API release</span></span>
       <span><i class="sw gd"></i><span class="en">site go-live</span><span class="zh">網站上線</span></span>
       <span><i class="sw alt"></i><span class="en">not yet contracted</span><span class="zh">尚未簽約</span></span>
+      <span><i class="tbdtag">TBD</i><span class="en">pending confirmation with Open Loyalty</span><span class="zh">待與 Open Loyalty 確認</span></span>
     </div>
   </div>
   </div>
   <div class="dec">
-    <div class="dcard"><div class="k">spec 1 · direct integration</div>
+    <div class="dcard"><div class="k">spec 1 · direct integration<i class="tbdtag">TBD</i></div>
       <div class="q"><span class="en">How lloud.club talks to Open Loyalty without Ztor in the middle</span><span class="zh">lloud.club 如何不經 Ztor 直接與 Open Loyalty 溝通</span></div>
       <div class="o"><span class="en"><b>Identity:</b> member id = Ztor user id, created by Ztor at sign-in. <b>One writer of points:</b> Ztor posts order and refund events (orders live in Ztor eShop); lloud.club only reads balance, ledger, tier, rewards and submits mission proofs. <b>Credentials:</b> per-member tokens from Open Loyalty's customer API, or a thin Ztor proxy; never the admin key in a browser. <b>Sync-back:</b> Open Loyalty → Ztor webhook (points, tier) into the Policy service for gating and the Media Vault. <b>Owner:</b> Jeff · Nan with Eric, written Oct 12–16 against the vendor docs.</span><span class="zh"><b>身分：</b>會員 id＝Ztor user id，由 Ztor 於登入時建立。<b>唯一寫入方：</b>Ztor 送出訂單與退款事件（訂單在 Ztor eShop）；lloud.club 只讀餘額、帳本、等級、獎勵，並提交任務證明。<b>憑證：</b>Open Loyalty 客戶端 API 的會員 token，或 Ztor 輕量代理；絕不把 admin key 放在瀏覽器。<b>同步回寫：</b>Open Loyalty → Ztor webhook（積分、等級）進 Policy 服務，供購買限制與媒體庫。<b>負責：</b>Jeff · Nan 與 Eric，10/12–16 依供應商文件撰寫。</span></div></div>
-    <div class="dcard"><div class="k">spec 2 · merge back to ztor</div>
+    <div class="dcard"><div class="k">spec 2 · merge back to ztor<i class="tbdtag">TBD</i></div>
       <div class="q"><span class="en">How lloud.club moves onto release 4 later without losing anything</span><span class="zh">lloud.club 之後如何無損改接 release 4</span></div>
       <div class="o"><span class="en"><b>No data migration:</b> both paths use the same Open Loyalty program, member ids and ledger, so the merge is a client switch, not a data move. <b>Cutover:</b> a per-channel flag in api-client.js swaps the loyalty endpoints from Open Loyalty to the Creator API; run both read paths for a week, compare, then retire the Open Loyalty tokens. <b>Ops:</b> LLOUD loyalty administration moves from Open Loyalty's admin into Creator Studio at cutover. <b>Owner:</b> Jeff · Nan with Eric, written Nov 9–13; cutover Dec 7–18.</span><span class="zh"><b>不搬資料：</b>兩條路徑用同一個 Open Loyalty 方案、會員 id 與帳本，併回只是切換客戶端，不是搬資料。<b>切換：</b>api-client.js 內的 channel 旗標把積分端點由 Open Loyalty 換成 Creator API；雙讀一週比對後，回收 Open Loyalty token。<b>營運：</b>切換時 LLOUD 積分管理由 Open Loyalty 後台移到 Creator Studio。<b>負責：</b>Jeff · Nan 與 Eric，11/9–13 撰寫；12/7–18 切換。</span></div></div>
-    <div class="dcard"><div class="k">what it buys · what it costs</div>
+    <div class="dcard"><div class="k">what it buys · what it costs<i class="tbdtag">TBD</i></div>
       <div class="q"><span class="en">Nov 13 instead of Dec 7, decoupled from release 4</span><span class="zh">11/13 而非 12/7，不受 release 4 牽制</span></div>
       <div class="o"><span class="en"><b>Buys:</b> 24 days on lloud.club, and LLOUD loyalty no longer waits on the Creator API. <b>Costs:</b> two specs, a second client integration by L that overlaps the Oct 30 launch prep, the Ztor order-event feed and webhook pulled forward to Oct 19–Nov 6, and a December cutover. <b>Condition:</b> the vendor call must confirm per-member tokens (or we build the proxy) and the contract must be signed by Oct 9.</span><span class="zh"><b>換到：</b>lloud.club 提早 24 天，LLOUD 積分不再等 Creator API。<b>代價：</b>兩份規格、L 多做一套與 10/30 上線準備重疊的客戶端串接、Ztor 的訂單事件與 webhook 提前到 10/19–11/6、12 月一次切換。<b>前提：</b>供應商通話確認會員 token（否則我方做代理），且 10/9 前簽約。</span></div></div>
   </div>
@@ -391,6 +400,7 @@
   <div class="foot">
     <b>Sources</b> Notion「創作者獨立網站與 Creator API 規劃討論」(09-16 sync, page 3dd9ca6e…9297) · Granola “sync up with Eric” summary (Nan, Jeff, Eric · 09-16) · Ztor 2.0 dev meeting 09-16 (eShop version to Eric Sep 28–29) · SA reviews 09-14 (DECIDED) / 09-15 (deck v1.2) · loyalty build-vs-buy 09-15 · Jeff's release breakdown 09-18<br>
     <b>Companion</b> ztor-docs/outputs/architecture/creator-api-timeline-2026-09-16.md (assumptions, PM review, open items) · <b>Visual system</b> Ztor timeline house style (paper / gold), lane palette validated for colour-vision separation<br>
+    <b>TBD</b> = still to be confirmed with Open Loyalty on the vendor call: per-member tokens · per-creator programs under one contract · percentile tiers · 45-day decay · pricing (active-member definition) · hosting · contract date<br>
     <b>Assumptions</b> “12/28–29” in the dev-meeting AI summary read as Sep 28–29 (transcript: “節前”, before Golden Week) · 10/31 = Saturday → Oct 30 · Golden Week Oct 1–8 per Eric · Open Loyalty contract by Oct 23 · Indonesia team availability in October not verified
   </div>
 
@@ -427,17 +437,17 @@ const lanes=[
    [{f:'2026-11-09',t:'2026-11-18',en:'Creator API · ticketing',fen:'Creator API ticketing group: events · wallet tickets, on the Bookyay Phase 1 feed',zh:'Creator API · 售票',fzh:'Creator API 售票群組：活動 · 錢包票券（Bookyay 第一階段資料）',cls:'api'},
     {f:'2026-11-20',t:'2026-11-20',en:'R3',fen:'Release 3 — ticketing API (Nov 20)',zh:'R3',fzh:'Release 3——售票 API（11/20）',solid:1,cls:'api'}]]},
  {cls:'ext',en:'R4 · Loyalty',zh:'R4 · 積分',sub:'Open Loyalty · Eric · FE',rows:[
-   [{f:'2026-09-24',t:'2026-10-23',en:'Open Loyalty: call → scoring fit → contract',fen:'Open Loyalty: call (percentile tiers · 45-day decay · pricing · hosting) → contract signed by Oct 23',zh:'Open Loyalty：通話 → 計分確認 → 簽約',fzh:'Open Loyalty：通話（百分位等級 · 45 天衰減 · 價格 · 託管）→ 10/23 前簽約',alt:1},
-    {f:'2026-11-02',t:'2026-11-13',en:'Integration + FE build (2 wk)',fen:'Open Loyalty integration + Ztor FE build, 2 weeks, done 2nd week of November',zh:'串接＋前端開發（2 週）',fzh:'Open Loyalty 串接＋Ztor 前端開發，2 週，11 月第二週完成'}],
-   [{f:'2026-11-09',t:'2026-11-18',en:'Creator API · loyalty',fen:'Creator API loyalty group: points · rewards · missions (+ leaderboard)',zh:'Creator API · 積分',fzh:'Creator API 積分群組：積分 · 獎勵 · 任務（＋排行）',cls:'api'},
-    {f:'2026-11-20',t:'2026-11-20',en:'R4',fen:'Release 4 — loyalty API (Nov 20)',zh:'R4',fzh:'Release 4——積分 API（11/20）',solid:1,cls:'api'}]]},
+   [{f:'2026-09-24',t:'2026-10-23',en:'Open Loyalty: call → scoring fit → contract',fen:'Open Loyalty: call (percentile tiers · 45-day decay · pricing · hosting) → contract signed by Oct 23',zh:'Open Loyalty：通話 → 計分確認 → 簽約',fzh:'Open Loyalty：通話（百分位等級 · 45 天衰減 · 價格 · 託管）→ 10/23 前簽約',alt:1,tbd:1},
+    {f:'2026-11-02',t:'2026-11-13',en:'Integration + FE build (2 wk)',fen:'Open Loyalty integration + Ztor FE build, 2 weeks, done 2nd week of November',zh:'串接＋前端開發（2 週）',fzh:'Open Loyalty 串接＋Ztor 前端開發，2 週，11 月第二週完成',tbd:1}],
+   [{f:'2026-11-09',t:'2026-11-18',en:'Creator API · loyalty',fen:'Creator API loyalty group: points · rewards · missions (+ leaderboard)',zh:'Creator API · 積分',fzh:'Creator API 積分群組：積分 · 獎勵 · 任務（＋排行）',cls:'api',tbd:1},
+    {f:'2026-11-20',t:'2026-11-20',en:'R4',fen:'Release 4 — loyalty API (Nov 20)',zh:'R4',fzh:'Release 4——積分 API（11/20）',solid:1,cls:'api',tbd:1}]]},
  {group:1,en:'Creator sites',zh:'創作者網站',sub:'L · Tyson’s dev'},
  {cls:'site',en:'LLOUD · lloud.club',zh:'LLOUD · lloud.club',sub:'L · site build + integration',rows:[
    [{f:'2026-09-28',t:'2026-10-09',en:'Build on spec v1 + mocks',fen:'Build against the frozen spec v1 with mocks (api-client.js is the only boundary); switch to release 1 from Oct 5',zh:'依 spec v1＋mock 建站',fzh:'依凍結的 spec v1 用 mock 建站（api-client.js 為唯一邊界）；10/5 起切換到 release 1',crit:1},
     {f:'2026-10-12',t:'2026-10-23',en:'Integrate R1 + R2 · CS shop',fen:'Integrate releases 1 + 2 · Lisa’s shop set up in Creator Studio (hide-on-ztor.com toggle)',zh:'串接 R1＋R2 · CS 商店',fzh:'串接 release 1＋2 · 在 Creator Studio 建 Lisa 商店（ztor.com 隱藏開關）',crit:1},
     {f:'2026-10-26',t:'2026-10-28',en:'UAT',fen:'Integration test + LLOUD UAT → go / no-go Oct 28',zh:'UAT',fzh:'整合測試＋LLOUD UAT → 10/28 go／no-go',uat:1,crit:1},
     {f:'2026-10-30',t:'2026-10-30',en:'LIVE',fen:'LLOUD live on releases 1–2 (fallback Nov 6)',zh:'上線',fzh:'LLOUD 以 release 1–2 上線（備案 11/6）',solid:1},
-    {f:'2026-11-23',t:'2026-12-04',en:'Add ticketing · loyalty',fen:'Integrate releases 3 + 4: ticketing · points · rewards · missions on lloud.club',zh:'加上售票 · 積分',fzh:'串接 release 3＋4：lloud.club 上線售票 · 積分 · 獎勵 · 任務'},
+    {f:'2026-11-23',t:'2026-12-04',en:'Add ticketing · loyalty',fen:'Integrate releases 3 + 4: ticketing · points · rewards · missions on lloud.club',zh:'加上售票 · 積分',fzh:'串接 release 3＋4：lloud.club 上線售票 · 積分 · 獎勵 · 任務',tbd:1},
     {f:'2026-12-07',t:'2026-12-07',en:'3+4',fen:'Ticketing + loyalty live on lloud.club (Dec 7)',zh:'3+4',fzh:'lloud.club 售票＋積分上線（12/7）',solid:1}]]},
  {cls:'ext',en:'Tyson Yoshi site',zh:'Tyson Yoshi 網站',sub:'Tyson’s FE dev',rows:[
    [{f:'2026-11-02',t:'2026-11-13',en:'Stretch: R1 + R2 early',fen:'Stretch: integrate releases 1 + 2 early (front end is "basically done")',zh:'加分：提前接 R1＋R2',fzh:'加分項：提前串接 release 1＋2（前端「基本完成」）',alt:1,dim:1},
@@ -448,16 +458,16 @@ const lanes=[
 const gates=[
  {d:'2026-09-21',en:'freeze',zh:'凍結',i:'◆'},{d:'2026-09-25',en:'spec v1',zh:'spec v1',i:'◆'},{d:'2026-09-28',en:'eShop→Eric',zh:'eShop→Eric',i:'◆'},
  {d:'2026-10-05',en:'R1',zh:'R1',i:'◆',api:1},{d:'2026-10-09',en:'eShop UAT',zh:'eShop UAT',i:'◆'},{d:'2026-10-12',en:'R2',zh:'R2',i:'◆',api:1},
- {d:'2026-10-23',en:'OL contract',zh:'OL 簽約',i:'◆'},{d:'2026-10-26',en:'go/no-go',zh:'go/no-go',i:'■',bad:1},{d:'2026-10-30',en:'LLOUD + 2.2',zh:'LLOUD＋2.2',i:'★'},
- {d:'2026-11-06',en:'ticketing UAT',zh:'售票 UAT',i:'◆'},{d:'2026-11-20',en:'R3 + R4',zh:'R3＋R4',i:'◆',api:1},{d:'2026-12-11',en:'Tyson live',zh:'Tyson 上線',i:'★'}
+ {d:'2026-10-23',en:'OL contract',zh:'OL 簽約',i:'◆',tbd:1},{d:'2026-10-26',en:'go/no-go',zh:'go/no-go',i:'■',bad:1},{d:'2026-10-30',en:'LLOUD + 2.2',zh:'LLOUD＋2.2',i:'★'},
+ {d:'2026-11-06',en:'ticketing UAT',zh:'售票 UAT',i:'◆'},{d:'2026-11-20',en:'R3',zh:'R3',i:'◆',api:1},{d:'2026-11-20',en:'R4',zh:'R4',i:'',api:1,tbd:1},{d:'2026-12-11',en:'Tyson live',zh:'Tyson 上線',i:'★'}
 ];
 
 /* ---------- Option B: lloud.club → Open Loyalty directly ---------- */
 const lanesB=[
- {cls:'pm',en:'Specs',zh:'規格',sub:'Jeff · Nan · Eric',rows:[
+ {cls:'pm',tbd:1,en:'Specs',zh:'規格',sub:'Jeff · Nan · Eric',rows:[
    [{f:'2026-10-12',t:'2026-10-16',en:'Spec 1 · direct integration',fen:'Spec 1 — direct integration: identity, single writer of points, per-member tokens or proxy, read surface, mission proofs, webhook (written against the vendor docs)',zh:'規格 1 · 直接串接',fzh:'規格 1——直接串接：身分、唯一寫入方、會員 token 或代理、讀取範圍、任務證明、webhook（依供應商文件撰寫）'},
     {f:'2026-11-09',t:'2026-11-13',en:'Spec 2 · merge back to Ztor',fen:'Spec 2 — merge back: same program + ledger so no data migration; per-channel endpoint flag; dual-read week; retire tokens; ops moves to Creator Studio',zh:'規格 2 · 併回 Ztor',fzh:'規格 2——併回：同一方案＋帳本、不搬資料；channel 端點旗標；雙讀一週；回收 token；營運移到 Creator Studio'}]]},
- {cls:'api',en:'Ztor · Open Loyalty',zh:'Ztor · Open Loyalty',sub:'Eric · FE',rows:[
+ {cls:'api',tbd:1,en:'Ztor · Open Loyalty',zh:'Ztor · Open Loyalty',sub:'Eric · FE',rows:[
    [{f:'2026-09-24',t:'2026-10-09',en:'Open Loyalty: call → contract by Oct 9',fen:'Open Loyalty: call (per-member tokens · percentile tiers · 45-day decay · pricing) → contract signed by Oct 9',zh:'Open Loyalty：通話 → 10/9 前簽約',fzh:'Open Loyalty：通話（會員 token · 百分位等級 · 45 天衰減 · 價格）→ 10/9 前簽約',cls:'ext',alt:1},
     {f:'2026-10-12',t:'2026-10-16',en:'Program set-up',fen:'Open Loyalty program set up for LLOUD (Ztor config: γ weights, tiers, rewards); sandbox + tokens issued',zh:'方案設定',fzh:'為 LLOUD 設定 Open Loyalty 方案（Ztor 設定：γ 權重、等級、獎勵）；發放沙盒與 token',cls:'ext'},
     {f:'2026-11-02',t:'2026-11-13',en:'Ztor integration + FE (2 wk)',fen:'Ztor-side Open Loyalty integration + ztor.com FE build, 2 weeks (unchanged from Plan A)',zh:'Ztor 串接＋前端（2 週）',fzh:'Ztor 端 Open Loyalty 串接＋ztor.com 前端開發，2 週（與方案 A 相同）',cls:'ext'}],
@@ -465,7 +475,7 @@ const lanesB=[
     {f:'2026-11-02',t:'2026-11-06',en:'OL → Ztor webhook',fen:'Open Loyalty → Ztor webhook: points and tier changes feed the Policy service for gating + Media Vault',zh:'OL → Ztor webhook',fzh:'Open Loyalty → Ztor webhook：積分與等級變更餵給 Policy 服務，供購買限制＋媒體庫'}],
    [{f:'2026-11-09',t:'2026-11-18',en:'Creator API · loyalty (ztor.com)',fen:'Creator API loyalty group — release 4 for ztor.com and later sites; lloud.club merges onto it in December',zh:'Creator API · 積分（ztor.com）',fzh:'Creator API 積分群組——release 4 供 ztor.com 與後續網站；lloud.club 12 月併回',cls:'api'},
     {f:'2026-11-20',t:'2026-11-20',en:'R4',fen:'Release 4 — loyalty API (Nov 20), unchanged',zh:'R4',fzh:'Release 4——積分 API（11/20），不變',solid:1,cls:'api'}]]},
- {cls:'site',en:'lloud.club · direct',zh:'lloud.club · 直接串接',sub:'L',rows:[
+ {cls:'site',tbd:1,en:'lloud.club · direct',zh:'lloud.club · 直接串接',sub:'L',rows:[
    [{f:'2026-10-12',t:'2026-10-16',en:'OL docs + sandbox',fen:'L reads Open Loyalty API docs, gets sandbox + per-member token flow',zh:'OL 文件＋沙盒',fzh:'L 研讀 Open Loyalty API 文件，取得沙盒與會員 token 流程'},
     {f:'2026-10-19',t:'2026-11-06',en:'Direct integration: points · tiers · rewards · missions',fen:'lloud.club calls Open Loyalty directly: balance · ledger · tier · rewards · mission proof submission (read + proofs only) — overlaps the Oct 30 launch prep',zh:'直接串接：積分 · 等級 · 獎勵 · 任務',fzh:'lloud.club 直接呼叫 Open Loyalty：餘額 · 帳本 · 等級 · 獎勵 · 任務證明提交（只讀＋證明）——與 10/30 上線準備重疊'},
     {f:'2026-11-09',t:'2026-11-11',en:'UAT',fen:'Loyalty UAT on lloud.club + our review',zh:'UAT',fzh:'lloud.club 積分 UAT＋我方審查',uat:1},
@@ -473,7 +483,7 @@ const lanesB=[
    [{f:'2026-12-07',t:'2026-12-18',en:'Merge back → release 4',fen:'Cutover per spec 2: flip the channel flag to Creator API endpoints, dual-read week, retire Open Loyalty tokens',zh:'併回 → release 4',fzh:'依規格 2 切換：channel 旗標改指 Creator API 端點，雙讀一週，回收 Open Loyalty token',dim:1}]]}
 ];
 const gatesB=[
- {d:'2026-10-09',en:'OL contract',zh:'OL 簽約',i:'◆'},{d:'2026-11-13',en:'LLOUD loyalty',zh:'LLOUD 積分',i:'★'},{d:'2026-11-20',en:'R4',zh:'R4',i:'◆',api:1},{d:'2026-12-07',en:'Plan A date',zh:'方案 A 日期',i:'◇'}
+ {d:'2026-10-09',en:'OL contract',zh:'OL 簽約',i:'◆',tbd:1},{d:'2026-11-13',en:'LLOUD loyalty',zh:'LLOUD 積分',i:'★',tbd:1},{d:'2026-11-20',en:'R4',zh:'R4',i:'◆',api:1,tbd:1},{d:'2026-12-07',en:'Plan A date',zh:'方案 A 日期',i:'◇'}
 ];
 
 /* ---------- render ---------- */
@@ -492,8 +502,10 @@ function render(id,lanes,gates,marks){
     if(L.group){h+='<div class="grp" style="grid-row:'+row+'"><span class="en">'+L.en+'</span><span class="zh">'+L.zh+'</span><span>'+L.sub+'</span></div>';row++;return;}
     const r0=row;
     L.rows.forEach(bars=>{
-      bars.forEach(b=>{const a=hc(b.f),e=hc(b.t)+1;const cls=(b.cls||L.cls)+(b.solid?' solid':'')+(b.uat?' uat':'')+(b.alt?' alt':'')+(b.dim?' dim':'')+(b.crit?' crit':'')+(e-a===1?' one':'');
-        h+='<div class="bar '+cls+'" style="grid-column:'+(2+a)+'/'+(2+e)+';grid-row:'+row+'" data-f="'+b.f+'" data-t="'+b.t+'" data-en="'+esc(b.fen||b.en)+'" data-zh="'+esc(b.fzh||b.zh)+'" data-len="'+L.en+' · '+L.sub+'" data-lzh="'+L.zh+' · '+L.sub+'"><span class="en">'+b.en+'</span><span class="zh">'+b.zh+'</span></div>';});
+      bars.forEach(b=>{const a=hc(b.f),e=hc(b.t)+1;const tb=b.tbd||L.tbd;const cls=(b.cls||L.cls)+(b.solid?' solid':'')+(b.uat?' uat':'')+(b.alt?' alt':'')+(b.dim?' dim':'')+(b.crit?' crit':'')+(e-a===1?' one':'')+(tb?' tbd':'');
+        const tag=(tb&&!b.solid&&e-a>=3)?'<i class="tbdtag">TBD</i>':'';
+        const fen=(b.fen||b.en)+(tb?' — TBD: pending confirmation with Open Loyalty':''),fzh=(b.fzh||b.zh)+(tb?' — TBD：待與 Open Loyalty 確認':'');
+        h+='<div class="bar '+cls+'" style="grid-column:'+(2+a)+'/'+(2+e)+';grid-row:'+row+'" data-f="'+b.f+'" data-t="'+b.t+'" data-en="'+esc(fen)+'" data-zh="'+esc(fzh)+'" data-len="'+L.en+' · '+L.sub+'" data-lzh="'+L.zh+' · '+L.sub+'">'+tag+'<span class="en">'+b.en+'</span><span class="zh">'+b.zh+'</span></div>';});
       row++;});
     h+='<div class="lanehead '+L.cls+'" style="grid-row:'+r0+'/'+row+'"><span class="en">'+L.en+'<span>'+L.sub+'</span></span><span class="zh">'+L.zh+'<span>'+L.sub+'</span></span></div>';
   });
@@ -501,10 +513,11 @@ function render(id,lanes,gates,marks){
   // placed greedily on the first label row whose previous label is at least three columns away (no collisions)
   h+='<div class="gaterow" style="grid-row:'+row+'">';
   const last=[-9,-9,-9];
-  gates.forEach(x=>{const c=1+hc(x.d);const a=Math.max(1,c-1),e=Math.min(29,c+2);const k=(x.bad?' bad':'')+(x.api?' api':'');
+  gates.forEach(x=>{const c=1+hc(x.d);const a=Math.max(1,c-1),e=Math.min(29,c+2);const k=(x.bad?' bad':'')+(x.api?' api':'')+(x.tbd?' tbd':'');
     let r=last.findIndex(v=>c-v>=3);if(r<0)r=2;last[r]=c;
-    h+='<div class="gate'+k+'" style="grid-column:'+c+'">'+x.i+'</div>';
-    h+='<div class="glabel'+k+'" style="grid-column:'+a+'/'+e+';grid-row:'+(2+r)+'"><span class="en">'+x.en+'</span><span class="zh">'+x.zh+'</span></div>';});
+    if(x.i) h+='<div class="gate'+k+'" style="grid-column:'+c+'">'+x.i+'</div>';
+    const sfx=x.tbd?' TBD':'';
+    h+='<div class="glabel'+k+'" style="grid-column:'+a+'/'+e+';grid-row:'+(2+r)+'"><span class="en">'+x.en+sfx+'</span><span class="zh">'+x.zh+sfx+'</span></div>';});
   h+='</div>';
   // shades + lines (absolute, fractional). Labels sit in the spacer row.
   if(marks.holiday) h+='<div class="shade" style="left:'+pct(hc('2026-10-01'))+';width:calc((100% - '+LBL+'px) * 2 / '+N+')"><i>Oct 1–8</i></div>';
