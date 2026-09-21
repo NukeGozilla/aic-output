@@ -11,8 +11,8 @@
   :root{
     --paper:#f3eee2; --paper2:#ece5d4; --card:#fffdf8; --ink:#241f18; --muted:#6f675a;
     --gold:#b0894f; --gold-soft:#cbb085; --rule:#ddd4c0;
-    --z:#0b6bcb;  --z-bg:#e0ecf9;  --z-ln:#a7c6ea;  --z-bg2:#cfe1f6;   /* Ztor */
-    --o:#6741d9;  --o-bg:#ebe5f9;  --o-ln:#c3b4ec;                     /* Open Loyalty */
+    --z:#0b6bcb;  --z-bg:#e0ecf9;  --z-ln:#a7c6ea;                     /* Ztor */
+    --o:#6741d9;  --o-bg:#ebe5f9;  --o-ln:#c3b4ec;  --o-bg2:#d9cdf5;   /* Open Loyalty */
     --s:#2f9e44;  --s-bg:#e3f2e6;  --s-ln:#a9d6b3;                     /* fans & sites */
     --warn:#b06b14; --warn-bg:#f8ecd4; --warn-ln:#e2c584;
     --shadow:0 1px 0 rgba(0,0,0,.04),0 14px 40px -22px rgba(60,45,20,.45);
@@ -32,14 +32,12 @@
   h2 .num{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--gold);font-weight:700;margin-right:10px;vertical-align:3px}
   .lede{font-size:14px;color:var(--muted);margin-bottom:16px;max-width:84ch}
 
-  /* ---- who we are ---- */
   .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
   @media(max-width:860px){.tiles{grid-template-columns:repeat(2,1fr)}}
   .tile{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:13px 15px;box-shadow:var(--shadow)}
   .tile b{display:block;font-family:"JetBrains Mono",monospace;font-size:19px;letter-spacing:-.02em;line-height:1.15}
   .tile span{font-size:12.5px;color:var(--muted)}
 
-  /* ---- agenda ---- */
   .strip{display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--rule);box-shadow:var(--shadow);font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700}
   .strip div{padding:9px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:2px solid var(--card)}
   .strip div:last-child{border-right:0}
@@ -53,30 +51,29 @@
   .blk .t{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
   .blk .q{font-weight:700;font-size:14.5px;margin:2px 0 5px}
   .blk ul{padding-left:15px;color:var(--muted)}
-  .blk li{margin:3px 0;line-height:1.4}
+  .blk li{margin:3px 0;line-height:1.5}
   .blk li b{color:var(--ink)}
   .qn{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-ln);border-radius:999px;padding:0 6px;line-height:15px;margin:0 1px;white-space:nowrap}
   .qn.star{background:var(--warn);color:#fff;border-color:var(--warn)}
   .rule{margin-top:12px;font-size:13px;color:var(--muted)}
   .rule b{color:var(--ink)}
 
-  /* ---- flows ---- */
   .flow{background:var(--card);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px 12px;overflow-x:auto}
   .flow svg{display:block;width:100%;min-width:900px;height:auto}
-  .ct{fill:none;stroke-width:1.5;stroke-dasharray:5 4;rx:14}
+  .ct{stroke-width:1.5;stroke-dasharray:5 4}
   .ct.cz{stroke:var(--z-ln);fill:rgba(224,236,249,.28)} .ct.co{stroke:var(--o-ln);fill:rgba(235,229,249,.32)}
   .ctl{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.16em}
   .ctl.cz{fill:var(--z)} .ctl.co{fill:var(--o)}
   .bx{stroke-width:1.2}
-  .bx.bz{fill:var(--z-bg);stroke:var(--z-ln)} .bx.bzs{fill:var(--z-bg2);stroke:var(--z);stroke-width:1.6}
-  .bx.bo{fill:var(--o-bg);stroke:var(--o-ln)} .bx.bs{fill:var(--s-bg);stroke:var(--s-ln)} .bx.bn{fill:var(--card);stroke:var(--rule)}
+  .bx.bz{fill:var(--z-bg);stroke:var(--z-ln)}
+  .bx.bo{fill:var(--o-bg);stroke:var(--o-ln)} .bx.bos{fill:var(--o-bg2);stroke:var(--o);stroke-width:1.7}
+  .bx.bs{fill:var(--s-bg);stroke:var(--s-ln)} .bx.bn{fill:var(--card);stroke:var(--rule)}
   .bx.dash{stroke-dasharray:5 4;fill-opacity:.55}
   .bt{font-size:12.5px;font-weight:700;fill:var(--ink);text-anchor:middle}
   .bsub{font-size:10.5px;fill:var(--muted);text-anchor:middle}
   .ar{fill:none;stroke:#7d7466;stroke-width:1.5}
   .ar.dash{stroke-dasharray:5 4}
   .al{font-size:10.5px;fill:var(--muted);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
-  .rowl{font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:700;letter-spacing:.14em;fill:var(--gold)}
   .pin circle{fill:var(--warn-bg);stroke:var(--warn);stroke-width:1.4}
   .pin text{font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;fill:var(--warn);text-anchor:middle}
   .pin.star circle{fill:var(--warn)} .pin.star text{fill:#fff}
@@ -85,8 +82,8 @@
   .legend span{display:flex;align-items:center;gap:7px}
   .sw{display:inline-block;width:15px;height:11px;border-radius:3px;border:1px solid}
   .sw.z{background:var(--z-bg);border-color:var(--z-ln)} .sw.o{background:var(--o-bg);border-color:var(--o-ln)} .sw.s{background:var(--s-bg);border-color:var(--s-ln)}
+  .sw.os{background:var(--o-bg2);border-color:var(--o);border-width:1.7px}
 
-  /* ---- short / long ---- */
   .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   @media(max-width:760px){.two{grid-template-columns:1fr}}
   .ph{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);font-size:13.5px;border-left:4px solid var(--c)}
@@ -96,7 +93,6 @@
   .ask{margin-top:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--warn-ln);background:var(--warn-bg);color:#6b4a12;font-size:14px}
   .ask b{font-weight:700}
 
-  /* ---- questions ---- */
   table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--rule);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);font-size:13px}
   th{background:var(--paper2);text-align:left;padding:9px 12px;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--rule)}
   td{padding:9px 12px;border-bottom:1px solid #efe9db;vertical-align:top;line-height:1.45}
@@ -140,35 +136,35 @@
     <div class="blk" style="--c:var(--muted)"><div class="t">0–3 · 3 min</div><div class="q">Who we are</div>
       <ul><li>Ztor: film + music platform, fans back individual artists</li><li>What we need from today: <b>fit, implementation, price</b></li></ul></div>
     <div class="blk" style="--c:var(--o)"><div class="t">3–15 · 12 min</div><div class="q">Is it a fit?</div>
-      <ul><li>Walk <b>flows 1–3</b></li><li>Must answer: <span class="qn star">Q1</span> <span class="qn star">Q2</span> <span class="qn star">Q3</span></li><li>If time: <span class="qn">Q4</span> <span class="qn">Q5</span> <span class="qn">Q6</span> <span class="qn">Q7</span></li><li>Short term vs long term</li></ul></div>
+      <ul><li>Walk <b>flows 1–3</b></li><li>Must answer: <span class="qn star">Q1</span> <span class="qn star">Q2</span> <span class="qn star">Q3</span> <span class="qn star">Q4</span> <span class="qn star">Q5</span></li><li>If time: <span class="qn">Q6</span> <span class="qn">Q7</span> <span class="qn">Q8</span></li><li>Short term vs long term</li></ul></div>
     <div class="blk" style="--c:var(--z)"><div class="t">15–23 · 8 min</div><div class="q">Implementation</div>
-      <ul><li>Walk <b>flow 4</b></li><li>Must answer: <span class="qn star">Q8</span></li><li>If time: <span class="qn">Q9</span> <span class="qn">Q10</span> <span class="qn">Q11</span></li></ul></div>
+      <ul><li>Walk <b>flow 4</b></li><li>Must answer: <span class="qn star">Q9</span></li><li>If time: <span class="qn">Q10</span> <span class="qn">Q11</span> <span class="qn">Q12</span></li></ul></div>
     <div class="blk" style="--c:var(--warn)"><div class="t">23–28 · 5 min</div><div class="q">Price</div>
-      <ul><li>Must answer: <span class="qn star">Q12</span></li><li>Then: <span class="qn">Q13</span></li></ul></div>
+      <ul><li>Must answer: <span class="qn star">Q13</span></li><li>Then: <span class="qn">Q14</span></li></ul></div>
     <div class="blk" style="--c:var(--s)"><div class="t">28–30 · 2 min</div><div class="q">Next steps</div>
       <ul><li>Sandbox + docs</li><li>Written answers + quote</li><li>Technical follow-up</li></ul></div>
   </div>
-  <p class="rule"><b>If time runs short:</b> the five <span class="qn star">★</span> questions live, everything else in writing.</p>
+  <p class="rule"><b>If time runs short:</b> the seven <span class="qn star">★</span> questions live, everything else in writing.</p>
 
   <!-- ============ 02 FLOW 1 ============ -->
   <h2><span class="num">02</span>Flow 1 — where Open Loyalty sits</h2>
-  <p class="lede">Ztor keeps identity, commerce and access rules. Open Loyalty holds members, one wallet per artist, the ledger and tiers. A thin adapter on our side does the parts that are specific to our model.</p>
+  <p class="lede">Ztor keeps identity, commerce and access rules, sends events, and reads results. The loyalty logic lives in Open Loyalty: members, one wallet per artist, the ledger, scoring and tiers.</p>
   <div class="flow"><div id="f1"></div>
-    <div class="legend"><span><i class="sw s"></i>fans &amp; sites</span><span><i class="sw z"></i>Ztor</span><span><i class="sw o"></i>Open Loyalty</span><span><span class="qn star">Q</span>must-answer question</span><span><span class="qn">Q</span>question · hover a pin to read it</span></div></div>
+    <div class="legend"><span><i class="sw s"></i>fans &amp; sites</span><span><i class="sw z"></i>Ztor</span><span><i class="sw o"></i>Open Loyalty</span><span><i class="sw os"></i>logic we want Open Loyalty to carry</span><span><span class="qn star">Q</span>must-answer</span><span><span class="qn">Q</span>question · hover a pin to read it</span></div></div>
 
   <!-- ============ 03 FLOW 2 ============ -->
   <h2><span class="num">03</span>Flow 2 — one purchase, many artists</h2>
-  <p class="lede">A film rental credits every artist on the title by job weight. One NT$100 rental of a 17-credit film becomes 17 ledger entries across 17 wallets.</p>
+  <p class="lede">A film rental credits every artist on the title by job weight. One NT$100 rental of a 17-credit film becomes 17 ledger entries across 17 wallets. We send one event with the artists and their weights.</p>
   <div class="flow"><div id="f2"></div></div>
 
   <!-- ============ 04 FLOW 3 ============ -->
-  <h2><span class="num">04</span>Flow 3 — from raw points to a tier</h2>
-  <p class="lede">A fan's score for an artist is the time-decayed sum of their ledger entries. Tiers are percentile cuts within each artist's fan base, recomputed weekly. We expect to compute both and write the tier back.</p>
+  <h2><span class="num">04</span>Flow 3 — from raw points to a tier, inside Open Loyalty</h2>
+  <p class="lede">We want decay, ranking and tiering to run in Open Loyalty, not in a layer of ours. For each highlighted step: is it native, configurable, or on your roadmap?</p>
   <div class="flow"><div id="f3"></div></div>
 
   <!-- ============ 05 FLOW 4 ============ -->
-  <h2><span class="num">05</span>Flow 4 — two ways to connect a creator site</h2>
-  <p class="lede">Either every call goes through our API, or the creator's site reads from Open Loyalty directly while Ztor stays the only writer of points.</p>
+  <h2><span class="num">05</span>Flow 4 — how creator sites connect</h2>
+  <p class="lede">Every site, including ztor.com, talks to one Ztor Creator API. Open Loyalty sits behind it and never takes calls from a site directly.</p>
   <div class="flow"><div id="f4"></div></div>
 
   <!-- ============ 06 SHORT / LONG ============ -->
@@ -179,7 +175,7 @@
     <div class="ph" style="--c:var(--o)"><div class="t">Long term · 2027</div><div class="q">A board for every artist</div>
       <ul><li><b>Thousands</b> of artist wallets</li><li>One purchase credits a <b>whole film crew</b></li><li>45-day decay + percentile tiers per artist</li><li>Rewards and missions catalogue</li></ul></div>
   </div>
-  <div class="ask"><b>The question for you:</b> which of these do you carry natively today, which work with our thin layer on top, and which should we not put on you at all?</div>
+  <div class="ask"><b>The question for you:</b> which of these run natively today, which are on your roadmap, and which would you build with us?</div>
 
   <!-- ============ 07 QUESTIONS ============ -->
   <h2><span class="num">07</span>Question list</h2>
@@ -190,8 +186,8 @@
   <div class="done">
     <div><i></i><span>Sandbox + OpenAPI access</span></div>
     <div><i></i><span>Written answers to the ★ questions</span></div>
+    <div><i></i><span>Roadmap dates for anything that is not native</span></div>
     <div><i></i><span>“Active member” definition + quote at three volumes</span></div>
-    <div><i></i><span>Hosting region + deployment options</span></div>
     <div><i></i><span>Technical follow-up with our backend lead</span></div>
   </div>
 
@@ -202,18 +198,19 @@
 /* ---------- questions (single source for the table and the pin tooltips) ---------- */
 const Q=[
  {n:1,star:1,g:'Fit',f:'1 · 2',q:'One wallet per artist. What is the practical limit on wallet types? We start with tens; the model needs thousands.',w:'Every artist account has its own board.'},
- {n:2,star:1,g:'Fit',f:'1 · 3',q:'Can one member hold a different tier for each artist (per wallet or tier set), and can we set it through the API?',w:'A fan is Inner Circle for one artist and unranked for another.'},
- {n:3,star:1,g:'Fit',f:'1 · 2',q:'One purchase credits up to 17+ artists. Is there a bulk add-points call, an idempotency key per entry, and what are the rate limits?',w:'A film rental pays every credited artist by job weight.'},
- {n:4,g:'Fit',f:'1 · 3',q:'Native expiry is fixed or annual, correct? If we compute a 45-day half-life outside, what is the best way to read the ledger at scale: export, stream or webhooks?',w:'Score = decayed sum of ledger entries.'},
- {n:5,g:'Fit',f:'3',q:'We compute percentile tiers weekly and write them back. Can your automatic tier recalculation be switched off so it does not overwrite ours?',w:'Top 1% / 10% / 30% per artist, 14-day demotion grace.'},
- {n:6,g:'Fit',f:'3',q:'Leaderboards: our reading is a maximum of 3 boards, refreshed every 4 hours. Correct? Anything on the roadmap?',w:'We need one board per artist.'},
+ {n:2,star:1,g:'Fit',f:'1 · 3',q:'Can one member hold a different tier for each artist, one tier per wallet?',w:'A fan is Inner Circle for one artist and unranked for another.'},
+ {n:3,star:1,g:'Fit',f:'3',q:'Decay: can points lose value continuously, halving every 45 days, inside Open Loyalty? If not, what is the closest native mechanism, and is decay on your roadmap?',w:'A score is the decayed sum of a fan\'s points. It fades, it never drops to zero.'},
+ {n:4,star:1,g:'Fit',f:'3',q:'Tiers by percentile: top 1% / 10% / 30% of each artist\'s fans, recalculated weekly, with a 14-day grace before demotion. Native, configurable, or roadmap?',w:'Tiers are relative to each artist\'s fan base, not fixed thresholds.'},
+ {n:5,star:1,g:'Fit',f:'3',q:'Ranking: can every artist wallet have its own leaderboard, with a rank we can read by API? Our reading of the docs is a maximum of 3 boards, refreshed every 4 hours.',w:'One board per artist.'},
+ {n:6,g:'Fit',f:'1 · 2',q:'One purchase credits up to 17+ artists. Can one event split points across many wallets by weight? If not: bulk call, idempotency key per entry, rate limits?',w:'A film rental pays every credited artist by job weight.'},
  {n:7,g:'Fit',f:'2',q:'Can earning caps be scoped per artist over a rolling 90 days? Can points sit pending until the fan claims them, and lapse at midnight if unclaimed?',w:'Engagement is capped per artist; daily tasks are claimed by hand.'},
- {n:8,star:1,g:'Implementation',f:'1 · 4',q:'Can a creator site call you directly with a per-member token, or must every call come from our backend?',w:'Decides between the two options in flow 4.'},
- {n:9,g:'Implementation',f:'1 · 4',q:'Which webhooks exist (points added, tier changed, reward redeemed), and what are the retry and ordering guarantees?',w:'Ztor gates purchases and content on tier.'},
- {n:10,g:'Implementation',f:'1',q:'Where is it hosted? Our fans are in Taiwan, Hong Kong and Singapore. SaaS only, or private deployment too? How many environments?',w:'Latency and data residency.'},
- {n:11,g:'Implementation',f:'—',q:'Sandbox and OpenAPI this week? Typical time from contract to first production launch, and what implementation support is included?',w:'First creator site goes live in Q4.'},
- {n:12,star:1,g:'Price',f:'—',q:'What exactly counts as an active member? A fan with a balance but no event this month? Do wallets, API volume or environments change the price?',w:'Daily check-ins make most engaged fans active every month.'},
- {n:13,g:'Price',f:'—',q:'Quote at 30K, 50K and 200K monthly members. Contract term, pilot or start-up terms, and how overage is handled.',w:'~30K today, growing with each creator launch.'}
+ {n:8,g:'Fit',f:'3',q:'Where something is not native: can custom formulas, scripts or scheduled jobs run inside Open Loyalty?',w:'We want the loyalty logic in one place, yours.'},
+ {n:9,star:1,g:'Implementation',f:'3',q:'For the parts that need custom work: do you build them, how long does it take, and what does it cost?',w:'Decides whether Q4 2026 is realistic.'},
+ {n:10,g:'Implementation',f:'1 · 4',q:'Which webhooks exist (points added, tier changed, reward redeemed), and what are the retry and ordering guarantees?',w:'Ztor gates purchases and content on tier.'},
+ {n:11,g:'Implementation',f:'1 · 4',q:'Every read comes through our API. Read limits, typical latency, caching guidance? Hosting region for fans in Taiwan, Hong Kong and Singapore; SaaS only or private deployment?',w:'A score or tier shows on most pages.'},
+ {n:12,g:'Implementation',f:'—',q:'Sandbox and OpenAPI this week? Typical time from contract to first production launch, and what implementation support is included?',w:'First creator site goes live in Q4.'},
+ {n:13,star:1,g:'Price',f:'—',q:'What exactly counts as an active member? A fan with a balance but no event this month? Do wallets, API volume or environments change the price?',w:'Daily check-ins make most engaged fans active every month.'},
+ {n:14,g:'Price',f:'—',q:'Quote at 30K, 50K and 200K monthly members. Contract term, pilot or start-up terms, and how overage is handled.',w:'~30K today, growing with each creator launch.'}
 ];
 (function(){let h='',g='';Q.forEach(x=>{if(x.g!==g){g=x.g;h+='<tr class="grp"><td colspan="4">'+g+'</td></tr>';}
   h+='<tr><td class="n"><span class="qn'+(x.star?' star':'')+'">'+(x.star?'★ ':'')+'Q'+x.n+'</span></td><td>'+x.q+'</td><td class="why">'+x.w+'</td><td class="n why">'+x.f+'</td></tr>';});
@@ -232,68 +229,60 @@ const V=(x,y,w,h,cls,t)=>'<rect class="bx '+cls+'" x="'+x+'" y="'+y+'" width="'+
 function A(id,pts,label,lx,ly,anchor,dash){let s='<polyline class="ar'+(dash?' dash':'')+'" points="'+pts.map(p=>p.join(',')).join(' ')+'" marker-end="url(#ah-'+id+')"/>';
   if(label)s+='<text class="al" x="'+lx+'" y="'+ly+'" text-anchor="'+(anchor||'middle')+'">'+esc(label)+'</text>';return s;}
 function P(x,y,n){const q=Q[n-1];return '<g class="pin'+(q.star?' star':'')+'"><title>Q'+n+' — '+esc(q.q)+'</title><circle cx="'+x+'" cy="'+y+'" r="11.5"/><text x="'+x+'" y="'+(y+3.5)+'">Q'+n+'</text></g>';}
-const T=(x,y,t)=>'<text class="rowl" x="'+x+'" y="'+y+'">'+esc(t)+'</text>';
+const L=(x,y,t,anchor)=>'<text class="al" x="'+x+'" y="'+y+'" text-anchor="'+(anchor||'middle')+'">'+esc(t)+'</text>';
 function draw(id,w,h,body){document.getElementById(id).innerHTML='<svg viewBox="0 0 '+w+' '+h+'" role="img"><defs><marker id="ah-'+id+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7d7466"/></marker></defs>'+body+'</svg>';}
 
 /* ---------- Flow 1: system context ---------- */
-draw('f1',1100,420,
-  C(285,40,420,362,'ZTOR PLATFORM · STAYS OURS','cz')+C(775,40,310,362,'OPEN LOYALTY','co')+
+draw('f1',1100,440,
+  C(285,40,420,385,'ZTOR PLATFORM · STAYS OURS','cz')+C(775,40,310,385,'OPEN LOYALTY','co')+
   B(20,95,215,46,'bs','ztor.com')+B(20,175,215,46,'bs','lloud.club','first creator site')+B(20,255,215,46,'bs','more creator sites','2027',1)+
-  V(300,75,52,310,'bz','Creator API')+
+  V(300,75,52,335,'bz','Creator API')+
   A('f1',[[235,118],[300,118]])+A('f1',[[235,198],[300,198]])+A('f1',[[235,278],[300,278]],null,0,0,null,1)+
   B(372,75,155,46,'bz','Identity','one account per fan')+B(537,75,155,46,'bz','Commerce','eShop · tickets · rentals')+
-  B(372,172,320,66,'bzs','Loyalty adapter','crew split · decay · percentile rank')+
-  B(372,304,320,46,'bz','Policy · gating · Media Vault')+
+  B(372,172,320,56,'bz','Loyalty events','orders · engagement · daily tasks')+
+  B(372,335,320,50,'bz','Policy · gating · Media Vault','uses score and tier')+
   A('f1',[[450,121],[450,172]],'member id',457,151,'start')+A('f1',[[615,121],[615,172]],'paid order',622,151,'start')+
-  A('f1',[[532,238],[532,304]],'score · tier',539,276,'start')+
-  B(795,72,270,46,'bo','Members','id = Ztor user id')+B(795,128,270,46,'bo','Wallets','one per artist')+
-  B(795,184,270,46,'bo','Ledger','append-only · every entry carries our order id')+
-  B(795,240,270,46,'bo','Tiers · rewards · achievements')+B(795,334,270,46,'bo','Admin back-office')+
-  A('f1',[[692,190],[795,151]],'add points',730,150)+A('f1',[[795,263],[692,224]],'webhooks',738,268)+
-  P(266,176,8)+P(742,126,3)+P(745,292,9)+P(1066,128,1)+P(1066,184,4)+P(1066,240,2)+P(1066,54,10));
+  B(795,72,270,44,'bo','Members','id = Ztor user id')+B(795,126,270,44,'bo','Wallets','one per artist')+
+  B(795,180,270,44,'bo','Ledger','append-only · every entry carries our order id')+
+  B(795,234,270,48,'bos','Scoring','decay · rank · percentile tiers')+
+  B(795,292,270,44,'bo','Rewards · achievements')+B(795,358,270,44,'bo','Admin back-office')+
+  A('f1',[[692,195],[795,148]],'add points',744,148)+A('f1',[[795,258],[692,355]],'webhooks: score · tier',744,308)+
+  P(744,122,6)+P(744,334,10)+P(1066,126,1)+P(1066,234,2)+P(1066,54,11));
 
 /* ---------- Flow 2: one purchase, many artists ---------- */
 draw('f2',1100,330,
-  C(690,28,395,290,'OPEN LOYALTY','co')+
-  B(20,120,170,60,'bs','Fan rents a film','NT$100')+B(225,120,150,60,'bz','Ztor','paid order')+
-  B(410,100,215,96,'bzs','Loyalty adapter','splits by job weight',0,'100% · 80% · 60% · 40% · 20%')+
-  A('f2',[[190,150],[225,150]])+A('f2',[[375,150],[410,150]])+
-  B(715,60,345,42,'bo','Director wallet   +800')+B(715,116,345,42,'bo','Supporting actor wallet   +640')+
-  B(715,172,345,42,'bo','… up to 17 credited artists','',1)+B(715,254,345,48,'bo','Ledger','17 entries · one order id')+
-  A('f2',[[625,140],[715,81]])+A('f2',[[625,148],[715,137]])+A('f2',[[625,156],[715,193]],null,0,0,null,1)+
-  '<text class="al" x="517" y="86" text-anchor="middle">1 order → N add-points calls</text>'+
-  '<text class="al" x="517" y="220" text-anchor="middle">rolling 90-day caps per artist · daily-task claims</text>'+
-  B(225,255,150,46,'bn','Refund')+A('f2',[[375,278],[715,278]],'reverses every entry',545,270)+
-  P(662,112,3)+P(1066,44,1)+P(517,243,7));
+  C(450,28,635,290,'OPEN LOYALTY','co')+
+  B(20,120,170,60,'bs','Fan rents a film','NT$100')+B(225,120,170,60,'bz','Ztor','paid order · film credits')+
+  A('f2',[[190,150],[225,150]])+A('f2',[[395,150],[478,150]],'1 event',436,140)+
+  B(478,100,205,100,'bos','Split by job weight','artists + weights in → N entries out',0,'100% · 80% · 60% · 40% · 20%')+
+  B(760,60,305,42,'bo','Director wallet   +800')+B(760,116,305,42,'bo','Supporting actor wallet   +640')+
+  B(760,172,305,42,'bo','… up to 17 credited artists','',1)+B(760,254,305,48,'bo','Ledger','17 entries · one order id')+
+  A('f2',[[683,140],[760,81]])+A('f2',[[683,150],[760,137]])+A('f2',[[683,160],[760,193]],null,0,0,null,1)+
+  L(560,228,'caps per artist · rolling 90 days · claim-to-earn tasks')+
+  B(225,255,170,46,'bn','Refund')+A('f2',[[395,278],[760,278]],'reverses every entry',577,270)+
+  P(436,176,6)+P(722,224,7)+P(1066,44,1));
 
-/* ---------- Flow 3: raw points to tier ---------- */
-draw('f3',1100,345,
-  C(20,28,310,300,'OPEN LOYALTY','co')+C(380,28,430,300,'ZTOR · LOYALTY ADAPTER','cz')+
-  B(40,75,270,50,'bo','Ledger','raw points · never edited')+B(40,250,270,50,'bo','Tier','per fan, per artist')+
-  B(400,75,180,50,'bz','Read ledger')+B(610,75,180,50,'bzs','Decay on read','points × 2^(−days ÷ 45)')+
-  B(610,162,180,50,'bz','Rank fans','within each artist')+B(400,162,180,50,'bzs','Weekly percentile cut','top 1% · 10% · 30%')+
-  B(400,250,390,50,'bz','Set tier through your API','upgrades at once · demotions after 14 days')+
-  A('f3',[[310,100],[400,100]],'export · stream · API',355,91)+A('f3',[[580,100],[610,100]])+A('f3',[[700,125],[700,162]])+
-  A('f3',[[610,187],[580,187]])+A('f3',[[490,212],[490,250]])+
-  A('f3',[[400,275],[310,275]],'tier per artist',355,266)+
-  B(860,162,220,50,'bs','Leaderboard on the site','one board per artist')+A('f3',[[790,187],[860,187]])+
-  B(860,250,220,50,'bs','Perks','VIP auction · shop access · vault')+A('f3',[[790,275],[860,275]],'tier changed',825,266)+
-  P(355,124,4)+P(342,299,2)+P(369,299,5)+P(1066,160,6));
+/* ---------- Flow 3: raw points to tier, inside Open Loyalty ---------- */
+draw('f3',1100,325,
+  C(250,28,605,285,'OPEN LOYALTY · WHERE WE WANT THE LOGIC','co')+
+  B(20,75,190,50,'bz','Ztor sends events','orders · engagement · tasks')+
+  B(275,75,170,50,'bo','Ledger','raw points · never edited')+B(475,75,170,50,'bos','Decay','halves every 45 days')+B(675,75,155,50,'bo','Score','per fan, per artist')+
+  B(675,162,155,50,'bos','Rank','within each artist')+B(475,162,170,50,'bos','Percentile tiers','top 1% · 10% · 30% · weekly')+B(275,162,170,50,'bos','Tier','per fan, per artist')+
+  B(20,162,190,50,'bz','Ztor gates perks','VIP auction · shop · vault')+B(895,162,190,50,'bs','Leaderboard on the site','one board per artist')+
+  B(275,250,555,44,'bo','Not native? Formulas · scripts · scheduled jobs inside Open Loyalty','',1)+
+  A('f3',[[210,100],[275,100]])+A('f3',[[445,100],[475,100]])+A('f3',[[645,100],[675,100]])+A('f3',[[752,125],[752,162]])+
+  A('f3',[[675,187],[645,187]])+A('f3',[[475,187],[445,187]])+A('f3',[[275,187],[210,187]])+L(242,178,'tier changed')+
+  A('f3',[[830,187],[895,187]])+
+  P(641,73,3)+P(826,160,5)+P(641,160,4)+P(441,160,2)+P(826,250,8)+P(841,44,9));
 
-/* ---------- Flow 4: two ways to connect ---------- */
-draw('f4',1100,335,
-  T(20,32,'PLAN A — EVERYTHING THROUGH OUR API')+
-  B(20,48,190,50,'bs','lloud.club')+B(330,48,210,50,'bz','Ztor Creator API')+B(670,48,210,50,'bo','Open Loyalty')+
-  A('f4',[[210,73],[330,73]],'one API for the site',270,64)+A('f4',[[540,73],[670,73]],'add · read · tiers',605,64)+
-  B(920,48,165,50,'bn','One integration','site never sees you')+
-  T(20,172,'OPTION B — THE SITE READS FROM YOU DIRECTLY')+
-  B(20,188,190,50,'bs','lloud.club')+B(670,188,210,50,'bo','Open Loyalty')+
-  A('f4',[[210,213],[670,213]],'balance · tier · rewards — per-member token',440,204)+
-  B(330,262,210,48,'bz','Ztor','the only writer of points')+
-  A('f4',[[540,278],[720,278],[720,238]],'orders · members',630,270)+
-  A('f4',[[790,238],[790,300],[540,300]],'webhooks: points · tier',665,318)+
-  B(920,188,165,50,'bn','Two integrations','faster for the site')+
-  P(440,236,8)+P(815,290,9));
+/* ---------- Flow 4: how creator sites connect ---------- */
+draw('f4',1100,200,
+  B(20,40,190,52,'bs','lloud.club')+B(20,118,190,52,'bs','ztor.com')+
+  B(330,62,210,66,'bz','Ztor Creator API','one API for every site')+B(670,62,210,66,'bo','Open Loyalty')+
+  B(920,62,165,66,'bn','One integration','sites never call you')+
+  A('f4',[[210,66],[330,84]])+A('f4',[[210,144],[330,108]])+
+  A('f4',[[540,82],[670,82]],'add points · read',605,73)+A('f4',[[670,110],[540,110]],'webhooks',605,128)+
+  P(605,46,11)+P(605,152,10));
 </script>
 </body>
 </html>
