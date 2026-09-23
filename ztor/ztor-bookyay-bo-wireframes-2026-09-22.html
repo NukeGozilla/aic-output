@@ -20,7 +20,10 @@ section{margin-top:38px;scroll-margin-top:64px}
 .shead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:6px}
 .snum{background:var(--gold);color:#fff;border-radius:8px;padding:2px 10px;font-weight:800;font-size:13px}
 .shead h2{font-size:16px;margin:0;color:var(--gold)}
-.goal{color:var(--muted);font-size:12.5px;margin:0 0 12px}
+.goal{color:var(--muted);font-size:12.5px;margin:0 0 8px}
+.req{border-left:4px solid var(--gold);background:var(--gold-bg);border-radius:0 8px 8px 0;padding:8px 12px;margin:0 0 12px;font-size:12.5px}
+.req b{color:var(--gold)}
+.req code{background:#fff;border-radius:4px;padding:0 5px;font-size:11.5px;color:var(--coral)}
 .stage{display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:start}
 @media(max-width:800px){.stage{grid-template-columns:1fr}}
 .wf{background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r);padding:14px 16px 16px;box-shadow:0 1px 3px rgba(40,35,25,.05)}
@@ -37,11 +40,16 @@ section{margin-top:38px;scroll-margin-top:64px}
 .box.new::before{content:"NEW · ";font-weight:800;color:var(--teal);font-size:10.5px;letter-spacing:.5px}
 .box.native{border-color:var(--line);border-style:solid;background:#fff}
 .box.native::before{content:"NATIVE · ";font-weight:800;color:var(--muted);font-size:10.5px;letter-spacing:.5px}
+.box.opt{border-color:var(--blue);border-style:dotted;background:var(--blue-bg)}
+.box.opt::before{content:"OPTIONAL · ";font-weight:800;color:var(--blue);font-size:10.5px;letter-spacing:.5px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row>*{flex:1;min-width:120px}
 .btn{display:inline-block;background:var(--txt);color:#fff;border-radius:8px;padding:8px 16px;font-weight:700;font-size:12.5px}
 .btn.ghost{background:var(--panel);color:var(--txt);border:1.5px solid var(--line)}
 .btn.new{background:var(--teal)}
+.toggle{display:inline-block;width:38px;height:20px;border-radius:12px;background:var(--teal);position:relative;vertical-align:middle;margin:0 6px}
+.toggle::after{content:"";position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+.toggle.off{background:#c9c4b8}.toggle.off::after{right:auto;left:2px}
 .pill{display:inline-block;border-radius:12px;padding:2px 10px;font-size:11px;font-weight:700;margin:2px 2px 2px 0}
 .pill.ok{background:var(--teal-bg);color:var(--teal)}
 .pill.warn{background:var(--gold-bg);color:var(--gold)}
@@ -56,8 +64,6 @@ section{margin-top:38px;scroll-margin-top:64px}
 .gone{border:1.5px dashed var(--coral);background:var(--coral-bg);border-radius:8px;padding:8px 10px;margin:8px 0;font-size:12px;color:var(--coral)}
 .gone b{color:var(--coral)}
 .screenlbl{display:inline-block;background:var(--txt);color:#fff;border-radius:6px 6px 0 0;padding:3px 12px;font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:-2px}
-.pagediv{display:flex;align-items:center;gap:10px;margin:16px 0 10px;color:var(--gold);font-size:11.5px;font-weight:700}
-.pagediv::before,.pagediv::after{content:"";flex:1;border-top:2px dashed var(--gold);opacity:.5}
 .flow{display:flex;gap:0;align-items:stretch;flex-wrap:wrap}
 .fstep{background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12px;margin:4px 0;flex:1;min-width:130px}
 .fstep b{display:block}
@@ -79,74 +85,60 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="wrap">
 <div class="docnav" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px"><a href="ztor-bookyay-ticketing-brd.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">BRD v1.3</a><a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">Feature wireframes</a><a href="ztor-bookyay-field-mapping-2026-09-08.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">Field mapping</a><a href="ztor-bookyay-bo-wireframes-2026-09-22.html" style="display:inline-block;border:1.5px solid var(--gold);background:var(--gold-bg);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:800;color:var(--gold);text-decoration:none">Bookyay BO changes</a></div>
 <h1>Bookyay BO changes &amp; channel API — dev wireframes</h1>
-<p class="sub">For Eric's team · 2026-09-22 · from the UAT BO review · <b>NATIVE</b> = exists today, <b>NEW</b> = build · contract: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · tickets: <code>bookyay-side-dev-spec-2026-09-22.md</code> (BO-1…11 · API-0…7) · Model C = one channel order per ticket</p>
-<div class="legend"><span><i class="sw" style="background:var(--teal)"></i>NEW build</span><span><i class="sw" style="background:#fff;border:1.5px solid var(--line)"></i>NATIVE (no change)</span><span><i class="sw" style="background:var(--gold)"></i>Bookyay side</span><span><i class="sw" style="background:var(--blue)"></i>Ztor side</span></div>
+<p class="sub">For Eric's team · 2026-09-22 · rev 09-23 (Jeff review: general-event toggle, no hand-over UI, lean registry) · from the UAT BO review · <b>NATIVE</b> = exists today, <b>NEW</b> = build, <b>OPTIONAL</b> = biz + dev decide · contract: <a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · tickets: <code>bookyay-side-dev-spec-2026-09-22.md</code> · Model C = one channel order per ticket · Phase 1 event type = <b>一般活動（活動管理，kind=real）</b>, not 票務活動</p>
+<div class="legend"><span><i class="sw" style="background:var(--teal)"></i>NEW build</span><span><i class="sw" style="background:#fff;border:1.5px solid var(--line)"></i>NATIVE (no change)</span><span><i class="sw" style="background:var(--blue-bg);border:1.5px dotted var(--blue)"></i>OPTIONAL UI</span><span><i class="sw" style="background:var(--gold)"></i>Bookyay side</span><span><i class="sw" style="background:var(--blue)"></i>Ztor side</span></div>
 
 <nav aria-label="Sections">
-<a href="#s0">0 · 全流程</a><a href="#s1">1 · 通路夥伴</a><a href="#s2">2 · 預留門票</a><a href="#s3">3 · 移交通路</a><a href="#s4">4 · 通路訂單</a><a href="#s5">5 · 報表</a><a href="#s6">6 · Channel API</a><a href="#s7">7 · Webhooks</a>
+<a href="#s0">0 · 全流程</a><a href="#s1">1 · 通路夥伴</a><a href="#s2">2 · Ztor 活動開關</a><a href="#s3">3 · 自動預開</a><a href="#s4">4 · 通路訂單</a><a href="#s5">5 · 報表</a><a href="#s6">6 · Channel API</a><a href="#s7">7 · Webhooks</a>
 </nav>
 
 <!-- S0 -->
 <section id="s0">
 <div class="shead"><span class="snum">0</span><h2>全流程 · Bookyay 批發，Ztor 零售（Model C）</h2></div>
-<p class="goal">五個 Bookyay 端動作、四條 API、一組 webhook。票券在 Bookyay 出生，在 Ztor 賣，回到 Bookyay 記帳。</p>
+<div class="req"><b>需求</b>：Bookyay 一般活動勾「Ztor 活動」後，整場票（take-all）預開 QR 交給 Ztor 販售；銷售、作廢、收回回到 Bookyay 記帳與掃票。Bookyay 端不需要新的營運流程 — 建活動、發佈、取消訂單都是既有動作。（BRD §1 · BR-02 · BR-40 · BR-60）</div>
+<p class="goal">Bookyay 端只多兩個東西：一個開關、一個背景工作；其餘是 API 與 webhook。</p>
 <div class="flow">
-  <div class="fstep by"><b>① 建活動</b>票務活動 · 普通模式 · GA · HKD<span class="pill gray">native</span></div><div class="farr">→</div>
-  <div class="fstep by"><b>② 預留 Cn + 分配通路</b>預留全部可用座位<span class="pill ok">BO-2/3</span></div><div class="farr">→</div>
-  <div class="fstep by"><b>③ 移交通路</b>N 張票 = N 筆通路訂單 <code>pool</code><span class="pill ok">BO-4</span></div><div class="farr">→</div>
+  <div class="fstep by"><b>① 建一般活動</b>活動管理 · 門票種類 · 門票時段 · HKD<span class="pill gray">native</span></div><div class="farr">→</div>
+  <div class="fstep by"><b>② 勾 Ztor 活動</b>基本資料一個開關<span class="pill ok">BO-2</span></div><div class="farr">→</div>
+  <div class="fstep by"><b>③ 發佈核准 → 自動預開</b>每時段人數上限 = N 張票 = N 筆通路訂單 <code>pool</code>，無 UI<span class="pill ok">BO-4</span></div><div class="farr">→</div>
   <div class="fstep zt"><b>④ Ztor 匯入 &amp; 販售</b>API-1/2/3 · 下單前 API-4<span class="pill blue">Ztor</span></div><div class="farr">→</div>
-  <div class="fstep by"><b>⑤ 回寫</b>API-5 → 訂單 <code>pool→sold</code><span class="pill ok">BO-6</span></div><div class="farr">→</div>
-  <div class="fstep by"><b>⑥ 作廢／收回</b>取消訂單 → webhook<span class="pill ok">BO-7/8</span></div>
+  <div class="fstep by"><b>⑤ 回寫</b>API-5 → 訂單 <code>pool→sold</code> + 票種<span class="pill ok">BO-6</span></div><div class="farr">→</div>
+  <div class="fstep by"><b>⑥ 作廢／收回</b>取消訂單 · 改人數上限 → webhook<span class="pill ok">BO-7/8</span></div>
 </div>
 <div class="row" style="margin-top:10px">
-  <div class="box native"><b>不用建</b>：Cn 票種 · 預留門票 · 私人活動＋私人連結 · 活動限購 · 每藝人主辦者 · 入場統計 · 取消訂單</div>
-  <div class="box new"><b>要建</b>：通路夥伴登錄 · 分配通路欄位 · 全場預留 · 移交通路 · 購票來源 Ztor · 回寫套用 · webhook 基礎建設 · 報表通路篩選 · Channel API</div>
+  <div class="box native"><b>不用建</b>：一般活動精靈 · 門票種類／時段 · 私人活動＋私人連結 · 活動限購 · 每藝人主辦者 · 入場統計 · 取消訂單 · 修改門票類別</div>
+  <div class="box new"><b>要建</b>：Ztor 活動開關 · 發佈後自動預開（背景）· 購票來源 Ztor · 回寫套用 · webhook 基礎建設 · 報表通路篩選 · Channel API · 通路設定（資料，UI 可選）</div>
 </div>
 <div class="gone"><b>Model A（備案）</b>：一筆 pool 訂單裝全部票 → 要新建「單張作廢」＋通路交易表＋新報表。Spec 附錄 A。</div>
 </section>
 
 <!-- S1 -->
 <section id="s1">
-<div class="shead"><span class="snum">1</span><h2>系統設定 · 通路夥伴（BO-1 · BO-9）</h2></div>
-<p class="goal">一個通路一筆紀錄：API 金鑰、webhook、推送紀錄。不是逐活動設定。</p>
+<div class="shead"><span class="snum">1</span><h2>通路設定 · 通路夥伴（BO-1 · BO-9）</h2></div>
+<div class="req"><b>需求</b>：系統要有一筆「Ztor 通路」設定 — API 金鑰、webhook URL／密鑰、佔位顧客、狀態 — 讓 API 認證、webhook 推送與回寫紀錄有地方掛。<b>只有一個通路，不預期新增</b>：資料一定要有，管理 UI 是可選項（biz + dev 決定）。（API-0 · BO-9）</div>
+<p class="goal">最簡版 = 一筆設定資料 + 一頁紀錄；完整 UI 留給團隊決定。</p>
 <div class="stage">
 <div class="wf">
-  <div class="states"><span class="lbl">Screen</span>
-    <button aria-pressed="true" data-for="s1a">列表</button>
-    <button aria-pressed="false" data-for="s1b">通路詳情 · 金鑰</button>
-    <button aria-pressed="false" data-for="s1c">推送紀錄</button>
+  <div class="states"><span class="lbl">Scope</span>
+    <button aria-pressed="true" data-for="s1a">最簡（必做）</button>
+    <button aria-pressed="false" data-for="s1b">完整 UI（可選）</button>
   </div>
   <div data-panel="s1a" class="on">
-    <span class="screenlbl">系統設定 › 通路夥伴</span>
-    <div class="box new" style="margin-top:0"><b>側欄</b>：活動類別 · 商品類別 · 活動主題 · 商品主題 · 票務基本設定 · <b>通路夥伴</b>
-      <table class="t" style="margin-top:8px"><tr><th>代碼</th><th>名稱</th><th>狀態</th><th>Webhook</th><th>最近推送</th><th></th></tr>
-      <tr><td><code>ztor</code></td><td>Ztor</td><td><span class="pill ok">actived</span></td><td>https://api.ztor.com/hooks/bookyay</td><td>2 分鐘前 · 200</td><td>⋮</td></tr></table>
-      <span class="btn new">新增通路</span>
-    </div>
+    <span class="screenlbl">設定資料（seed / config）＋ 紀錄頁</span>
+    <div class="box new" style="margin-top:0"><b>通路紀錄 ×1</b>：代碼 <code>ztor</code> · 名稱 · 狀態 · API 金鑰（hash）· webhook URL · HMAC 密鑰 · 佔位顧客 · 通知 email — 由 dev 以設定檔／seed 建立，金鑰輪替走指令</div>
+    <div class="box new"><b>系統設定 › 通路紀錄</b>（唯讀頁，必做）：webhook 推送紀錄（時間 · 類型 · 活動 · HTTP · 嘗試 · <b>重送</b>）＋ 回寫紀錄（batch id · ok/duplicate/conflict/rejected）— 出問題時營運看這裡</div>
+    <div class="box">Suspended → API 回 <code>403</code>；webhook 排隊不丟</div>
   </div>
   <div data-panel="s1b">
-    <span class="screenlbl">通路夥伴 › ztor</span>
-    <div class="box new" style="margin-top:0"><b>基本</b>：代碼 <code>ztor</code>（不可改）· 名稱 · 狀態 actived / suspended · 通知 email · 報表幣別 <b>HKD</b>（固定）</div>
-    <div class="box new"><b>合作夥伴顧客</b>：通路訂單的「顧客」佔位帳號（顯示 <b>Ztor</b>，永不放買家資料 BR-61）</div>
-    <div class="box new"><b>API 金鑰</b>：前綴 <code>byk_live_3f…</code> · 建立時間 · <span class="btn ghost">輪替</span>（新舊並存 24h）<br><span class="pill warn">完整金鑰只顯示一次</span></div>
-    <div class="box new"><b>Webhook</b>：URL · 密鑰（HMAC-SHA256）· <span class="btn ghost">測試推送</span></div>
-    <div class="box"><b>Suspended</b> → API 回 <code>403</code>；webhook 排隊不丟</div>
-  </div>
-  <div data-panel="s1c">
-    <span class="screenlbl">通路夥伴 › ztor › 推送紀錄</span>
-    <div class="box new" style="margin-top:0">篩選：活動 · 類型 · 狀態 · 日期
-      <table class="t" style="margin-top:8px"><tr><th>時間</th><th>類型</th><th>活動</th><th>HTTP</th><th>嘗試</th><th>下次重試</th><th></th></tr>
-      <tr><td>11/05 03:20</td><td><code>ticket.voided</code></td><td>1000537</td><td><span class="pill ok">200</span></td><td>1</td><td>—</td><td>檢視 · 重送</td></tr>
-      <tr><td>11/05 03:18</td><td><code>allocation.changed</code></td><td>1000537</td><td><span class="pill bad">500</span></td><td>3</td><td>30 分鐘</td><td>檢視 · <b>重送</b></td></tr>
-      <tr><td>11/04 16:02</td><td><span class="pill blue">同步紀錄</span> batch 6f1c…</td><td>—</td><td>202</td><td>—</td><td>—</td><td>3 ok · 1 conflict</td></tr></table>
-    </div>
-    <div class="box">重送 = 同一個 delivery id；Ztor 端以 id 去重</div>
+    <span class="screenlbl">系統設定 › 通路夥伴（可選）</span>
+    <div class="box opt" style="margin-top:0">列表 + 詳情：代碼（不可改）· 名稱 · 狀態 · 通知 email · <b>API 金鑰</b>（前綴顯示，輪替按鈕，完整金鑰只顯示一次）· <b>Webhook</b> URL／密鑰／測試推送 · 佔位顧客</div>
+    <div class="box">值得做的時機：第二個通路出現、或營運需要自助輪替金鑰</div>
   </div>
 </div>
 <div class="notes">
 <span class="chip">Channel record = auth root for API-0 <code>BO-1</code></span>
 <span class="chip">Outbox + retry 1m→24h · signed <code>X-Bookyay-Signature</code> <code>BO-9</code></span>
-<span class="chip">回寫結果（API-5）也進同一個紀錄頁</span>
+<span class="chip decide">Biz + dev — 要不要管理 UI？（最簡版已滿足需求）</span>
 <span class="chip decide">Q9 — 現有 queue worker 可重用？</span>
 </div>
 </div>
@@ -154,83 +146,79 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 
 <!-- S2 -->
 <section id="s2">
-<div class="shead"><span class="snum">2</span><h2>預留門票 · 分配通路＋全場預留（BO-2 · BO-3）</h2></div>
-<p class="goal">既有流程加兩件事：Cn 預留必選通路；一鍵預留全部可用座位。</p>
+<div class="shead"><span class="snum">2</span><h2>一般活動 · Ztor 活動開關（BO-2）</h2></div>
+<div class="req"><b>需求</b>：營運要能標記「這場一般活動在 Ztor 販售」。Phase 1 = take-all、只在 Ztor 賣（09-08）：一個開關就夠 — 開了就進 Ztor feed、整場預開、bookyay.com 不販售。不需要預留門票／選座／分配數量。（BR-01 · BR-02 · BR-20）</div>
+<p class="goal">既有一般活動精靈（基本資料 → 詳細資料 → 門票種類 → 門票時段 → 進階設定 → 門票預覽 → 發佈）加一個欄位。</p>
 <div class="stage">
 <div class="wf">
-  <div class="states"><span class="lbl">Step</span>
-    <button aria-pressed="true" data-for="s2a">選座</button>
-    <button aria-pressed="false" data-for="s2b">預留座位 dialog</button>
-    <button aria-pressed="false" data-for="s2c">列表</button>
+  <div class="states"><span class="lbl">Screen</span>
+    <button aria-pressed="true" data-for="s2a">基本資料 · 開關</button>
+    <button aria-pressed="false" data-for="s2b">發佈步驟</button>
+    <button aria-pressed="false" data-for="s2c">活動列表</button>
   </div>
   <div data-panel="s2a" class="on">
-    <span class="screenlbl">預留門票 › 建立 › 選擇座位</span>
-    <div class="box native" style="margin-top:0"><b>時段</b> 2026/12/30 21:00 · 可用 366 · 已預留 0 · 已售 0</div>
-    <div class="box native"><b>工具列</b>：＋ － 點選 框選 套索 · 可選取座位：所有座位 · 重新載入座位表</div>
-    <div class="box new"><b>預留全部可用座位</b> <span class="btn new">全場（366）</span> <span class="btn ghost">整區 Section B（210）</span><br>只選「可用」— 排除 已保留／已預留／已售／不可用 · 儲存時伺服器再驗一次（搶先售出者勝）</div>
-    <div class="box"><span class="btn">預留座位(366)</span></div>
+    <span class="screenlbl">活動管理 › 活動 › 1 基本資料</span>
+    <div class="box native" style="margin-top:0">活動名稱* · 活動主辦名稱* · 活動類別* / 子類別* · 國家/地區* · 標籤 · 最少/最大人數 · 活動語言*</div>
+    <div class="box new"><b>Ztor 活動</b> <span class="toggle"></span> 於 Ztor 販售（整場）<br><span class="pill warn">開啟後</span> bookyay.com 不販售此活動（活動頁可見、無購票）· 發佈核准後自動預開全部門票並交付 Ztor · 進入 Ztor feed<br><span class="pill gray">條件</span> 一般活動（kind=real）· 非優先訂票 · 非測試資料 · 票務活動精靈不顯示此開關（Phase 1）</div>
+    <div class="box"><b>關閉</b>（撤銷分配）：只在尚無 Ztor 售出時允許 → 走 BO-8 收回全部後才生效；已售出 → 提示改走整場取消</div>
   </div>
   <div data-panel="s2b">
-    <span class="screenlbl">預留座位</span>
-    <div class="box native" style="margin-top:0">活動時間 · 預留座位數量 <b>366</b> · 已選擇座位 Section A–C …</div>
-    <div class="box native"><b>預留代碼*</b> <code>Cn</code> Consignment（reserveMode 3）</div>
-    <div class="box new"><b>分配通路*</b> ▾ Ztor <span class="pill warn">Cn 才出現、必填</span> → 寫入 seat <code>reserveVia = ztor</code></div>
-    <div class="box new"><b>顧客名稱 / 電郵 / 電話</b> = 通路佔位帳號 <span class="pill gray">唯讀</span></div>
-    <div class="box native">設有座位預留完結日期 ☐ → 到期自動收回（BO-8）· 預留詳情（備註）</div>
-    <div class="box"><span class="btn ghost">取消</span> <span class="btn">確定</span></div>
+    <span class="screenlbl">活動管理 › 活動 › 7 發佈</span>
+    <div class="box native" style="margin-top:0">活動性質 公開／私人 · 發售時間 · 活動主題 · 發佈狀態 草稿 → 等待批核 → 批核中 → 待發佈 → 已發佈</div>
+    <div class="box new">摘要列：<span class="pill blue">Ztor 活動</span> 核准後將預開 <b>1,005</b> 張（時段 A 1,000 早鳥票 · 時段 B 5 優惠票）並交付 Ztor · 私人活動建議開啟（BR-20 store-only）</div>
+    <div class="box">審核中修訂：Ztor 繼續賣已核准版本；暫停發售／暫時下架才是「停賣」訊號（webhook）</div>
   </div>
   <div data-panel="s2c">
-    <span class="screenlbl">預留門票管理</span>
-    <div class="box new" style="margin-top:0">篩選新增 <b>通路</b> ▾
-      <table class="t" style="margin-top:8px"><tr><th>活動</th><th>時段</th><th>代碼</th><th>通路</th><th>價格區域</th><th>數量</th><th>移交</th><th></th></tr>
-      <tr><td>小巨蛋演唱會</td><td>12/30</td><td>Cn</td><td><span class="pill blue">Ztor</span></td><td>HK$200 (1)</td><td>210</td><td><span class="pill ok">已移交 210</span></td><td>⋮</td></tr>
-      <tr><td>小巨蛋演唱會</td><td>12/30</td><td>Cn</td><td><span class="pill blue">Ztor</span></td><td>HK$100 (2)</td><td>156</td><td><span class="pill warn">未移交</span></td><td>⋮</td></tr></table>
+    <span class="screenlbl">活動管理 › 列表</span>
+    <div class="box new" style="margin-top:0">篩選 <b>通路</b> ▾ 全部 · Bookyay · Ztor
+      <table class="t" style="margin-top:8px"><tr><th>活動名稱</th><th>類別</th><th>主辦</th><th>活動時間</th><th>通路</th><th>預開</th><th>售出</th><th>狀態</th></tr>
+      <tr><td>普通活動-階段性售票功能</td><td>喜怒哀樂 › 太陽獨家</td><td>Travelconnect</td><td>2027/09/16</td><td><span class="pill blue">Ztor</span></td><td><span class="pill ok">1,005</span></td><td>0 <span class="pill gray">Ztor 0</span></td><td>已發佈</td></tr></table>
     </div>
-    <div class="box">⋮ = 修改預留記錄 · <b>移交通路</b>（未移交時）· <b>縮減／收回</b>（已移交時，BO-8）· 售賣門票（非通路預留）</div>
   </div>
 </div>
 <div class="notes">
-<span class="chip">Cn ticket type is native; channel field is the only add <code>BO-2</code></span>
-<span class="chip">Take-all (BR-02) = one click, server-clamped <code>BO-3</code></span>
-<span class="chip">Top-up = a second channel reservation on the same event <code>BR-50</code></span>
-<span class="chip decide">Q4 — <code>reserveVia</code> 目前有用嗎？</span>
+<span class="chip">One flag replaces reservation + seat select + channel field <code>BO-2</code></span>
+<span class="chip">Feed filter = <code>kind:"real"</code> + flag + not test <code>API-1</code></span>
+<span class="chip">bookyay.com checkout off for flagged events (Phase 1 Ztor-only, 09-08); Phase 2 co-sale = relax this</span>
+<span class="chip decide">開關放基本資料還是發佈步驟？（提案：基本資料，發佈步驟顯示摘要）</span>
 </div>
-</div>
+<div class="gone"><b>不再需要</b>：預留門票 Cn 分配 · 分配通路欄位 · 全場預留按鈕 — 那是票務活動（座位表）的機制；一般活動沒有座位表。</div>
 </section>
 
 <!-- S3 -->
 <section id="s3">
-<div class="shead"><span class="snum">3</span><h2>移交通路 · 預開票券（BO-4）</h2></div>
-<p class="goal">一張票一筆通路訂單。票立刻可掃（Organizer App 不變），但不算銷售。</p>
+<div class="shead"><span class="snum">3</span><h2>發佈後自動預開（BO-4 · 背景工作，無 UI）</h2></div>
+<div class="req"><b>需求</b>：Ztor 在分配時就要拿到可掃的 QR（BR-02 / A4 「預開 QR 是掃票契約」）。一般活動的票（UTK）本來只在售出時才產生 — 所以 Ztor 活動要在<b>發佈核准當下</b>由系統自動產生全部門票，營運不用做任何事。Bookyay 端只要一個狀態指示。</div>
+<p class="goal">觸發 = 發佈核准、或之後「時段人數上限」增加（加碼）。不是按鈕，是事件。</p>
 <div class="stage">
 <div class="wf">
   <div class="states"><span class="lbl">State</span>
-    <button aria-pressed="true" data-for="s3a">確認</button>
-    <button aria-pressed="false" data-for="s3b">執行中</button>
-    <button aria-pressed="false" data-for="s3c">完成</button>
+    <button aria-pressed="true" data-for="s3a">核准 → 預開</button>
+    <button aria-pressed="false" data-for="s3b">加碼（改上限）</button>
+    <button aria-pressed="false" data-for="s3c">失敗</button>
   </div>
   <div data-panel="s3a" class="on">
-    <span class="screenlbl">預留門票 › ⋮ › 移交通路</span>
-    <div class="box new" style="margin-top:0"><b>移交 366 張至 Ztor？</b><br>將建立 366 筆訂單 · 購票來源 <b>Ztor</b> · 通路狀態 <code>pool</code> · 顧客 = Ztor 佔位 · 付款中介 channel · 金額 0<br>不寄 email · 不計入售出票數</div>
-    <div class="box"><span class="btn ghost">取消</span> <span class="btn new">移交</span></div>
+    <span class="screenlbl">背景工作（無畫面）</span>
+    <div class="box new" style="margin-top:0"><b>每個時段</b>：產生 <code>時段人數上限</code> 張票 → 每張 = 一筆通路訂單（購票來源 Ztor · 通路狀態 <code>pool</code> · 顧客 = 佔位 · 金額 0 · 不寄 email · 不計售出）· 票種先掛該時段第一個門票種類，售出回寫時用 <b>修改門票類別</b>（native）改成實際票種</div>
+    <div class="box new">完成 → 活動列表／發佈步驟顯示 <span class="pill ok">已預開 1,005 · Ztor</span> · webhook <code>allocation.changed {added:[1,005]}</code> · API-3 可拉 <code>qrPayload</code></div>
+    <div class="box native">Organizer App 掃這些 UTK 與掃自己的票沒有差別</div>
   </div>
   <div data-panel="s3b">
-    <span class="screenlbl">預留門票管理 · 列表列</span>
-    <div class="box new" style="margin-top:0"><span class="pill warn">移交中 218 / 366</span> 背景工作 · handoverId 6f1c… · 重跑不重複</div>
+    <span class="screenlbl">活動管理 › 門票時段 › 修改（需重新提交批核）</span>
+    <div class="box native" style="margin-top:0">時段人數上限 1,000 → <b>1,200</b> → 送審 → 核准</div>
+    <div class="box new">核准時差額 200 張自動預開 → <code>allocation.changed {added:[200]}</code>（BR-50 加碼）· 上限<b>減少</b>則走 §4 收回流程（BR-51）</div>
   </div>
   <div data-panel="s3c">
-    <span class="screenlbl">結果</span>
-    <div class="box new" style="margin-top:0"><span class="pill ok">已移交 366</span> · 訂單 ORD…×366 · UTK×366 · webhook <code>allocation.changed {added:[366]}</code> <span class="pill ok">200</span></div>
-    <div class="box native"><b>票務活動管理</b> 售出票數 <b>10</b>（不變）· 總收入 HKD 200（不變）</div>
-    <div class="box"><b>API-3</b> 現在回 366 張 <code>qrPayload</code></div>
+    <span class="screenlbl">狀態</span>
+    <div class="box new" style="margin-top:0"><span class="pill bad">預開失敗 312/1,005</span> 於活動列表與通路紀錄頁；<span class="btn ghost">重試</span>（冪等，不重複）· 失敗期間活動不進 API-1</div>
   </div>
 </div>
 <div class="notes">
 <span class="chip">Pre-issue at allocation = the scanning contract (09-07) <code>BR-02</code> A4</span>
-<span class="chip">UTK <code>state actived</code>; inventory state lives on the order (<code>channelState</code>) <code>BO-4</code></span>
-<span class="chip">Idempotent job; async for 1,000</span>
-<span class="chip decide">Q6 — 售賣門票 1,000 張一次 OK？付款紀錄必填？</span>
-<div class="gone"><b>Model A</b>：一筆訂單裝 366 張 UTK → 縮減／作廢都要新建「單張作廢」</div>
+<span class="chip">UTK <code>state actived</code>; inventory state on the order (<code>channelState</code>) <code>BO-4</code></span>
+<span class="chip">Idempotent job keyed on event + session + approved revision</span>
+<span class="chip decide">Q6′ — 1,000 張背景產生 OK？票種先掛預設再改，可行？</span>
+<div class="gone"><b>不再需要</b>：移交通路確認畫面 · 售賣門票對通路 · 分配 dialog</div>
 </div>
 </div>
 </section>
@@ -238,6 +226,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <!-- S4 -->
 <section id="s4">
 <div class="shead"><span class="snum">4</span><h2>訂單管理 · 通路訂單（BO-5 · BO-6 · BO-7 · BO-8）</h2></div>
+<div class="req"><b>需求</b>：營運與財務要在既有訂單／報表看到 Ztor 銷售（<code>ztor_tag</code>）；作廢在 Bookyay BO 執行並即時通知 Ztor（BR-40）；收回未售票時絕不能碰到 Ztor 已賣出的票（BR-51/52）。（BR-40 · BR-41 · BR-51 · BR-52 · BR-60 · BR-61）</div>
 <p class="goal">既有訂單頁加三個欄位；取消訂單就是作廢；縮減是「Bookyay 提出、Ztor 執行、Bookyay 確認」。</p>
 <div class="stage">
 <div class="wf">
@@ -250,20 +239,19 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   <div data-panel="s4a" class="on">
     <span class="screenlbl">訂單管理 · 篩選 購票來源 ▾ Bookyay · BO · <b>Ztor</b></span>
     <div class="box new" style="margin-top:0">
-      <table class="t"><tr><th>訂單編號</th><th>來源</th><th>通路狀態</th><th>通路參考</th><th>數量</th><th>金額</th><th>付款中介</th><th>訂單狀態</th></tr>
-      <tr><td>ORD…8848</td><td><span class="pill blue">Ztor</span></td><td><span class="pill gray">pool</span></td><td>—</td><td>1</td><td>HKD 0</td><td>channel</td><td>已完成</td></tr>
-      <tr><td>ORD…8849</td><td><span class="pill blue">Ztor</span></td><td><span class="pill gray">pool</span></td><td>—</td><td>1</td><td>HKD 0</td><td>channel</td><td>已完成</td></tr></table>
+      <table class="t"><tr><th>訂單編號</th><th>來源</th><th>通路狀態</th><th>通路參考</th><th>票種</th><th>金額</th><th>付款中介</th><th>訂單狀態</th></tr>
+      <tr><td>ORD…8848</td><td><span class="pill blue">Ztor</span></td><td><span class="pill gray">pool</span></td><td>—</td><td>早鳥票（預設）</td><td>HKD 0</td><td>channel</td><td>已完成</td></tr>
+      <tr><td>ORD…8849</td><td><span class="pill blue">Ztor</span></td><td><span class="pill gray">pool</span></td><td>—</td><td>早鳥票（預設）</td><td>HKD 0</td><td>channel</td><td>已完成</td></tr></table>
     </div>
-    <div class="box native"><b>訂單詳情</b> › 門票資料：UTK890178852087758848 · Consignment-1 · Section B Row A Seat 10 · ⋮ 下載門票</div>
-    <div class="box">顧客 = <b>Ztor</b>（佔位）— 報表永不出現買家資料</div>
+    <div class="box">預設不顯示 pool 列（1,000 筆會淹沒真訂單）· 顧客 = <b>Ztor</b>（佔位）— 報表永不出現買家資料</div>
   </div>
   <div data-panel="s4b">
     <span class="screenlbl">同一筆訂單 · 回寫 batch 套用後</span>
     <div class="box new" style="margin-top:0">
-      <table class="t"><tr><th>訂單編號</th><th>來源</th><th>通路狀態</th><th>通路參考</th><th>金額</th><th>付款時間</th></tr>
-      <tr><td>ORD…8848</td><td><span class="pill blue">Ztor</span></td><td><span class="pill ok">sold</span></td><td><code>ZT-ORD-1042#1</code></td><td>HKD 200</td><td>11/03 09:12</td></tr></table>
+      <table class="t"><tr><th>訂單編號</th><th>來源</th><th>通路狀態</th><th>通路參考</th><th>票種</th><th>金額</th><th>付款時間</th></tr>
+      <tr><td>ORD…8848</td><td><span class="pill blue">Ztor</span></td><td><span class="pill ok">sold</span></td><td><code>ZT-ORD-1042#1</code></td><td>優惠票 <span class="pill gray">修改門票類別</span></td><td>HKD 200</td><td>11/03 09:12</td></tr></table>
     </div>
-    <div class="box"><b>現在才算銷售</b>：售出票數 +1 · 總收入 +200 · 分成報表 付款中介 channel、無手續費行</div>
+    <div class="box"><b>現在才算銷售</b>：售出票數 +1 · 總收入 +200（以 paidAt 記日）· 分成報表 付款中介 channel、無手續費行</div>
     <div class="box">同一 batch 再送一次 → 全部 <code>duplicate</code>，狀態不變</div>
   </div>
   <div data-panel="s4c">
@@ -275,20 +263,19 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <div class="box"><b>作廢 SOP</b>：① Ztor CS 手動回寫 → ② 訂單管理 以通路參考搜尋 → ③ 取消訂單 · 錢：不動，營運在 Ztor 金流後台退款（BR-40）</div>
   </div>
   <div data-panel="s4d">
-    <span class="screenlbl">預留門票 › ⋮ › 縮減／收回（BO-8 · 三步）</span>
-    <div class="box new" style="margin-top:0"><b>① 提出收回</b>：收回數量 [ 100 ] / Bookyay 認為的 pool 266 · ☐ 全部收回並撤銷分配 · <span class="btn ghost">取消</span> <span class="btn new">送出請求</span><br>→ 列表列顯示 <span class="pill warn">收回中 100</span> · webhook <code>allocation.return_requested {requestId, qty:100}</code> · <b>此時不取消任何訂單</b></div>
+    <span class="screenlbl">觸發 = 門票時段 人數上限減少 · 或 Ztor 活動開關關閉（BO-8 · 三步）</span>
+    <div class="box new" style="margin-top:0"><b>① 提出收回</b>：上限 1,000 → 900 送審核准（或關閉開關 = 全部）→ 系統建立收回請求 100 · 時段列顯示 <span class="pill warn">收回中 100</span> · webhook <code>allocation.return_requested {requestId, qty:100}</code> · <b>此時不取消任何訂單</b></div>
     <div class="box"><b>② Ztor 執行</b>：從本地 pool 挑 100 張<b>未售</b>（只有 Ztor 知道即時已售）→ 立即回寫 <code>ticket_status returned + requestId</code>；不足就回少</div>
-    <div class="box new"><b>③ Bookyay 確認</b>：對應 pool 訂單 → 撤銷 · 通路狀態 <span class="pill gray">returned</span> · 座位回 可用 · webhook <code>allocation.changed {returned:[…], remainingPool, requestId}</code> · 列表 <span class="pill ok">已收回 100</span> / <span class="pill warn">部分 96/100</span> / <span class="pill bad">逾時</span>（24h 無回應，什麼都不動）</div>
-    <div class="box">永不碰 sold · 預留完結日期到期 = 自動提出「全部收回」· <b>撤銷分配</b>只在 sold = 0 時允許（否則走整場取消）；撤銷後活動在 API 留 30 天 <code>listingState: withdrawn</code></div>
+    <div class="box new"><b>③ Bookyay 確認</b>：對應 pool 訂單 → 撤銷 · 通路狀態 <span class="pill gray">returned</span> · 庫存回到 Bookyay · webhook <code>allocation.changed {returned:[…], remainingPool, requestId}</code> · <span class="pill ok">已收回 100</span> / <span class="pill warn">部分 96/100</span> / <span class="pill bad">逾時</span>（24h 無回應，什麼都不動 — 上限維持原值）</div>
+    <div class="box">永不碰 sold · 關閉開關只在 sold = 0 時允許（否則走整場取消）；撤銷後活動在 API 留 30 天 <code>listingState: withdrawn</code></div>
     <div class="gone"><b>為什麼不直接取消</b>：Bookyay 的 pool 數落後一個同步週期 — 直接取消會把 Ztor 已賣出的票標成 returned，買家到場被拒（SA F1）</div>
   </div>
 </div>
 <div class="notes">
 <span class="chip">Source enum <code>bookyay · bo · ztor</code> — fix the BO/Back Office/網頁 mismatch <code>BO-5</code></span>
-<span class="chip">Sync-back = re-label, idempotent per <code>batchId</code>/<code>recordId</code> <code>BO-6</code></span>
+<span class="chip">Sync-back = re-label + 修改門票類別 (native), idempotent per <code>batchId</code>/<code>recordId</code> <code>BO-6</code></span>
 <span class="chip">Order-level 取消訂單 IS per-ticket void under Model C <code>BO-7</code></span>
-<span class="chip">Reduce/expiry/withdraw = request → Ztor returns unsold → Bookyay confirms; sold never claws back <code>BO-8</code> BR-51/52 · SA F1</span>
-<span class="chip">Channel sales dated by <code>paidAt</code>, revenue from order.amount (no payment row); pool rows hidden by default <code>BO-5/10</code> · SA F2</span>
+<span class="chip">Reduce/expiry/withdraw = request → Ztor returns unsold → Bookyay confirms <code>BO-8</code> BR-51/52 · SA F1</span>
 <span class="chip decide">F3 — sync-back hourly instead of daily? (Jeff, BRD BR-60)</span>
 <span class="chip decide">Q7 — 修改門票類別 in-flight work overlaps?</span>
 </div>
@@ -298,6 +285,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <!-- S5 -->
 <section id="s5">
 <div class="shead"><span class="snum">5</span><h2>報表 · 通路篩選（BO-10）</h2></div>
+<div class="req"><b>需求</b>：MVP 日常報表的家是 Bookyay BO（BR-62）— 財務要分得出 Bookyay vs Ztor 渠道，且預開但未售的票不能被算成銷售。（BR-60 · BR-62 · A5 無結算）</div>
 <p class="goal">pool 不算賣，sold 才算；每張銷售報表多一個「通路」篩選。</p>
 <div class="stage">
 <div class="wf">
@@ -310,11 +298,11 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="screenlbl">報表 › 活動售票報表</span>
     <div class="box new" style="margin-top:0">篩選 <b>通路</b> ▾ 全部 · Bookyay · BO · Ztor
       <table class="t" style="margin-top:8px"><tr><th>活動</th><th>通路</th><th>已售</th><th>收入 HKD</th></tr>
-      <tr><td>小巨蛋演唱會</td><td>Bookyay</td><td>0</td><td>0</td></tr>
-      <tr><td>小巨蛋演唱會</td><td><span class="pill blue">Ztor</span></td><td>533</td><td>106,600</td></tr>
+      <tr><td>普通活動-階段性售票功能</td><td>Bookyay</td><td>0</td><td>0</td></tr>
+      <tr><td>普通活動-階段性售票功能</td><td><span class="pill blue">Ztor</span></td><td>533</td><td>106,600</td></tr>
       <tr><td colspan="2"><b>小計</b></td><td>533</td><td>106,600</td></tr></table>
     </div>
-    <div class="box">pool 366→ 顯示為 <b>通路持有</b>，不在已售內 · 訂單報表 顧客欄 = Ztor</div>
+    <div class="box">pool 1,005 → 顯示為 <b>通路持有</b>，不在已售內 · 訂單報表 顧客欄 = Ztor · 日期以 paidAt</div>
   </div>
   <div data-panel="s5b">
     <span class="screenlbl">報表 › 票務活動入場統計</span>
@@ -323,14 +311,14 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   </div>
   <div data-panel="s5c">
     <span class="screenlbl">報表 › 票務活動分成報表</span>
-    <div class="box new" style="margin-top:0">通路 sold 金額列在主辦者下 · 付款中介 <b>channel</b> · <b>無平台費行</b>（同集團，BRD §3）</div>
+    <div class="box new" style="margin-top:0">通路 sold 金額列在主辦者下 · 付款中介 <b>channel</b> · <b>無平台費行</b>（同集團，BRD §3）· 讀訂單金額，不是付款紀錄</div>
     <div class="box">月結報表 同規則</div>
   </div>
 </div>
 <div class="notes">
 <span class="chip">One predicate <code>is_recognised_sale()</code> for every counter <code>BO-10</code></span>
 <span class="chip">Reporting home = Bookyay BO (09-07) <code>BR-62</code></span>
-<span class="chip decide">Q10 — finance: 通路訂單真的不產生手續費行？</span>
+<span class="chip decide">Q10 — finance: 通路訂單無手續費行、收入以 paidAt 記日 — OK？</span>
 </div>
 </div>
 </section>
@@ -338,20 +326,21 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <!-- S6 -->
 <section id="s6">
 <div class="shead"><span class="snum">6</span><h2>Channel API · <code>/capi/v1</code>（API-0 … API-5）</h2></div>
+<div class="req"><b>需求</b>：Ztor 要能（a）自動匯入所有 Ztor 活動與票種（BR-04/10）、（b）拿到每張預開票的 QR 與入場狀態（BR-02/30/64）、（c）下單前確認活動仍可售（BR-21）、（d）把銷售回寫給 Bookyay（BR-60/63）— 全部走金鑰認證、不含買家個資（BR-61）。</div>
 <p class="goal">金鑰認證、去識別、欄位沿用 <code>/opi/v1</code> 原名。四條讀、一條寫。</p>
 <div class="wf">
 <table class="t">
 <tr><th>Ticket</th><th>Endpoint</th><th>給 Ztor 什麼</th><th>BRD</th><th>Fixture</th></tr>
 <tr><td><b>API-0</b></td><td><code>Authorization: Bearer &lt;key&gt;</code></td><td>envelope · pageNo/pageSize · cents · ISO Z · <code>updatedSince</code> · 429/Retry-After · 無 PII 欄位</td><td>§8</td><td>—</td></tr>
-<tr><td><b>API-1</b></td><td><code>GET /events</code></td><td>只回本通路已分配、票務、非優先訂票、非測試 · 三語 title/content · <code>isPrivate</code> · caps · <b><code>timezone</code></b>（payload 是 UTC，BO 顯示的是瀏覽器時區）· <code>listingState</code> draft/published/paused/cancelled/<b>withdrawn</b>（撤銷後留 30 天）</td><td>BR-04/10/20/22</td><td>events-ticketing.json</td></tr>
-<tr><td><b>API-2</b></td><td><code>GET /events/{id}</code></td><td>＋ sessions[] · <b>tiers[]</b>（Cn ETK：價格區域、HKD 分、逐票種時窗、caps、allocation pool/sold/voided/returned）· tncs · flags（動態QR/轉贈/實名/搶票）</td><td>BR-12/14/25 §6b</td><td>events-detail · sessions · salesScopes · ticketTypes · templates</td></tr>
-<tr><td><b>API-3</b></td><td><code>GET /events/{id}/tickets</code></td><td>每張 UTK：<b>qrPayload</b>（掃描器讀的原字串）· seat · tier · channelState · redeemed/redeemedAt · <code>updatedSince</code></td><td>BR-02/30/64</td><td>sessions.json → userEventTicket[]</td></tr>
-<tr><td><b>API-4</b></td><td><code>GET /events/{id}/availability</code></td><td>逐 tier pool/sold · saleOpen · listingState · &lt;300 ms · 無副作用（advisory）</td><td>BR-21</td><td>—</td></tr>
-<tr><td><b>API-5</b></td><td><code>POST /syncback</code></td><td>batchId + records[]：transaction · ticket_status · inventory · 冪等 · PII 鍵直接拒收 · 結果逐筆 ok/duplicate/conflict/rejected</td><td>BR-60/61/63</td><td>spec 附錄 C</td></tr>
+<tr><td><b>API-1</b></td><td><code>GET /events</code></td><td>只回 <b>Ztor 活動開關 = on</b> 的一般活動（<code>kind:"real"</code>，非優先訂票，非測試）· 三語 title/content · <code>isPrivate</code> · caps · <b><code>timezone</code></b>（payload 是 UTC，BO 顯示的是瀏覽器時區）· <code>listingState</code> draft/published/paused/cancelled/<b>withdrawn</b>（撤銷後留 30 天）</td><td>BR-04/10/20/22</td><td>general-event-detail.json</td></tr>
+<tr><td><b>API-2</b></td><td><code>GET /events/{id}</code></td><td>＋ sessions[]（<code>limitHeadCnt</code> = 該時段分配量、時窗）· <b>tiers[]</b> = 時段 × 門票種類（HKD 分、逐票種時窗、caps、allocation pool/sold/voided/returned）· tncs · flags（動態QR/轉贈/實名/搶票）</td><td>BR-12/14/25 §6b</td><td>general-event-sessions · tickets-templates</td></tr>
+<tr><td><b>API-3</b></td><td><code>GET /events/{id}/tickets</code></td><td>每張 UTK：<b>qrPayload</b>（掃描器讀的原字串）· session · tier（預設→售出後實際）· channelState · redeemed/redeemedAt · <code>updatedSince</code></td><td>BR-02/30/64</td><td>sessions.json → userEventTicket[]（票務活動範例）</td></tr>
+<tr><td><b>API-4</b></td><td><code>GET /events/{id}/availability</code></td><td>逐 session/tier pool/sold · saleOpen · listingState · &lt;300 ms · 無副作用（advisory）</td><td>BR-21</td><td>—</td></tr>
+<tr><td><b>API-5</b></td><td><code>POST /syncback</code></td><td>batchId + records[]：transaction（含 <b>售出票種</b>）· ticket_status · inventory · 冪等 · PII 鍵直接拒收 · 結果逐筆 ok/duplicate/conflict/rejected</td><td>BR-60/61/63</td><td>spec 附錄 C</td></tr>
 <tr><td><b>API-7</b></td><td>mock（Prism + openapi.yaml）</td><td>CS 團隊假期前先開工（09-21 J8/E5）</td><td>—</td><td>全部</td></tr>
 </table>
 <div class="row" style="margin-top:10px">
-  <div class="box new"><b>Scope 規則</b>：永遠只回「本通路有預留或通路訂單」的活動；<code>IsTest</code> 排除</div>
+  <div class="box new"><b>Scope 規則</b>：永遠只回「Ztor 活動 = on」的活動；<code>IsTest</code> 排除</div>
   <div class="box new"><b>審核中修訂</b>：<code>listingState</code> 維持 published、回已發佈版本欄位 — Ztor 繼續賣，直到新版核准（review §11.2）</div>
 </div>
 <div class="notes" style="margin-top:10px">
@@ -365,28 +354,29 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <!-- S7 -->
 <section id="s7">
 <div class="shead"><span class="snum">7</span><h2>Webhooks · Bookyay → Ztor（API-6 · BO-9）</h2></div>
+<div class="req"><b>需求</b>：活動上下架、取消、作廢、庫存增減要即時推到 Ztor（BR-04 09-16 定案），否則 Ztor 會賣到已下架或已作廢的票；每小時拉取只是備援。（BR-04 · BR-40 · BR-42 · BR-43 · BR-50–52）</div>
 <p class="goal">九種事件，每則帶完整現況（順序不保證也無害）。簽章、重試、可重送。</p>
 <div class="wf">
 <table class="t">
 <tr><th>Type</th><th>Fires when</th><th>Ztor does</th><th>Ticket</th></tr>
-<tr><td><code>event.published</code></td><td>發佈核准上線</td><td>listing 可售（若已 mapped + sale_setup）</td><td>BR-04</td></tr>
+<tr><td><code>event.published</code></td><td>發佈核准上線（預開完成後）</td><td>listing 可售（若已 mapped + sale_setup）</td><td>BR-04</td></tr>
 <tr><td><code>event.paused</code></td><td>暫停發售 · 暫時下架 · 改回草稿</td><td>自動下架（published → paused）</td><td>BR-04</td></tr>
 <tr><td><code>event.resumed</code></td><td>恢復發售</td><td>上架</td><td>BR-04</td></tr>
 <tr><td><code>event.updated</code></td><td>修訂核准生效（<b>不是</b>送審時）</td><td>更新鎖定欄位；人工 email 買家</td><td>BR-42</td></tr>
 <tr><td><code>event.cancelled</code></td><td>整場取消（cascade：sold→voided，pool→returned）</td><td>下架 · 全部票 已取消 · 營運退款</td><td>BR-43</td></tr>
 <tr><td><code>ticket.voided</code></td><td>取消訂單（通路 sold 訂單）</td><td>錢包 已取消 ＋ 自動 email</td><td>BR-40</td></tr>
-<tr><td><code>allocation.return_requested</code></td><td>營運提出縮減／到期／撤銷分配（BO-8 ①）</td><td>從本地 pool 挑未售票，立即回寫 <code>returned + requestId</code></td><td>BR-51/52</td></tr>
-<tr><td><code>allocation.changed</code></td><td>移交／加碼（added）· 收回確認（returned + requestId）· 撤銷（withdrawn）</td><td>本地 pool 增減；0 = 完售不下架；withdrawn = 下架封存</td><td>BR-50/51/52 · open #6</td></tr>
+<tr><td><code>allocation.return_requested</code></td><td>時段上限減少核准 · 開關關閉（BO-8 ①）</td><td>從本地 pool 挑未售票，立即回寫 <code>returned + requestId</code></td><td>BR-51/52</td></tr>
+<tr><td><code>allocation.changed</code></td><td>預開／加碼（added）· 收回確認（returned + requestId）· 撤銷（withdrawn）</td><td>本地 pool 增減；0 = 完售不下架；withdrawn = 下架封存</td><td>BR-50/51/52 · open #6</td></tr>
 <tr><td><code>ticket.redeemed</code> <span class="pill gray">SHOULD</span></td><td>Organizer App 掃描</td><td>錢包 已使用 · CS 已入場（否則每小時 API-3 拉）</td><td>BR-64</td></tr>
 </table>
 <div class="row" style="margin-top:10px">
   <div class="box new"><b>Envelope</b> <code>{id, type, occurredAt, channel, data}</code> · headers <code>X-Bookyay-Event</code> · <code>X-Bookyay-Delivery</code> · <code>X-Bookyay-Signature t=…,v1=HMAC</code></div>
-  <div class="box new"><b>Retry</b> 1m · 5m · 30m · 2h · 6h · 24h → 停泊；推送紀錄可重送（同 id）· suspended 排隊不丟</div>
+  <div class="box new"><b>Retry</b> 1m · 5m · 30m · 2h · 6h · 24h → 停泊；紀錄頁可重送（同 id）· suspended 排隊不丟</div>
 </div>
 </div>
 </section>
 
-<footer>Dev wireframes for the Bookyay-side build · NATIVE vs NEW verified on UAT 2026-09-22 (read-only) · contract = BRD v1.3 · tickets = bookyay-side-dev-spec-2026-09-22.md · Model C primary, Model A appendix</footer>
+<footer>Dev wireframes for the Bookyay-side build · NATIVE vs NEW verified on UAT 2026-09-22 (read-only) · rev 09-23 after Jeff's review: general-event toggle replaces reservation/hand-over, registry UI optional · contract = BRD v1.3 · tickets = bookyay-side-dev-spec-2026-09-22.md · Model C primary, Model A appendix</footer>
 </div>
 <script>
 document.querySelectorAll('.states').forEach(function(group){
