@@ -74,6 +74,9 @@ table.t{width:100%;border-collapse:collapse;font-size:12px;background:#fff}
 table.t th,table.t td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
 table.t th{background:var(--wf);font-weight:700}
 table.t td code{background:var(--gold-bg);border-radius:4px;padding:0 5px;font-size:11.5px;color:var(--coral)}
+table.t.steps td:first-child,table.t.steps th:first-child{white-space:nowrap;width:1%;color:var(--muted);font-weight:600}
+table.t.asks td:first-child,table.t.asks th:first-child{white-space:nowrap;width:1%;font-weight:700}
+table.t.asks td:last-child,table.t.asks th:last-child{white-space:nowrap;width:1%}
 .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin:6px 0 0}
 .legend span{display:inline-flex;align-items:center;gap:5px}
 .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
@@ -89,7 +92,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="legend"><span><i class="sw" style="background:var(--teal)"></i>NEW build</span><span><i class="sw" style="background:#fff;border:1.5px solid var(--line)"></i>NATIVE (no change)</span><span><i class="sw" style="background:var(--blue-bg);border:1.5px dotted var(--blue)"></i>OPTIONAL UI</span><span><i class="sw" style="background:var(--gold)"></i>Bookyay side</span><span><i class="sw" style="background:var(--blue)"></i>Ztor side</span></div>
 
 <nav aria-label="Sections">
-<a href="#s0">0 · 全流程</a><a href="#s1">1 · 通路夥伴</a><a href="#s2">2 · Ztor 活動開關</a><a href="#s3">3 · 自動預開</a><a href="#s4">4 · 通路訂單</a><a href="#s5">5 · 報表</a><a href="#s6">6 · Channel API</a><a href="#s7">7 · Webhooks</a>
+<a href="#s0">0 · 全流程</a><a href="#s1">1 · 通路夥伴</a><a href="#s2">2 · Ztor 活動開關</a><a href="#s3">3 · 自動預開</a><a href="#s4">4 · 通路訂單</a><a href="#s5">5 · 報表</a><a href="#s6">6 · Channel API</a><a href="#s7">7 · Webhooks</a><a href="#s8">8 · 每場設定</a><a href="#s9">9 · 掃票不變</a><a href="#s10">10 · 範圍 · 待確認 · 開工</a>
 </nav>
 
 <!-- S0 -->
@@ -376,7 +379,145 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 </div>
 </section>
 
-<footer>Dev wireframes for the Bookyay-side build · NATIVE vs NEW verified on UAT 2026-09-22 (read-only) · rev 09-23 after Jeff's review: general-event toggle replaces reservation/hand-over, registry UI optional · contract = BRD v1.3 · tickets = bookyay-side-dev-spec-2026-09-22.md · Model C primary, Model A appendix</footer>
+<!-- S8 -->
+<section id="s8">
+<div class="shead"><span class="snum">8</span><h2>每場活動的設定（營運做 · 不需開發）</h2></div>
+<div class="req"><b>需求</b>：Ztor 端鎖定的欄位 — 票價、購買上限、條款、上架方式 — 全部沿用 Bookyay 既有設定，經 feed 帶到 Ztor（「新增不改」）。營運照常建活動，只多勾一個開關。這頁是每場檢查表，dev 不用為這些另外開發。（BR-14 · BR-20 · BR-22 · BR-25 · BO-11）</div>
+<p class="goal">全部是既有欄位 — 這裡列的是「Ztor 活動必須怎麼填」。</p>
+<div class="stage">
+<div class="wf">
+  <div class="states"><span class="lbl">Checklist</span>
+    <button aria-pressed="true" data-for="s8a">必填設定</button>
+    <button aria-pressed="false" data-for="s8b">進階設定預設值</button>
+  </div>
+  <div data-panel="s8a" class="on">
+    <span class="screenlbl">活動管理 › 建立 Ztor 活動</span>
+    <table class="t steps" style="margin-top:4px">
+      <tr><th>步驟</th><th>設定</th><th>為什麼</th></tr>
+      <tr><td>1 基本資料</td><td><b>一般活動</b>（非票務活動、非優先訂票）· <b>Ztor 活動 = ON</b></td><td>Phase 1 只支援一般活動；開關＝進 feed（BR-01/02）</td></tr>
+      <tr><td>2 詳細資料</td><td><b>條款及細則</b> 填該場條款並開啟顯示</td><td>Ztor 沿用 Bookyay 條款，不另建（BR-14）</td></tr>
+      <tr><td>3 門票種類</td><td><b>自定門票</b> · 名稱 · <b>現價 HKD</b> · 每張門票人數</td><td>HKD 為基準價，Ztor 依平台匯率表換算、逐幣微調（BR-25）</td></tr>
+      <tr><td>3 門票種類</td><td><b>活動限購</b>：每人總限購 · 每次交易限購 · 限購次數</td><td>購買上限在 Bookyay 設定，Ztor 拉取後於結帳執行（BR-22）</td></tr>
+      <tr><td>4 門票時段</td><td>單一時段（MVP）· <b>時段人數上限 = 給 Ztor 的整場數量</b> · 售票時窗</td><td>上限＝預開張數；階段性售票＝逐時段一個票種（BR-02）</td></tr>
+      <tr><td>7 發佈</td><td><b>私人活動</b>（只在 Ztor 賣時）· 不勾「設定為測試資料」</td><td>隱藏上架＋私人連結（BR-20）· 測試資料不進 feed</td></tr>
+    </table>
+    <div class="box"><b>不用做</b>：預留門票 · 選座 · 分配數量 · 移交 — 發佈核准後系統自動預開（§3）</div>
+  </div>
+  <div data-panel="s8b">
+    <span class="screenlbl">活動管理 › 5 進階設定（維持預設）</span>
+    <div class="box native" style="margin-top:0"><b>QR CODE 門票設定</b>：BOOKYAY 自動生成 QR（預設）· 門票由主辦者自行提供 <b>不勾</b> · 使用動態 QR <b>不勾</b>（Phase 1 靜態，09-09 定案）· 可以轉贈門票 <b>不勾</b></div>
+    <div class="box native"><b>實名登記</b> 不勾 · <b>開啟優惠碼校驗</b> 不勾（折扣由 Ztor 端處理）· <b>保護頁</b> 不勾 · <b>送貨服務</b> 不勾（電子門票）</div>
+    <div class="box new">這些開關會經 API-2 <code>flags</code> 傳給 Ztor — 設定不符的活動 Ztor 會拒絕匯入並提示，避免票到現場掃不過</div>
+    <div class="box">未來要開動態 QR／轉贈，是 Phase 2 討論，不是改設定就好（Ztor 端錢包與掃票流程要一起動）</div>
+  </div>
+</div>
+<div class="notes">
+<span class="chip">Price · caps · T&amp;C · listing mode all stay Bookyay-owned <code>BR-25/22/14/20</code></span>
+<span class="chip">Ztor adds only a display layer: images · supplementary text · translations <code>BR-10</code></span>
+<span class="chip">Flags surfaced through the feed so a misconfigured event fails early <code>API-2</code></span>
+<span class="chip decide">Q8 — <code>IsTest</code> 活動一律排除，確認？</span>
+</div>
+</div>
+</section>
+
+<!-- S9 -->
+<section id="s9">
+<div class="shead"><span class="snum">9</span><h2>現場掃票 · 完全不變（BR-03 · BR-31 · BR-64）</h2></div>
+<div class="req"><b>需求</b>：Ztor 賣出的票必須能用<b>現有的 Bookyay Organizer App</b> 原樣掃描 — 不改 App、不換掃描器、不發新裝置。Bookyay 需要為每位藝人開一個 organizer 帳號（09-16 定案），入場數據回到 Bookyay 既有報表。</div>
+<p class="goal">這是整個整合最不該動的一塊 — 票是 Bookyay 出的，掃的也還是 Bookyay。</p>
+<div class="stage">
+<div class="wf">
+  <div class="states"><span class="lbl">Topic</span>
+    <button aria-pressed="true" data-for="s9a">帳號與掃票</button>
+    <button aria-pressed="false" data-for="s9b">票面與 QR</button>
+    <button aria-pressed="false" data-for="s9c">入場數據</button>
+  </div>
+  <div data-panel="s9a" class="on">
+    <span class="screenlbl">主辦者管理 / 成員管理（既有功能）</span>
+    <div class="box new" style="margin-top:0"><b>營運待辦</b>：每位藝人一個 <b>主辦者</b> 帳號 + 綁該主辦者的 <b>成員</b> 帳號（掃票用）— 由 Bookyay 開立，隨活動排程<br><span class="pill ok">09-16 定案</span> 藝人 A 的帳號看不到也掃不了藝人 B 的活動</div>
+    <div class="box native"><b>Organizer App</b>：版本不變、流程不變 — 掃 Ztor 賣出的票與掃 Bookyay 自己賣的票完全相同（都是 UTK）</div>
+    <div class="box"><b>已作廢／已收回</b>的票在 App 端會被拒絕（狀態即時；作廢在 Bookyay BO 執行 → §4）</div>
+  </div>
+  <div data-panel="s9b">
+    <span class="screenlbl">票面與 QR 的分工</span>
+    <div class="box native" style="margin-top:0"><b>QR 內容 = Bookyay 產生</b>（預開時一次交付給 Ztor，靜態，不變）</div>
+    <div class="box new"><b>票面樣式 = Ztor 預設版型</b>：Ztor 自己渲染活動資訊 + QR，買家可下載 PDF／圖片（BR-30）· Phase 1 不做票面編輯器</div>
+    <div class="box">Bookyay 端與 David 談的票面改版是另一條線，不擋這個整合</div>
+    <div class="box new"><b>唯一待確認（Q1）</b>：Organizer App 驗的那串 QR 內容是什麼格式？（UTK oid／簽章 token／其他）— 這是 API-3 的核心，回覆前該支 API 無法定稿</div>
+  </div>
+  <div data-panel="s9c">
+    <span class="screenlbl">報表 › 票務活動入場統計（既有）</span>
+    <div class="box native" style="margin-top:0">逐活動／逐時段 已入場 · 未入場 · 匯出 — 照舊使用，不需改</div>
+    <div class="box new">同一份資料經 API-3 回給 Ztor → Creator Studio 顯示<b>唯讀</b>的 已入場／未入場 名單（BR-64）· Ztor 端不做掃描動作</div>
+    <div class="box">活動當天建議手動同步一次，讓入場率分母（已售張數）即時正確</div>
+  </div>
+</div>
+<div class="notes">
+<span class="chip">Pre-issued QR scans on the unchanged app <code>BR-03</code> A4</span>
+<span class="chip">One organizer account per artist — ops task, no build <code>BR-31</code></span>
+<span class="chip">Scan status flows Bookyay → Ztor, read-only <code>BR-64</code> · <code>API-3</code></span>
+<span class="chip decide">Q1 — QR payload 格式（唯一擋 API-3 的問題）</span>
+</div>
+</div>
+</section>
+
+<!-- S10 -->
+<section id="s10">
+<div class="shead"><span class="snum">10</span><h2>範圍界線 · 待你們確認 · 開工順序</h2></div>
+<div class="req"><b>需求</b>：讓今天散會時三件事是清楚的 — Phase 1 不做什麼、Bookyay 要回覆什麼、假期前哪些可以先動工。（BRD §3 Out · §11 里程碑）</div>
+<div class="stage">
+<div class="wf">
+  <div class="states"><span class="lbl">View</span>
+    <button aria-pressed="true" data-for="s10a">待 Bookyay 回覆</button>
+    <button aria-pressed="false" data-for="s10b">開工順序</button>
+    <button aria-pressed="false" data-for="s10c">不在 Phase 1</button>
+  </div>
+  <div data-panel="s10a" class="on">
+    <span class="screenlbl">需要回覆才能定稿的項目</span>
+    <table class="t asks" style="margin-top:4px">
+      <tr><th>#</th><th>問題</th><th>擋住什麼</th><th>誰</th></tr>
+      <tr><td>Q1</td><td><b>Organizer App 驗的 QR 是什麼字串？</b>格式、是否整張票生命週期不變</td><td>API-3 預開票交付</td><td>Jesse / Eric</td></tr>
+      <tr><td>Q2</td><td>活動 <code>stage</code> 代碼表（500 = 已發佈？）與 <code>valid</code> 意義</td><td>webhook 狀態對應</td><td>Jesse</td></tr>
+      <tr><td>Q3</td><td>先前 <b>Damai</b> 寄售有沒有做過 partner API／匯出可重用？</td><td>可能省一整塊</td><td>Jesse</td></tr>
+      <tr><td>Q6′</td><td>背景一次產生 1,000+ 張票可行？預開先掛預設票種、售出後以<b>修改門票類別</b>改為實際票種 — 可程式化呼叫嗎？</td><td>BO-4 預開作法</td><td>Eric</td></tr>
+      <tr><td>Q7</td><td>你們正在開發的 <b>修改門票類別</b>／Event 相關功能，與這裡的訂單頁改動是否同一塊？</td><td>排程衝突</td><td>Jesse / Eric</td></tr>
+      <tr><td>Q10</td><td>財務：通路訂單<b>不產生手續費行</b>、收入以 <code>paidAt</code> 記日 — 可接受？</td><td>分成／月結報表</td><td>Agnes</td></tr>
+      <tr><td>新</td><td><b>售票時窗結束時自動收回未售票</b>（BR-52）在只賣 Ztor 的活動還需要嗎？（沒有第二個通路可賣）</td><td>BO-8 是否要做</td><td>Biz</td></tr>
+    </table>
+    <div class="box new"><b>Jeff 待決</b>：回寫頻率 <b>每小時</b> 取代每日（不加開發量，縮短作廢等待）· Ztor 客服是否給 Bookyay BO 帳號（否則作廢一律由 Bookyay 營運執行）</div>
+  </div>
+  <div data-panel="s10b">
+    <span class="screenlbl">依相依性排序</span>
+    <div class="box new" style="margin-top:0"><b>A · 假期前可動工（不等任何回覆）</b><br>通路設定資料 + webhook 基礎建設（BO-1/9）· Channel API 認證與活動列表（API-0/1，可先用 UAT 假資料）· <b>OpenAPI + mock</b>（API-7）讓 Creator Studio 團隊平行開工</div>
+    <div class="box"><b>B · Jesse 團隊 Event 改動完成後（約 10 月中）</b><br>Ztor 活動開關（BO-2）· 自動預開（BO-4）· 活動詳情／預開票／庫存查詢（API-2/3/4）</div>
+    <div class="box"><b>C · 接著</b><br>購票來源 Ztor + 通路狀態（BO-5）· 回寫套用（BO-6/API-5）· 作廢與收回（BO-7/8）· webhook 事件（API-6）· 報表通路篩選（BO-10）</div>
+    <div class="box new"><b>硬牆</b>：9/24 起印尼假期（9/28–30 僅 3 個工作日）· 10 月中 Event 開工 · 11 月第 2 週開發完成 · <b>11 月中交 UAT</b></div>
+  </div>
+  <div data-panel="s10c">
+    <span class="screenlbl">Phase 1 明確不做</span>
+    <div class="row">
+      <div class="box" style="background:#fff"><b>對號入座 / 座位表活動</b><br>票務活動（座位表）留待後續；Phase 1 只做一般活動自由入座</div>
+      <div class="box" style="background:#fff"><b>票面編輯器</b><br>Ztor 用預設版型</div>
+      <div class="box" style="background:#fff"><b>搶票 / Queue</b><br>小型策展活動，不做排隊機制</div>
+    </div>
+    <div class="row">
+      <div class="box" style="background:#fff"><b>App 內購票</b><br>Web 先行，App 導流＋訂單唯讀</div>
+      <div class="box" style="background:#fff"><b>公司間金流結算</b><br>同集團，只用 ztor_tag 分渠道</div>
+      <div class="box" style="background:#fff"><b>bookyay.com 前台改版</b><br>只多一條：Ztor 活動在 bookyay.com 不販售</div>
+    </div>
+    <div class="box">套票管理 · NFT · 優惠管理（Bookyay 端）皆不在這次整合範圍</div>
+  </div>
+</div>
+<div class="notes">
+<span class="chip">Foundation slice needs no answers — start before the holiday</span>
+<span class="chip">Q1 is the only hard blocker on an API contract</span>
+<span class="chip">Scope fence = BRD §3 Out; reopening any line is a BRD change</span>
+<span class="chip decide">今天要關：Q1 · Q7 · 回寫頻率</span>
+</div>
+</div>
+</section>
+
+<footer>Dev wireframes for the Bookyay-side build · NATIVE vs NEW verified on UAT 2026-09-22 (read-only) · rev 09-23 after Jeff's review: general-event toggle replaces reservation/hand-over, registry UI optional, ops/scanning/asks sections added · contract = BRD v1.3 · tickets = bookyay-side-dev-spec-2026-09-22.md · Model C primary, Model A appendix</footer>
 </div>
 <script>
 document.querySelectorAll('.states').forEach(function(group){
