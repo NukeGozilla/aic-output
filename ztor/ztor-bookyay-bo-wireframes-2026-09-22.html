@@ -39,11 +39,19 @@ section{margin-top:38px;scroll-margin-top:64px}
 .shotlbl{display:inline-block;background:var(--txt);color:#fff;border-radius:6px;padding:3px 12px;font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 .shot{position:relative;margin:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;line-height:0}
 .shot img{display:block;width:100%;height:auto}
-.pin{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;border:2.5px solid #fff;color:#fff;font-weight:800;font-size:12px;cursor:pointer;box-shadow:0 2px 7px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;padding:0;line-height:1;z-index:2}
+.hl{position:absolute;border-radius:6px;box-sizing:border-box;pointer-events:none;z-index:2}
+.hl.new{border:2.5px solid var(--teal);background:rgba(46,125,95,.12);box-shadow:0 0 0 2px rgba(255,255,255,.75)}
+.hl.bg{border:2.5px dashed var(--blue);background:rgba(47,95,158,.10);box-shadow:0 0 0 2px rgba(255,255,255,.75)}
+.hl.keep{border:2.5px solid var(--keep);background:rgba(107,101,88,.08);box-shadow:0 0 0 2px rgba(255,255,255,.75)}
+.hl[data-on="true"]{box-shadow:0 0 0 3px var(--gold),0 3px 12px rgba(0,0,0,.25);z-index:5}
+.hl.new[data-on="true"]{background:rgba(46,125,95,.2)}
+.hl.bg[data-on="true"]{background:rgba(47,95,158,.18)}
+.hl.keep[data-on="true"]{background:rgba(107,101,88,.16)}
+.pin{position:absolute;transform:translate(-62%,-62%);width:24px;height:24px;border-radius:50%;border:2.5px solid #fff;color:#fff;font-weight:800;font-size:12px;cursor:pointer;box-shadow:0 2px 7px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;padding:0;line-height:1;z-index:4}
 .pin.new{background:var(--teal)}
 .pin.bg{background:var(--blue)}
 .pin.keep{background:var(--keep)}
-.pin[aria-pressed="true"]{outline:3px solid var(--gold);z-index:6;width:30px;height:30px;font-size:13px}
+.pin[aria-pressed="true"]{outline:3px solid var(--gold);z-index:7;width:28px;height:28px;font-size:13px}
 .pin:focus-visible{outline:3px solid var(--gold)}
 .pinlist{list-style:none;padding:0;margin:10px 0 0;font-size:12.5px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
 @media(max-width:800px){.pinlist{grid-template-columns:1fr}}
@@ -97,7 +105,7 @@ table.t.asks td:first-child,table.t.asks th:first-child{white-space:nowrap;width
 table.t.asks td:last-child,table.t.asks th:last-child{white-space:nowrap;width:1%}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:10px 0 0;background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:8px 12px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
-.sw{width:14px;height:14px;border-radius:50%;display:inline-block;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw{width:16px;height:12px;border-radius:3px;display:inline-block}
 footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
@@ -106,11 +114,11 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="wrap">
 <div class="docnav" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px"><a href="ztor-bookyay-ticketing-brd.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">BRD v1.3</a><a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">Feature wireframes</a><a href="ztor-bookyay-field-mapping-2026-09-08.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">Field mapping</a><a href="ztor-bookyay-bo-wireframes-2026-09-22.html" style="display:inline-block;border:1.5px solid var(--gold);background:var(--gold-bg);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:800;color:var(--gold);text-decoration:none">Bookyay BO changes</a></div>
 <h1>Bookyay BO — 要改什麼、要建什麼</h1>
-<p class="sub">Ztor × Bookyay 寄售整合 · 直接標在現有 UAT 後台畫面上（2026-09-22 擷取，唯讀）· 點圓點看說明 · 契約：<a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · 開發票：<code>bookyay-side-dev-spec-2026-09-22.md</code>（BO-1…11 · API-0…7）· Phase 1 活動型態＝<b>一般活動（活動管理）</b></p>
+<p class="sub">Ztor × Bookyay 寄售整合 · 直接標在現有 UAT 後台畫面上（2026-09-22 擷取，唯讀）· 框起來的就是對應位置 · 點編號看說明 · 契約：<a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · 開發票：<code>bookyay-side-dev-spec-2026-09-22.md</code>（BO-1…11 · API-0…7）· Phase 1 活動型態＝<b>一般活動（活動管理）</b></p>
 <div class="legend">
-<span><i class="sw" style="background:#2e7d5f"></i><b>新 UI</b> — 畫面上看得到的新東西</span>
-<span><i class="sw" style="background:#2f5f9e"></i><b>背景</b> — 系統自動做，沒有畫面</span>
-<span><i class="sw" style="background:#6b6558"></i><b>不變</b> — 沿用現有欄位／動作</span>
+<span><i class="sw" style="border:2.5px solid #2e7d5f;background:rgba(46,125,95,.12)"></i><b>新 UI</b> — 畫面上看得到的新東西</span>
+<span><i class="sw" style="border:2.5px dashed #2f5f9e;background:rgba(47,95,158,.10)"></i><b>背景</b> — 系統自動做，沒有畫面</span>
+<span><i class="sw" style="border:2.5px solid #6b6558;background:rgba(107,101,88,.08)"></i><b>不變</b> — 沿用現有欄位／動作</span>
 </div>
 
 <nav aria-label="Sections">
@@ -139,7 +147,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <section id="s1">
 <div class="shead"><span class="snum">1</span><h2>建立活動 · 現有精靈 ＋ 一個開關</h2></div>
 <div class="req"><b>需求</b>：營運要能標記「這場在 Ztor 賣」，並在發佈核准當下把整場票預開交給 Ztor。Phase 1 是 take-all、只在 Ztor 賣 — 一個開關就夠，不需要預留門票／選座／分配數量。（BR-01 · BR-02 · BR-20 · BR-22 · BR-25）</div>
-<p class="goal">以下都是現在 UAT 後台的真實畫面 — 綠點是新東西，藍點是背景工作，灰點是沿用。</p>
+<p class="goal">以下都是現在 UAT 後台的真實畫面 — 綠框是新東西，藍虛線框是背景工作，灰框是沿用。</p>
 <div class="wf">
   <div class="states"><span class="lbl">畫面</span>
     <button aria-pressed="true" data-for="p1a">① 活動列表</button>
@@ -154,9 +162,9 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">活動管理 › 活動列表</span>
     <figure class="shot">
       <img src="img/bookyay-bo/a-event-list.png" alt="Bookyay 後台活動列表" loading="lazy">
-      <button class="pin new" style="left:88%;top:22%" data-k="a1" aria-pressed="false">1</button>
-      <button class="pin new" style="left:92%;top:49%" data-k="a2" aria-pressed="false">2</button>
-      <button class="pin new" style="left:86%;top:77%" data-k="a3" aria-pressed="false">3</button>
+      <div class="hl new" data-k="a1" data-on="false" style="left:75.6%;top:21.3%;width:19.0%;height:5.6%"></div><button class="pin new" style="left:75.6%;top:21.3%" data-k="a1" aria-pressed="false">1</button>
+      <div class="hl new" data-k="a2" data-on="false" style="left:91.1%;top:48.6%;width:7.3%;height:8.7%"></div><button class="pin new" style="left:91.1%;top:48.6%" data-k="a2" aria-pressed="false">2</button>
+      <div class="hl new" data-k="a3" data-on="false" style="left:83.3%;top:57.3%;width:7.8%;height:8.2%"></div><button class="pin new" style="left:83.3%;top:57.3%" data-k="a3" aria-pressed="false">3</button>
     </figure>
     <ul class="pinlist">
       <li data-k="a1" aria-selected="false"><span class="num new">1</span><span><b>新增「通路」篩選</b> — 全部／Bookyay／Ztor，營運一眼看出哪些活動在 Ztor 賣 <code>BO-2</code></span></li>
@@ -169,8 +177,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">1 基本資料 — 唯一的新欄位</span>
     <figure class="shot">
       <img src="img/bookyay-bo/b-basic-info.png" alt="活動基本資料設定頁" loading="lazy">
-      <button class="pin new" style="left:41%;top:59.5%" data-k="b1" aria-pressed="false">1</button>
-      <button class="pin keep" style="left:41%;top:24%" data-k="b2" aria-pressed="false">2</button>
+      <div class="hl new" data-k="b1" data-on="false" style="left:40.4%;top:58.8%;width:40.0%;height:5.0%"></div><button class="pin new" style="left:40.4%;top:58.8%" data-k="b1" aria-pressed="false">1</button>
+      <div class="hl keep" data-k="b2" data-on="false" style="left:40.4%;top:11.6%;width:40.6%;height:21.2%"></div><button class="pin keep" style="left:40.4%;top:11.6%" data-k="b2" aria-pressed="false">2</button>
     </figure>
     <ul class="pinlist">
       <li data-k="b1" aria-selected="false"><span class="num new">1</span><span><b>Ztor 活動</b> <span class="toggle"></span> 於 Ztor 販售（整場）<br>開啟後：進 Ztor feed · 發佈核准自動預開 · bookyay.com 不販售此活動 · 只在一般活動出現 <code>BO-2</code></span></li>
@@ -183,9 +191,9 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">3 門票種類 — 完全不變</span>
     <figure class="shot">
       <img src="img/bookyay-bo/c-ticket-types.png" alt="門票種類設定頁" loading="lazy">
-      <button class="pin keep" style="left:60%;top:17%" data-k="c1" aria-pressed="false">1</button>
-      <button class="pin keep" style="left:78%;top:11.5%" data-k="c2" aria-pressed="false">2</button>
-      <button class="pin keep" style="left:33%;top:22.5%" data-k="c3" aria-pressed="false">3</button>
+      <div class="hl keep" data-k="c1" data-on="false" style="left:58.1%;top:15.5%;width:12.8%;height:19.4%"></div><button class="pin keep" style="left:58.1%;top:15.5%" data-k="c1" aria-pressed="false">1</button>
+      <div class="hl keep" data-k="c2" data-on="false" style="left:77.5%;top:11.0%;width:6.3%;height:2.7%"></div><button class="pin keep" style="left:77.5%;top:11.0%" data-k="c2" aria-pressed="false">2</button>
+      <div class="hl keep" data-k="c3" data-on="false" style="left:29.2%;top:15.5%;width:12.6%;height:19.4%"></div><button class="pin keep" style="left:29.2%;top:15.5%" data-k="c3" aria-pressed="false">3</button>
     </figure>
     <ul class="pinlist">
       <li data-k="c1" aria-selected="false"><span class="num keep">1</span><span><b>現價 HKD ＝ 基準價</b> — Ztor 依平台匯率表換算 USD/SGD/TWD，CS 逐幣微調整數 <code>BR-25</code></span></li>
@@ -198,9 +206,9 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">4 門票時段 — 數量的來源</span>
     <figure class="shot">
       <img src="img/bookyay-bo/d-sessions.png" alt="門票時段設定頁" loading="lazy">
-      <button class="pin keep" style="left:68%;top:28%" data-k="d1" aria-pressed="false">1</button>
-      <button class="pin bg" style="left:78%;top:33%" data-k="d2" aria-pressed="false">2</button>
-      <button class="pin keep" style="left:55%;top:28%" data-k="d3" aria-pressed="false">3</button>
+      <div class="hl keep" data-k="d1" data-on="false" style="left:65.1%;top:26.8%;width:7.1%;height:19.4%"></div><button class="pin keep" style="left:65.1%;top:26.8%" data-k="d1" aria-pressed="false">1</button>
+      <div class="hl bg" data-k="d2" data-on="false" style="left:72.2%;top:26.8%;width:14.2%;height:19.4%"></div><button class="pin bg" style="left:72.2%;top:26.8%" data-k="d2" aria-pressed="false">2</button>
+      <div class="hl keep" data-k="d3" data-on="false" style="left:52.5%;top:26.8%;width:5.4%;height:19.4%"></div><button class="pin keep" style="left:52.5%;top:26.8%" data-k="d3" aria-pressed="false">3</button>
     </figure>
     <ul class="pinlist">
       <li data-k="d1" aria-selected="false"><span class="num keep">1</span><span><b>時段人數上限＝給 Ztor 的整場數量</b> — 不需另外填分配數；take-all <code>BR-02</code></span></li>
@@ -213,10 +221,10 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">5 進階設定 — 維持預設值</span>
     <figure class="shot">
       <img src="img/bookyay-bo/e-advanced.png" alt="進階設定頁" loading="lazy">
-      <button class="pin bg" style="left:41%;top:20.5%" data-k="e1" aria-pressed="false">1</button>
-      <button class="pin keep" style="left:44.5%;top:26%" data-k="e2" aria-pressed="false">2</button>
-      <button class="pin keep" style="left:44.5%;top:31.5%" data-k="e3" aria-pressed="false">3</button>
-      <button class="pin keep" style="left:44.5%;top:37%" data-k="e4" aria-pressed="false">4</button>
+      <div class="hl bg" data-k="e1" data-on="false" style="left:40.4%;top:19.8%;width:40.0%;height:4.6%"></div><button class="pin bg" style="left:40.4%;top:19.8%" data-k="e1" aria-pressed="false">1</button>
+      <div class="hl keep" data-k="e2" data-on="false" style="left:43.0%;top:24.9%;width:37.5%;height:2.4%"></div><button class="pin keep" style="left:43.0%;top:24.9%" data-k="e2" aria-pressed="false">2</button>
+      <div class="hl keep" data-k="e3" data-on="false" style="left:43.0%;top:30.3%;width:37.5%;height:2.4%"></div><button class="pin keep" style="left:43.0%;top:30.3%" data-k="e3" aria-pressed="false">3</button>
+      <div class="hl keep" data-k="e4" data-on="false" style="left:43.0%;top:35.8%;width:37.5%;height:2.4%"></div><button class="pin keep" style="left:43.0%;top:35.8%" data-k="e4" aria-pressed="false">4</button>
     </figure>
     <ul class="pinlist">
       <li data-k="e1" aria-selected="false"><span class="num bg">1</span><span><b>背景</b>：這些開關經 API 傳給 Ztor（<code>flags</code>）— 設定不符的活動 Ztor 會拒絕匯入並提示，避免票到現場掃不過 <code>API-2</code></span></li>
@@ -230,10 +238,10 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">7 發佈 — 觸發預開</span>
     <figure class="shot">
       <img src="img/bookyay-bo/f-publish.png" alt="活動發佈頁" loading="lazy">
-      <button class="pin keep" style="left:61%;top:25.5%" data-k="f1" aria-pressed="false">1</button>
-      <button class="pin keep" style="left:43.5%;top:46.5%" data-k="f2" aria-pressed="false">2</button>
-      <button class="pin new" style="left:44%;top:75.5%" data-k="f3" aria-pressed="false">3</button>
-      <button class="pin bg" style="left:76%;top:79%" data-k="f4" aria-pressed="false">4</button>
+      <div class="hl keep" data-k="f1" data-on="false" style="left:40.1%;top:24.4%;width:40.6%;height:3.2%"></div><button class="pin keep" style="left:40.1%;top:24.4%" data-k="f1" aria-pressed="false">1</button>
+      <div class="hl keep" data-k="f2" data-on="false" style="left:43.0%;top:46.2%;width:17.6%;height:2.5%"></div><button class="pin keep" style="left:43.0%;top:46.2%" data-k="f2" aria-pressed="false">2</button>
+      <div class="hl new" data-k="f3" data-on="false" style="left:40.4%;top:75.9%;width:40.0%;height:2.6%"></div><button class="pin new" style="left:40.4%;top:75.9%" data-k="f3" aria-pressed="false">3</button>
+      <div class="hl bg" data-k="f4" data-on="false" style="left:40.4%;top:78.4%;width:40.0%;height:2.9%"></div><button class="pin bg" style="left:40.4%;top:78.4%" data-k="f4" aria-pressed="false">4</button>
     </figure>
     <ul class="pinlist">
       <li data-k="f1" aria-selected="false"><span class="num keep">1</span><span><b>私人活動</b> — 只在 Ztor 賣的活動用這個：bookyay.com 隱藏，Ztor 隱藏上架＋私人連結 <code>BR-20</code></span></li>
@@ -262,9 +270,9 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">7 發佈 › 發佈狀態</span>
     <figure class="shot">
       <img src="img/bookyay-bo/f-publish.png" alt="活動發佈狀態與修改按鈕" loading="lazy">
-      <button class="pin keep" style="left:61%;top:82.5%" data-k="g1" aria-pressed="false">1</button>
-      <button class="pin keep" style="left:41%;top:82.5%" data-k="g2" aria-pressed="false">2</button>
-      <button class="pin bg" style="left:76%;top:79.5%" data-k="g3" aria-pressed="false">3</button>
+      <div class="hl keep" data-k="g1" data-on="false" style="left:60.7%;top:82.2%;width:19.8%;height:2.0%"></div><button class="pin keep" style="left:60.7%;top:82.2%" data-k="g1" aria-pressed="false">1</button>
+      <div class="hl keep" data-k="g2" data-on="false" style="left:40.4%;top:82.2%;width:19.8%;height:2.0%"></div><button class="pin keep" style="left:40.4%;top:82.2%" data-k="g2" aria-pressed="false">2</button>
+      <div class="hl bg" data-k="g3" data-on="false" style="left:40.4%;top:78.4%;width:40.0%;height:2.9%"></div><button class="pin bg" style="left:40.4%;top:78.4%" data-k="g3" aria-pressed="false">3</button>
     </figure>
     <ul class="pinlist">
       <li data-k="g1" aria-selected="false"><span class="num keep">1</span><span><b>修改（需重新提交批核）</b> — 照現行流程。<b>送審期間 Ztor 繼續賣已核准版本</b>；新版核准才推 <code>event.updated</code>，Ztor 更新欄位、營運人工 email 通知買家 <code>BR-42</code></span></li>
@@ -276,8 +284,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">4 門票時段 › 修改上限</span>
     <figure class="shot">
       <img src="img/bookyay-bo/d-sessions.png" alt="門票時段人數上限" loading="lazy">
-      <button class="pin bg" style="left:68%;top:28%" data-k="h1" aria-pressed="false">1</button>
-      <button class="pin new" style="left:78%;top:33%" data-k="h2" aria-pressed="false">2</button>
+      <div class="hl bg" data-k="h1" data-on="false" style="left:65.1%;top:26.8%;width:7.1%;height:19.4%"></div><button class="pin bg" style="left:65.1%;top:26.8%" data-k="h1" aria-pressed="false">1</button>
+      <div class="hl new" data-k="h2" data-on="false" style="left:82.0%;top:26.8%;width:4.4%;height:19.4%"></div><button class="pin new" style="left:82.0%;top:26.8%" data-k="h2" aria-pressed="false">2</button>
     </figure>
     <ul class="pinlist">
       <li data-k="h1" aria-selected="false"><span class="num bg">1</span><span><b>上限調高</b>（1,000 → 1,200）核准後：系統自動預開差額 200 張 → <code>allocation.changed</code>，Ztor 可售量即時增加 <code>BR-50</code></span></li>
@@ -307,10 +315,10 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">訂單管理</span>
     <figure class="shot">
       <img src="img/bookyay-bo/g-orders-list.png" alt="訂單管理列表" loading="lazy">
-      <button class="pin new" style="left:10%;top:19%" data-k="i1" aria-pressed="false">1</button>
-      <button class="pin new" style="left:57%;top:31%" data-k="i2" aria-pressed="false">2</button>
-      <button class="pin keep" style="left:90%;top:24.5%" data-k="i3" aria-pressed="false">3</button>
-      <button class="pin new" style="left:22%;top:40%" data-k="i4" aria-pressed="false">4</button>
+      <div class="hl new" data-k="i1" data-on="false" style="left:2.3%;top:17.1%;width:17.4%;height:4.1%"></div><button class="pin new" style="left:2.3%;top:17.1%" data-k="i1" aria-pressed="false">1</button>
+      <div class="hl new" data-k="i2" data-on="false" style="left:48.1%;top:29.2%;width:18.0%;height:6.8%"></div><button class="pin new" style="left:48.1%;top:29.2%" data-k="i2" aria-pressed="false">2</button>
+      <div class="hl keep" data-k="i3" data-on="false" style="left:86.2%;top:23.6%;width:8.4%;height:2.7%"></div><button class="pin keep" style="left:86.2%;top:23.6%" data-k="i3" aria-pressed="false">3</button>
+      <div class="hl new" data-k="i4" data-on="false" style="left:1.7%;top:36.0%;width:96.5%;height:6.7%"></div><button class="pin new" style="left:1.7%;top:36.0%" data-k="i4" aria-pressed="false">4</button>
     </figure>
     <ul class="pinlist">
       <li data-k="i1" aria-selected="false"><span class="num new">1</span><span><b>購票來源加一個值：Ztor</b> — 現有是 Bookyay／BO。這就是 <code>ztor_tag</code>，財務用它分渠道 <code>BO-5</code></span></li>
@@ -323,9 +331,9 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">訂單詳情 › 訂單基本資料</span>
     <figure class="shot">
       <img src="img/bookyay-bo/h-order-detail.png" alt="訂單詳情頁" loading="lazy">
-      <button class="pin new" style="left:56%;top:25%" data-k="j1" aria-pressed="false">1</button>
-      <button class="pin keep" style="left:46%;top:33.5%" data-k="j2" aria-pressed="false">2</button>
-      <button class="pin new" style="left:68%;top:33.5%" data-k="j3" aria-pressed="false">3</button>
+      <div class="hl new" data-k="j1" data-on="false" style="left:40.4%;top:24.3%;width:40.0%;height:2.2%"></div><button class="pin new" style="left:40.4%;top:24.3%" data-k="j1" aria-pressed="false">1</button>
+      <div class="hl keep" data-k="j2" data-on="false" style="left:40.4%;top:32.4%;width:10.5%;height:2.7%"></div><button class="pin keep" style="left:40.4%;top:32.4%" data-k="j2" aria-pressed="false">2</button>
+      <div class="hl new" data-k="j3" data-on="false" style="left:40.4%;top:29.8%;width:40.0%;height:2.2%"></div><button class="pin new" style="left:40.4%;top:29.8%" data-k="j3" aria-pressed="false">3</button>
     </figure>
     <ul class="pinlist">
       <li data-k="j1" aria-selected="false"><span class="num new">1</span><span><b>訂單來源顯示 Ztor</b> — 順便修正現況：同一筆訂單在列表顯示 <code>BO</code>、詳情顯示 <code>Back Office</code>、報表顯示 <code>網頁</code> <code>BO-5</code></span></li>
@@ -338,9 +346,9 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">訂單詳情 › 門票資料（＝交給 Ztor 的東西）</span>
     <figure class="shot">
       <img src="img/bookyay-bo/i-order-tickets.png" alt="訂單門票資料分頁" loading="lazy">
-      <button class="pin keep" style="left:33%;top:11%" data-k="k1" aria-pressed="false">1</button>
-      <button class="pin bg" style="left:33%;top:17%" data-k="k2" aria-pressed="false">2</button>
-      <button class="pin new" style="left:68%;top:96.5%" data-k="k3" aria-pressed="false">3</button>
+      <div class="hl keep" data-k="k1" data-on="false" style="left:29.7%;top:9.6%;width:23.9%;height:46.7%"></div><button class="pin keep" style="left:29.7%;top:9.6%" data-k="k1" aria-pressed="false">1</button>
+      <div class="hl bg" data-k="k2" data-on="false" style="left:53.6%;top:9.6%;width:37.7%;height:46.7%"></div><button class="pin bg" style="left:53.6%;top:9.6%" data-k="k2" aria-pressed="false">2</button>
+      <div class="hl new" data-k="k3" data-on="false" style="left:62.9%;top:96.2%;width:10.5%;height:2.7%"></div><button class="pin new" style="left:62.9%;top:96.2%" data-k="k3" aria-pressed="false">3</button>
     </figure>
     <ul class="pinlist">
       <li data-k="k1" aria-selected="false"><span class="num keep">1</span><span><b>票證編號（UTK）＝ 掃描單位</b> — 預開時產生，QR 內容由 Bookyay 決定，Organizer App 照掃不誤 <code>BR-03/30</code></span></li>
@@ -365,10 +373,10 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="shotlbl">報表 › 訂單報表（買家欄位已於截圖隱藏）</span>
     <figure class="shot">
       <img src="img/bookyay-bo/j-report.png" alt="訂單報表" loading="lazy">
-      <button class="pin new" style="left:80%;top:24%" data-k="m1" aria-pressed="false">1</button>
-      <button class="pin keep" style="left:7.5%;top:34%" data-k="m2" aria-pressed="false">2</button>
-      <button class="pin new" style="left:90%;top:34%" data-k="m3" aria-pressed="false">3</button>
-      <button class="pin keep" style="left:16.5%;top:34%" data-k="m4" aria-pressed="false">4</button>
+      <div class="hl new" data-k="m1" data-on="false" style="left:79.7%;top:22.4%;width:18.7%;height:5.2%"></div><button class="pin new" style="left:79.7%;top:22.4%" data-k="m1" aria-pressed="false">1</button>
+      <div class="hl keep" data-k="m2" data-on="false" style="left:5.4%;top:30.1%;width:4.1%;height:22.4%"></div><button class="pin keep" style="left:5.4%;top:30.1%" data-k="m2" aria-pressed="false">2</button>
+      <div class="hl new" data-k="m3" data-on="false" style="left:88.1%;top:30.1%;width:3.6%;height:22.4%"></div><button class="pin new" style="left:88.1%;top:30.1%" data-k="m3" aria-pressed="false">3</button>
+      <div class="hl keep" data-k="m4" data-on="false" style="left:14.4%;top:30.1%;width:12.3%;height:22.4%"></div><button class="pin keep" style="left:14.4%;top:30.1%" data-k="m4" aria-pressed="false">4</button>
     </figure>
     <ul class="pinlist">
       <li data-k="m1" aria-selected="false"><span class="num new">1</span><span><b>新增「通路」篩選</b> — 全部／Bookyay／BO／Ztor，各張銷售報表都加（活動售票／分成／月結）＋匯出含新欄位 <code>BO-10</code></span></li>
@@ -577,6 +585,7 @@ document.querySelectorAll('.states').forEach(function(group){
 document.querySelectorAll('.shotwrap').forEach(function(w){
   function sync(k){
     w.querySelectorAll('.pin').forEach(function(p){ p.setAttribute('aria-pressed', String(p.dataset.k===k)); });
+    w.querySelectorAll('.hl').forEach(function(b){ b.setAttribute('data-on', String(b.dataset.k===k)); });
     w.querySelectorAll('.pinlist li').forEach(function(li){ li.setAttribute('aria-selected', String(li.dataset.k===k)); });
   }
   w.querySelectorAll('.pin').forEach(function(p){
@@ -587,6 +596,7 @@ document.querySelectorAll('.shotwrap').forEach(function(w){
     li.addEventListener('click', function(){ sync(li.getAttribute('aria-selected')==='true' ? null : li.dataset.k); });
     li.addEventListener('mouseenter', function(){ sync(li.dataset.k); });
   });
+  w.addEventListener('mouseleave', function(){ sync(null); });
 });
 </script>
 </body>
