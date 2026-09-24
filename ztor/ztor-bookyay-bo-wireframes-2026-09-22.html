@@ -588,7 +588,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   <div data-panel="s9a" class="on">
     <table class="t steps" style="margin-top:4px">
       <tr><th>#</th><th>步驟</th><th>不搬的功能</th></tr>
-      <tr><td>1</td><td>基本資料</td><td><span class="pill warn">待確認</span> 該畫面未標紅框 — 等 Figma 留言確認範圍</td></tr>
+      <tr><td>1</td><td>基本資料</td><td><span class="pill ok">全部保留</span> 該步驟沒有任何排除 — 欄位全拉（Jeff 09-24）</td></tr>
       <tr><td>2</td><td>詳細資料</td><td><b>活動包括</b>（食品和飲品 / 入場券 / 裝備及材料 / 其他）</td></tr>
       <tr><td>3</td><td>詳細資料</td><td><b>需要攜帶的物品</b></td></tr>
       <tr><td>4</td><td>門票種類</td><td><b>本單品項有手續費 + 手續費</b> — 不向買家收手續費</td></tr>
@@ -599,6 +599,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td>9</td><td>門票種類</td><td><b>不設門票</b> 模式 — 完全不開票，Ztor 無票可賣可掃</td></tr>
     </table>
     <div class="box"><b>對 Ztor 的意思</b>：這些欄位不拉、不顯示、不做 UI。Bookyay 端要不要留是他們的事</div>
+    <div class="box new"><b>09-24 補充</b>：#1 基本資料全部保留。對照表原本漏了三個該步驟的欄位，已補上 — <b>標籤</b>、<b>最少/最大人數</b>、<b>活動語言</b>。⚠ 最少/最大人數是活動人數參考，<b>不是票券庫存</b></div>
   </div>
 
   <div data-panel="s9b">
@@ -626,7 +627,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="notes">
 <span class="chip">欄位層級清單，不是模組層級 <code>BRD §3 · BR-10a</code></span>
 <span class="chip">免費門票＝領取按鈕＋略過付款，其餘不變 <code>BR-26</code></span>
-<span class="chip decide">#1 基本資料 — 範圍待 Figma 留言確認</span>
+<span class="chip">#1 基本資料 全部保留；補回 3 個原表漏列欄位：標籤 · 最少/最大人數 · 活動語言 <code>09-24</code></span>
+<span class="chip decide">最少/最大人數 ≠ 票券庫存 — 分配量看「時段人數上限」，別接錯</span>
 </div>
 </div>
 </section>
