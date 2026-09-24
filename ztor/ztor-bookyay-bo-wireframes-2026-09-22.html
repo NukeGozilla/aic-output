@@ -592,10 +592,10 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td>2</td><td>詳細資料</td><td><b>活動包括</b>（食品和飲品 / 入場券 / 裝備及材料 / 其他）</td></tr>
       <tr><td>3</td><td>詳細資料</td><td><b>需要攜帶的物品</b></td></tr>
       <tr><td>4</td><td>門票種類</td><td><b>本單品項有手續費 + 手續費</b> — 不向買家收手續費</td></tr>
-      <tr><td>5</td><td>門票種類</td><td><b>折扣優惠 + 早鳥優惠</b>（含優惠結束時間）— Ztor 自有促銷</td></tr>
+      <tr><td>5</td><td>門票種類</td><td><b>折扣優惠</b>（前提：Ztor 自有促銷）+ <b>早鳥優惠</b> <span class="pill warn">Phase 2 要</span> — Jesse：「Phase 1 用其他方式處理，Phase 2 可以有嗎？」Agnes：小型活動蠻需要</td></tr>
       <tr><td>6</td><td>進階設定</td><td><b>QR CODE 門票設定</b>（主辦者自行提供 / 動態QR / 可轉贈）+ <b>保護頁</b></td></tr>
       <tr><td>7</td><td>發佈</td><td><b>設定為測試資料</b> + <b>設定是否只可直接購買</b></td></tr>
-      <tr><td>8</td><td>發佈</td><td><b>活動主題</b>（6 個首頁推薦位）<span class="pill bad">只排除主題</span></td></tr>
+      <tr><td>8</td><td>發佈</td><td><b>活動主題</b>（6 個首頁推薦位）<span class="pill bad">留言說連發佈狀態也不要</span> — Jeff 裁定發佈狀態要留，見「兩個例外」</td></tr>
       <tr><td>9</td><td>門票種類</td><td><b>不設門票</b> 模式 — 完全不開票，Ztor 無票可賣可掃</td></tr>
     </table>
     <div class="box"><b>對 Ztor 的意思</b>：這些欄位不拉、不顯示、不做 UI。Bookyay 端要不要留是他們的事</div>
@@ -611,6 +611,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <div class="fstep by"><b>之後全部不變</b>開票 · QR · 錢包 · 回寫（金額 0）<span class="pill gray">沿用</span></div>
     </div>
     <div class="box"><b>不是架構缺口</b>（Jeff 09-23）：購買流程本身不動，只是入口按鈕換成「領取」並跳過付款那一段</div>
+    <div class="box new"><b>真正的問題（Jesse 留言）</b>：會有「免費門票」這個模式，只是因為<b>「自訂門票」的現價不能填 0</b>。Jesse 與 Agnes 都傾向<b>請 Eric 開放現價可填 0</b> → 就不用多支援一種門票模式。<b>擇一後才開工</b></div>
     <div class="gone"><b>別和 #9 混淆</b>：<b>免費門票</b>＝價格 0，仍然開票、仍有 QR、仍要掃；<b>不設門票</b>＝完全不開票，Ztor 沒有東西可賣</div>
   </div>
 
@@ -618,7 +619,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <div class="box new" style="margin-top:0"><b>「不搬」＝ Ztor 不做 UI，不等於不拉資料</b></div>
     <table class="t" style="margin-top:4px">
       <tr><th>欄位</th><th>為什麼還是要拉</th></tr>
-      <tr><td><b>發佈狀態</b><br><span class="pill gray">與 #8 活動主題同畫面</span></td><td>Ztor 的 <code>event.published</code> / <code>event.paused</code> webhook 就是讀這個狀態。<b>#8 只排除「活動主題」</b>，發佈狀態要留（Jeff 09-23）</td></tr>
+      <tr><td><b>發佈狀態</b><br><span class="pill bad">留言衝突</span></td><td>Jesse 留言寫「活動主題<b>還有發佈狀態</b>在 ztor 上都不需要」（Agnes agree），但 Jeff 09-23 裁定<b>發佈狀態要留</b> — <code>event.published</code>／<code>event.paused</code> webhook 就是讀它。<br><b>相容說法</b>：Ztor 不複製審批流程 UI，但狀態值仍要經 feed 傳過來。<b>需與 Jesse 確認用詞</b>，別讓開發讀成「不用傳」</td></tr>
       <tr><td><b>進階設定 QR 三個開關</b><br><span class="pill gray">#6</span></td><td>經 API-2 <code>flags</code> 傳給 Ztor，讓 Ztor 能<b>擋掉設定不符的活動</b>（例如誤開動態 QR）。只有「控制項」是 Bookyay 專用</td></tr>
     </table>
     <div class="box"><b>手續費（#4）的連動</b>：買家端不收手續費 → Ztor 只有平台費，且<b>由創作者支付</b>（與 Beamco 相同，ADR 2026-09-23）。欄位對照表已標「不傳」</div>
@@ -629,6 +630,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <span class="chip">免費門票＝領取按鈕＋略過付款，其餘不變 <code>BR-26</code></span>
 <span class="chip">#1 基本資料 全部保留；補回 3 個原表漏列欄位：標籤 · 最少/最大人數 · 活動語言 <code>09-24</code></span>
 <span class="chip decide">最少/最大人數 ≠ 票券庫存 — 分配量看「時段人數上限」，別接錯</span>
+<span class="chip decide">發佈狀態：留言說不要、Jeff 說要留 — 與 Jesse 確認「不做 UI ≠ 不傳」</span>
+<span class="chip decide">免費門票：走模式，還是請 Eric 開放現價填 0？（biz 傾向後者）</span>
 </div>
 </div>
 </section>
