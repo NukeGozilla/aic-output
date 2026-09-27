@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creator API — review feedback on v1.4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --background:#FFFFFF; --foreground:#1A1A1A; --muted:#FAFAFA; --muted-foreground:#6E6E68;
+  --accent:#F3F3F3; --border:#EAEAEA; --primary:#ffa33f; --brand-ink:#8F4E00;
+  --selected-surface:rgba(255,163,63,.14);
+  --font:"Poppins","Noto Sans TC","Microsoft JhengHei",-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--background); color:var(--foreground); font-family:var(--font); font-size:15px; line-height:1.65; padding:0 20px}
+.layout{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:230px minmax(0,1fr); gap:48px; padding-block:40px 72px}
+@media (max-width:960px){ .layout{grid-template-columns:1fr; gap:0} .toc{display:none} }
+.toc{position:sticky; top:24px; align-self:start; font-size:13px; border-left:1px solid var(--border); padding-left:16px}
+.toc .toc-h{font-size:11px; font-weight:600; letter-spacing:1.2px; color:var(--muted-foreground); margin-bottom:8px}
+.toc a{display:block; color:var(--muted-foreground); text-decoration:none; padding:4px 0}
+.toc a:hover{color:var(--brand-ink)}
+header.doc{border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:8px}
+header.doc h1{font-size:30px; line-height:1.25; margin:0 0 8px; letter-spacing:-.3px}
+header.doc .subtitle{color:var(--muted-foreground); font-size:14px}
+.links{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+.links a{font-size:13px; text-decoration:none; color:var(--brand-ink); background:var(--selected-surface); border-radius:999px; padding:5px 12px}
+.links a:hover{background:rgba(255,163,63,.24)}
+main h2{font-size:22px; margin:44px 0 12px; padding-top:8px; letter-spacing:-.2px; scroll-margin-top:16px}
+main h3{font-size:16px; margin:28px 0 8px; scroll-margin-top:16px}
+main p{margin:10px 0}
+main ul, main ol{padding-left:22px; margin:8px 0}
+main li{margin:4px 0}
+main li > ul, main li > ol{margin:4px 0}
+main a{color:var(--brand-ink)}
+code{font-family:var(--mono); font-size:12.5px; background:var(--accent); border-radius:5px; padding:1px 5px}
+pre{background:var(--muted); border:1px solid var(--border); border-radius:10px; padding:12px 14px; overflow-x:auto}
+pre code{background:none; padding:0; font-size:12.5px}
+blockquote{margin:16px 0; padding:12px 16px; border-left:4px solid var(--primary); background:rgba(255,163,63,.07); border-radius:0 10px 10px 0}
+blockquote p:first-child{margin-top:0}
+blockquote p:last-child, blockquote ul:last-child{margin-bottom:0}
+.table-wrap{overflow-x:auto; margin:14px 0; border:1px solid var(--border); border-radius:12px}
+table{border-collapse:collapse; width:100%; font-size:13.5px}
+th, td{text-align:left; vertical-align:top; padding:9px 12px; border-top:1px solid var(--border)}
+thead th{background:var(--muted); border-top:0; font-weight:600; font-size:12.5px; color:var(--muted-foreground)}
+tbody tr:hover td{background:#FCFCFB}
+footer{border-top:1px solid var(--border); margin-top:48px; padding-top:14px; font-size:12px; color:var(--muted-foreground)}
+footer code{font-size:11.5px}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc" aria-label="Contents"><div class="toc-h">CONTENTS</div><a href="#1-scope">1. Scope</a><a href="#2-catalog-commerce">2. Catalog + Commerce</a><a href="#3-checkout-delivery-payment-order-states">3. Checkout — delivery, payment, order states</a><a href="#4-sign-in">4. Sign-in</a><a href="#5-channel-settings-set-in-creator-studio">5. Channel settings (set in Creator Studio)</a><a href="#6-currency">6. Currency</a><a href="#7-gating">7. Gating</a><a href="#8-acceptance">8. Acceptance</a><a href="#9-category-1-endpoints-after-these-changes-and-clean-up">9. Category 1 endpoints after these changes, and clean-up</a><a href="#open-items">Open items</a></nav>
+  <div>
+    <header class="doc">
+      <h1>Creator API — review feedback on v1.4</h1>
+      <div class="subtitle">From Jeff · 2026-09-27 · Covers: brief v1.4 (24 Sep), API reference Draft v0.5, <code>openapi.yaml</code> 0.4.0-draft · Scope: category 1 (existing features + eShop)</div>
+      <div class="links"><a href="ztor-creator-site-settings-wireframe-2026-09-27.html">Wireframe: Creator Studio site settings</a><a href="ztor-creator-site-setup-workflow-2026-09-27.html">Workflow: set up → sell → loyalty</a><a href="https://github.com/ztor20/creator-api">Dev team&#x27;s eShop API (ztor20/creator-api)</a></div>
+    </header>
+    <main>
+<p><strong>Reference for everything eShop:</strong> the dev team's eShop API, <a href="https://github.com/ztor20/creator-api" target="_blank" rel="noopener">github.com/ztor20/creator-api</a> (<code>ztor-shopping-api.md</code>). Check Catalog, Cart, Checkout and Orders facts against it.</p>
+<p>What's already strong and should stay:</p>
+<ul>
+<li><strong>Conventions:</strong> idempotency, atomic limits, signed webhooks, caching, versioning.</li>
+<li><strong>Explainable Policy verdict:</strong> <code>{allowed, reason, conditions}</code>.</li>
+<li><strong>TO-CONFIRM badges</strong> instead of guessed values.</li>
+<li><strong>Alignment with the real eShop contract.</strong></li>
+</ul>
+<p>The changes below are for v1.5.</p>
+<h2 id="1-scope">1. Scope</h2>
+<h3 id="the-rule-the-creator-api-is-front-end-only">The rule: the Creator API is front-end only</h3>
+<p>Every endpoint in the Creator API is called by an artist site's front end (e.g. lloud.club). Anything else lives elsewhere:</p>
+<ul>
+<li><strong>Admin and configuration</strong> belong to Creator Studio.</li>
+<li><strong>Backend-to-backend calls</strong> are outside this API.</li>
+</ul>
+<h3 id="sort-every-endpoint-into-three-categories">Sort every endpoint into three categories</h3>
+<p>The reference has 82 endpoints in 23 groups, and none of them says when it will be built. Two things make that a problem:</p>
+<ul>
+<li>Eric's team builds the feature first, then exposes its API.</li>
+<li>The site team will generate mock APIs from <code>openapi.yaml</code>, so whatever is in the file becomes build scope and launch expectation.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Category</th>
+<th>What it means</th>
+<th>Endpoints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Existing features + eShop</td>
+<td>Built on what Ztor already has, plus eShop 2.2. Build first.</td>
+<td>19</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Event</td>
+<td>Tickets via Bookyay. Follows the Event feature (UAT mid-Nov).</td>
+<td>4</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Future features</td>
+<td>Not scheduled yet. Keep as backlog.</td>
+<td>38</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Removed: admin</td>
+<td>Creator Studio, not the Creator API (see below)</td>
+<td>21</td>
+</tr>
+</tbody>
+</table></div>
+<p>This feedback reviews <strong>category 1 only</strong>. Categories 2 and 3 are listed so every endpoint gets its tag; they get their own review later.</p>
+<h3 id="category-1-existing-features-eshop">Category 1 — Existing features + eShop</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Endpoints</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identity (7)</td>
+<td><code>POST /auth/register</code> · <code>POST /auth/login</code> · <code>POST /auth/social</code> · <code>POST /auth/refresh</code> · <code>POST /auth/logout</code> · <code>GET /me</code> · <code>PATCH /me</code></td>
+<td>Existing Ztor account</td>
+</tr>
+<tr>
+<td>Catalog (2)</td>
+<td><code>GET /creators/{c}/products/{id}</code> · <code>GET /creators/{c}/products/{id}/inventory</code></td>
+<td>eShop 2.2. Collections move to category 3; see section 2</td>
+</tr>
+<tr>
+<td>Commerce (7)</td>
+<td><code>GET /cart</code> · <code>POST /cart/items</code> · <code>PATCH /cart/items/{id}</code> · <code>DELETE /cart/items/{id}</code> · <code>POST /orders</code> · <code>GET /orders</code> · <code>GET /orders/{id}</code></td>
+<td>eShop 2.2. Discount codes are out of the first cut</td>
+</tr>
+<tr>
+<td>Content (2)</td>
+<td><code>GET /creators/{c}/content</code> · <code>GET /content/{key}</code></td>
+<td>Confirm these two are still needed. With collections kept in the site (section 2), collection and site copy can live in the site too</td>
+</tr>
+<tr>
+<td>Gating (1)</td>
+<td><code>GET /entitlements</code></td>
+<td>Answered from the eShop (sale start, purchase limit, stock). No new service at launch; the Policy service is the next step (section 7)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="category-2-event">Category 2 — Event</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Endpoints</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ticketing (4)</td>
+<td><code>GET /events</code> · <code>GET /events/{id}</code> · <code>POST /events/{id}/tickets</code> · <code>GET /me/tickets</code></td>
+<td>Bookyay consignment</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="category-3-future-features">Category 3 — Future features</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Endpoints</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Collections (2)</td>
+<td><code>GET /creators/{c}/catalog</code> · <code>GET /creators/{c}/collections/{id}</code></td>
+<td>Future: collections in Creator Studio. For launch the site groups its own products (section 2)</td>
+</tr>
+<tr>
+<td>Entitlements list (1)</td>
+<td><code>GET /me/entitlements</code></td>
+<td>Future: its examples are all vault and auction items</td>
+</tr>
+<tr>
+<td>Media (1)</td>
+<td><code>GET /media/{id}</code></td>
+<td>Future. Product images are uploaded in Creator Studio and come with the product. Could serve vault media later</td>
+</tr>
+<tr>
+<td>Points (4)</td>
+<td><code>GET /points/balance</code> · <code>GET /points/ledger</code> · <code>GET /points/breakdown</code> · <code>POST /points/claim</code></td>
+<td>Planned: loyalty (vendor TBD)</td>
+</tr>
+<tr>
+<td>Ranking (2)</td>
+<td><code>GET /leaderboard</code> · <code>GET /me/rank</code></td>
+<td>Planned: loyalty</td>
+</tr>
+<tr>
+<td>Tiers (2)</td>
+<td><code>GET /tiers</code> · <code>GET /me/tier</code></td>
+<td>Planned: loyalty</td>
+</tr>
+<tr>
+<td>Rewards (3)</td>
+<td><code>GET /rewards</code> · <code>GET /me/rewards</code> · <code>POST /rewards/{id}/redeem</code></td>
+<td>Planned: loyalty</td>
+</tr>
+<tr>
+<td>Missions (4)</td>
+<td><code>GET /missions</code> · <code>GET /missions/{id}</code> · <code>POST /missions/{id}/complete</code> · <code>POST /missions/checkin</code></td>
+<td>Planned: missions / Easter Egg, built in-house</td>
+</tr>
+<tr>
+<td>Vault (2)</td>
+<td><code>GET /vault</code> · <code>GET /vault/{id}</code></td>
+<td>Planned: Media Vault (2.3)</td>
+</tr>
+<tr>
+<td>Webhooks (2)</td>
+<td><code>GET /webhooks</code> · <code>POST /webhooks</code></td>
+<td>Backend-to-backend, not front end. Outside the Creator API under the rule above</td>
+</tr>
+<tr>
+<td>Paid membership (4)</td>
+<td><code>GET /memberships/plans</code> · <code>POST /memberships/subscribe</code> · <code>POST /memberships/cancel</code> · <code>GET /me/membership</code></td>
+<td>Not confirmed. Ztor has no subscription billing</td>
+</tr>
+<tr>
+<td>Auction (3)</td>
+<td><code>GET /auctions</code> · <code>GET /auctions/{id}</code> · <code>POST /auctions/{id}/bids</code></td>
+<td>Not confirmed. Deferred since Creator Studio phase 1</td>
+</tr>
+<tr>
+<td>Drops &amp; ballot (3)</td>
+<td><code>GET /drops/{id}/ballot</code> · <code>POST /drops/{id}/ballot</code> · <code>GET /me/ballot-entries</code></td>
+<td>Not confirmed</td>
+</tr>
+<tr>
+<td>Size hold (2)</td>
+<td><code>POST /products/{id}/size-hold</code> · <code>DELETE /size-holds/{id}</code></td>
+<td>Not confirmed</td>
+</tr>
+<tr>
+<td>Everyday earn (3)</td>
+<td><code>GET /everyday-earn/partners</code> · <code>POST /everyday-earn/scan</code> · <code>GET /me/everyday-earn</code></td>
+<td>Not confirmed. This is a partner-merchant programme with revenue share, a separate business line</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="removed-admin-endpoints-21">Removed — admin endpoints (21)</h3>
+<ul>
+<li><strong>Why:</strong> an artist site never calls these; Creator Studio covers them.</li>
+<li><strong>Category 1 admin (9):</strong> <code>POST /media</code> · <code>GET /admin/products</code> · <code>POST /admin/products</code> · <code>PUT /admin/products/{id}</code> · <code>POST /admin/orders/{id}/refund</code> · <code>GET /admin/rules</code> · <code>PUT /admin/rules/{id}</code> · <code>GET /admin/channels</code> · <code>PUT /admin/channels/{id}</code></li>
+<li><strong>Future admin (12):</strong> <code>GET /admin/rewards</code> · <code>PUT /admin/rewards/{id}</code> · <code>GET /admin/missions/review</code> · <code>POST /admin/missions/{id}/review</code> · <code>GET /admin/reports</code> · <code>GET /admin/fans</code> · <code>GET /admin/fans/{id}</code> · <code>GET /admin/fans/export</code> · <code>GET /admin/benefits</code> · <code>POST /admin/benefits</code> · <code>PUT /admin/benefits/{id}</code> · <code>GET /admin/demand</code></li>
+<li><strong>Also remove from the API tab:</strong>
+<ul>
+<li>the &quot;Admin authorization&quot; section and its permission keys</li>
+<li>the ADMIN scope</li>
+<li><code>admin</code> in the JWT <code>scope</code> claim</li>
+<li>Studio config, Fan CRM, Benefit builder and Demand board in the side nav</li>
+</ul>
+</li>
+<li><strong>What replaces them:</strong> the brief's existing deliverable, the <strong>BO configuration inventory</strong>. It's a checklist of what Creator Studio / ops must set up before a site goes live:
+<ul>
+<li><strong>the site (channel):</strong> name + logo, creators, domains, allowed origins, return URLs, channel key, default language, No crossover. Email sender + receipt logo depend on management</li>
+<li><strong>products (eShop):</strong> images, options / SKUs, price, stock, purchase limit, sale start, pickup sessions</li>
+<li><strong>order void / refund handling</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="what-to-change-in-v1-5">What to change in v1.5</h3>
+<ol>
+<li>Tag every operation in <code>openapi.yaml</code> with <code>x-category: existing | event | future</code>, and show the category on each endpoint card in the API tab.<pre><code class="language-yaml">/cart:
+  get:  { x-category: existing }
+/events/{id}/tickets:
+  post: { x-category: event }
+/auctions:
+  get:  { x-category: future }
+</code></pre>
+</li>
+<li><code>openapi.yaml</code>, the file teams build and mock from, holds categories 1 and 2 only.
+<ul>
+<li>Category 3 moves to a &quot;Future — not scheduled&quot; section in the API tab.</li>
+<li>An endpoint moves into the yaml once its feature is scheduled.</li>
+</ul>
+</li>
+<li>Remove the 21 admin endpoints and the admin conventions. Put the BO configuration inventory in the brief instead.</li>
+<li>Update the brief to match:
+<ul>
+<li>the capability table</li>
+<li>the &quot;twelve API groups · ~80 endpoints&quot; line</li>
+<li>the facade box on the Architecture page</li>
+<li>the Creator Studio line under the service diagram. It stays, as a pointer to where configuration happens.</li>
+</ul>
+</li>
+</ol>
+<h2 id="2-catalog-commerce">2. Catalog + Commerce</h2>
+<h3 id="the-principle-the-creator-api-owns-its-contract-ztor-owns-the-model">The principle: the Creator API owns its contract, Ztor owns the model</h3>
+<p>The Creator API is a separate API for standalone creator sites. It doesn't need to copy the dev team's internal Shopping API, so keep its shapes simple:</p>
+<ul>
+<li><strong>The creator is fixed by the site</strong> (from the channel key). Drop <code>/creators/{c}/</code> paths and <code>?creator=</code> parameters.</li>
+<li><strong>One shop per site.</strong> No seller objects, no carts grouped by shop, no multi-shop payment groups.</li>
+</ul>
+<p>What the shapes can't do is promise behaviour the systems behind them don't have. Each shape has to carry these facts, checked against the dev team's eShop API (<a href="https://github.com/ztor20/creator-api" target="_blank" rel="noopener">ztor20/creator-api</a> → <code>ztor-shopping-api.md</code>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Fact in Ztor's systems</th>
+<th>What v1.4 says</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Products have options (e.g. colour, size) and SKUs. Price and stock are per SKU</td>
+<td><code>sizes[]</code>, one <code>price</code>, per-size <code>/inventory</code></td>
+<td>Model options + SKUs (SKU ID, price, stock). Stock comes with the product, so drop <code>/inventory</code>. Adding to the cart takes a SKU ID</td>
+</tr>
+<tr>
+<td>Checkout = price quote the buyer confirms → submit → payment page (redirect) → result</td>
+<td><code>POST /orders</code> returns <code>paid</code> immediately</td>
+<td>Submit returns a payment URL and a pending status. Add a quote step and a &quot;check payment result&quot; endpoint. Never return <code>paid</code> synchronously</td>
+</tr>
+<tr>
+<td>Checkout takes a pickup contact (name + phone). There's no shipping-address field</td>
+<td><code>address_id</code> (shipping)</td>
+<td>Use a pickup contact. Delivery: see section 3</td>
+</tr>
+<tr>
+<td>Order history shows paid orders only, with the fulfilment status the backend holds</td>
+<td><code>paid / shipped / canceled / refunded</code></td>
+<td>Show paid orders only, using the backend's fulfilment status</td>
+</tr>
+<tr>
+<td>IDs are 64-bit numbers sent as strings</td>
+<td>Samples use <code>pr_dress</code>, <code>cart_1</code></td>
+<td>Samples should follow the Conventions</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Endpoints to add:</strong></p>
+<ul>
+<li>the site's product list (the site groups products into collections itself; see Collections below)</li>
+<li>size guide (LLOUD sells clothing)</li>
+<li>pickup contacts: list and save</li>
+<li>checkout quote</li>
+<li>payment result</li>
+<li>currency context (which currency the fan sees)</li>
+</ul>
+<h3 id="collections">Collections</h3>
+<ul>
+<li><strong>For launch, the site keeps its own collection → product list</strong> in its content, next to each collection's choreography. Every new drop needs site work anyway, so this adds nothing extra.</li>
+<li>The Creator API provides the site's product list and product detail, and the site groups them.</li>
+<li>Collections as a Creator Studio feature, so a creator can launch a drop without site work, move to category 3.</li>
+</ul>
+<h3 id="conventions">Conventions</h3>
+<ul>
+<li><strong>Remove <code>X-Gateway-App-Token</code> from the site's headers.</strong>
+<ul>
+<li>It's a server-only credential: the dev team's doc says it must never be placed in a browser.</li>
+<li>Sites send <code>X-Channel-Key</code> plus the fan's Bearer token, and the Creator API adds the gateway token when it calls Ztor's systems.</li>
+<li>This resolves the TO-CONFIRM.</li>
+</ul>
+</li>
+<li><strong>Use one set of conventions everywhere:</strong> one error shape, one field casing, one pagination style, one timestamp format. Today the Conventions (the eShop envelope) and the endpoint samples disagree. Which set is the BA's choice; it just has to be consistent.</li>
+<li><strong>Add a &quot;Backed by&quot; column to each endpoint:</strong> which Ztor system and call serves it. Draft it from the dev team's eShop API (<a href="https://github.com/ztor20/creator-api" target="_blank" rel="noopener">ztor20/creator-api</a>), and Eric's team confirms.</li>
+<li><strong>Language is required on every call.</strong> The site sends its current language in <code>Accept-Language</code> (e.g. <code>en-us</code> on lloud.club), and passes it to the Ztor sign-in page (<code>ui_locales</code>) so a new account's language is set from it. Supported: <code>en-us</code>, <code>zh-hk</code>, <code>zh-tw</code>. The Channel's <code>default_language</code> (section 5) is only the safety net.</li>
+</ul>
+<h3 id="shared-with-ztor-com-by-default-no-crossover-as-an-option">Shared with ztor.com by default, &quot;No crossover&quot; as an option</h3>
+<ul>
+<li><strong>By default</strong> a site member is a Ztor user:
+<ul>
+<li>one account works on both the site and ztor.com</li>
+<li>cart and order history show on both</li>
+<li>the creator's products can sell on both</li>
+</ul>
+</li>
+<li><strong>&quot;No crossover&quot; is a Creator Studio setting per site.</strong> When it's on:
+<ul>
+<li>accounts don't cross over: a ztor.com account can't sign in on the site, and a site account can't sign in on ztor.com</li>
+<li>the same email can hold a site account and a separate Ztor account</li>
+<li>cart and orders stay with the site account</li>
+<li>all of the creator's products sell only on the site, not on ztor.com (exclusivity is per site, not per product)</li>
+</ul>
+</li>
+<li><strong>It's chosen once, at setup, and locked once the site has members.</strong> Switching it later would mean splitting or merging accounts.</li>
+<li><strong>LLOUD launches with No crossover on.</strong></li>
+<li><strong>What stays shared even when it's on:</strong> the Ztor sign-in page, Ztor's payment gateway, Creator Studio, Ztor's customer service team, and Ztor's email service. Whether emails carry the creator's branding is a management question (Open items).</li>
+<li><strong>Update the brief to match:</strong>
+<ul>
+<li>Design rule 04 (one identity) stays as it is: every site member has an account in Ztor's identity. Add one line: the No crossover setting decides whether that account can also be used on ztor.com.</li>
+<li>AC-2.2 (&quot;recognised on ztor.com — no second account&quot;) applies only when No crossover is off. With it on, the check becomes: a site account can't sign in on ztor.com, and a Ztor account can't sign in on the site.</li>
+<li>Add the No crossover setting to the Channel data model.</li>
+</ul>
+</li>
+</ul>
+<h2 id="3-checkout-delivery-payment-order-states">3. Checkout — delivery, payment, order states</h2>
+<h3 id="delivery-pickup-pop-up-only-at-launch">Delivery: pickup / pop-up only at launch</h3>
+<ul>
+<li><strong>LLOUD launches with pickup / pop-up only.</strong> Delivery to an address is a later eShop feature.</li>
+<li>Checkout takes a <strong>pickup contact</strong> (name + phone). There's no delivery address.</li>
+<li>Each item gets its own <strong>pickup QR code</strong>, shown in the order detail with the pickup session (time and place).</li>
+<li><strong>Remove</strong> <code>address_id</code>, <code>delivery_fee</code>, the shipped / delivered states and the tracking number.</li>
+<li>Record the decision in the brief (Scope and Schedule risk).</li>
+</ul>
+<h3 id="payment">Payment</h3>
+<ul>
+<li><strong>Payment happens on Ztor's payment page</strong> (a redirect), never on the site, so the site never handles card details.</li>
+<li><strong>The flow:</strong> payment methods for this cart → quote → submit → payment page → back to the site → check the result.
+<ul>
+<li>Submit returns a pending status and the payment page URL. It never returns <code>paid</code>.</li>
+<li>The payment page stays valid for up to 10 minutes.</li>
+<li>If a payment fails, the fan can pay again for the same order.</li>
+</ul>
+</li>
+<li><strong>The site sends a payment method code</strong> from the list (card, Apple Pay, Google Pay, …), not a card token like <code>pm_x92</code>. Which methods appear depends on the fan's currency.</li>
+<li><strong>Endpoints to add:</strong> payment methods for this cart · pay again. Quote and payment result are already listed in section 2.</li>
+<li><strong>Remove</strong> &quot;Antom sandbox&quot; from Environments and &quot;Payment via Antom (capture at order)&quot; from Integrations. The payment provider sits behind Ztor's gateway and isn't the site's concern.</li>
+</ul>
+<h3 id="prices-and-totals">Prices and totals</h3>
+<ul>
+<li>Totals are the subtotal and the amount payable. There's no delivery fee or tax line.</li>
+<li>Discount codes are out of the first cut, so remove <code>discount</code> and <code>promotion</code> from orders.</li>
+<li>Sale prices do exist in the eShop (original vs current price), so a product can show both.</li>
+</ul>
+<h3 id="order-states">Order states</h3>
+<ul>
+<li><strong>Order history shows paid orders only:</strong> paid → completed (collected at pickup).</li>
+<li><strong>Cancellation</strong> is an ops void in Creator Studio. How a voided order appears to the fan is being confirmed with the dev team.</li>
+<li><strong>No refunds in the product.</strong> A fan who wants one emails support, and ops handle it manually. The site shows the refund policy and how to get in touch.</li>
+<li><strong>No guest checkout:</strong> fans sign in before adding to the cart. With No crossover on, that's a site account.</li>
+</ul>
+<h3 id="what-changes-on-the-site-for-the-site-team">What changes on the site (for the site team)</h3>
+<p>As of the 09-14 review, lloud.club's checkout was built for delivery: address form, flat shipping fee, 5% tax line, promo codes, saved card. For launch it needs:</p>
+<ul>
+<li>a pickup contact instead of the address form</li>
+<li>no shipping fee, tax line or promo field</li>
+<li>no saved card, because payment happens on Ztor's page</li>
+<li>the pickup QR and session on the order page</li>
+</ul>
+<h2 id="4-sign-in">4. Sign-in</h2>
+<h3 id="a-ztor-sign-in-page-sso-the-site-never-handles-passwords">A Ztor sign-in page (SSO): the site never handles passwords</h3>
+<ul>
+<li><strong>Sign-in happens on a Ztor-hosted page</strong> showing the Ztor logo and the site's name. The site sends the fan there and gets them back signed in, so passwords are never typed on an artist's site.</li>
+<li><strong>The page handles:</strong> sign-in, registration, social login, email verification, password reset and change, and account deletion. These replace <code>POST /auth/register</code>, <code>/auth/login</code> and <code>/auth/social</code>.</li>
+<li><strong>The flow</strong> (OAuth 2.0 authorization code + PKCE, the standard for browser-only sites):
+<ol>
+<li>The site sends the fan to the Ztor sign-in page with its channel ID, its return URL, a random <code>state</code> and a PKCE challenge.</li>
+<li>The fan signs in or registers, with email + password or a social account.</li>
+<li>The page sends the fan back to the site's return URL with a one-time code.</li>
+<li>The site exchanges the code for tokens with <code>POST /auth/token</code>, and gets an access token (1 hour) + refresh token.</li>
+<li><strong>Refresh:</strong> <code>POST /auth/token</code> with the refresh token. Each refresh issues a new refresh token, and reusing an old one signs the fan out.</li>
+<li><strong>Sign out:</strong> <code>POST /auth/logout</code> revokes the refresh token and ends the sign-in page session.</li>
+</ol>
+</li>
+<li><strong>Return URLs</strong> must be on the site's allowlist, set in Creator Studio.</li>
+<li><strong>No crossover:</strong> the sign-in page knows which site it's serving.
+<ul>
+<li>On a No crossover site it only signs in that site's accounts, and new registrations create accounts for that site.</li>
+<li>Because the page shows the Ztor logo, its copy should tell fans that site accounts are separate from ztor.com accounts.</li>
+</ul>
+</li>
+</ul>
+<h3 id="social-login-required-at-launch">Social login (required at launch)</h3>
+<ul>
+<li><strong>Social login runs on the Ztor sign-in page.</strong> Each provider therefore needs only Ztor's sign-in domain registered, not each artist site. Each site's return URL goes on its allowlist in Creator Studio instead.</li>
+<li><strong>Providers:</strong> the four ztor.com supports today: <strong>Apple, Google, Facebook, LINE</strong>. LINE matters for fans in Thailand and Taiwan. Replace v1.4's &quot;Spotify, Apple, Google&quot; default.</li>
+<li><strong>On a No crossover site,</strong> a social sign-in creates or uses that site's account.</li>
+<li><strong>Remove <code>POST /auth/social {provider, id_token}</code>.</strong> The <code>ya29…</code> sample is a Google access token, which can't prove who the fan is.</li>
+</ul>
+<h3 id="registration">Registration</h3>
+<ul>
+<li><strong>Market (country) comes from the fan's IP address,</strong> set by the server. Remove <code>market</code> from the request.</li>
+<li><strong>Language</strong> is chosen at registration (English by default on LLOUD) and can be changed in the profile. Account and order emails use it; without it they fall back to Traditional Chinese (zh-hk).</li>
+<li><strong>Terms:</strong> the fan accepts Ztor's terms of sale and privacy policy, because Ztor is the seller and payment goes through Ztor's gateway. The site's own terms are added if it has any.</li>
+<li><strong>The email address is verified</strong> after registration.</li>
+</ul>
+<h3 id="profile">Profile</h3>
+<ul>
+<li><strong>Keep:</strong> <code>GET /me</code> and <code>PATCH /me</code> (name ≤ 40, bio ≤ 160, plus language). A profile update can never change tier, points or membership (AC-2.4).</li>
+<li><strong>Add <code>PUT /me/avatar</code>:</strong> the fan uploads their own photo (JPEG or PNG, ≤ 5 MB) and gets back the avatar URL. v1.4's only upload endpoint was admin-only and has been removed. Update AC-2.3 to match, dropping &quot;JPEG data URI&quot;.</li>
+</ul>
+<h3 id="identity-endpoints-after-these-changes">Identity endpoints after these changes</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Endpoints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Remove</strong></td>
+<td><code>POST /auth/register</code> · <code>POST /auth/login</code> · <code>POST /auth/social</code> · <code>POST /auth/refresh</code></td>
+</tr>
+<tr>
+<td><strong>Add</strong></td>
+<td><code>POST /auth/token</code> (code exchange + refresh) · <code>PUT /me/avatar</code></td>
+</tr>
+<tr>
+<td><strong>Keep</strong></td>
+<td><code>POST /auth/logout</code> · <code>GET /me</code> · <code>PATCH /me</code> (+ language)</td>
+</tr>
+<tr>
+<td><strong>On the Ztor sign-in / account pages, not the API</strong></td>
+<td>register · sign in · social login · verify email · reset or change password · delete account. The site links to these</td>
+</tr>
+</tbody>
+</table></div>
+<p>Token endpoints return 200, not 201.</p>
+<h2 id="5-channel-settings-set-in-creator-studio">5. Channel settings (set in Creator Studio)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code>, <code>api_key</code> (public channel key), <code>domains</code>, <code>allowed_origins</code></td>
+<td>Keep</td>
+</tr>
+<tr>
+<td><code>return_urls</code></td>
+<td>Keep. Used when the fan comes back from the Ztor sign-in page and from the payment page</td>
+</tr>
+<tr>
+<td><code>creator_id</code> (string or null)</td>
+<td><strong>Replace with <code>creator_ids</code>:</strong> a list holding one creator today, with more addable later (e.g. a label site). Drop the null (&quot;every creator&quot;) case, since ztor.com isn't a Creator API site</td>
+</tr>
+<tr>
+<td><code>brand.name</code></td>
+<td>Keep, and <strong>add a logo</strong>, shown next to the Ztor logo on the sign-in page</td>
+</tr>
+<tr>
+<td><code>brand.sender</code>, <code>brand.receipt_logo</code></td>
+<td>Keep for now. Depends on management's answer on email branding (Open items)</td>
+</tr>
+<tr>
+<td><code>base_currency</code></td>
+<td><strong>Remove.</strong> See section 6</td>
+</tr>
+<tr>
+<td><code>no_crossover</code></td>
+<td><strong>Add.</strong> The No crossover setting, locked once the site has members</td>
+</tr>
+<tr>
+<td><code>default_language</code></td>
+<td><strong>Add (a safety net).</strong> A default language in the site's Channel settings. It's used only when a call arrives without a language, and for anything Ztor sends on its own, such as an email to a fan whose profile has no language</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="6-currency">6. Currency</h2>
+<ul>
+<li><strong>Creator sites follow the same currency rule as ztor.com.</strong> The Creator API has no currency rule of its own.</li>
+<li><strong>The rule (Ztor's, from eShop 2.2):</strong> the fan's currency is fixed at registration from their IP.
+<ul>
+<li>Singapore → SGD, Hong Kong → HKD, Taiwan → TWD, everywhere else → USD.</li>
+<li>It doesn't change when the fan travels or uses a VPN.</li>
+</ul>
+</li>
+<li><strong>Ztor's systems set the fan's currency; the site can't choose it.</strong> The site reads it from the currency-context endpoint (section 2) and shows exactly what Ztor quotes, so the price shown and the price charged can't differ.</li>
+<li><strong>Supported currencies:</strong> SGD, USD, HKD, TWD.</li>
+<li><strong>Remove &quot;channel currency&quot; everywhere:</strong> the Money decision (&quot;decimal in the channel currency&quot;), <code>Channel.base_currency</code>, and the channel currency in samples.</li>
+<li><strong>Money format:</strong> every amount carries its currency code, and all amounts use one format. TWD has no decimal places.</li>
+</ul>
+<h2 id="7-gating">7. Gating</h2>
+<h3 id="launch-no-new-service">Launch: no new service</h3>
+<ul>
+<li><strong>Keep <code>GET /entitlements?product=</code>,</strong> which answers &quot;can this fan buy this now, and if not, why?&quot;.</li>
+<li><strong>At launch the answer comes from the eShop's own facts:</strong> sale start (not buyable before the sale opens), purchase limit (per fan, across orders) and stock. The eShop also enforces these at checkout.</li>
+<li><strong>Reasons at launch:</strong> <code>not_on_sale_yet</code> · <code>purchase_limit</code> · <code>sold_out</code>. Checkout returns the same reason when it refuses, so the site shows one message (AC-3.2).</li>
+<li><strong>No region lock for now.</strong> No crossover already keeps the creator's products on the site.</li>
+<li><strong>Remove from the Policy rules section for launch:</strong>
+<ul>
+<li><code>purchase_limit</code> and <code>inventory</code>: the eShop enforces them.</li>
+<li><code>region</code>: not needed now.</li>
+<li><code>member_only</code>: every buyer is a signed-in site member.</li>
+<li><code>tier</code>, <code>presale_window</code> with a tier, and <code>points_min</code>: these need tiers and points.</li>
+</ul>
+</li>
+<li><strong><code>GET /me/entitlements</code> moves to category 3.</strong></li>
+</ul>
+<h3 id="next-step-the-policy-service-after-launch-before-tiers-and-points">Next step: the Policy service (after launch, before tiers and points)</h3>
+<ul>
+<li><strong>Not in the current sprint.</strong> Build it before tiers and loyalty points go live.</li>
+<li><strong>It sits behind the same <code>/entitlements</code> endpoint,</strong> so the site doesn't change; it just starts returning new reasons, e.g. tier locked.</li>
+<li><strong>It adds:</strong>
+<ul>
+<li>the rule format (all / any, typed conditions)</li>
+<li>rules set up in Creator Studio</li>
+<li>tier and lifetime-points conditions, taken from Ztor's own scoring</li>
+<li>early access for top tiers</li>
+<li>the same checks on ztor.com's own checkout</li>
+</ul>
+</li>
+<li><strong>Reward and vault unlocks:</strong> decide with the loyalty vendor, which may own tier benefits.</li>
+<li><strong>Keep v1.4's Policy rules section</strong> as the design input for this step, marked &quot;next step&quot;.</li>
+</ul>
+<h2 id="8-acceptance">8. Acceptance</h2>
+<h3 id="the-four-criteria">The four criteria</h3>
+<ul>
+<li><strong>01 — keep.</strong> The platform owns data and transactions, never presentation.</li>
+<li><strong>02 — reword.</strong> Sign-in and payment now happen on Ztor's pages by design, so &quot;curl can complete the entire flow with no browser&quot; can't pass any more. The criterion's purpose, that the site decides nothing, stays:
+<blockquote>
+<p><strong>02 · The site decides nothing — the server enforces every rule.</strong> With a test token (staging), curl calls the same endpoints the site calls — can-I-buy → add to cart → quote → submit — and gets the same answers and refusals. Calling an endpoint directly can't get past a rule the server refuses. Sign-in and payment happen on Ztor's pages by design and sit outside this test.</p>
+</blockquote>
+</li>
+<li><strong>03 — keep.</strong> Adding an artist requires no new endpoints.</li>
+<li><strong>04 — reword:</strong> &quot;Each site sees only its creator's data, and every order records the site it came from.&quot; Drop the ztor.com / tyson.com example.</li>
+</ul>
+<p><strong>Rewrite the curl sample</strong> with these steps (every call carries <code>X-Channel-Key</code> + Bearer):</p>
+<ol>
+<li><code>GET /v1/entitlements?product=…</code> for a product whose sale hasn't opened → <code>allowed: false, reason: not_on_sale_yet</code></li>
+<li><code>POST /v1/cart/items {skuId, quantity}</code> for that product → refused with <code>not_on_sale_yet</code>. The server refuses; the site's code isn't involved.</li>
+<li>For a product that's on sale: <code>POST /v1/cart/items</code> → <code>POST /v1/checkout/quote</code> → <code>POST /v1/checkout</code> → pending + a payment URL.</li>
+</ol>
+<p>Keep the closing test: <em>&quot;can the next artist's site be built without touching the API repo?&quot;</em></p>
+<h3 id="the-checks">The checks</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Verdict</th>
+<th>Launch wording</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AC-1 Gating</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1.1</td>
+<td>Reword</td>
+<td>A refused fan gets the specific reason (not on sale yet / purchase limit / sold out), never a generic denial</td>
+</tr>
+<tr>
+<td>1.2 · 1.3 · 1.5</td>
+<td>→ Future</td>
+<td>Reward conditions, locked-reward media, reward validation. These become the Policy step's acceptance</td>
+</tr>
+<tr>
+<td>1.4</td>
+<td>Reword</td>
+<td>Changing a product's sale start or purchase limit in Creator Studio changes the <code>/entitlements</code> answer with no site deploy</td>
+</tr>
+<tr>
+<td><strong>AC-2 Identity</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>2.1</td>
+<td>Reword</td>
+<td>Sign-in happens on the Ztor sign-in page and gives the site a Ztor token. The site never sees a password</td>
+</tr>
+<tr>
+<td>2.2</td>
+<td>Reword (No crossover on)</td>
+<td>A site account can't sign in on ztor.com, a ztor.com account can't sign in on the site, and the same email can hold both</td>
+</tr>
+<tr>
+<td>2.3</td>
+<td>Reword</td>
+<td>Server-side limits: name ≤ 40, bio ≤ 160, avatar JPEG/PNG ≤ 5 MB via the avatar upload</td>
+</tr>
+<tr>
+<td>2.4</td>
+<td>Keep</td>
+<td>A profile update can't change tier, points or membership</td>
+</tr>
+<tr>
+<td>2.5</td>
+<td>Add</td>
+<td>Sending <code>market</code> has no effect; it comes from the IP at registration</td>
+</tr>
+<tr>
+<td><strong>AC-3 Commerce</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>3.1</td>
+<td>Reword</td>
+<td>Adding or submitting a product that isn't on sale yet is refused by the server with the reason</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td>Keep</td>
+<td>The refusal matches what the site showed (same code)</td>
+</tr>
+<tr>
+<td>3.3</td>
+<td>Keep</td>
+<td>The per-fan purchase limit holds under concurrent orders: fire the limit+1th order twice at once, and exactly one succeeds</td>
+</tr>
+<tr>
+<td>3.4</td>
+<td>→ Future</td>
+<td>Refund reverses points</td>
+</tr>
+<tr>
+<td>3.5</td>
+<td>Add</td>
+<td>Submit never returns paid: it returns pending + a payment URL, and the order appears only after payment succeeds</td>
+</tr>
+<tr>
+<td><strong>AC-4 Points &amp; tiers</strong></td>
+<td>→ Future</td>
+<td>All four</td>
+</tr>
+<tr>
+<td><strong>AC-5 Boundary</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5.1 · 5.4</td>
+<td>Keep</td>
+<td>Only <code>api-client.js</code> touches data; swapping the data source changes no view</td>
+</tr>
+<tr>
+<td>5.2</td>
+<td>Reword</td>
+<td>Every request carries <code>X-Channel-Key</code>; every signed-in request also carries the Bearer token</td>
+</tr>
+<tr>
+<td>5.3</td>
+<td>Keep</td>
+<td><code>reward-engine.js</code> and <code>profile-model.js</code> decide nothing. Rewards stay hidden until the feature exists</td>
+</tr>
+<tr>
+<td>5.5</td>
+<td>Add</td>
+<td>No <code>X-Gateway-App-Token</code> or other Ztor secret anywhere in the site's code</td>
+</tr>
+<tr>
+<td>5.6</td>
+<td>Add (from 6.1 + 6.2)</td>
+<td>No rule or catalogue config lives in the browser (<code>lloud_reward_config_preview_v1</code> is gone), and clearing browser storage doesn't change what a fan can buy</td>
+</tr>
+<tr>
+<td><strong>AC-6 Creator Studio</strong></td>
+<td>Dissolve</td>
+<td>6.1 and 6.2 → 5.6 · 6.3 → Future · 6.4 (config audit log) → Creator Studio's own acceptance</td>
+</tr>
+<tr>
+<td><strong>AC-7 Isolation</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>7.1</td>
+<td>Reword</td>
+<td>Every order records the site it came from; every read returns only the site's creator's data</td>
+</tr>
+<tr>
+<td>7.2</td>
+<td>Keep</td>
+<td>A new site is added with configuration in Creator Studio only: no new endpoint, no deploy</td>
+</tr>
+<tr>
+<td>7.3</td>
+<td>Reword</td>
+<td>A site's key can't read another creator's products or orders. The admin version → Creator Studio</td>
+</tr>
+<tr>
+<td>7.4</td>
+<td>→ Future</td>
+<td>Points accrue to the creator</td>
+</tr>
+<tr>
+<td>7.5</td>
+<td>Add</td>
+<td>With No crossover on, the creator's products don't appear on ztor.com</td>
+</tr>
+<tr>
+<td>7.6</td>
+<td>Add</td>
+<td>For sites with crossover on: the site's cart and order history show only its creator's items</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Result:</strong> 22 launch checks. 10 move to Future, where they become the Policy / loyalty acceptance, and 2 move to Creator Studio.</p>
+<h2 id="9-category-1-endpoints-after-these-changes-and-clean-up">9. Category 1 endpoints after these changes, and clean-up</h2>
+<h3 id="endpoint-list">Endpoint list</h3>
+<p>The paths are suggestions; the final names are the BA's call.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Endpoints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sign-in</td>
+<td><code>POST /auth/token</code> · <code>POST /auth/logout</code>, plus the Ztor sign-in pages</td>
+</tr>
+<tr>
+<td>Profile</td>
+<td><code>GET /me</code> · <code>PATCH /me</code> · <code>PUT /me/avatar</code></td>
+</tr>
+<tr>
+<td>Catalog</td>
+<td><code>GET /products</code> · <code>GET /products/{id}</code> · <code>GET /products/{id}/size-guide</code></td>
+</tr>
+<tr>
+<td>Cart</td>
+<td><code>GET /cart</code> · <code>POST /cart/items</code> · <code>PATCH /cart/items/{id}</code> · <code>DELETE /cart/items/{id}</code></td>
+</tr>
+<tr>
+<td>Checkout</td>
+<td><code>GET /pickup-contacts</code> · <code>POST /pickup-contacts</code> · <code>GET /checkout/payment-methods</code> · <code>POST /checkout/quote</code> · <code>POST /checkout</code> · <code>GET /checkout/{id}</code> · <code>POST /checkout/{id}/pay</code></td>
+</tr>
+<tr>
+<td>Orders</td>
+<td><code>GET /orders</code> · <code>GET /orders/{id}</code></td>
+</tr>
+<tr>
+<td>Gating / currency</td>
+<td><code>GET /entitlements?product=</code> · <code>GET /currency-context</code></td>
+</tr>
+<tr>
+<td>To confirm</td>
+<td>Content ×2: probably not needed, since collection and site copy live in the site</td>
+</tr>
+</tbody>
+</table></div>
+<p>That's 23 endpoints, plus up to 2 still to confirm.</p>
+<h3 id="clean-up">Clean-up</h3>
+<ul>
+<li><strong>Product payloads:</strong>
+<ul>
+<li>Remove <code>points_award</code> and <code>unlocks</code>; they're category 3.</li>
+<li>Include full image URLs, with CDN sizes, in the product, so the site doesn't fetch images one by one. Product images are uploaded in Creator Studio. The eShop sometimes returns relative image paths, so the Creator API always returns full URLs.</li>
+</ul>
+</li>
+<li><strong><code>DELETE /cart/items/{id}</code>:</strong> v1.4 returns 204 <em>with</em> a body. Return 200 with the updated cart, or 204 with no body.</li>
+<li><strong>Language:</strong> the site sends it on every call (section 2), with the Channel's <code>default_language</code> as the safety net (section 5). This way an English site never falls back to Traditional Chinese (zh-hk).</li>
+<li><strong>Samples:</strong> use 64-bit string IDs, SKU-based carts and amounts in the fan's currency (e.g. USD for a Thai fan).</li>
+</ul>
+<h2 id="open-items">Open items</h2>
+<h3 id="to-confirm-with-management">To confirm with management</h3>
+<blockquote>
+<p><strong>Where fans see Ztor on a creator site</strong></p>
+<ul>
+<li><strong>Sign-in:</strong> the Ztor sign-in page shows the Ztor logo.</li>
+<li><strong>Payment:</strong> the payment page and card statement show Ztor, not the creator's brand.</li>
+<li><strong>Emails:</strong> account emails (verification, password reset) and order emails come from Ztor unless management chooses a creator-branded sender. See Email branding below.</li>
+</ul>
+</blockquote>
+<p><strong>Email branding</strong></p>
+<ul>
+<li>Should account and order emails come from a <strong>creator-branded sender</strong> (e.g. &quot;LLOUD&quot;), with the creator's logo on receipts, rather than from Ztor?</li>
+<li><strong>Recommended: branded.</strong> Fans may not recognise Ztor, and could miss or ignore the emails.</li>
+<li>This is why <code>brand.sender</code> and <code>brand.receipt_logo</code> stay in the Channel settings for now.</li>
+</ul>
+<p><strong>Currency</strong></p>
+<ul>
+<li>There's no Thai baht. Fans in Thailand and the Philippines will pay in <strong>USD</strong>, under Ztor's currency rule from eShop 2.2. OK for LLOUD?</li>
+</ul>
+<p><strong>Delivery</strong></p>
+<ul>
+<li>LLOUD launches with <strong>pickup / pop-up only</strong>, with no delivery to an address. Fans collect each item with a QR code at a pickup session (time and place set in Creator Studio). Is this OK for launch?</li>
+</ul>
+<p><strong>Payment</strong></p>
+<ul>
+<li>Fans pay on <strong>Ztor's payment page</strong>, not on the site, so there's no saved card on lloud.club. OK?</li>
+<li>Which payment methods do LLOUD fans need at launch: cards, Apple Pay, Google Pay? The Hong Kong wallets (AlipayHK, Octopus, PayMe) won't matter to most LLOUD fans.</li>
+<li><strong>No discount codes at launch.</strong> OK?</li>
+<li><strong>No self-service refunds:</strong> a fan emails support and ops handle it manually. OK as the refund policy on lloud.club?</li>
+</ul>
+<h3 id="depends-on-the-dev-team-for-awareness-i-m-raising-these-with-eric">Depends on the dev team (for awareness; I'm raising these with Eric)</h3>
+<ul>
+<li><strong>A Ztor sign-in page (SSO) is launch-critical,</strong> because sign-in comes first. The dev team needs to build:
+<ul>
+<li>the hosted pages: sign-in, registration, social login (Apple, Google, Facebook, LINE), email verification, password reset, account deletion</li>
+<li><code>POST /auth/token</code> for code exchange and refresh</li>
+<li>a per-site return-URL allowlist</li>
+<li>the No crossover rule on the page</li>
+<li>the four providers registered for the Ztor sign-in domain</li>
+</ul>
+</li>
+<li><strong>No crossover is launch-critical, because LLOUD launches with it on.</strong>
+<ul>
+<li>Accounts in Ztor's identity need the per-site no-crossover rule: the same email can register on the site and on ztor.com, and each account signs in only where it belongs.</li>
+<li>Shopping and Order must still accept those fans' orders.</li>
+</ul>
+</li>
+<li><strong>Per-site product listing.</strong> With No crossover on, the creator's products must be hidden from ztor.com yet still listed on the site. The eShop's single visibility flag can't do both today.</li>
+<li><strong>No shop filter.</strong> Shopping has none on products or orders, and the Creator API needs one to show only the site's own items.</li>
+<li><strong>Orders don't record which site they came from.</strong></li>
+<li><strong>The post-payment return URL isn't checked,</strong> so the Creator API must enforce each site's allowed return URLs.</li>
+<li><strong>Catalog responses aren't cached,</strong> so drop-day traffic needs caching and limits in the Creator API layer.</li>
+<li><strong>Unpaid orders hold stock.</strong> Stock is taken when the order is created, before payment, so on a hot drop an unpaid order holds stock for up to ~10 minutes. Confirm stock is released when a payment expires.</li>
+<li><strong>Voided orders:</strong> how they show in the fan's order history.</li>
+<li><strong>If management picks branded emails:</strong> a per-site sender (the creator's email domain verified for sending) and the creator's logo on account and order email templates.</li>
+<li><strong>eShop rule to confirm:</strong> is there a scheduled sale end? (The purchase limit is per fan, across orders.)</li>
+<li><strong>Next step (not this sprint):</strong> the Policy service, built before tiers and loyalty points go live.</li>
+</ul>
+
+    </main>
+    <footer>Source: <code>ztor-docs/outputs/specs/creator-api-v1.4-feedback-for-ba-2026-09-26.md</code> · Visual system: Ztor Creator Studio r2.2, light mode.</footer>
+  </div>
+</div>
+</body>
+</html>
