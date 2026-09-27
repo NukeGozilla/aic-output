@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creator Site Workflow — set up → sell → loyalty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Noto+Sans+TC:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+/* Tokens: Ztor Creator Studio r2.2, light mode (ds-components/_tokens.css) */
+:root{
+  --background:#FFFFFF; --foreground:#1A1A1A; --muted:#FAFAFA; --muted-foreground:#6E6E68;
+  --accent:#F3F3F3; --border:#EAEAEA; --primary:#ffa33f; --brand-ink:#8F4E00;
+  --selected-surface:rgba(255,163,63,.14);
+  --ops:#ffa33f; --site:#266DF0; --fan:#22C55E; --dev:#71717A;
+  --fan-ink:#15803D;
+  --font:"Poppins","Noto Sans TC","Microsoft JhengHei",-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--background); color:var(--foreground); font-family:var(--font); line-height:1.45; padding:32px 20px 56px}
+.wrap{max-width:1320px; margin:0 auto}
+h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.2px}
+.zh{font-family:"Noto Sans TC",var(--font); color:var(--muted-foreground); font-weight:400}
+
+/* header */
+.head{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:flex-start; margin-bottom:18px}
+.head h1{font-size:28px}
+.head .sub{color:var(--muted-foreground); font-size:14px; margin-top:4px}
+.lloud{border:1px solid var(--border); border-radius:12px; padding:10px 14px; font-size:12.5px; background:var(--muted)}
+.lloud b{color:var(--brand-ink)}
+.legend{display:flex; flex-wrap:wrap; gap:8px 18px; font-size:12px; color:var(--muted-foreground); margin:8px 0 22px}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+.dot{width:10px; height:10px; border-radius:50%; display:inline-block; flex:none}
+.dot.ops{background:var(--ops)} .dot.site{background:var(--site)} .dot.fan{background:var(--fan)} .dot.dev{background:var(--dev)}
+.tag{display:inline-block; font-size:9.5px; font-weight:600; letter-spacing:.4px; padding:1px 6px; border-radius:6px; vertical-align:middle; white-space:nowrap}
+.tag.new{background:var(--primary); color:#171717}
+.tag.existing{border:1px solid var(--border); color:var(--muted-foreground)}
+.tag.pending{border:1px dashed #B58900; color:#8A6A00}
+.tag.next{border:1px dashed var(--primary); color:var(--brand-ink)}
+.tag.future{border:1px dashed var(--dev); color:var(--dev)}
+
+/* one-time band */
+.band{border:1px dashed var(--dev); border-radius:16px; padding:12px 16px; display:flex; gap:10px 14px; align-items:center; flex-wrap:wrap; background:var(--muted)}
+.band-h{font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px}
+.chip{font-size:12px; border:1px solid var(--border); background:#fff; border-radius:999px; padding:4px 10px; white-space:nowrap}
+
+/* rows */
+.row-label{font-size:12px; font-weight:600; letter-spacing:1.2px; color:var(--muted-foreground); margin:26px 0 10px; display:flex; align-items:center; gap:10px}
+.row-label::after{content:""; flex:1; height:1px; background:var(--border)}
+.scroll{overflow-x:auto; padding-bottom:6px}
+.flow{display:grid; align-items:stretch; gap:0}
+.flow.setup{grid-template-columns:repeat(4, minmax(190px,1fr) 30px) minmax(190px,1fr); min-width:1120px}
+.flow.run{grid-template-columns:minmax(420px,2.3fr) 30px minmax(200px,1fr) 30px minmax(260px,1.3fr); min-width:1000px}
+.conn{display:flex; align-items:center; justify-content:center; color:#B8B8B2; font-size:20px}
+
+.phase{border:1px solid var(--border); border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:8px; background:#fff}
+.phase.next{border:1.5px dashed var(--primary); background:rgba(255,163,63,.04)}
+.phase.future{border:1.5px dashed #C9C9C4; background:var(--muted)}
+.ph-h{display:flex; align-items:center; gap:8px; margin-bottom:2px}
+.num{width:24px; height:24px; border-radius:50%; background:var(--foreground); color:#fff; font-size:12px; font-weight:600; display:inline-flex; align-items:center; justify-content:center; flex:none}
+.phase.next .num{background:var(--primary); color:#171717}
+.phase.future .num{background:var(--dev)}
+.ph-h h3{font-size:15px}
+.ph-h .zh{font-size:12px}
+
+.step{position:relative; border:1px solid var(--border); border-radius:10px; padding:8px 10px 8px 14px; font-size:12.5px; background:#fff}
+.step::before{content:""; position:absolute; left:0; top:6px; bottom:6px; width:4px; border-radius:4px}
+.step.ops::before{background:var(--ops)} .step.site::before{background:var(--site)} .step.fan::before{background:var(--fan)} .step.dev::before{background:var(--dev)}
+.step.both::before{background:linear-gradient(var(--ops) 50%, var(--site) 50%)}
+.step.pending{border-style:dashed; border-color:#D9B84A}
+.step.decision{border:1.5px solid var(--primary); background:rgba(255,163,63,.06)}
+.step.decision .q{font-weight:600}
+.step.golive{border:1.5px solid var(--foreground); font-weight:600}
+.step.future-step{border-style:dashed; color:#52525B; background:transparent}
+.step .meta{display:block; font-size:11px; color:var(--muted-foreground); margin-top:2px}
+.step .mono{font-family:var(--mono); font-size:11px}
+
+/* fan journey chain */
+.chain{display:flex; flex-wrap:wrap; align-items:center; gap:6px}
+.chain .step{flex:1 1 110px; text-align:left}
+.chain .arr{color:#B8B8B2; font-size:15px}
+.subgap{height:4px}
+.future-chain{display:flex; flex-direction:column; gap:6px}
+.down{color:#B8B8B2; text-align:center; font-size:14px; line-height:1}
+
+.between{display:flex; align-items:center; gap:10px; margin:12px 0 0 6px; font-size:12.5px; color:var(--muted-foreground)}
+.between b{color:var(--foreground)}
+
+footer{margin-top:34px; padding-top:14px; border-top:1px solid var(--border); font-size:12px; color:var(--muted-foreground); display:grid; gap:3px}
+footer .mono{font-family:var(--mono); font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <h1>Creator site · set up → sell → loyalty</h1>
+      <div class="sub">From creating the creator to selling on their own site, then what comes next. <span class="zh">獨立網站：建立 → 開賣 → 會員積分</span></div>
+    </div>
+    <div class="lloud">LLOUD launch choices: <b>No crossover on</b> · <b>English</b> · <b>pickup / pop-up only</b></div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot ops"></span>Ztor ops · Creator Studio</span>
+    <span><span class="dot site"></span>Site team</span>
+    <span><span class="dot fan"></span>Fans</span>
+    <span><span class="dot dev"></span>Dev team</span>
+    <span><span class="tag new">NEW</span> decided in the review</span>
+    <span><span class="tag existing">EXISTING</span> works today</span>
+    <span><span class="tag pending">PENDING</span> management</span>
+    <span><span class="tag next">NEXT</span> after launch</span>
+    <span><span class="tag future">FUTURE</span> not scheduled</span>
+  </div>
+
+  <div class="band">
+    <span class="band-h"><span class="dot dev"></span>Before the first site · one-time platform work</span>
+    <span class="chip">Ztor sign-in page (SSO)</span>
+    <span class="chip">Creator API layer</span>
+    <span class="chip">No crossover in identity</span>
+    <span class="chip">Per-site product listing</span>
+    <span class="chip">Shop filter</span>
+    <span class="chip">Orders record the site</span>
+    <span class="chip">Return-URL allowlist</span>
+  </div>
+
+  <!-- ROW 1: SET UP -->
+  <div class="row-label">SET UP · ONCE PER SITE</div>
+  <div class="scroll">
+    <div class="flow setup">
+
+      <div class="phase">
+        <div class="ph-h"><span class="num">1</span><div><h3>Create creator</h3><span class="zh">建立 Creator</span></div></div>
+        <div class="step ops">Search Ztor account → name · email · shop URL <span class="tag existing">EXISTING</span></div>
+        <div class="step ops">Shop created automatically <span class="tag existing">EXISTING</span></div>
+      </div>
+      <div class="conn">→</div>
+
+      <div class="phase">
+        <div class="ph-h"><span class="num">2</span><div><h3>Set up the site</h3><span class="zh">設定網站</span></div></div>
+        <div class="step ops">Name + logo · domain · return URLs <span class="tag new">NEW</span><span class="meta">logo appears on the Ztor sign-in page</span></div>
+        <div class="step ops">Default language <span class="tag new">NEW</span></div>
+        <div class="step decision"><span class="q">◇ No crossover?</span> <span class="tag new">NEW</span><span class="meta">decide now · locked once members exist</span></div>
+        <div class="step ops">Channel key → site team</div>
+        <div class="step ops pending">Email branding <span class="tag pending">PENDING</span></div>
+      </div>
+      <div class="conn">→</div>
+
+      <div class="phase">
+        <div class="ph-h"><span class="num">3</span><div><h3>List products</h3><span class="zh">上架商品</span></div></div>
+        <div class="step ops">Images · SKUs · price · stock <span class="tag existing">EXISTING</span></div>
+        <div class="step ops">Sale start · purchase limit per fan <span class="tag existing">EXISTING</span></div>
+        <div class="step ops">Pickup sessions · time · place · scanner <span class="tag existing">EXISTING</span></div>
+        <div class="step ops">Region lock <span class="tag new">NEW</span></div>
+      </div>
+      <div class="conn">→</div>
+
+      <div class="phase">
+        <div class="ph-h"><span class="num">4</span><div><h3>Build the site</h3><span class="zh">建置網站</span></div></div>
+        <div class="step site">Theme + collections<span class="meta">collections live in the site's content</span></div>
+        <div class="step site"><span class="mono">api-client.js</span> + channel key</div>
+        <div class="step site">Mock API → live Creator API</div>
+        <div class="step site">Sign-in → Ztor sign-in page <span class="tag new">NEW</span></div>
+        <div class="step site">Checkout → pickup contact → Ztor payment page</div>
+      </div>
+      <div class="conn">→</div>
+
+      <div class="phase">
+        <div class="ph-h"><span class="num">5</span><div><h3>Test &amp; launch</h3><span class="zh">測試上線</span></div></div>
+        <div class="step both">23 acceptance checks</div>
+        <div class="step both">Payment test</div>
+        <div class="step dev">Drop-day readiness · cache · limits</div>
+        <div class="step golive">Go live ✓</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="between">↓ <b>Go live</b> — the site starts selling</div>
+
+  <!-- ROW 2: RUN & GROW -->
+  <div class="row-label">RUN &amp; GROW</div>
+  <div class="scroll">
+    <div class="flow run">
+
+      <div class="phase">
+        <div class="ph-h"><span class="num">6</span><div><h3>Selling</h3><span class="zh">開賣</span></div></div>
+        <div class="chain">
+          <div class="step fan">Sign in<span class="meta">Ztor page</span></div><span class="arr">→</span>
+          <div class="step fan">Browse<span class="meta">can I buy?</span></div><span class="arr">→</span>
+          <div class="step fan">Cart → quote</div><span class="arr">→</span>
+          <div class="step fan">Pay<span class="meta">Ztor page</span></div>
+        </div>
+        <div class="chain">
+          <span class="arr">↳</span>
+          <div class="step fan">Order + pickup QR</div><span class="arr">→</span>
+          <div class="step fan">Collect at pop-up<span class="meta">scan QR</span></div>
+        </div>
+        <div class="subgap"></div>
+        <div class="step ops">Refund: fan emails → manual refund → void in Creator Studio</div>
+      </div>
+      <div class="conn">→</div>
+
+      <div class="phase next">
+        <div class="ph-h"><span class="num">7</span><div><h3>Next step</h3><span class="zh">下一步</span></div></div>
+        <div class="step dev">Policy service <span class="tag next">NEXT</span><span class="meta">same <span class="mono">/entitlements</span> · built before tiers</span></div>
+      </div>
+      <div class="conn">→</div>
+
+      <div class="phase future">
+        <div class="ph-h"><span class="num">8</span><div><h3>Loyalty</h3><span class="zh">會員積分（未來）</span></div></div>
+        <div class="future-chain">
+          <div class="step future-step">Tiers &amp; points <span class="tag future">FUTURE</span><span class="meta">Ztor scoring + vendor ledger</span></div>
+          <div class="down">↓</div>
+          <div class="step future-step">Tier-gated drops · early access</div>
+          <div class="down">↓</div>
+          <div class="step future-step">Rewards · vault · missions</div>
+        </div>
+        <div class="step future-step">Event tickets <span class="tag future">CATEGORY 2</span><span class="meta">follows the Event feature</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div>Visual system: Ztor Creator Studio r2.2, light mode (<span class="mono">pathfinders/Creator-Studio/ztor-creator-studio/r2.2/design-system.md</span>).</div>
+    <div>Source: Creator API v1.4 review, 09-26 → 09-27 (<span class="mono">ztor-docs/outputs/specs/creator-api-v1.4-feedback-for-ba-2026-09-26.md</span>) · companion wireframe: <span class="mono">outputs/wireframes/creator-site-settings-wireframe-2026-09-27.html</span> · no dates shown on purpose.</div>
+  </footer>
+</div>
+</body>
+</html>
