@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,25 +14,33 @@
   --accent:#F3F3F3; --border:#EAEAEA; --primary:#ffa33f; --brand-ink:#8F4E00;
   --selected-surface:rgba(255,163,63,.14);
   --ops:#ffa33f; --site:#266DF0; --fan:#22C55E; --dev:#71717A;
-  --fan-ink:#15803D;
   --font:"Poppins","Noto Sans TC","Microsoft JhengHei",-apple-system,"Segoe UI",sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
   color-scheme:light;
 }
+/* language: English by default */
+:root[data-lang="en"] .zh{display:none !important}
+:root[data-lang="zh"] .en{display:none !important}
+
 *{box-sizing:border-box}
 body{margin:0; background:var(--background); color:var(--foreground); font-family:var(--font); line-height:1.45; padding:32px 20px 56px}
 .wrap{max-width:1320px; margin:0 auto}
 h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.2px}
-.zh{font-family:"Noto Sans TC",var(--font); color:var(--muted-foreground); font-weight:400}
+
+/* language switch */
+.lang-toggle{position:fixed; top:14px; right:14px; z-index:50; display:inline-flex; gap:2px; padding:3px; border-radius:999px; background:#fff; border:1px solid var(--border); box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.lang-toggle button{font:600 12px var(--font); color:var(--muted-foreground); background:transparent; border:0; padding:6px 12px; border-radius:999px; cursor:pointer}
+.lang-toggle button[aria-pressed="true"]{background:var(--selected-surface); color:var(--brand-ink)}
 
 /* header */
-.head{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:flex-start; margin-bottom:18px}
+.head{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:flex-start; margin-bottom:18px; padding-right:120px}
 .head h1{font-size:28px}
 .head .sub{color:var(--muted-foreground); font-size:14px; margin-top:4px}
 .lloud{border:1px solid var(--border); border-radius:12px; padding:10px 14px; font-size:12.5px; background:var(--muted)}
 .lloud b{color:var(--brand-ink)}
+@media (max-width:760px){ .head{padding-right:0; padding-top:36px} }
 .legend{display:flex; flex-wrap:wrap; gap:8px 18px; font-size:12px; color:var(--muted-foreground); margin:8px 0 22px}
-.legend span{display:inline-flex; align-items:center; gap:6px}
+.legend > span{display:inline-flex; align-items:center; gap:6px}
 .dot{width:10px; height:10px; border-radius:50%; display:inline-block; flex:none}
 .dot.ops{background:var(--ops)} .dot.site{background:var(--site)} .dot.fan{background:var(--fan)} .dot.dev{background:var(--dev)}
 .tag{display:inline-block; font-size:9.5px; font-weight:600; letter-spacing:.4px; padding:1px 6px; border-radius:6px; vertical-align:middle; white-space:nowrap}
@@ -64,7 +72,6 @@ h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.2px}
 .phase.next .num{background:var(--primary); color:#171717}
 .phase.future .num{background:var(--dev)}
 .ph-h h3{font-size:15px}
-.ph-h .zh{font-size:12px}
 
 .step{position:relative; border:1px solid var(--border); border-radius:10px; padding:8px 10px 8px 14px; font-size:12.5px; background:#fff}
 .step::before{content:""; position:absolute; left:0; top:6px; bottom:6px; width:4px; border-radius:4px}
@@ -78,7 +85,7 @@ h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.2px}
 .step .meta{display:block; font-size:11px; color:var(--muted-foreground); margin-top:2px}
 .step .mono{font-family:var(--mono); font-size:11px}
 
-/* fan journey chain */
+/* fan journey */
 .chain{display:flex; flex-wrap:wrap; align-items:center; gap:6px}
 .chain .step{flex:1 1 110px; text-align:left}
 .chain .arr{color:#B8B8B2; font-size:15px}
@@ -94,141 +101,162 @@ footer .mono{font-family:var(--mono); font-size:11px}
 </style>
 </head>
 <body>
+<div class="lang-toggle" role="group" aria-label="Language">
+  <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+  <button type="button" data-set-lang="zh" aria-pressed="false">中文</button>
+</div>
 <div class="wrap">
 
   <div class="head">
     <div>
-      <h1>Creator site · set up → sell → loyalty</h1>
-      <div class="sub">From creating the creator to selling on their own site, then what comes next. <span class="zh">獨立網站：建立 → 開賣 → 會員積分</span></div>
+      <h1><span class="en">Creator site · set up → sell → loyalty</span><span class="zh">獨立網站 · 建立 → 開賣 → 會員積分</span></h1>
+      <div class="sub"><span class="en">From creating the creator to selling on their own site, then what comes next.</span><span class="zh">從建立 creator，到在自己的網站開賣，以及之後的規劃。</span></div>
     </div>
-    <div class="lloud">LLOUD launch choices: <b>No crossover on</b> · <b>English</b> · <b>pickup / pop-up only</b></div>
+    <div class="lloud"><span class="en">LLOUD launch choices: <b>No crossover on</b> · <b>English</b> · <b>pickup / pop-up only</b></span><span class="zh">LLOUD 上線設定：<b>不互通（開啟）</b>· <b>English</b> · <b>僅限取貨／快閃店</b></span></div>
   </div>
 
   <div class="legend">
-    <span><span class="dot ops"></span>Ztor ops · Creator Studio</span>
-    <span><span class="dot site"></span>Site team</span>
-    <span><span class="dot fan"></span>Fans</span>
-    <span><span class="dot dev"></span>Dev team</span>
-    <span><span class="tag new">NEW</span> decided in the review</span>
-    <span><span class="tag existing">EXISTING</span> works today</span>
-    <span><span class="tag pending">PENDING</span> management</span>
-    <span><span class="tag next">NEXT</span> after launch</span>
-    <span><span class="tag future">FUTURE</span> not scheduled</span>
+    <span><span class="dot ops"></span><span class="en">Ztor ops · Creator Studio</span><span class="zh">Ztor 營運 · Creator Studio</span></span>
+    <span><span class="dot site"></span><span class="en">Site team</span><span class="zh">網站團隊</span></span>
+    <span><span class="dot fan"></span><span class="en">Fans</span><span class="zh">粉絲</span></span>
+    <span><span class="dot dev"></span><span class="en">Dev team</span><span class="zh">開發團隊</span></span>
+    <span><span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="en">decided in the review</span><span class="zh">審閱中決定</span></span>
+    <span><span class="tag existing"><span class="en">EXISTING</span><span class="zh">既有</span></span><span class="en">works today</span><span class="zh">現在就能用</span></span>
+    <span><span class="tag pending"><span class="en">PENDING</span><span class="zh">待確認</span></span><span class="en">management</span><span class="zh">管理層</span></span>
+    <span><span class="tag next"><span class="en">NEXT</span><span class="zh">下一步</span></span><span class="en">after launch</span><span class="zh">上線後</span></span>
+    <span><span class="tag future"><span class="en">FUTURE</span><span class="zh">未來</span></span><span class="en">not scheduled</span><span class="zh">尚未排程</span></span>
   </div>
 
   <div class="band">
-    <span class="band-h"><span class="dot dev"></span>Before the first site · one-time platform work</span>
-    <span class="chip">Ztor sign-in page (SSO)</span>
-    <span class="chip">Creator API layer</span>
-    <span class="chip">No crossover in identity</span>
-    <span class="chip">Per-site product listing</span>
-    <span class="chip">Shop filter</span>
-    <span class="chip">Orders record the site</span>
-    <span class="chip">Return-URL allowlist</span>
+    <span class="band-h"><span class="dot dev"></span><span class="en">Before the first site · one-time platform work</span><span class="zh">第一個網站之前 · 一次性平台工作</span></span>
+    <span class="chip"><span class="en">Ztor sign-in page (SSO)</span><span class="zh">Ztor 登入頁（SSO）</span></span>
+    <span class="chip"><span class="en">Creator API layer</span><span class="zh">Creator API 層</span></span>
+    <span class="chip"><span class="en">No crossover in identity</span><span class="zh">身分系統支援不互通</span></span>
+    <span class="chip"><span class="en">Per-site product listing</span><span class="zh">依網站上架商品</span></span>
+    <span class="chip"><span class="en">Shop filter</span><span class="zh">店鋪篩選</span></span>
+    <span class="chip"><span class="en">Orders record the site</span><span class="zh">訂單記錄來源網站</span></span>
+    <span class="chip"><span class="en">Return-URL allowlist</span><span class="zh">回跳網址白名單</span></span>
   </div>
 
   <!-- ROW 1: SET UP -->
-  <div class="row-label">SET UP · ONCE PER SITE</div>
+  <div class="row-label"><span class="en">SET UP · ONCE PER SITE</span><span class="zh">建立 · 每個網站一次</span></div>
   <div class="scroll">
     <div class="flow setup">
 
       <div class="phase">
-        <div class="ph-h"><span class="num">1</span><div><h3>Create creator</h3><span class="zh">建立 Creator</span></div></div>
-        <div class="step ops">Search Ztor account → name · email · shop URL <span class="tag existing">EXISTING</span></div>
-        <div class="step ops">Shop created automatically <span class="tag existing">EXISTING</span></div>
+        <div class="ph-h"><span class="num">1</span><h3><span class="en">Create creator</span><span class="zh">建立 Creator</span></h3></div>
+        <div class="step ops"><span class="en">Search Ztor account → name · email · shop URL</span><span class="zh">搜尋 Ztor 帳號 → 名稱・Email・店鋪網址</span> <span class="tag existing"><span class="en">EXISTING</span><span class="zh">既有</span></span></div>
+        <div class="step ops"><span class="en">Shop created automatically</span><span class="zh">自動建立店鋪</span> <span class="tag existing"><span class="en">EXISTING</span><span class="zh">既有</span></span></div>
       </div>
       <div class="conn">→</div>
 
       <div class="phase">
-        <div class="ph-h"><span class="num">2</span><div><h3>Set up the site</h3><span class="zh">設定網站</span></div></div>
-        <div class="step ops">Name + logo · domain · return URLs <span class="tag new">NEW</span><span class="meta">logo appears on the Ztor sign-in page</span></div>
-        <div class="step ops">Default language <span class="tag new">NEW</span></div>
-        <div class="step decision"><span class="q">◇ No crossover?</span> <span class="tag new">NEW</span><span class="meta">decide now · locked once members exist</span></div>
-        <div class="step ops">Channel key → site team</div>
-        <div class="step ops pending">Email branding <span class="tag pending">PENDING</span></div>
+        <div class="ph-h"><span class="num">2</span><h3><span class="en">Set up the site</span><span class="zh">設定網站</span></h3></div>
+        <div class="step ops"><span class="en">Name + logo · domain · return URLs</span><span class="zh">名稱＋Logo・網域・回跳網址</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="meta"><span class="en">logo appears on the Ztor sign-in page</span><span class="zh">Logo 顯示在 Ztor 登入頁</span></span></div>
+        <div class="step ops"><span class="en">Default language</span><span class="zh">預設語言</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span></div>
+        <div class="step decision"><span class="q"><span class="en">◇ No crossover?</span><span class="zh">◇ 是否不互通？</span></span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="meta"><span class="en">decide now · locked once members exist</span><span class="zh">現在決定・有會員後鎖定</span></span></div>
+        <div class="step ops"><span class="en">Channel key → site team</span><span class="zh">頻道金鑰 → 網站團隊</span></div>
+        <div class="step ops pending"><span class="en">Email branding</span><span class="zh">電郵品牌</span> <span class="tag pending"><span class="en">PENDING</span><span class="zh">待確認</span></span></div>
       </div>
       <div class="conn">→</div>
 
       <div class="phase">
-        <div class="ph-h"><span class="num">3</span><div><h3>List products</h3><span class="zh">上架商品</span></div></div>
-        <div class="step ops">Images · SKUs · price · stock <span class="tag existing">EXISTING</span></div>
-        <div class="step ops">Sale start · purchase limit per fan <span class="tag existing">EXISTING</span></div>
-        <div class="step ops">Pickup sessions · time · place · scanner <span class="tag existing">EXISTING</span></div>
-        <div class="step ops">Region lock <span class="tag new">NEW</span></div>
+        <div class="ph-h"><span class="num">3</span><h3><span class="en">List products</span><span class="zh">上架商品</span></h3></div>
+        <div class="step ops"><span class="en">Images · SKUs · price · stock</span><span class="zh">圖片・SKU・價格・庫存</span> <span class="tag existing"><span class="en">EXISTING</span><span class="zh">既有</span></span></div>
+        <div class="step ops"><span class="en">Sale start · purchase limit per fan</span><span class="zh">開賣時間・每位粉絲購買上限</span> <span class="tag existing"><span class="en">EXISTING</span><span class="zh">既有</span></span></div>
+        <div class="step ops"><span class="en">Pickup sessions · time · place · scanner</span><span class="zh">取貨場次・時間・地點・掃碼器</span> <span class="tag existing"><span class="en">EXISTING</span><span class="zh">既有</span></span></div>
       </div>
       <div class="conn">→</div>
 
       <div class="phase">
-        <div class="ph-h"><span class="num">4</span><div><h3>Build the site</h3><span class="zh">建置網站</span></div></div>
-        <div class="step site">Theme + collections<span class="meta">collections live in the site's content</span></div>
-        <div class="step site"><span class="mono">api-client.js</span> + channel key</div>
-        <div class="step site">Mock API → live Creator API</div>
-        <div class="step site">Sign-in → Ztor sign-in page <span class="tag new">NEW</span></div>
-        <div class="step site">Checkout → pickup contact → Ztor payment page</div>
+        <div class="ph-h"><span class="num">4</span><h3><span class="en">Build the site</span><span class="zh">建置網站</span></h3></div>
+        <div class="step site"><span class="en">Theme + collections</span><span class="zh">主題＋系列</span><span class="meta"><span class="en">collections live in the site's content</span><span class="zh">系列由網站內容管理</span></span></div>
+        <div class="step site"><span class="mono">api-client.js</span> <span class="en">+ channel key</span><span class="zh">＋頻道金鑰</span></div>
+        <div class="step site"><span class="en">Mock API → live Creator API</span><span class="zh">模擬 API → 正式 Creator API</span></div>
+        <div class="step site"><span class="en">Sign-in → Ztor sign-in page</span><span class="zh">登入 → Ztor 登入頁</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span></div>
+        <div class="step site"><span class="en">Checkout → pickup contact → Ztor payment page</span><span class="zh">結帳 → 取貨聯絡人 → Ztor 付款頁</span></div>
       </div>
       <div class="conn">→</div>
 
       <div class="phase">
-        <div class="ph-h"><span class="num">5</span><div><h3>Test &amp; launch</h3><span class="zh">測試上線</span></div></div>
-        <div class="step both">23 acceptance checks</div>
-        <div class="step both">Payment test</div>
-        <div class="step dev">Drop-day readiness · cache · limits</div>
-        <div class="step golive">Go live ✓</div>
+        <div class="ph-h"><span class="num">5</span><h3><span class="en">Test &amp; launch</span><span class="zh">測試上線</span></h3></div>
+        <div class="step both"><span class="en">22 acceptance checks</span><span class="zh">22 項驗收</span></div>
+        <div class="step both"><span class="en">Payment test</span><span class="zh">付款測試</span></div>
+        <div class="step dev"><span class="en">Drop-day readiness · cache · limits</span><span class="zh">開賣日準備・快取・限流</span></div>
+        <div class="step golive"><span class="en">Go live ✓</span><span class="zh">上線 ✓</span></div>
       </div>
 
     </div>
   </div>
 
-  <div class="between">↓ <b>Go live</b> — the site starts selling</div>
+  <div class="between">↓ <span class="en"><b>Go live</b> — the site starts selling</span><span class="zh"><b>上線</b> — 網站開始販售</span></div>
 
   <!-- ROW 2: RUN & GROW -->
-  <div class="row-label">RUN &amp; GROW</div>
+  <div class="row-label"><span class="en">RUN &amp; GROW</span><span class="zh">營運與成長</span></div>
   <div class="scroll">
     <div class="flow run">
 
       <div class="phase">
-        <div class="ph-h"><span class="num">6</span><div><h3>Selling</h3><span class="zh">開賣</span></div></div>
+        <div class="ph-h"><span class="num">6</span><h3><span class="en">Selling</span><span class="zh">開賣</span></h3></div>
         <div class="chain">
-          <div class="step fan">Sign in<span class="meta">Ztor page</span></div><span class="arr">→</span>
-          <div class="step fan">Browse<span class="meta">can I buy?</span></div><span class="arr">→</span>
-          <div class="step fan">Cart → quote</div><span class="arr">→</span>
-          <div class="step fan">Pay<span class="meta">Ztor page</span></div>
+          <div class="step fan"><span class="en">Sign in</span><span class="zh">登入</span><span class="meta"><span class="en">Ztor page</span><span class="zh">Ztor 頁面</span></span></div><span class="arr">→</span>
+          <div class="step fan"><span class="en">Browse</span><span class="zh">瀏覽</span><span class="meta"><span class="en">can I buy?</span><span class="zh">能否購買？</span></span></div><span class="arr">→</span>
+          <div class="step fan"><span class="en">Cart → quote</span><span class="zh">購物車 → 報價</span></div><span class="arr">→</span>
+          <div class="step fan"><span class="en">Pay</span><span class="zh">付款</span><span class="meta"><span class="en">Ztor page</span><span class="zh">Ztor 頁面</span></span></div>
         </div>
         <div class="chain">
           <span class="arr">↳</span>
-          <div class="step fan">Order + pickup QR</div><span class="arr">→</span>
-          <div class="step fan">Collect at pop-up<span class="meta">scan QR</span></div>
+          <div class="step fan"><span class="en">Order + pickup QR</span><span class="zh">訂單＋取貨 QR</span></div><span class="arr">→</span>
+          <div class="step fan"><span class="en">Collect at pop-up</span><span class="zh">快閃店取貨</span><span class="meta"><span class="en">scan QR</span><span class="zh">掃 QR</span></span></div>
         </div>
         <div class="subgap"></div>
-        <div class="step ops">Refund: fan emails → manual refund → void in Creator Studio</div>
+        <div class="step ops"><span class="en">Refund: fan emails → manual refund → void in Creator Studio</span><span class="zh">退款：粉絲寄信 → 人工退款 → 在 Creator Studio 作廢</span></div>
       </div>
       <div class="conn">→</div>
 
       <div class="phase next">
-        <div class="ph-h"><span class="num">7</span><div><h3>Next step</h3><span class="zh">下一步</span></div></div>
-        <div class="step dev">Policy service <span class="tag next">NEXT</span><span class="meta">same <span class="mono">/entitlements</span> · built before tiers</span></div>
+        <div class="ph-h"><span class="num">7</span><h3><span class="en">Next step</span><span class="zh">下一步</span></h3></div>
+        <div class="step dev"><span class="en">Policy service</span><span class="zh">規則服務（Policy）</span> <span class="tag next"><span class="en">NEXT</span><span class="zh">下一步</span></span><span class="meta"><span class="en">same <span class="mono">/entitlements</span> · built before tiers</span><span class="zh">同一個 <span class="mono">/entitlements</span>・在等級上線前完成</span></span></div>
       </div>
       <div class="conn">→</div>
 
       <div class="phase future">
-        <div class="ph-h"><span class="num">8</span><div><h3>Loyalty</h3><span class="zh">會員積分（未來）</span></div></div>
+        <div class="ph-h"><span class="num">8</span><h3><span class="en">Loyalty</span><span class="zh">會員積分（未來）</span></h3></div>
         <div class="future-chain">
-          <div class="step future-step">Tiers &amp; points <span class="tag future">FUTURE</span><span class="meta">Ztor scoring + vendor ledger</span></div>
+          <div class="step future-step"><span class="en">Tiers &amp; points</span><span class="zh">等級與積分</span> <span class="tag future"><span class="en">FUTURE</span><span class="zh">未來</span></span><span class="meta"><span class="en">Ztor scoring + vendor ledger</span><span class="zh">Ztor 計分＋供應商帳本</span></span></div>
           <div class="down">↓</div>
-          <div class="step future-step">Tier-gated drops · early access</div>
+          <div class="step future-step"><span class="en">Tier-gated drops · early access</span><span class="zh">等級限定商品・優先購買</span></div>
           <div class="down">↓</div>
-          <div class="step future-step">Rewards · vault · missions</div>
+          <div class="step future-step"><span class="en">Rewards · vault · missions</span><span class="zh">獎勵・彩蛋庫・任務</span></div>
         </div>
-        <div class="step future-step">Event tickets <span class="tag future">CATEGORY 2</span><span class="meta">follows the Event feature</span></div>
+        <div class="step future-step"><span class="en">Event tickets</span><span class="zh">活動票券</span> <span class="tag future"><span class="en">CATEGORY 2</span><span class="zh">第 2 類</span></span><span class="meta"><span class="en">follows the Event feature</span><span class="zh">隨 Event 功能上線</span></span></div>
       </div>
 
     </div>
   </div>
 
   <footer>
-    <div>Visual system: Ztor Creator Studio r2.2, light mode (<span class="mono">pathfinders/Creator-Studio/ztor-creator-studio/r2.2/design-system.md</span>).</div>
-    <div>Source: Creator API v1.4 review, 09-26 → 09-27 (<span class="mono">ztor-docs/outputs/specs/creator-api-v1.4-feedback-for-ba-2026-09-26.md</span>) · companion wireframe: <span class="mono">outputs/wireframes/creator-site-settings-wireframe-2026-09-27.html</span> · no dates shown on purpose.</div>
+    <div><span class="en">Visual system: Ztor Creator Studio r2.2, light mode</span><span class="zh">視覺系統：Ztor Creator Studio r2.2 淺色模式</span> (<span class="mono">pathfinders/Creator-Studio/ztor-creator-studio/r2.2/design-system.md</span>).</div>
+    <div><span class="en">Source: Creator API v1.4 review, 09-26 → 09-27</span><span class="zh">來源：Creator API v1.4 審閱，09-26 → 09-27</span> (<span class="mono">ztor-docs/outputs/specs/creator-api-v1.4-feedback-for-ba-2026-09-26.md</span>) · <span class="en">companion wireframe:</span><span class="zh">配套線框稿：</span> <span class="mono">ztor-creator-site-settings-wireframe-2026-09-27.html</span> · <span class="en">no dates shown on purpose.</span><span class="zh">刻意不標示日期。</span></div>
   </footer>
 </div>
+<script>
+(function () {
+  var root = document.documentElement;
+  var KEY = 'ztor-creator-site-lang';
+  var buttons = document.querySelectorAll('[data-set-lang]');
+  function setLang(lang) {
+    root.setAttribute('data-lang', lang);
+    root.lang = lang === 'zh' ? 'zh-Hant' : 'en';
+    buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-set-lang') === lang)); });
+    try { localStorage.setItem(KEY, lang); } catch (e) {}
+  }
+  var fromUrl = new URLSearchParams(location.search).get('lang');
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) {}
+  setLang(fromUrl === 'zh' || fromUrl === 'en' ? fromUrl : (saved === 'zh' ? 'zh' : 'en'));
+  buttons.forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-set-lang')); }); });
+})();
+</script>
 </body>
 </html>
