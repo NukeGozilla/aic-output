@@ -54,11 +54,11 @@ footer code{font-size:11.5px}
 </head>
 <body>
 <div class="layout">
-  <nav class="toc" aria-label="Contents"><div class="toc-h">CONTENTS</div><a href="#1-scope">1. Scope</a><a href="#2-catalog-commerce">2. Catalog + Commerce</a><a href="#3-checkout-delivery-payment-order-states">3. Checkout — delivery, payment, order states</a><a href="#4-sign-in">4. Sign-in</a><a href="#5-channel-settings-set-in-creator-studio">5. Channel settings (set in Creator Studio)</a><a href="#6-currency">6. Currency</a><a href="#7-gating">7. Gating</a><a href="#8-acceptance">8. Acceptance</a><a href="#9-category-1-endpoints-after-these-changes-and-clean-up">9. Category 1 endpoints after these changes, and clean-up</a><a href="#open-items">Open items</a></nav>
+  <nav class="toc" aria-label="Contents"><div class="toc-h">CONTENTS</div><a href="#this-sprint-dev-sync-28-sep">This sprint (dev sync, 28 Sep)</a><a href="#1-scope">1. Scope</a><a href="#2-catalog-commerce">2. Catalog + Commerce</a><a href="#3-checkout-delivery-payment-order-states">3. Checkout — delivery, payment, order states</a><a href="#4-sign-in">4. Sign-in</a><a href="#5-channel-settings-set-in-creator-studio">5. Channel settings (set in Creator Studio)</a><a href="#6-currency">6. Currency</a><a href="#7-gating">7. Gating</a><a href="#8-acceptance">8. Acceptance</a><a href="#9-category-1-endpoints-after-these-changes-and-clean-up">9. Category 1 endpoints after these changes, and clean-up</a><a href="#open-items">Open items</a></nav>
   <div>
     <header class="doc">
       <h1>Creator API — review feedback on v1.4</h1>
-      <div class="subtitle">From Jeff · 2026-09-27 · Covers: brief v1.4 (24 Sep), API reference Draft v0.5, <code>openapi.yaml</code> 0.4.0-draft · Scope: category 1 (existing features + eShop)</div>
+      <div class="subtitle">From Jeff · 2026-09-27, updated 2026-09-28 after the dev sync · Covers: brief v1.4 (24 Sep), API reference Draft v0.5, <code>openapi.yaml</code> 0.4.0-draft · Scope: category 1 (existing features + eShop)</div>
       <div class="links"><a href="ztor-creator-site-settings-wireframe-2026-09-27.html">Wireframe: Creator Studio site settings</a><a href="ztor-creator-site-setup-workflow-2026-09-27.html">Workflow: set up → sell → loyalty</a><a href="https://github.com/ztor20/creator-api">Dev team&#x27;s eShop API (ztor20/creator-api)</a></div>
     </header>
     <main>
@@ -71,6 +71,77 @@ footer code{font-size:11.5px}
 <li><strong>Alignment with the real eShop contract.</strong></li>
 </ul>
 <p>The changes below are for v1.5.</p>
+<h2 id="this-sprint-dev-sync-28-sep">This sprint (dev sync, 28 Sep)</h2>
+<p>Eric's team builds <strong>Identity and Commerce only</strong>, starting over the National Day holiday (1–8 Oct). Gating, Content and everything else wait.</p>
+<p>Some of the design in this doc is too big for this sprint. The table shows what launches instead. The rest of the doc stays as the target design, and each affected section has a <strong>This sprint</strong> note.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Target design (this doc)</th>
+<th>This sprint</th>
+<th>Why (Eric, 28 Sep)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sign-in</td>
+<td>A Ztor-hosted sign-in page (SSO)</td>
+<td>The site's own sign-in and registration pages call a Ztor account API: email + password, a verification code, password reset (section 4)</td>
+<td>A hosted page with registration takes 2–3 weeks</td>
+</tr>
+<tr>
+<td>Social login</td>
+<td>Apple, Google, Facebook, LINE at launch</td>
+<td>Not this sprint. Management decides if and how to add it (Open items)</td>
+<td>Using Ztor's social login from another site needs 3–4 days of research first</td>
+</tr>
+<tr>
+<td>Accounts</td>
+<td>No crossover, on for LLOUD</td>
+<td>Shared: one Ztor account signs in on both lloud.club and ztor.com</td>
+<td>Separate accounts touch the whole backend, ztor.com included: 2–3 weeks</td>
+</tr>
+<tr>
+<td>Emails</td>
+<td>Creator-branded sender recommended</td>
+<td>From Ztor, with the site's logo and &quot;Powered by Ztor&quot; (about a day of work)</td>
+<td>A branded sender needs the email provider to verify the creator's domain: 1–2 weeks or more, by hand</td>
+</tr>
+<tr>
+<td>Site key</td>
+<td>A public channel key per site</td>
+<td>An API key per artist, issued when API access is turned on in Creator Studio (section 2)</td>
+<td>One artist, one key</td>
+</tr>
+<tr>
+<td>Site set-up</td>
+<td>Domains, allowed origins and return URLs in Creator Studio</td>
+<td>Set up by Ztor's dev team in server config, outside Creator Studio</td>
+<td>These need manual set-up anyway</td>
+</tr>
+<tr>
+<td>Gating</td>
+<td><code>GET /entitlements</code>, answered from eShop facts</td>
+<td>Not this sprint. The eShop still refuses at add-to-cart and checkout (section 7)</td>
+<td>Identity and Commerce only</td>
+</tr>
+<tr>
+<td>Collections</td>
+<td>The site keeps its own collection list</td>
+<td>Still open: eShop categories (the meeting's lean) or the site's own list (section 2)</td>
+<td>Collections don't exist in the eShop</td>
+</tr>
+<tr>
+<td>Payment</td>
+<td>Ztor's payment page, then back to the site</td>
+<td>Same. How the fan gets back to the site after paying is still to confirm (section 3)</td>
+<td>The payment gateway limits callback URLs</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Unchanged:</strong> pickup / pop-up only (LLOUD hasn't picked a shipping partner, and Ztor has no shipping yet) · Ztor's payment page · the currency rule · discount codes (ready by October).</p>
+<p><strong>For the API doc:</strong> keep only Identity and Commerce for Eric's team, and show the eShop call behind each Commerce endpoint. Section 9 has a draft of that mapping.</p>
 <h2 id="1-scope">1. Scope</h2>
 <h3 id="the-rule-the-creator-api-is-front-end-only">The rule: the Creator API is front-end only</h3>
 <p>Every endpoint in the Creator API is called by an artist site's front end (e.g. lloud.club). Anything else lives elsewhere:</p>
@@ -134,7 +205,7 @@ footer code{font-size:11.5px}
 <tr>
 <td>Identity (7)</td>
 <td><code>POST /auth/register</code> · <code>POST /auth/login</code> · <code>POST /auth/social</code> · <code>POST /auth/refresh</code> · <code>POST /auth/logout</code> · <code>GET /me</code> · <code>PATCH /me</code></td>
-<td>Existing Ztor account</td>
+<td>Existing Ztor account. This sprint the site's own pages call these; <code>/auth/social</code> waits for social login (section 4)</td>
 </tr>
 <tr>
 <td>Catalog (2)</td>
@@ -144,7 +215,7 @@ footer code{font-size:11.5px}
 <tr>
 <td>Commerce (7)</td>
 <td><code>GET /cart</code> · <code>POST /cart/items</code> · <code>PATCH /cart/items/{id}</code> · <code>DELETE /cart/items/{id}</code> · <code>POST /orders</code> · <code>GET /orders</code> · <code>GET /orders/{id}</code></td>
-<td>eShop 2.2. Discount codes are out of the first cut</td>
+<td>eShop 2.2. Discount codes are ready by October</td>
 </tr>
 <tr>
 <td>Content (2)</td>
@@ -154,7 +225,7 @@ footer code{font-size:11.5px}
 <tr>
 <td>Gating (1)</td>
 <td><code>GET /entitlements</code></td>
-<td>Answered from the eShop (sale start, purchase limit, stock). No new service at launch; the Policy service is the next step (section 7)</td>
+<td><strong>Not this sprint.</strong> When built: answered from the eShop (sale start, purchase limit, stock), with the Policy service as the next step (section 7)</td>
 </tr>
 </tbody>
 </table></div>
@@ -277,7 +348,11 @@ footer code{font-size:11.5px}
 </li>
 <li><strong>What replaces them:</strong> the brief's existing deliverable, the <strong>BO configuration inventory</strong>. It's a checklist of what Creator Studio / ops must set up before a site goes live:
 <ul>
-<li><strong>the site (channel):</strong> name + logo, creators, domains, allowed origins, return URLs, channel key, default language, No crossover. Email sender + receipt logo depend on management</li>
+<li><strong>the site (channel):</strong> name + logo, creators, domains, allowed origins, return URLs, channel key, default language, No crossover. Email sender + receipt logo depend on management
+<ul>
+<li><strong>This sprint:</strong> Creator Studio holds the name + logo, the creator, the API key and the default language. Ztor's dev team sets up domains, allowed origins and return URLs. No crossover and a branded email sender come later</li>
+</ul>
+</li>
 <li><strong>products (eShop):</strong> images, options / SKUs, price, stock, purchase limit, sale start, pickup sessions</li>
 <li><strong>order void / refund handling</strong></li>
 </ul>
@@ -367,6 +442,12 @@ footer code{font-size:11.5px}
 <li><strong>For launch, the site keeps its own collection → product list</strong> in its content, next to each collection's choreography. Every new drop needs site work anyway, so this adds nothing extra.</li>
 <li>The Creator API provides the site's product list and product detail, and the site groups them.</li>
 <li>Collections as a Creator Studio feature, so a creator can launch a drop without site work, move to category 3.</li>
+<li><strong>This sprint, still open:</strong> the dev sync leaned toward using the eShop's existing categories as collections, which needs no new eShop feature. Two limits to check first (the site's own list, above, has neither):
+<ul>
+<li>a product has <strong>one</strong> main category (<code>mainCategoryCode</code>), so it could sit in only one collection and would lose its real category (e.g. Apparel)</li>
+<li>the category list is shared across the marketplace (<code>GET /api/v1/eshop/product-types</code>), so LLOUD's collection names could show up as filters on ztor.com</li>
+</ul>
+</li>
 </ul>
 <h3 id="conventions">Conventions</h3>
 <ul>
@@ -375,13 +456,16 @@ footer code{font-size:11.5px}
 <li>It's a server-only credential: the dev team's doc says it must never be placed in a browser.</li>
 <li>Sites send <code>X-Channel-Key</code> plus the fan's Bearer token, and the Creator API adds the gateway token when it calls Ztor's systems.</li>
 <li>This resolves the TO-CONFIRM.</li>
+<li><strong>This sprint:</strong> the key is per artist, issued when API access is turned on in Creator Studio (Eric). The header name is the BA's call.</li>
+<li><strong>To confirm with Eric: is that key a secret?</strong> He called it a private key, but lloud.club calls the API from the browser, where any key is visible. Either it's a public identifier, with the checks staying on the server (allowed origins, the fan's token, the artist's scope), or lloud.club calls the Creator API from its own server.</li>
 </ul>
 </li>
 <li><strong>Use one set of conventions everywhere:</strong> one error shape, one field casing, one pagination style, one timestamp format. Today the Conventions (the eShop envelope) and the endpoint samples disagree. Which set is the BA's choice; it just has to be consistent.</li>
 <li><strong>Add a &quot;Backed by&quot; column to each endpoint:</strong> which Ztor system and call serves it. Draft it from the dev team's eShop API (<a href="https://github.com/ztor20/creator-api" target="_blank" rel="noopener">ztor20/creator-api</a>), and Eric's team confirms.</li>
-<li><strong>Language is required on every call.</strong> The site sends its current language in <code>Accept-Language</code> (e.g. <code>en-us</code> on lloud.club), and passes it to the Ztor sign-in page (<code>ui_locales</code>) so a new account's language is set from it. Supported: <code>en-us</code>, <code>zh-hk</code>, <code>zh-tw</code>. The Channel's <code>default_language</code> (section 5) is only the safety net.</li>
+<li><strong>Language is required on every call.</strong> The site sends its current language in <code>Accept-Language</code> (e.g. <code>en-us</code> on lloud.club), and passes it to the Ztor sign-in page (<code>ui_locales</code>) so a new account's language is set from it. This sprint, with no sign-in page, the register call sets it from <code>Accept-Language</code>. Supported: <code>en-us</code>, <code>zh-hk</code>, <code>zh-tw</code>. The Channel's <code>default_language</code> (section 5) is only the safety net.</li>
 </ul>
 <h3 id="shared-with-ztor-com-by-default-no-crossover-as-an-option">Shared with ztor.com by default, &quot;No crossover&quot; as an option</h3>
+<p><strong>This sprint: shared only.</strong> No crossover isn't built this sprint (Eric: 2–3 weeks of backend changes, ztor.com included). LLOUD launches with accounts shared with ztor.com, pending management. The rest of this subsection is the design for when it's built.</p>
 <ul>
 <li><strong>By default</strong> a site member is a Ztor user:
 <ul>
@@ -399,7 +483,7 @@ footer code{font-size:11.5px}
 </ul>
 </li>
 <li><strong>It's chosen once, at setup, and locked once the site has members.</strong> Switching it later would mean splitting or merging accounts.</li>
-<li><strong>LLOUD launches with No crossover on.</strong></li>
+<li><strong>LLOUD was to launch with No crossover on.</strong> This sprint it launches shared (above).</li>
 <li><strong>What stays shared even when it's on:</strong> the Ztor sign-in page, Ztor's payment gateway, Creator Studio, Ztor's customer service team, and Ztor's email service. Whether emails carry the creator's branding is a management question (Open items).</li>
 <li><strong>Update the brief to match:</strong>
 <ul>
@@ -421,6 +505,12 @@ footer code{font-size:11.5px}
 <h3 id="payment">Payment</h3>
 <ul>
 <li><strong>Payment happens on Ztor's payment page</strong> (a redirect), never on the site, so the site never handles card details.</li>
+<li><strong>This sprint, to confirm: the way back to the site.</strong> Eric flagged that the payment gateway accepts only a few callback URLs and can't serve other websites as is, so it can't send fans straight back to each creator site.
+<ul>
+<li>One way that needs no per-site registration: the gateway returns the fan to a ztor.com page, which forwards them to the site's allowed return URL.</li>
+<li>Whether Ztor's merchant account may take sales that start on another site is a question for the payment provider, later.</li>
+</ul>
+</li>
 <li><strong>The flow:</strong> payment methods for this cart → quote → submit → payment page → back to the site → check the result.
 <ul>
 <li>Submit returns a pending status and the payment page URL. It never returns <code>paid</code>.</li>
@@ -435,7 +525,12 @@ footer code{font-size:11.5px}
 <h3 id="prices-and-totals">Prices and totals</h3>
 <ul>
 <li>Totals are the subtotal and the amount payable. There's no delivery fee or tax line.</li>
-<li>Discount codes are out of the first cut, so remove <code>discount</code> and <code>promotion</code> from orders.</li>
+<li><strong>Discount codes are ready by October.</strong>
+<ul>
+<li>The quote step takes an optional discount code (one per order), and the quote and order show the discount.</li>
+<li>Keep <code>discount</code>. Remove <code>promotion</code>, which the eShop doesn't have.</li>
+</ul>
+</li>
 <li>Sale prices do exist in the eShop (original vs current price), so a product can show both.</li>
 </ul>
 <h3 id="order-states">Order states</h3>
@@ -443,19 +538,37 @@ footer code{font-size:11.5px}
 <li><strong>Order history shows paid orders only:</strong> paid → completed (collected at pickup).</li>
 <li><strong>Cancellation</strong> is an ops void in Creator Studio. How a voided order appears to the fan is being confirmed with the dev team.</li>
 <li><strong>No refunds in the product.</strong> A fan who wants one emails support, and ops handle it manually. The site shows the refund policy and how to get in touch.</li>
-<li><strong>No guest checkout:</strong> fans sign in before adding to the cart. With No crossover on, that's a site account.</li>
+<li><strong>No guest checkout:</strong> fans sign in before adding to the cart. This sprint that's their Ztor account; with No crossover on (later), a site account.</li>
 </ul>
 <h3 id="what-changes-on-the-site-for-the-site-team">What changes on the site (for the site team)</h3>
 <p>As of the 09-14 review, lloud.club's checkout was built for delivery: address form, flat shipping fee, 5% tax line, promo codes, saved card. For launch it needs:</p>
 <ul>
 <li>a pickup contact instead of the address form</li>
-<li>no shipping fee, tax line or promo field</li>
+<li>no shipping fee or tax line. Keep the discount-code field, since codes are ready by October.</li>
 <li>no saved card, because payment happens on Ztor's page</li>
 <li>the pickup QR and session on the order page</li>
+<li><strong>this sprint:</strong> its own sign-in and registration pages (email + password, verification code, password reset), calling the Creator API (section 4)</li>
 </ul>
 <h2 id="4-sign-in">4. Sign-in</h2>
-<h3 id="a-ztor-sign-in-page-sso-the-site-never-handles-passwords">A Ztor sign-in page (SSO): the site never handles passwords</h3>
+<h3 id="this-sprint-sign-in-through-the-api">This sprint: sign-in through the API</h3>
 <ul>
+<li><strong>The site hosts its own sign-in and registration pages</strong> and calls Ztor's account API. Accounts are Ztor accounts, shared with ztor.com.</li>
+<li><strong>Why:</strong> a Ztor-hosted sign-in page with registration takes 2–3 weeks (Eric), which doesn't fit this sprint. It stays the target design (below).</li>
+<li><strong>Endpoints:</strong> keep v1.4's <code>POST /auth/register</code> · <code>POST /auth/login</code> · <code>POST /auth/refresh</code> · <code>POST /auth/logout</code>, and add:
+<ul>
+<li>verify the email with the code · resend the code</li>
+<li>request a password reset · set a new password</li>
+</ul>
+</li>
+<li><strong>Emails:</strong> registration sends the same account emails as ztor.com (4–5 of them, e.g. the verification code and the registration confirmation), from Ztor with the site's logo and &quot;Powered by Ztor&quot;.</li>
+<li><strong>Passwords:</strong> the site sends the password once, over HTTPS, and never stores it. It keeps only the tokens.</li>
+<li><strong>Shape the token response like the future <code>POST /auth/token</code></strong> (access token, expiry, refresh token). Moving to the Ztor sign-in page later then changes how the site gets tokens, not how it uses them.</li>
+<li><strong>Social login isn't in this sprint.</strong> Whether and how to add it is a management question (Open items).</li>
+<li>The Registration and Profile rules below apply as written.</li>
+</ul>
+<h3 id="later-a-ztor-sign-in-page-sso-so-the-site-never-handles-passwords">Later: a Ztor sign-in page (SSO), so the site never handles passwords</h3>
+<ul>
+<li><strong>Not this sprint</strong> (above). This is the target design.</li>
 <li><strong>Sign-in happens on a Ztor-hosted page</strong> showing the Ztor logo and the site's name. The site sends the fan there and gets them back signed in, so passwords are never typed on an artist's site.</li>
 <li><strong>The page handles:</strong> sign-in, registration, social login, email verification, password reset and change, and account deletion. These replace <code>POST /auth/register</code>, <code>/auth/login</code> and <code>/auth/social</code>.</li>
 <li><strong>The flow</strong> (OAuth 2.0 authorization code + PKCE, the standard for browser-only sites):
@@ -476,12 +589,24 @@ footer code{font-size:11.5px}
 </ul>
 </li>
 </ul>
-<h3 id="social-login-required-at-launch">Social login (required at launch)</h3>
+<h3 id="social-login-not-this-sprint">Social login (not this sprint)</h3>
+<ul>
+<li><strong>Not in this sprint.</strong> Eric needs 3–4 days to research using Ztor's social login from another site. Management decides whether and how to add it (Open items).</li>
+<li><strong>Two ways to add it:</strong>
+<ul>
+<li>Ztor's existing Google, Apple, Facebook and LINE set-ups also serve lloud.club (Eric's team)</li>
+<li>LLOUD registers its own developer accounts, which needs LLOUD's business registration documents</li>
+</ul>
+</li>
+<li><strong>The catch with LLOUD's own accounts:</strong> Apple, Facebook and LINE give each developer account its own ID for the same person (Google doesn't). A fan who signs in to ztor.com with Apple would get a second Ztor account on lloud.club, which breaks &quot;one account on both sites&quot;. Check the first way before LLOUD registers anything.</li>
+<li><strong>The target design,</strong> with the Ztor sign-in page:
 <ul>
 <li><strong>Social login runs on the Ztor sign-in page.</strong> Each provider therefore needs only Ztor's sign-in domain registered, not each artist site. Each site's return URL goes on its allowlist in Creator Studio instead.</li>
 <li><strong>Providers:</strong> the four ztor.com supports today: <strong>Apple, Google, Facebook, LINE</strong>. LINE matters for fans in Thailand and Taiwan. Replace v1.4's &quot;Spotify, Apple, Google&quot; default.</li>
 <li><strong>On a No crossover site,</strong> a social sign-in creates or uses that site's account.</li>
 <li><strong>Remove <code>POST /auth/social {provider, id_token}</code>.</strong> The <code>ya29…</code> sample is a Google access token, which can't prove who the fan is.</li>
+</ul>
+</li>
 </ul>
 <h3 id="registration">Registration</h3>
 <ul>
@@ -500,25 +625,25 @@ footer code{font-size:11.5px}
 <thead>
 <tr>
 <th></th>
-<th>Endpoints</th>
+<th>This sprint</th>
+<th>Later, with the Ztor sign-in page</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Remove</strong></td>
-<td><code>POST /auth/register</code> · <code>POST /auth/login</code> · <code>POST /auth/social</code> · <code>POST /auth/refresh</code></td>
+<td><strong>Sign-in</strong></td>
+<td><code>POST /auth/register</code> · <code>POST /auth/login</code> · <code>POST /auth/refresh</code> · <code>POST /auth/logout</code> · verify email · resend the code · request a reset · set a new password</td>
+<td><code>POST /auth/token</code> (code exchange + refresh) · <code>POST /auth/logout</code></td>
 </tr>
 <tr>
-<td><strong>Add</strong></td>
-<td><code>POST /auth/token</code> (code exchange + refresh) · <code>PUT /me/avatar</code></td>
+<td><strong>Profile</strong></td>
+<td><code>GET /me</code> · <code>PATCH /me</code> (+ language) · <code>PUT /me/avatar</code></td>
+<td>Same</td>
 </tr>
 <tr>
-<td><strong>Keep</strong></td>
-<td><code>POST /auth/logout</code> · <code>GET /me</code> · <code>PATCH /me</code> (+ language)</td>
-</tr>
-<tr>
-<td><strong>On the Ztor sign-in / account pages, not the API</strong></td>
-<td>register · sign in · social login · verify email · reset or change password · delete account. The site links to these</td>
+<td><strong>Not in the API</strong></td>
+<td><code>POST /auth/social</code>, until social login is scheduled</td>
+<td>register · sign in · social login · verify email · reset or change password · delete account move to the Ztor sign-in / account pages. The site links to these</td>
 </tr>
 </tbody>
 </table></div>
@@ -529,40 +654,54 @@ footer code{font-size:11.5px}
 <tr>
 <th>Field</th>
 <th>Change</th>
+<th>This sprint</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>id</code>, <code>api_key</code> (public channel key), <code>domains</code>, <code>allowed_origins</code></td>
+<td><code>id</code>, <code>api_key</code> (public channel key)</td>
 <td>Keep</td>
+<td><code>api_key</code> is the artist's API key, issued when API access is turned on in Creator Studio</td>
+</tr>
+<tr>
+<td><code>domains</code>, <code>allowed_origins</code></td>
+<td>Keep</td>
+<td>Set up by Ztor's dev team in server config, not in Creator Studio</td>
 </tr>
 <tr>
 <td><code>return_urls</code></td>
 <td>Keep. Used when the fan comes back from the Ztor sign-in page and from the payment page</td>
+<td>Set up by Ztor's dev team. Used after payment only, since there's no sign-in page yet</td>
 </tr>
 <tr>
 <td><code>creator_id</code> (string or null)</td>
 <td><strong>Replace with <code>creator_ids</code>:</strong> a list holding one creator today, with more addable later (e.g. a label site). Drop the null (&quot;every creator&quot;) case, since ztor.com isn't a Creator API site</td>
+<td>One creator. With a key per artist, a label site with several creators will need a key per site later</td>
 </tr>
 <tr>
 <td><code>brand.name</code></td>
 <td>Keep, and <strong>add a logo</strong>, shown next to the Ztor logo on the sign-in page</td>
+<td>The logo goes on account and order emails, with &quot;Powered by Ztor&quot;</td>
 </tr>
 <tr>
 <td><code>brand.sender</code>, <code>brand.receipt_logo</code></td>
 <td>Keep for now. Depends on management's answer on email branding (Open items)</td>
+<td>Sender stays Ztor. The site logo above covers the receipt logo</td>
 </tr>
 <tr>
 <td><code>base_currency</code></td>
 <td><strong>Remove.</strong> See section 6</td>
+<td>—</td>
 </tr>
 <tr>
 <td><code>no_crossover</code></td>
 <td><strong>Add.</strong> The No crossover setting, locked once the site has members</td>
+<td>Not built this sprint; accounts are shared</td>
 </tr>
 <tr>
 <td><code>default_language</code></td>
 <td><strong>Add (a safety net).</strong> A default language in the site's Channel settings. It's used only when a call arrives without a language, and for anything Ztor sends on its own, such as an email to a fan whose profile has no language</td>
+<td>Yes</td>
 </tr>
 </tbody>
 </table></div>
@@ -581,13 +720,25 @@ footer code{font-size:11.5px}
 <li><strong>Money format:</strong> every amount carries its currency code, and all amounts use one format. TWD has no decimal places.</li>
 </ul>
 <h2 id="7-gating">7. Gating</h2>
-<h3 id="launch-no-new-service">Launch: no new service</h3>
+<h3 id="this-sprint-no-entitlements">This sprint: no <code>/entitlements</code></h3>
+<ul>
+<li><strong>Gating isn't in this sprint;</strong> Eric's team builds Identity and Commerce only. The eShop still enforces sale start, the per-fan purchase limit and stock at add-to-cart and checkout.</li>
+<li><strong>What the site can show without it:</strong> the product's <code>sellable</code> flag, stock per SKU and <code>purchaseLimit</code> (the per-fan limit).</li>
+<li><strong>What it can't show yet:</strong>
+<ul>
+<li>a sale-start time: the eShop product has none among its documented fields, so a drop can't show a countdown</li>
+<li>the specific reason: add-to-cart refuses with one code, <code>SHOPPING_CART_NOT_PURCHASABLE</code>, whether the sale hasn't opened or the item is off sale</li>
+</ul>
+</li>
+<li><strong>Ask Eric:</strong> add the sale start to the product, if LLOUD's drops need a countdown.</li>
+</ul>
+<h3 id="first-version-after-this-sprint-no-new-service">First version (after this sprint): no new service</h3>
 <ul>
 <li><strong>Keep <code>GET /entitlements?product=</code>,</strong> which answers &quot;can this fan buy this now, and if not, why?&quot;.</li>
-<li><strong>At launch the answer comes from the eShop's own facts:</strong> sale start (not buyable before the sale opens), purchase limit (per fan, across orders) and stock. The eShop also enforces these at checkout.</li>
-<li><strong>Reasons at launch:</strong> <code>not_on_sale_yet</code> · <code>purchase_limit</code> · <code>sold_out</code>. Checkout returns the same reason when it refuses, so the site shows one message (AC-3.2).</li>
-<li><strong>No region lock for now.</strong> No crossover already keeps the creator's products on the site.</li>
-<li><strong>Remove from the Policy rules section for launch:</strong>
+<li><strong>The answer comes from the eShop's own facts:</strong> sale start (not buyable before the sale opens), purchase limit (per fan, across orders) and stock. The eShop also enforces these at checkout.</li>
+<li><strong>Reasons:</strong> <code>not_on_sale_yet</code> · <code>purchase_limit</code> · <code>sold_out</code>. Checkout returns the same reason when it refuses, so the site shows one message (AC-3.2).</li>
+<li><strong>No region lock for now.</strong></li>
+<li><strong>Remove from the Policy rules section for this version:</strong>
 <ul>
 <li><code>purchase_limit</code> and <code>inventory</code>: the eShop enforces them.</li>
 <li><code>region</code>: not needed now.</li>
@@ -617,18 +768,18 @@ footer code{font-size:11.5px}
 <h3 id="the-four-criteria">The four criteria</h3>
 <ul>
 <li><strong>01 — keep.</strong> The platform owns data and transactions, never presentation.</li>
-<li><strong>02 — reword.</strong> Sign-in and payment now happen on Ztor's pages by design, so &quot;curl can complete the entire flow with no browser&quot; can't pass any more. The criterion's purpose, that the site decides nothing, stays:
+<li><strong>02 — reword.</strong> Payment happens on Ztor's payment page by design (and sign-in will too, once the Ztor sign-in page is built), so &quot;curl can complete the entire flow with no browser&quot; can't pass any more. The criterion's purpose, that the site decides nothing, stays:
 <blockquote>
-<p><strong>02 · The site decides nothing — the server enforces every rule.</strong> With a test token (staging), curl calls the same endpoints the site calls — can-I-buy → add to cart → quote → submit — and gets the same answers and refusals. Calling an endpoint directly can't get past a rule the server refuses. Sign-in and payment happen on Ztor's pages by design and sit outside this test.</p>
+<p><strong>02 · The site decides nothing — the server enforces every rule.</strong> With a test token (staging), curl calls the same endpoints the site calls — add to cart → quote → submit, plus can-I-buy once <code>/entitlements</code> is built — and gets the same answers and refusals. Calling an endpoint directly can't get past a rule the server refuses. Payment happens on Ztor's page by design and sits outside this test, as will sign-in once the Ztor sign-in page is built.</p>
 </blockquote>
 </li>
 <li><strong>03 — keep.</strong> Adding an artist requires no new endpoints.</li>
 <li><strong>04 — reword:</strong> &quot;Each site sees only its creator's data, and every order records the site it came from.&quot; Drop the ztor.com / tyson.com example.</li>
 </ul>
-<p><strong>Rewrite the curl sample</strong> with these steps (every call carries <code>X-Channel-Key</code> + Bearer):</p>
+<p><strong>Rewrite the curl sample</strong> with these steps (every call carries the site's key + Bearer):</p>
 <ol>
-<li><code>GET /v1/entitlements?product=…</code> for a product whose sale hasn't opened → <code>allowed: false, reason: not_on_sale_yet</code></li>
-<li><code>POST /v1/cart/items {skuId, quantity}</code> for that product → refused with <code>not_on_sale_yet</code>. The server refuses; the site's code isn't involved.</li>
+<li><code>GET /v1/products/{id}</code> for a product whose sale hasn't opened → <code>sellable: false</code>. Once <code>/entitlements</code> is built: <code>GET /v1/entitlements?product=…</code> → <code>allowed: false, reason: not_on_sale_yet</code>.</li>
+<li><code>POST /v1/cart/items {skuId, quantity}</code> for that product → refused by the server; the site's code isn't involved.</li>
 <li>For a product that's on sale: <code>POST /v1/cart/items</code> → <code>POST /v1/checkout/quote</code> → <code>POST /v1/checkout</code> → pending + a payment URL.</li>
 </ol>
 <p>Keep the closing test: <em>&quot;can the next artist's site be built without touching the API repo?&quot;</em></p>
@@ -649,8 +800,8 @@ footer code{font-size:11.5px}
 </tr>
 <tr>
 <td>1.1</td>
-<td>Reword</td>
-<td>A refused fan gets the specific reason (not on sale yet / purchase limit / sold out), never a generic denial</td>
+<td>Reword · waits for <code>/entitlements</code></td>
+<td>A refused fan gets the specific reason (not on sale yet / purchase limit / sold out), never a generic denial. This sprint the eShop's refusal is generic, so this check waits</td>
 </tr>
 <tr>
 <td>1.2 · 1.3 · 1.5</td>
@@ -660,7 +811,7 @@ footer code{font-size:11.5px}
 <tr>
 <td>1.4</td>
 <td>Reword</td>
-<td>Changing a product's sale start or purchase limit in Creator Studio changes the <code>/entitlements</code> answer with no site deploy</td>
+<td>Changing a product's sale start or purchase limit in Creator Studio changes what the product shows and what checkout accepts (and, once built, the <code>/entitlements</code> answer), with no site deploy</td>
 </tr>
 <tr>
 <td><strong>AC-2 Identity</strong></td>
@@ -670,12 +821,12 @@ footer code{font-size:11.5px}
 <tr>
 <td>2.1</td>
 <td>Reword</td>
-<td>Sign-in happens on the Ztor sign-in page and gives the site a Ztor token. The site never sees a password</td>
+<td>Signing in gives the site a Ztor token, and the site never stores the password. With the Ztor sign-in page (later): the site never sees a password</td>
 </tr>
 <tr>
 <td>2.2</td>
-<td>Reword (No crossover on)</td>
-<td>A site account can't sign in on ztor.com, a ztor.com account can't sign in on the site, and the same email can hold both</td>
+<td>Keep this sprint</td>
+<td>One account signs in on both lloud.club and ztor.com, with no second account (v1.4's check). With No crossover on (later): a site account can't sign in on ztor.com, a ztor.com account can't sign in on the site, and the same email can hold both</td>
 </tr>
 <tr>
 <td>2.3</td>
@@ -700,7 +851,7 @@ footer code{font-size:11.5px}
 <tr>
 <td>3.1</td>
 <td>Reword</td>
-<td>Adding or submitting a product that isn't on sale yet is refused by the server with the reason</td>
+<td>Adding or submitting a product that isn't on sale yet is refused by the server (with the specific reason once <code>/entitlements</code> is built)</td>
 </tr>
 <tr>
 <td>3.2</td>
@@ -740,7 +891,7 @@ footer code{font-size:11.5px}
 <tr>
 <td>5.2</td>
 <td>Reword</td>
-<td>Every request carries <code>X-Channel-Key</code>; every signed-in request also carries the Bearer token</td>
+<td>Every request carries the site's key (this sprint, the artist's API key); every signed-in request also carries the Bearer token</td>
 </tr>
 <tr>
 <td>5.3</td>
@@ -774,8 +925,8 @@ footer code{font-size:11.5px}
 </tr>
 <tr>
 <td>7.2</td>
-<td>Keep</td>
-<td>A new site is added with configuration in Creator Studio only: no new endpoint, no deploy</td>
+<td>Reword</td>
+<td>A new site needs no new endpoint and no code change: Creator Studio settings plus a one-time set-up by Ztor's dev team (domains, allowed origins, return URLs)</td>
 </tr>
 <tr>
 <td>7.3</td>
@@ -789,63 +940,131 @@ footer code{font-size:11.5px}
 </tr>
 <tr>
 <td>7.5</td>
-<td>Add</td>
+<td>Add · waits for No crossover</td>
 <td>With No crossover on, the creator's products don't appear on ztor.com</td>
 </tr>
 <tr>
 <td>7.6</td>
 <td>Add</td>
-<td>For sites with crossover on: the site's cart and order history show only its creator's items</td>
+<td>For sites with crossover on (LLOUD this sprint): the site's cart and order history show only its creator's items</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>Result:</strong> 22 launch checks. 10 move to Future, where they become the Policy / loyalty acceptance, and 2 move to Creator Studio.</p>
+<p><strong>Result:</strong> 22 launch checks in the target design. This sprint runs 20, because 1.1 waits for <code>/entitlements</code> and 7.5 for No crossover. 10 move to Future, where they become the Policy / loyalty acceptance, and 2 move to Creator Studio.</p>
 <h2 id="9-category-1-endpoints-after-these-changes-and-clean-up">9. Category 1 endpoints after these changes, and clean-up</h2>
-<h3 id="endpoint-list">Endpoint list</h3>
-<p>The paths are suggestions; the final names are the BA's call.</p>
+<h3 id="endpoint-list-this-sprint">Endpoint list — this sprint</h3>
+<ul>
+<li>The paths are suggestions; the final names are the BA's call.</li>
+<li>&quot;Backed by&quot; is drafted from the dev team's eShop API (<code>ztor-shopping-api.md</code>, 24 Sep) for Eric's team to confirm.</li>
+<li>Every Commerce call is limited to the artist's shop: reads are filtered, and writes to another shop's product or cart line are refused.</li>
+</ul>
 <div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Area</th>
-<th>Endpoints</th>
+<th>Creator API</th>
+<th>Backed by (dev team's API)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Sign-in</td>
-<td><code>POST /auth/token</code> · <code>POST /auth/logout</code>, plus the Ztor sign-in pages</td>
+<td><code>POST /auth/register</code> · <code>POST /auth/login</code> · <code>POST /auth/refresh</code> · <code>POST /auth/logout</code> · <code>POST /auth/verify-email</code> · <code>POST /auth/verify-email/resend</code> · <code>POST /auth/password/forgot</code> · <code>POST /auth/password/reset</code></td>
+<td>Ztor's account service. Eric's team to name the calls</td>
 </tr>
 <tr>
 <td>Profile</td>
 <td><code>GET /me</code> · <code>PATCH /me</code> · <code>PUT /me/avatar</code></td>
+<td>Ztor's account and Fans Profile services. Eric's team to name the calls</td>
 </tr>
 <tr>
 <td>Catalog</td>
-<td><code>GET /products</code> · <code>GET /products/{id}</code> · <code>GET /products/{id}/size-guide</code></td>
+<td><code>GET /products</code></td>
+<td><code>GET /api/v1/eshop/products</code>, plus a shop filter (none today)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>GET /products/{id}</code></td>
+<td><code>GET /api/v1/eshop/products/{productId}</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>GET /products/{id}/size-guide</code></td>
+<td><code>GET /api/v1/eshop/products/{productId}/size-guides</code></td>
 </tr>
 <tr>
 <td>Cart</td>
-<td><code>GET /cart</code> · <code>POST /cart/items</code> · <code>PATCH /cart/items/{id}</code> · <code>DELETE /cart/items/{id}</code></td>
+<td><code>GET /cart</code></td>
+<td><code>GET /api/v1/eshop/cart</code>, keeping only the artist's lines</td>
+</tr>
+<tr>
+<td></td>
+<td><code>POST /cart/items</code></td>
+<td><code>POST /api/v1/eshop/cart</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>PATCH /cart/items/{id}</code></td>
+<td><code>PATCH /api/v1/eshop/cart/{cartItemId}</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>DELETE /cart/items/{id}</code></td>
+<td><code>DELETE /api/v1/eshop/cart/{cartItemId}</code></td>
 </tr>
 <tr>
 <td>Checkout</td>
-<td><code>GET /pickup-contacts</code> · <code>POST /pickup-contacts</code> · <code>GET /checkout/payment-methods</code> · <code>POST /checkout/quote</code> · <code>POST /checkout</code> · <code>GET /checkout/{id}</code> · <code>POST /checkout/{id}/pay</code></td>
+<td><code>GET /pickup-contacts</code> · <code>POST /pickup-contacts</code></td>
+<td><code>GET</code> · <code>POST /api/v1/eshop/pickup-contacts</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>GET /checkout/payment-methods</code></td>
+<td><code>POST /api/v1/eshop/checkout/payment-methods</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>POST /checkout/quote</code> (optional discount code)</td>
+<td><code>POST /api/v1/eshop/checkout/discount-quote</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>POST /checkout</code></td>
+<td><code>POST /api/v1/eshop/checkout/orders</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>GET /checkout/{id}</code></td>
+<td><code>GET /api/v1/eshop/checkout/order-groups/{checkoutGroupId}/payment-result</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>POST /checkout/{id}/pay</code></td>
+<td><code>POST /api/v1/eshop/checkout/order-groups/{checkoutGroupId}/payments</code></td>
 </tr>
 <tr>
 <td>Orders</td>
-<td><code>GET /orders</code> · <code>GET /orders/{id}</code></td>
+<td><code>GET /orders</code></td>
+<td><code>GET /api/v1/eshop/orders</code>, keeping only the artist's orders</td>
 </tr>
 <tr>
-<td>Gating / currency</td>
-<td><code>GET /entitlements?product=</code> · <code>GET /currency-context</code></td>
+<td></td>
+<td><code>GET /orders/{id}</code></td>
+<td><code>GET /api/v1/eshop/orders/{orderId}</code></td>
 </tr>
 <tr>
-<td>To confirm</td>
-<td>Content ×2: probably not needed, since collection and site copy live in the site</td>
+<td>Currency</td>
+<td><code>GET /currency-context</code></td>
+<td><code>GET /api/v1/eshop/currency-context</code></td>
+</tr>
+<tr>
+<td>Not this sprint</td>
+<td><code>GET /entitlements?product=</code> (section 7) · <code>POST /auth/social</code> (section 4) · Content ×2 (probably not needed, since collection and site copy live in the site)</td>
+<td>—</td>
 </tr>
 </tbody>
 </table></div>
-<p>That's 23 endpoints, plus up to 2 still to confirm.</p>
+<p>That's 28 endpoints this sprint. The target design has 23: <code>POST /auth/token</code> and the Ztor sign-in pages replace the 7 sign-in calls other than <code>/auth/logout</code>, and <code>/entitlements</code> is added.</p>
 <h3 id="clean-up">Clean-up</h3>
 <ul>
 <li><strong>Product payloads:</strong>
@@ -861,18 +1080,29 @@ footer code{font-size:11.5px}
 <h2 id="open-items">Open items</h2>
 <h3 id="to-confirm-with-management">To confirm with management</h3>
 <blockquote>
-<p><strong>Where fans see Ztor on a creator site</strong></p>
+<p><strong>Where fans see Ztor on a creator site (this sprint)</strong></p>
 <ul>
-<li><strong>Sign-in:</strong> the Ztor sign-in page shows the Ztor logo.</li>
+<li><strong>Account:</strong> fans sign in with a Ztor account, and the same account works on ztor.com.</li>
 <li><strong>Payment:</strong> the payment page and card statement show Ztor, not the creator's brand.</li>
-<li><strong>Emails:</strong> account emails (verification, password reset) and order emails come from Ztor unless management chooses a creator-branded sender. See Email branding below.</li>
+<li><strong>Emails:</strong> account and order emails come from Ztor, with the creator's logo and &quot;Powered by Ztor&quot;.</li>
 </ul>
 </blockquote>
-<p><strong>Email branding</strong></p>
+<p><strong>Time first: Ztor accounts and Ztor emails at launch</strong></p>
 <ul>
-<li>Should account and order emails come from a <strong>creator-branded sender</strong> (e.g. &quot;LLOUD&quot;), with the creator's logo on receipts, rather than from Ztor?</li>
-<li><strong>Recommended: branded.</strong> Fans may not recognise Ztor, and could miss or ignore the emails.</li>
-<li>This is why <code>brand.sender</code> and <code>brand.receipt_logo</code> stay in the Channel settings for now.</li>
+<li><strong>Accounts:</strong> LLOUD-only accounts (No crossover) take 2–3 weeks of backend work, ztor.com included, so LLOUD launches with accounts shared with ztor.com. OK?</li>
+<li><strong>Products:</strong> with shared accounts, LLOUD's products also show on ztor.com by default. OK, or keep them on lloud.club only (extra eShop work)?</li>
+<li><strong>Emails:</strong> a LLOUD sender needs the email provider to verify LLOUD's domain, which takes 1–2 weeks or more and can't be automated. Until then emails come from Ztor with LLOUD's logo and &quot;Powered by Ztor&quot;. OK?</li>
+</ul>
+<p><strong>Social login</strong></p>
+<ul>
+<li>Not in this sprint: fans register with email + password at launch.</li>
+<li>Add Google and Apple later? Two ways:
+<ul>
+<li>Eric's team extends Ztor's own sign-in set-ups to lloud.club (3–4 days to research)</li>
+<li>LLOUD registers its own developer accounts. This needs LLOUD's business registration documents, and fans who use Apple on ztor.com would get a second account (section 4)</li>
+</ul>
+</li>
+<li>Which, and by when?</li>
 </ul>
 <p><strong>Currency</strong></p>
 <ul>
@@ -885,37 +1115,36 @@ footer code{font-size:11.5px}
 <p><strong>Payment</strong></p>
 <ul>
 <li>Fans pay on <strong>Ztor's payment page</strong>, not on the site, so there's no saved card on lloud.club. OK?</li>
-<li>Which payment methods do LLOUD fans need at launch: cards, Apple Pay, Google Pay? The Hong Kong wallets (AlipayHK, Octopus, PayMe) won't matter to most LLOUD fans.</li>
-<li><strong>No discount codes at launch.</strong> OK?</li>
+<li><strong>Payment methods:</strong> all LLOUD payments route through Ztor. OK?</li>
 <li><strong>No self-service refunds:</strong> a fan emails support and ops handle it manually. OK as the refund policy on lloud.club?</li>
 </ul>
 <h3 id="depends-on-the-dev-team-for-awareness-i-m-raising-these-with-eric">Depends on the dev team (for awareness; I'm raising these with Eric)</h3>
 <ul>
-<li><strong>A Ztor sign-in page (SSO) is launch-critical,</strong> because sign-in comes first. The dev team needs to build:
+<li><strong>This sprint, Identity:</strong> the sign-in API behind the site's own pages: register, verification code, sign in, refresh, sign out, password reset, profile and avatar (section 4).</li>
+<li><strong>This sprint, Commerce:</strong> the eShop API wrapped for the artist (section 9 maps each endpoint). Around it:
 <ul>
-<li>the hosted pages: sign-in, registration, social login (Apple, Google, Facebook, LINE), email verification, password reset, account deletion</li>
-<li><code>POST /auth/token</code> for code exchange and refresh</li>
-<li>a per-site return-URL allowlist</li>
-<li>the No crossover rule on the page</li>
-<li>the four providers registered for the Ztor sign-in domain</li>
-</ul>
-</li>
-<li><strong>No crossover is launch-critical, because LLOUD launches with it on.</strong>
-<ul>
-<li>Accounts in Ztor's identity need the per-site no-crossover rule: the same email can register on the site and on ztor.com, and each account signs in only where it belongs.</li>
-<li>Shopping and Order must still accept those fans' orders.</li>
-</ul>
-</li>
-<li><strong>Per-site product listing.</strong> With No crossover on, the creator's products must be hidden from ztor.com yet still listed on the site. The eShop's single visibility flag can't do both today.</li>
-<li><strong>No shop filter.</strong> Shopping has none on products or orders, and the Creator API needs one to show only the site's own items.</li>
+<li><strong>A shop filter.</strong> Shopping has none on products, cart or orders, and the Creator API needs one to show only the artist's items.</li>
 <li><strong>Orders don't record which site they came from.</strong></li>
-<li><strong>The post-payment return URL isn't checked,</strong> so the Creator API must enforce each site's allowed return URLs.</li>
+<li><strong>The artist's API key,</strong> issued in Creator Studio: a secret, or a public identifier? (section 2, Conventions)</li>
+<li><strong>The email logo per site</strong> (about a day): the site's logo and &quot;Powered by Ztor&quot; on the account and order emails.</li>
+<li><strong>Manual set-up per site:</strong> domains, allowed origins and return URLs in server config.</li>
+</ul>
+</li>
+<li><strong>The way back after payment.</strong> The gateway limits callback URLs, and Shopping doesn't check <code>callbackUrl</code>. Confirm how the fan gets back to the site, and enforce each site's allowed return URLs (section 3).</li>
 <li><strong>Catalog responses aren't cached,</strong> so drop-day traffic needs caching and limits in the Creator API layer.</li>
 <li><strong>Unpaid orders hold stock.</strong> Stock is taken when the order is created, before payment, so on a hot drop an unpaid order holds stock for up to ~10 minutes. Confirm stock is released when a payment expires.</li>
 <li><strong>Voided orders:</strong> how they show in the fan's order history.</li>
-<li><strong>If management picks branded emails:</strong> a per-site sender (the creator's email domain verified for sending) and the creator's logo on account and order email templates.</li>
-<li><strong>eShop rule to confirm:</strong> is there a scheduled sale end? (The purchase limit is per fan, across orders.)</li>
-<li><strong>Next step (not this sprint):</strong> the Policy service, built before tiers and loyalty points go live.</li>
+<li><strong>eShop rules to confirm:</strong> is there a scheduled sale end? Can the product carry its sale start, so a drop can show a countdown? (The purchase limit is per fan, across orders.)</li>
+<li><strong>Collections:</strong> eShop categories or the site's own list (section 2).</li>
+<li><strong>Later, not this sprint:</strong>
+<ul>
+<li>the Ztor sign-in page (SSO) and social login</li>
+<li>No crossover, plus per-site product listing if LLOUD's products must stay off ztor.com</li>
+<li>a creator-branded email sender</li>
+<li><code>/entitlements</code>, then the Policy service, built before tiers and loyalty points go live</li>
+<li>asking the payment provider whether Ztor's merchant account may take sales that start on other sites</li>
+</ul>
+</li>
 </ul>
 
     </main>

@@ -58,6 +58,9 @@ h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.2px}
 .tag.pending{border:1px dashed var(--warning); color:var(--warning)}
 .tag.existing{background:transparent; color:var(--muted-foreground); border:1px solid var(--border)}
 .tag.info{border:1px solid var(--info); color:var(--info)}
+.tag.later{border:1px dashed var(--muted-foreground); color:var(--muted-foreground)}
+.tag.dev{background:rgba(88,150,243,.14); color:var(--info)}
+.field.later{opacity:.55}
 .pin{display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%;
   background:var(--primary); color:var(--on-primary); font-size:11px; font-weight:700; flex:none}
 .pin.n{background:var(--accent); color:var(--foreground); border:1px solid var(--border)}
@@ -130,6 +133,8 @@ h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.2px}
 .toggle-row{display:flex; align-items:center; justify-content:space-between; gap:16px; background:var(--input-surface); border-radius:12px; padding:14px 16px}
 .switch{width:46px; height:26px; border-radius:999px; background:var(--primary); position:relative; flex:none; box-shadow:0 0 14px rgba(255,163,63,.35)}
 .switch::after{content:""; position:absolute; top:3px; right:3px; width:20px; height:20px; border-radius:50%; background:var(--on-primary)}
+.switch.off{background:var(--accent); box-shadow:none}
+.switch.off::after{right:auto; left:3px; background:var(--muted-foreground)}
 .bullets{margin:10px 0 0; padding-left:18px; font-size:13px; color:var(--foreground)}
 .bullets li{margin:2px 0}
 .warn{margin-top:12px; font-size:12px; color:var(--warning); background:rgba(243,207,88,.08); border:1px solid rgba(243,207,88,.3); border-radius:10px; padding:8px 12px}
@@ -172,13 +177,14 @@ footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--border); fo
   <header class="doc-head">
     <h1><span class="en">Creator Studio · Creator Site Settings</span><span class="zh">Creator Studio · 獨立網站設定</span> <span style="color:var(--muted-foreground);font-weight:400"><span class="en">— wireframe</span><span class="zh">— 線框稿</span></span></h1>
     <div class="sub">
-      <span class="en">New Creator Studio fields for independent creator sites (e.g. lloud.club), from the Creator API v1.4 review (Jeff, 09-26 → 09-27).</span>
-      <span class="zh">獨立網站（例：lloud.club）需要在 Creator Studio 新增的欄位，來自 Creator API v1.4 審閱（Jeff，09-26 → 09-27）。</span>
+      <span class="en">New Creator Studio fields for independent creator sites (e.g. lloud.club), from the Creator API v1.4 review (Jeff, 09-26 → 09-27). Updated 09-28 after the dev sync.</span>
+      <span class="zh">獨立網站（例：lloud.club）需要在 Creator Studio 新增的欄位，來自 Creator API v1.4 審閱（Jeff，09-26 → 09-27）。9/28 開發同步後更新。</span>
     </div>
     <ul class="points">
       <li><span class="en"><b>① Creator Management:</b> today's page, plus a new site column.</span><span class="zh"><b>① Creator 管理：</b>現有頁面，新增一欄「獨立網站」。</span></li>
       <li><span class="en"><b>② Creator Sites:</b> a new list of creator sites.</span><span class="zh"><b>② 獨立網站：</b>新增的網站列表。</span></li>
       <li><span class="en"><b>③ Create / edit site:</b> the site settings, the main screen.</span><span class="zh"><b>③ 建立／設定網站：</b>網站設定（主要畫面）。</span></li>
+      <li><span class="en"><b>This sprint (dev sync, 28 Sep):</b> No crossover and the Ztor sign-in page come later. Ztor's dev team sets up domains, origins and return URLs. Emails carry the site logo.</span><span class="zh"><b>本期（9/28 開發同步）：</b>不互通與 Ztor 登入頁延後。網域、允許來源與回跳網址由 Ztor 開發團隊設定。電郵使用網站 Logo。</span></li>
     </ul>
     <div class="legend">
       <span><span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="en">decided in the review</span><span class="zh">審閱中決定</span></span>
@@ -186,6 +192,8 @@ footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--border); fo
       <span><span class="tag pending"><span class="en">PENDING</span><span class="zh">待確認</span></span><span class="en">waiting on management</span><span class="zh">等待管理層決定</span></span>
       <span><span class="tag existing"><span class="en">EXISTING</span><span class="zh">既有</span></span><span class="en">in Creator Studio today</span><span class="zh">Creator Studio 現有</span></span>
       <span><span class="tag info"><span class="en">INFO</span><span class="zh">資訊</span></span><span class="en">shown, not set</span><span class="zh">僅顯示，不需設定</span></span>
+      <span><span class="tag later"><span class="en">LATER</span><span class="zh">之後</span></span><span class="en">not in this sprint</span><span class="zh">本期不做</span></span>
+      <span><span class="tag dev"><span class="en">DEV TEAM</span><span class="zh">開發團隊</span></span><span class="en">set up by Ztor's dev team this sprint</span><span class="zh">本期由 Ztor 開發團隊設定</span></span>
     </div>
   </header>
 
@@ -208,7 +216,7 @@ footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--border); fo
           <div class="list-row">
             <span class="who"><span class="av">L</span><span>LLOUD</span></span>
             <span class="mono" style="font-size:12px">ztor.com/shop/lloud</span>
-            <span class="newcol">lloud.club · <span class="pill orange"><span class="en">No crossover</span><span class="zh">不互通</span></span></span>
+            <span class="newcol">lloud.club · <span class="pill"><span class="en">Shared</span><span class="zh">互通</span></span></span>
             <span><span class="pill green"><span class="en">Active</span><span class="zh">啟用中</span></span></span>
             <span class="btn sm outline"><span class="en">Enter workspace</span><span class="zh">進入工作區</span></span>
           </div>
@@ -244,7 +252,7 @@ footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--border); fo
           <div class="list-row">
             <span class="who"><span class="av" style="background:#2d2d2d;color:#fff">LL</span><span>LLOUD<br><span class="mono">lloud.club</span></span></span>
             <span><span class="chip"><span class="av">L</span>LLOUD</span></span>
-            <span><span class="pill orange"><span class="en">No crossover</span><span class="zh">不互通</span></span> · English</span>
+            <span><span class="pill"><span class="en">Shared</span><span class="zh">互通</span></span> · English</span>
             <span><span class="pill"><span class="en">Setting up</span><span class="zh">設定中</span></span></span>
             <span class="btn sm outline"><span class="en">Settings</span><span class="zh">設定</span></span>
           </div>
@@ -275,30 +283,32 @@ footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--border); fo
           <div class="card-head"><h3><span class="en">Basics</span><span class="zh">基本資料</span></h3></div>
           <div class="two">
             <div class="field"><div class="label"><span class="pin">3</span><span class="en">Site name</span><span class="zh">網站名稱</span> <span class="mono">brand.name</span></div><div class="input">LLOUD</div></div>
-            <div class="field"><div class="label"><span class="pin">3</span><span class="en">Site logo</span><span class="zh">網站 Logo</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span> <span class="mono">brand.logo</span></div><div class="logo-tile">LLOUD</div><div class="hint"><span class="en">Shown next to the Ztor logo on the Ztor sign-in page</span><span class="zh">顯示在 Ztor 登入頁，Ztor logo 旁</span></div></div>
+            <div class="field"><div class="label"><span class="pin">3</span><span class="en">Site logo</span><span class="zh">網站 Logo</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span> <span class="mono">brand.logo</span></div><div class="logo-tile">LLOUD</div><div class="hint"><span class="en">On account and order emails, with “Powered by Ztor”. Later also on the Ztor sign-in page</span><span class="zh">用於帳號與訂單電郵，附「Powered by Ztor」。之後也顯示在 Ztor 登入頁</span></div></div>
           </div>
           <div class="field"><div class="label"><span class="pin">4</span><span class="en">Creators</span><span class="zh">Creator</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span> <span class="mono">creator_ids</span></div>
             <div class="input"><span class="chip"><span class="av">L</span>LLOUD ✕</span><span class="btn sm outline" disabled><span class="en">＋ Add creator (later)</span><span class="zh">＋ 新增 creator（之後開放）</span></span></div></div>
         </div>
 
         <!-- Domains -->
-        <div class="form-card">
-          <div class="card-head"><h3><span class="en">Domains &amp; return URLs</span><span class="zh">網域與回跳網址</span></h3><span class="tag spec"><span class="en">SPEC</span><span class="zh">規格</span></span></div>
+        <div class="form-card readonly">
+          <div class="card-head"><h3><span class="en">Domains &amp; return URLs</span><span class="zh">網域與回跳網址</span></h3><span class="tag spec"><span class="en">SPEC</span><span class="zh">規格</span></span><span class="tag dev"><span class="en">DEV TEAM</span><span class="zh">開發團隊</span></span></div>
+          <div class="hint" style="margin:-4px 0 14px"><span class="en">This sprint Ztor's dev team sets these up in server config, not in Creator Studio. Shown for reference.</span><span class="zh">本期由 Ztor 開發團隊在伺服器設定，不在 Creator Studio 設定。此處僅供參考。</span></div>
           <div class="two">
             <div class="field"><div class="label"><span class="pin n">5</span><span class="en">Domain</span><span class="zh">網域</span> <span class="mono">domains</span></div><div class="input">lloud.club</div></div>
             <div class="field"><div class="label"><span class="pin n">5</span><span class="en">Allowed origin</span><span class="zh">允許來源</span> <span class="mono">allowed_origins</span></div><div class="input">https://lloud.club</div></div>
           </div>
           <div class="field"><div class="label"><span class="pin n">5</span><span class="en">Return URLs</span><span class="zh">回跳網址</span> <span class="mono">return_urls</span></div>
-            <div class="input">https://lloud.club/auth/callback <span class="pill"><span class="en">after sign-in</span><span class="zh">登入後</span></span></div>
             <div class="input">https://lloud.club/checkout/return <span class="pill"><span class="en">after payment</span><span class="zh">付款後</span></span></div>
-            <div class="hint"><span class="en">The Ztor sign-in and payment pages only return to these URLs</span><span class="zh">Ztor 登入頁與付款頁完成後，只會回到這些網址</span></div></div>
+            <div class="input" style="opacity:.55">https://lloud.club/auth/callback <span class="pill"><span class="en">after sign-in</span><span class="zh">登入後</span></span> <span class="tag later"><span class="en">LATER</span><span class="zh">之後</span></span></div>
+            <div class="hint"><span class="en">The payment page (and later the Ztor sign-in page) only returns to these URLs</span><span class="zh">付款頁（之後加上 Ztor 登入頁）完成後，只會回到這些網址</span></div></div>
         </div>
 
         <!-- Members & sign-in -->
         <div class="form-card">
           <div class="card-head"><h3><span class="en">Members &amp; sign-in</span><span class="zh">會員與登入</span></h3></div>
-          <div class="field"><div class="label"><span class="pin">6</span><span class="en">No crossover</span><span class="zh">不互通（No crossover）</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span> <span class="mono">no_crossover</span></div>
-            <div class="toggle-row"><div><b><span class="en">No crossover</span><span class="zh">不互通</span></b><div class="hint"><span class="en">Accounts and products don't cross with ztor.com</span><span class="zh">帳號與商品不與 ztor.com 互通</span></div></div><span class="switch" aria-label="on"></span></div>
+          <div class="hint" style="margin:-4px 0 14px"><span class="en">This sprint LLOUD launches with accounts shared with ztor.com, and fans sign in on the site's own pages through the Creator API. Both fields below come later.</span><span class="zh">本期 LLOUD 上線時帳號與 ztor.com 互通，粉絲在網站自己的頁面透過 Creator API 登入。以下兩項之後再做。</span></div>
+          <div class="field later"><div class="label"><span class="pin">6</span><span class="en">No crossover</span><span class="zh">不互通（No crossover）</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span> <span class="tag later"><span class="en">LATER</span><span class="zh">之後</span></span> <span class="mono">no_crossover</span></div>
+            <div class="toggle-row"><div><b><span class="en">No crossover</span><span class="zh">不互通</span></b><div class="hint"><span class="en">Accounts and products don't cross with ztor.com</span><span class="zh">帳號與商品不與 ztor.com 互通</span></div></div><span class="switch off" aria-label="off"></span></div>
             <ul class="bullets">
               <li><span class="en">A ztor.com account can't sign in on this site</span><span class="zh">ztor.com 帳號不能登入此網站</span></li>
               <li><span class="en">A site account can't sign in on ztor.com (the same email can hold one of each)</span><span class="zh">此網站帳號不能登入 ztor.com（同一 email 可各有一個帳號）</span></li>
@@ -306,14 +316,14 @@ footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--border); fo
             </ul>
             <div class="warn"><span class="en">⚠ Can't be changed once the site has members. Decide before launch.</span><span class="zh">⚠ 網站有會員後就無法更改。請在上線前決定。</span></div>
           </div>
-          <div class="field" style="margin-top:18px"><div class="label"><span class="pin n">7</span><span class="en">Ztor sign-in page</span><span class="zh">Ztor 登入頁</span> <span class="tag info"><span class="en">INFO</span><span class="zh">資訊</span></span></div>
+          <div class="field later" style="margin-top:18px"><div class="label"><span class="pin n">7</span><span class="en">Ztor sign-in page</span><span class="zh">Ztor 登入頁</span> <span class="tag info"><span class="en">INFO</span><span class="zh">資訊</span></span> <span class="tag later"><span class="en">LATER</span><span class="zh">之後</span></span></div>
             <div class="signin-preview">
               <div class="mini-login">
                 <div class="brands"><b>Ztor</b> × LLOUD</div>
                 <div class="soc"><span>Apple</span><span>Google</span><span>Facebook</span><span>LINE</span></div>
                 <div class="em">Email</div><div class="go"><span class="en">Sign in / Register</span><span class="zh">登入 / 註冊</span></div>
               </div>
-              <div class="hint"><span class="en">Provided by Ztor: Ztor logo + the site's name and logo. The site never handles passwords. Nothing to set here.</span><span class="zh">登入頁由 Ztor 提供：Ztor logo + 網站名稱與 Logo。網站不處理密碼。此處不需設定。</span></div>
+              <div class="hint"><span class="en">Later, provided by Ztor: Ztor logo + the site's name and logo, and the site never handles passwords. Nothing to set here. Social login comes with it.</span><span class="zh">之後由 Ztor 提供：Ztor logo＋網站名稱與 Logo，網站不處理密碼。此處不需設定。社群登入一併延後。</span></div>
             </div>
           </div>
         </div>
@@ -332,18 +342,21 @@ footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--border); fo
         <div class="form-card pending">
           <div class="card-head"><h3><span class="en">Email branding</span><span class="zh">電郵品牌</span></h3><span class="tag pending"><span class="en">PENDING · management</span><span class="zh">待確認 · 管理層</span></span></div>
           <div class="two">
-            <div class="field"><div class="label"><span class="pin">9</span><span class="en">Sender</span><span class="zh">寄件者</span> <span class="mono">brand.sender</span></div><div class="input">LLOUD &lt;no-reply@lloud.club&gt;</div></div>
-            <div class="field"><div class="label"><span class="pin">9</span><span class="en">Receipt logo</span><span class="zh">收據 Logo</span> <span class="mono">brand.receipt_logo</span></div><div class="logo-tile" style="width:100%">LLOUD</div></div>
+            <div class="field"><div class="label"><span class="pin">9</span><span class="en">Sender</span><span class="zh">寄件者</span> <span class="mono">brand.sender</span></div><div class="input ro">Ztor <span class="pill"><span class="en">fixed this sprint</span><span class="zh">本期固定</span></span></div>
+              <div class="hint"><span class="en">A LLOUD sender needs the email provider to verify lloud.club: 1–2 weeks or more, by hand.</span><span class="zh">改用 LLOUD 寄件者需由電郵服務商驗證 lloud.club：1–2 週以上，需人工處理。</span> <span class="tag later"><span class="en">LATER</span><span class="zh">之後</span></span></div></div>
+            <div class="field"><div class="label"><span class="pin">9</span><span class="en">Email logo</span><span class="zh">電郵 Logo</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span> <span class="mono">brand.logo</span></div><div class="logo-tile" style="width:100%; flex-direction:column; gap:2px">LLOUD<span class="mono" style="letter-spacing:0">Powered by Ztor</span></div>
+              <div class="hint"><span class="en">Uses the site logo from Basics. On the 4–5 account emails and the order emails.</span><span class="zh">使用「基本資料」的網站 Logo。用於 4–5 封帳號電郵與訂單電郵。</span></div></div>
           </div>
-          <div class="hint" style="margin-top:10px"><span class="en">Hidden if management chooses Ztor as the sender.</span><span class="zh">若管理層選擇由 Ztor 寄出，此區隱藏。</span></div>
+          <div class="hint" style="margin-top:10px"><span class="en">Management to confirm: Ztor sender + LLOUD logo at launch.</span><span class="zh">待管理層確認：上線時由 Ztor 寄出＋LLOUD Logo。</span></div>
         </div>
 
-        <!-- Channel key -->
+        <!-- API key (per artist) -->
         <div class="form-card">
-          <div class="card-head"><h3><span class="en">Channel key</span><span class="zh">頻道金鑰</span></h3><span class="tag spec"><span class="en">SPEC</span><span class="zh">規格</span></span></div>
-          <div class="field"><div class="label"><span class="pin n">10</span><span class="en">Public key</span><span class="zh">公開金鑰</span> <span class="mono">api_key</span></div>
-            <div class="input ro key-box">ck_live_7Q2m…F9x <span class="btn sm outline" style="margin-left:auto"><span class="en">Copy</span><span class="zh">複製</span></span><span class="btn sm outline"><span class="en">Regenerate</span><span class="zh">重新產生</span></span></div>
-            <div class="hint"><span class="en">Goes in the site's api-client.js. A public key, not a password.</span><span class="zh">放在網站的 api-client.js。公開金鑰，不是密碼。</span></div></div>
+          <div class="card-head"><h3><span class="en">API access</span><span class="zh">API 存取</span></h3><span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span></div>
+          <div class="toggle-row"><div><b><span class="en">API access</span><span class="zh">API 存取</span></b><div class="hint"><span class="en">Turning it on issues the creator's API key</span><span class="zh">開啟後產生此 creator 的 API 金鑰</span></div></div><span class="switch" aria-label="on"></span></div>
+          <div class="field"><div class="label"><span class="pin n">10</span><span class="en">API key (one per creator)</span><span class="zh">API 金鑰（每位 creator 一組）</span> <span class="mono">api_key</span></div>
+            <div class="input ro key-box">ak_live_7Q2m…F9x <span class="btn sm outline" style="margin-left:auto"><span class="en">Copy</span><span class="zh">複製</span></span><span class="btn sm outline"><span class="en">Regenerate</span><span class="zh">重新產生</span></span></div>
+            <div class="hint"><span class="en">Given to the site team. Secret or public is to confirm with Eric: a secret key stays on the site's server, never in the browser.</span><span class="zh">交給網站團隊。是否保密待與 Eric 確認：保密金鑰只能放在網站伺服器，不能放在瀏覽器。</span></div></div>
         </div>
 
         <!-- Currency (read-only) -->
@@ -357,29 +370,29 @@ footer{margin-top:40px; padding-top:16px; border-top:1px solid var(--border); fo
     </div>
     <div class="notes">
       <div class="note"><div class="note-h"><span class="pin">3</span><span class="en">Name + logo</span><span class="zh">名稱＋Logo</span></div>
-        <ul><li><span class="en">Shown next to the Ztor logo on the Ztor sign-in page.</span><span class="zh">顯示在 Ztor 登入頁，Ztor logo 旁。</span></li><li><span class="en">The logo is new.</span><span class="zh">Logo 為新增。</span></li></ul><span class="mono">brand.name · brand.logo</span></div>
+        <ul><li><span class="en">This sprint: on account and order emails.</span><span class="zh">本期：用於帳號與訂單電郵。</span></li><li><span class="en">Later also on the Ztor sign-in page.</span><span class="zh">之後也顯示在 Ztor 登入頁。</span></li><li><span class="en">The logo is new.</span><span class="zh">Logo 為新增。</span></li></ul><span class="mono">brand.name · brand.logo</span></div>
       <div class="note"><div class="note-h"><span class="pin">4</span><span class="en">Creators</span><span class="zh">Creator</span></div>
         <ul><li><span class="en">One creator today.</span><span class="zh">目前一個 creator。</span></li><li><span class="en">More later, e.g. a label site.</span><span class="zh">之後可加更多，例如廠牌網站。</span></li></ul><span class="mono">creator_ids</span></div>
-      <div class="note"><div class="note-h"><span class="pin n">5</span><span class="en">Domains + return URLs</span><span class="zh">網域與回跳網址</span></div>
-        <ul><li><span class="en">The sign-in and payment pages only return to these.</span><span class="zh">登入頁與付款頁只會回到這些網址。</span></li></ul><span class="mono">domains · allowed_origins · return_urls</span></div>
-      <div class="note"><div class="note-h"><span class="pin">6</span><span class="en">No crossover</span><span class="zh">不互通</span></div>
-        <ul><li><span class="en">Accounts and products stay on the site.</span><span class="zh">帳號與商品只在此網站。</span></li><li><span class="en">Still one Ztor identity.</span><span class="zh">仍是同一個 Ztor 身分系統。</span></li><li><span class="en">Locked once the site has members.</span><span class="zh">網站有會員後鎖定。</span></li><li><b><span class="en">LLOUD: on.</span><span class="zh">LLOUD：開啟。</span></b></li></ul><span class="mono">no_crossover</span></div>
-      <div class="note"><div class="note-h"><span class="pin n">7</span><span class="en">Ztor sign-in page</span><span class="zh">Ztor 登入頁</span></div>
-        <ul><li><span class="en">Provided by Ztor.</span><span class="zh">由 Ztor 提供。</span></li><li>Apple · Google · Facebook · LINE</li><li><span class="en">Nothing to set.</span><span class="zh">不需設定。</span></li></ul></div>
+      <div class="note"><div class="note-h"><span class="pin n">5</span><span class="en">Domains + return URLs</span><span class="zh">網域與回跳網址</span> <span class="tag dev"><span class="en">DEV TEAM</span><span class="zh">開發團隊</span></span></div>
+        <ul><li><span class="en">This sprint: set up by Ztor's dev team in server config.</span><span class="zh">本期：由 Ztor 開發團隊在伺服器設定。</span></li><li><span class="en">The payment page only returns to these.</span><span class="zh">付款頁只會回到這些網址。</span></li></ul><span class="mono">domains · allowed_origins · return_urls</span></div>
+      <div class="note"><div class="note-h"><span class="pin">6</span><span class="en">No crossover</span><span class="zh">不互通</span> <span class="tag later"><span class="en">LATER</span><span class="zh">之後</span></span></div>
+        <ul><li><span class="en">Not this sprint: 2–3 weeks of backend work, ztor.com included.</span><span class="zh">本期不做：需 2–3 週後端工作，含 ztor.com。</span></li><li><b><span class="en">LLOUD launches shared with ztor.com.</span><span class="zh">LLOUD 上線時與 ztor.com 互通。</span></b></li><li><span class="en">When built: still one Ztor identity; locked once the site has members.</span><span class="zh">之後做時：仍是同一個 Ztor 身分系統；網站有會員後鎖定。</span></li></ul><span class="mono">no_crossover</span></div>
+      <div class="note"><div class="note-h"><span class="pin n">7</span><span class="en">Ztor sign-in page</span><span class="zh">Ztor 登入頁</span> <span class="tag later"><span class="en">LATER</span><span class="zh">之後</span></span></div>
+        <ul><li><span class="en">This sprint: the site's own sign-in and registration pages call the Creator API.</span><span class="zh">本期：網站自己的登入／註冊頁串接 Creator API。</span></li><li><span class="en">Later: provided by Ztor, with Apple · Google · Facebook · LINE.</span><span class="zh">之後：由 Ztor 提供，含 Apple · Google · Facebook · LINE。</span></li></ul></div>
       <div class="note"><div class="note-h"><span class="pin">8</span><span class="en">Default language</span><span class="zh">預設語言</span></div>
         <ul><li><span class="en">Safety net only.</span><span class="zh">僅為安全網。</span></li><li><span class="en">The site sends its language on every call.</span><span class="zh">網站每次呼叫都會帶語言。</span></li><li><b><span class="en">LLOUD: English.</span><span class="zh">LLOUD：English。</span></b></li></ul><span class="mono">default_language</span></div>
       <div class="note"><div class="note-h"><span class="pin">9</span><span class="en">Email branding</span><span class="zh">電郵品牌</span> <span class="tag pending"><span class="en">PENDING</span><span class="zh">待確認</span></span></div>
-        <ul><li><span class="en">Branded sender + receipt logo, or Ztor.</span><span class="zh">品牌寄件者＋收據 Logo，或由 Ztor 寄出。</span></li><li><span class="en">Jeff leans branded.</span><span class="zh">Jeff 傾向品牌寄件。</span></li></ul><span class="mono">brand.sender · brand.receipt_logo</span></div>
-      <div class="note"><div class="note-h"><span class="pin n">10</span><span class="en">Channel key</span><span class="zh">頻道金鑰</span></div>
-        <ul><li><span class="en">Public; identifies the site.</span><span class="zh">公開，用來識別網站。</span></li><li><span class="en">The secret gateway token stays on Ztor's servers.</span><span class="zh">保密的 gateway token 只留在 Ztor 伺服器。</span></li></ul><span class="mono">api_key</span></div>
+        <ul><li><span class="en">This sprint: Ztor sender, with the site logo and “Powered by Ztor”.</span><span class="zh">本期：由 Ztor 寄出，附網站 Logo 與「Powered by Ztor」。</span></li><li><span class="en">LLOUD sender later (domain verification).</span><span class="zh">LLOUD 寄件者之後再做（需驗證網域）。</span></li><li><span class="en">Management to confirm.</span><span class="zh">待管理層確認。</span></li></ul><span class="mono">brand.sender · brand.logo</span></div>
+      <div class="note"><div class="note-h"><span class="pin n">10</span><span class="en">API key</span><span class="zh">API 金鑰</span></div>
+        <ul><li><span class="en">One per creator (Eric), issued when API access is turned on.</span><span class="zh">每位 creator 一組（Eric），開啟 API 存取時產生。</span></li><li><span class="en">Replaces the per-site channel key.</span><span class="zh">取代每個網站一組的頻道金鑰。</span></li><li><span class="en">Secret or public: to confirm with Eric.</span><span class="zh">是否保密：待與 Eric 確認。</span></li><li><span class="en">The secret gateway token stays on Ztor's servers.</span><span class="zh">保密的 gateway token 只留在 Ztor 伺服器。</span></li></ul><span class="mono">api_key</span></div>
       <div class="note"><div class="note-h"><span class="pin n">11</span><span class="en">Currency</span><span class="zh">幣別</span></div>
-        <ul><li><span class="en">No setting.</span><span class="zh">不需設定。</span></li><li><span class="en">Ztor's rule from eShop 2.2.</span><span class="zh">依 eShop 2.2 起的 Ztor 規則。</span></li><li><span class="en">Replaces the BA's <span class="mono">base_currency</span>.</span><span class="zh">取代 BA 的 <span class="mono">base_currency</span>。</span></li></ul></div>
+        <ul><li><span class="en">No setting.</span><span class="zh">不需設定。</span></li><li><span class="en">Ztor's rule from eShop 2.2.</span><span class="zh">依 eShop 2.2 起的 Ztor 規則。</span></li><li><span class="en">Replaces the BA's <span class="mono" style="display:inline">base_currency</span>.</span><span class="zh">取代 BA 的 <span class="mono" style="display:inline">base_currency</span>。</span></li></ul></div>
     </div>
   </section>
 
   <footer>
     <div><span class="en">Visual system: Ztor Creator Studio r2.2, dark mode</span><span class="zh">視覺系統：Ztor Creator Studio r2.2 深色模式</span> (<span class="mono">pathfinders/Creator-Studio/ztor-creator-studio/r2.2/design-system.md</span>) · <span class="en">reference: current Creator Management + Create Creator screens.</span><span class="zh">參考：現有 Creator 管理與建立 Creator 畫面。</span></div>
-    <div><span class="en">Spec:</span><span class="zh">規格：</span> <span class="mono">ztor-docs/outputs/specs/creator-api-v1.4-feedback-for-ba-2026-09-26.md</span> <span class="en">(sections 2, 4, 5) · Wireframe, not final UI · 2026-09-27</span><span class="zh">（第 2、4、5 節）· 線框稿，非最終 UI · 2026-09-27</span></div>
+    <div><span class="en">Spec:</span><span class="zh">規格：</span> <span class="mono">ztor-docs/outputs/specs/creator-api-v1.4-feedback-for-ba-2026-09-26.md</span> <span class="en">(sections 2, 4, 5) · Wireframe, not final UI · 2026-09-27, updated 2026-09-28 after the dev sync</span><span class="zh">（第 2、4、5 節）· 線框稿，非最終 UI · 2026-09-27，9/28 開發同步後更新</span></div>
   </footer>
 </div>
 <script>
