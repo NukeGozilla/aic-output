@@ -73,6 +73,7 @@ h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.2px}
 .phase.next .num{background:var(--primary); color:#171717}
 .phase.future .num{background:var(--dev)}
 .ph-h h3{font-size:15px}
+.ph-sub{font-size:11.5px; color:var(--muted-foreground); margin:-6px 0 2px 32px}
 
 .step{position:relative; border:1px solid var(--border); border-radius:10px; padding:8px 10px 8px 14px; font-size:12.5px; background:#fff}
 .step::before{content:""; position:absolute; left:0; top:6px; bottom:6px; width:4px; border-radius:4px}
@@ -173,11 +174,13 @@ footer .mono{font-family:var(--mono); font-size:11px}
 
       <div class="phase">
         <div class="ph-h"><span class="num">4</span><h3><span class="en">Build the site</span><span class="zh">建置網站</span></h3></div>
-        <div class="step site"><span class="en">Theme + collections</span><span class="zh">主題＋系列</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="meta"><span class="en">site list or eShop category (open)</span><span class="zh">網站自管或 eShop 分類（待定）</span></span></div>
-        <div class="step site"><span class="mono">api-client.js</span> <span class="en">+ API key</span><span class="zh">＋API 金鑰</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span></div>
-        <div class="step site"><span class="en">Mock API → live Creator API</span><span class="zh">模擬 API → 正式 Creator API</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span></div>
-        <div class="step site"><span class="en">Sign-in + registration pages → Creator API</span><span class="zh">登入＋註冊頁 → Creator API</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="meta"><span class="en">email + password · Ztor account</span><span class="zh">Email＋密碼・Ztor 帳號</span></span></div>
-        <div class="step site"><span class="en">Checkout → pickup contact → Ztor payment page</span><span class="zh">結帳 → 取貨聯絡人 → Ztor 付款頁</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span></div>
+        <div class="ph-sub"><span class="en">Features that run on the Creator API</span><span class="zh">串接 Creator API 的功能</span></div>
+        <div class="step site"><span class="en">Sign-in + sign-up</span><span class="zh">登入＋註冊</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="meta"><span class="en">email + password</span><span class="zh">Email＋密碼</span></span></div>
+        <div class="step site"><span class="en">Profile</span><span class="zh">會員資料</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="meta"><span class="en">name · avatar · language</span><span class="zh">名稱・頭像・語言</span></span></div>
+        <div class="step site"><span class="en">Products</span><span class="zh">商品</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="meta"><span class="en">list · detail · size guide</span><span class="zh">列表・詳情・尺碼表</span></span></div>
+        <div class="step site"><span class="en">Cart</span><span class="zh">購物車</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span></div>
+        <div class="step site"><span class="en">Checkout</span><span class="zh">結帳</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="meta"><span class="en">pickup contact · discount code · Ztor payment page</span><span class="zh">取貨聯絡人・折扣碼・Ztor 付款頁</span></span></div>
+        <div class="step site"><span class="en">Orders</span><span class="zh">訂單</span> <span class="tag new"><span class="en">NEW</span><span class="zh">新增</span></span><span class="meta"><span class="en">history · pickup QR</span><span class="zh">訂單紀錄・取貨 QR</span></span></div>
       </div>
       <div class="conn">→</div>
 
