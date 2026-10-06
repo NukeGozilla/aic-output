@@ -40,13 +40,14 @@ h2{font-size:16px; letter-spacing:1.2px; text-transform:uppercase; color:var(--m
 .badge.assumed{border:1px dashed #B58900; color:#8A6A00; background:#fff}
 
 /* journey cards */
-.journey{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px}
+.journey{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px}
 .card{border:1px solid var(--border); border-radius:14px; padding:12px 12px 10px; background:#fff; display:flex; flex-direction:column; gap:8px; min-height:132px}
 .card .step{font-size:10px; color:var(--muted-foreground); font-family:var(--mono)}
 .card h3{font-size:13.5px}
 .card .when{display:flex; flex-direction:column; gap:5px; margin-top:auto; font-size:11px; color:var(--muted-foreground)}
 .card .when > div{display:flex; justify-content:space-between; align-items:center; gap:6px}
 .card .when span:first-child{white-space:nowrap}
+.card .when .badge{white-space:normal; text-align:right; line-height:1.3}
 .card.z{border-top:3px solid var(--ztor)} .card.l{border-top:3px solid var(--lloud)}
 
 /* table */
@@ -101,10 +102,10 @@ td.mig b{display:block; margin-bottom:2px}
   <div class="card l"><span class="step">03</span><h3>Social login buttons</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD apps</span></div><div><span>March</span><span class="badge later">Ztor holds keys</span></div></div></div>
   <div class="card l"><span class="step">04</span><h3>Catalog &amp; product pages</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
   <div class="card l"><span class="step">05</span><h3>Cart &amp; checkout screens</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
-  <div class="card z"><span class="step">06</span><h3>Payment page</h3><div class="when"><div><span>December</span><span class="badge ztor">ZTOR</span></div><div><span>March</span><span class="badge later">slide-in, if Stripe Connect</span></div></div></div>
+  <div class="card z"><span class="step">06</span><h3>Payment page</h3><div class="when"><div><span>December</span><span class="badge ztor">ZTOR</span></div><div><span>March</span><span class="badge later">LLOUD, if Stripe Connect</span></div></div></div>
   <div class="card z"><span class="step">07</span><h3>Card statement</h3><div class="when"><div><span>December</span><span class="badge ztor">ZTOR</span></div><div><span>March</span><span class="badge later">LLOUD, if Stripe Connect</span></div></div></div>
-  <div class="card z"><span class="step">08</span><h3>Account &amp; order emails</h3><div class="when"><div><span>December</span><span class="badge ztor">Ztor sender · LLOUD logo</span></div><div><span>March</span><span class="badge later">LLOUD sender</span></div></div></div>
-  <div class="card l"><span class="step">09</span><h3>Delivery</h3><div class="when"><div><span>December</span><span class="badge lloud">pickup / LLOUD ships</span></div><div><span>March</span><span class="badge later">Ztor shipping</span></div></div></div>
+  <div class="card z"><span class="step">08</span><h3>Account &amp; order emails</h3><div class="when"><div><span>December</span><span class="badge ztor">Ztor · LLOUD logo</span></div><div><span>March</span><span class="badge later">LLOUD sender</span></div></div></div>
+  <div class="card l"><span class="step">09</span><h3>Delivery</h3><div class="when"><div><span>December</span><span class="badge lloud">pickup · LLOUD ships</span></div><div><span>March</span><span class="badge later">Ztor shipping</span></div></div></div>
   <div class="card z"><span class="step">10</span><h3>VIP &amp; loyalty</h3><div class="when"><div><span>late January</span><span class="badge assumed">Ztor · lite</span></div><div><span>March</span><span class="badge assumed">Ztor · full</span></div></div></div>
   <div class="card l"><span class="step">11</span><h3>Marketing emails</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
 </div>
