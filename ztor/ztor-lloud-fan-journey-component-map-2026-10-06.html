@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLOUD on Ztor — fan journey & component map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Noto+Sans+TC:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+/* Tokens: Ztor Creator Studio r2.2, light mode */
+:root{
+  --background:#FFFFFF; --foreground:#1A1A1A; --muted:#FAFAFA; --muted-foreground:#6E6E68;
+  --accent:#F3F3F3; --border:#EAEAEA; --primary:#ffa33f; --brand-ink:#8F4E00;
+  --selected-surface:rgba(255,163,63,.14);
+  --ztor:#ffa33f; --ztor-ink:#8F4E00; --ztor-bg:rgba(255,163,63,.14);
+  --lloud:#266DF0; --lloud-ink:#1B4FB3; --lloud-bg:rgba(38,109,240,.10);
+  --dev:#71717A;
+  --font:"Poppins","Noto Sans TC","Microsoft JhengHei",-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--background); color:var(--foreground); font-family:var(--font); line-height:1.45; padding:32px 20px 56px}
+.wrap{max-width:1280px; margin:0 auto}
+h1,h2,h3{margin:0; font-weight:600; letter-spacing:-.2px}
+h1{font-size:28px}
+h2{font-size:16px; letter-spacing:1.2px; text-transform:uppercase; color:var(--muted-foreground); font-size:12px; margin:34px 0 12px}
+.sub{color:var(--muted-foreground); font-size:14px; margin-top:6px; max-width:900px}
+.note{border:1px solid var(--border); border-radius:12px; padding:10px 14px; font-size:12.5px; background:var(--muted); margin-top:14px; max-width:900px}
+.note b{color:var(--brand-ink)}
+
+.legend{display:flex; flex-wrap:wrap; gap:8px 18px; font-size:12px; color:var(--muted-foreground); margin:14px 0 0}
+.legend > span{display:inline-flex; align-items:center; gap:6px}
+.badge{display:inline-block; font-size:10.5px; font-weight:600; letter-spacing:.4px; padding:2px 8px; border-radius:6px; white-space:nowrap; vertical-align:middle}
+.badge.ztor{background:var(--ztor-bg); color:var(--ztor-ink); border:1px solid rgba(255,163,63,.5)}
+.badge.lloud{background:var(--lloud-bg); color:var(--lloud-ink); border:1px solid rgba(38,109,240,.4)}
+.badge.mixed{background:#fff; color:var(--foreground); border:1px solid var(--border)}
+.badge.later{border:1px dashed var(--dev); color:var(--dev); background:#fff}
+.badge.assumed{border:1px dashed #B58900; color:#8A6A00; background:#fff}
+
+/* journey cards */
+.journey{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px}
+.card{border:1px solid var(--border); border-radius:14px; padding:12px 12px 10px; background:#fff; display:flex; flex-direction:column; gap:8px; min-height:132px}
+.card .step{font-size:10px; color:var(--muted-foreground); font-family:var(--mono)}
+.card h3{font-size:13.5px}
+.card .when{display:flex; flex-direction:column; gap:5px; margin-top:auto; font-size:11px; color:var(--muted-foreground)}
+.card .when > div{display:flex; justify-content:space-between; align-items:center; gap:6px}
+.card .when span:first-child{white-space:nowrap}
+.card.z{border-top:3px solid var(--ztor)} .card.l{border-top:3px solid var(--lloud)}
+
+/* table */
+.tablewrap{overflow-x:auto; border:1px solid var(--border); border-radius:14px}
+table{border-collapse:collapse; width:100%; min-width:860px; font-size:12.5px}
+th,td{padding:10px 12px; vertical-align:top; border-bottom:1px solid var(--border); text-align:left}
+th{background:var(--muted); font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--muted-foreground); font-weight:600}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600; white-space:nowrap}
+td.mig{min-width:230px}
+td.mig b{display:block; margin-bottom:2px}
+.dim{color:var(--muted-foreground)}
+
+/* timeline */
+.timeline{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px}
+.tl{border:1px solid var(--border); border-radius:14px; padding:14px; background:#fff}
+.tl .date{font-family:var(--mono); font-size:11px; color:var(--muted-foreground)}
+.tl h3{font-size:14px; margin:4px 0 8px}
+.tl ul{margin:0; padding-left:16px; font-size:12.5px}
+.tl li{margin:3px 0}
+.tl.a{border-top:3px solid var(--lloud)} .tl.b{border-top:3px solid #B58900} .tl.c{border-top:3px solid var(--ztor)}
+
+/* two columns */
+.cols{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px}
+.box{border:1px solid var(--border); border-radius:14px; padding:14px 16px; background:var(--muted)}
+.box h3{font-size:13.5px; margin-bottom:8px}
+.box ul{margin:0; padding-left:16px; font-size:12.5px}
+.box li{margin:4px 0}
+
+.foot{margin-top:34px; font-size:11px; color:var(--muted-foreground); border-top:1px solid var(--border); padding-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>LLOUD on Ztor: what fans see, who runs it, when it moves</h1>
+  <p class="sub">Component by component, instead of “Option A vs Option B”. Fans can’t tell an API layer from a platform; they see whichever features exist on launch day. So each piece of the journey is marked <b>Ztor</b> or <b>LLOUD</b>, with the date it moves onto Ztor if it starts on LLOUD’s side.</p>
+  <div class="legend">
+    <span><span class="badge ztor">ZTOR</span> runs on Ztor (Creator API, eShop, accounts)</span>
+    <span><span class="badge lloud">LLOUD</span> runs on LLOUD’s side (site, own apps, own tools)</span>
+    <span><span class="badge later">→ ZTOR LATER</span> starts on LLOUD, moves onto Ztor</span>
+    <span><span class="badge assumed">ASSUMED</span> loyalty has no concrete plan yet</span>
+  </div>
+  <div class="note"><b>Rule of thumb:</b> anything touching money, orders or the account stays on Ztor. Presentation, social-login buttons and outbound marketing can be LLOUD’s. Dates are the PM’s planning estimates; the dev team hasn’t sized them.</div>
+</header>
+
+<h2>1 · What fans see, touchpoint by touchpoint</h2>
+<div class="journey">
+  <div class="card l"><span class="step">01</span><h3>The site</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
+  <div class="card l"><span class="step">02</span><h3>Sign-in page</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
+  <div class="card l"><span class="step">03</span><h3>Social login buttons</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD apps</span></div><div><span>March</span><span class="badge later">Ztor holds keys</span></div></div></div>
+  <div class="card l"><span class="step">04</span><h3>Catalog &amp; product pages</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
+  <div class="card l"><span class="step">05</span><h3>Cart &amp; checkout screens</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
+  <div class="card z"><span class="step">06</span><h3>Payment page</h3><div class="when"><div><span>December</span><span class="badge ztor">ZTOR</span></div><div><span>March</span><span class="badge later">slide-in, if Stripe Connect</span></div></div></div>
+  <div class="card z"><span class="step">07</span><h3>Card statement</h3><div class="when"><div><span>December</span><span class="badge ztor">ZTOR</span></div><div><span>March</span><span class="badge later">LLOUD, if Stripe Connect</span></div></div></div>
+  <div class="card z"><span class="step">08</span><h3>Account &amp; order emails</h3><div class="when"><div><span>December</span><span class="badge ztor">Ztor sender · LLOUD logo</span></div><div><span>March</span><span class="badge later">LLOUD sender</span></div></div></div>
+  <div class="card l"><span class="step">09</span><h3>Delivery</h3><div class="when"><div><span>December</span><span class="badge lloud">pickup / LLOUD ships</span></div><div><span>March</span><span class="badge later">Ztor shipping</span></div></div></div>
+  <div class="card z"><span class="step">10</span><h3>VIP &amp; loyalty</h3><div class="when"><div><span>late January</span><span class="badge assumed">Ztor · lite</span></div><div><span>March</span><span class="badge assumed">Ztor · full</span></div></div></div>
+  <div class="card l"><span class="step">11</span><h3>Marketing emails</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
+</div>
+<p class="sub" style="margin-top:10px">In December, Ztor is visible at three points: the sender of account and order emails, the payment page and the card statement. Everything else already reads as LLOUD.</p>
+
+<h2>2 · Component map</h2>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Component</th><th>On Ztor (Creator API)</th><th>On LLOUD’s side</th><th>Ztor migration</th></tr></thead>
+  <tbody>
+    <tr><td>Identity (the account)</td><td>One Ztor account for every fan; same account on lloud.club and ztor.com</td><td class="dim">—</td><td class="mig"><b><span class="badge ztor">ZTOR</span> from day one</b>Orders belong to Ztor accounts, so this can’t move.</td></tr>
+    <tr><td>Social login</td><td>Ztor-owned Google / Apple / Facebook / LINE apps named “LLOUD” (target design)</td><td>LLOUD registers its own apps and runs the buttons on lloud.club; the provider token is handed to Ztor to sign the fan in</td><td class="mig"><b><span class="badge later">LLOUD → ZTOR</span> holds the keys later</b>Keep the same app IDs when moving, or Apple and Facebook users get a second account. LLOUD needs a business entity for the developer accounts.</td></tr>
+    <tr><td>Sign-in pages</td><td>A hosted sign-in page on the brand’s domain (target design)</td><td>lloud.club’s own pages call Ztor’s account API</td><td class="mig"><b><span class="badge lloud">LLOUD</span> now · optional Ztor page later</b>Can stay on LLOUD for good.</td></tr>
+    <tr><td>Shop, cart, checkout</td><td>Ztor eShop, limited to the artist’s products</td><td class="dim">—</td><td class="mig"><b><span class="badge ztor">ZTOR</span> from day one</b></td></tr>
+    <tr><td>Payment page &amp; merchant</td><td>Ztor’s payment gateway and merchant account</td><td>LLOUD’s own Stripe account</td><td class="mig"><b><span class="badge ztor">ZTOR</span> from day one</b>LLOUD collecting money for Ztor orders is Stripe Connect: a later build, and it needs Ztor’s Stripe account in good standing.</td></tr>
+    <tr><td>Account &amp; order emails</td><td>Ztor sender with LLOUD’s logo; LLOUD sender later</td><td>LLOUD’s own mailer</td><td class="mig"><b><span class="badge ztor">ZTOR</span> from day one</b>LLOUD can’t send these without account and order events from Ztor’s backend. Sends <i>as</i> LLOUD once the brand sender is built.</td></tr>
+    <tr><td>Marketing emails, CRM, analytics</td><td class="dim">—</td><td>LLOUD’s own tools</td><td class="mig"><b><span class="badge lloud">LLOUD</span>, stays LLOUD</b>Nothing needed from Ztor.</td></tr>
+    <tr><td>Delivery</td><td>Pickup with a QR code at launch; shipping is a later eShop build</td><td>LLOUD collects the address on its own site after purchase and ships with its own courier; Ztor ops closes the order by hand</td><td class="mig"><b><span class="badge later">LLOUD → ZTOR</span> when shipping is built</b>Until then: address data outside Ztor, manual order status, support split in two.</td></tr>
+    <tr><td>VIP &amp; loyalty <span class="badge assumed">ASSUMED</span></td><td>Ztor’s engine: points from spend, VIP tiers per creator, VIP-only products; shown on lloud.club through the API</td><td>LLOUD builds on a loyalty vendor directly</td><td class="mig"><b><span class="badge ztor">ZTOR</span> from late January, no migration</b> (recommended)<br>If built on a vendor first: the points ledger moves into Ztor later, and Ztor still has to feed the vendor with orders.</td></tr>
+    <tr><td>Domain, DNS, site build</td><td class="dim">—</td><td>LLOUD’s own; adds a few DNS records once when the brand sender comes</td><td class="mig"><b><span class="badge lloud">LLOUD</span>, stays LLOUD</b></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>3 · When</h2>
+<div class="timeline">
+  <div class="tl a"><div class="date">first half of December 2026</div><h3>Launch</h3><ul><li>Sign-in, shop and checkout on Ztor’s API; LLOUD’s site, social buttons, delivery and marketing</li><li>After Ztor’s eShop goes live (Nov 30)</li><li>Fans see Ztor at the email sender, payment page, card statement</li></ul></div>
+  <div class="tl b"><div class="date">late January 2027 · assumed</div><h3>VIP &amp; loyalty, lite</h3><ul><li>Points from spend, backfilled from December orders</li><li>VIP tiers per creator; VIP-only products</li><li>Depends on the loyalty plan, which isn’t decided yet</li></ul></div>
+  <div class="tl c"><div class="date">end of March 2027 · conditional</div><h3>Brand-only</h3><ul><li>Brand sender, Ztor-held social login keys, shipping, full loyalty</li><li>Statement “LLOUD” only with Stripe Connect</li><li>Needs three dev streams in parallel and decisions in November</li></ul></div>
+</div>
+
+<h2>4 · What it takes</h2>
+<div class="cols">
+  <div class="box"><h3>From LLOUD</h3><ul>
+    <li>A business entity for the Google / Apple / Facebook / LINE developer accounts</li>
+    <li>LLOUD’s team owns the social-login front end and delivery operations</li>
+    <li>Answers: launch date and first drop · same account on ztor.com OK? · points per brand or per creator · who builds lloud.club</li>
+  </ul></div>
+  <div class="box"><h3>Where moving onto Ztor later costs something</h3><ul>
+    <li><b>Social login:</b> provider IDs are tied to the app that registered them</li>
+    <li><b>Delivery:</b> addresses collected on LLOUD’s side stay there</li>
+    <li><b>Loyalty:</b> a points ledger built outside Ztor has to be imported</li>
+    <li>Everything else starts on Ztor or never moves</li>
+  </ul></div>
+  <div class="box"><h3>Open on Ztor’s side</h3><ul>
+    <li>Payment gateway is in flux; the launch runs on whichever gateway is live</li>
+    <li>The sign-in API’s date (sprint started Oct 1)</li>
+    <li>Loyalty: engine, owner and rules not decided; all loyalty dates are assumptions</li>
+  </ul></div>
+</div>
+
+<div class="foot">Prepared 2026-10-06 for management · Sources: the white-label setup plan (2026-09-29) and its item-by-item review (2026-10-04/05), the dev-sync scope of 2026-09-28, the CORE standup of 2026-10-06 · Durations are PM planning estimates, to be confirmed by the dev team.</div>
+
+</div>
+</body>
+</html>
