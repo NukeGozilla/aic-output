@@ -85,12 +85,12 @@ td.mig b{display:block; margin-bottom:2px}
 
 <header>
   <h1>LLOUD on Ztor: what fans see, who runs it, when it moves</h1>
-  <p class="sub">Component by component, instead of “Option A vs Option B”. Fans can’t tell an API layer from a platform; they see whichever features exist on launch day. So each piece of the journey is marked <b>Ztor</b> or <b>LLOUD</b>, with the date it moves onto Ztor if it starts on LLOUD’s side. <b>Approach as of Oct 6:</b> identity and commerce on Ztor’s Creator API; social login, loyalty + VIP and delivery integrated directly by LLOUD; payment under review; the platform layer on Ztor later, then migrate.</p>
+  <p class="sub">Component by component, instead of “Option A vs Option B”. Fans can’t tell an API layer from a platform; they see whichever features exist on launch day. So each piece of the journey is marked <b>Ztor</b> or <b>LLOUD</b>, with the date it moves onto Ztor if it starts on LLOUD’s side. <b>Approach as of Oct 6:</b> identity and commerce on Ztor’s Creator API; LLOUD runs its own front end and a backend service for payment, loyalty + VIP, social login and delivery; the platform layer on Ztor later, then migrate.</p>
   <div class="legend">
     <span><span class="badge ztor">ZTOR</span> runs on Ztor (Creator API, eShop, accounts)</span>
     <span><span class="badge lloud">LLOUD</span> runs on LLOUD’s side (site, own apps, own tools)</span>
     <span><span class="badge later">→ ZTOR LATER</span> starts on LLOUD, moves onto Ztor</span>
-    <span><span class="badge assumed">OPEN</span> payment option under review</span>
+    <span><span class="badge assumed">TO SIZE</span> small Ztor piece, dev team to size</span>
   </div>
   <div class="note"><b>Rule of thumb:</b> anything touching money, orders or the account stays on Ztor. Presentation, social-login buttons and outbound marketing can be LLOUD’s. Dates are the PM’s planning estimates; the dev team hasn’t sized them.</div>
 </header>
@@ -102,14 +102,14 @@ td.mig b{display:block; margin-bottom:2px}
   <div class="card l"><span class="step">03</span><h3>Social login buttons</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD’s own apps</span></div><div><span>March</span><span class="badge later">Ztor holds the keys</span></div></div></div>
   <div class="card l"><span class="step">04</span><h3>Catalog &amp; product pages</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
   <div class="card l"><span class="step">05</span><h3>Cart &amp; checkout screens</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
-  <div class="card z"><span class="step">06</span><h3>Payment page</h3><div class="when"><div><span>December</span><span class="badge assumed">LLOUD if direct payment, else Ztor</span></div><div><span>March</span><span class="badge assumed">same</span></div></div></div>
-  <div class="card z"><span class="step">07</span><h3>Card statement</h3><div class="when"><div><span>December</span><span class="badge assumed">LLOUD if direct payment, else Ztor</span></div><div><span>March</span><span class="badge assumed">same</span></div></div></div>
+  <div class="card l"><span class="step">06</span><h3>Payment page</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD collects</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
+  <div class="card l"><span class="step">07</span><h3>Card statement</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
   <div class="card z"><span class="step">08</span><h3>Account &amp; order emails</h3><div class="when"><div><span>December</span><span class="badge ztor">Ztor · LLOUD logo</span></div><div><span>March</span><span class="badge later">LLOUD sender</span></div></div></div>
   <div class="card l"><span class="step">09</span><h3>Delivery</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD ships · pickup</span></div><div><span>March</span><span class="badge later">Ztor shipping</span></div></div></div>
   <div class="card z"><span class="step">10</span><h3>VIP &amp; loyalty</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD’s own</span></div><div><span>later</span><span class="badge later">Ztor engine</span></div></div></div>
   <div class="card l"><span class="step">11</span><h3>Marketing emails</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div><div><span>March</span><span class="badge lloud">LLOUD</span></div></div></div>
 </div>
-<p class="sub" style="margin-top:10px">In December, Ztor is visible at the sender of account and order emails (with LLOUD’s logo) and, unless LLOUD collects payment directly, at the payment page and the card statement. Everything else reads as LLOUD.</p>
+<p class="sub" style="margin-top:10px">In December, Ztor is visible at one point: the sender of account and order emails, with LLOUD’s logo. Everything else reads as LLOUD.</p>
 
 <h2>2 · Component map</h2>
 <div class="tablewrap">
@@ -120,11 +120,11 @@ td.mig b{display:block; margin-bottom:2px}
     <tr><td>Social login</td><td>Ztor accepts the provider token and signs the fan in; Ztor-owned apps named “LLOUD” are the later platform design</td><td>LLOUD registers its own Google / Apple / Facebook / LINE apps and runs the buttons on lloud.club</td><td class="mig"><b><span class="badge later">LLOUD → ZTOR</span> holds the keys later</b>Keep the same app IDs when moving, or Apple and Facebook users get a second account. LLOUD needs a business entity for the developer accounts.</td></tr>
     <tr><td>Sign-in pages</td><td>A hosted sign-in page on the brand’s domain (target design)</td><td>lloud.club’s own pages call Ztor’s account API</td><td class="mig"><b><span class="badge lloud">LLOUD</span> now · optional Ztor page later</b>Can stay on LLOUD for good.</td></tr>
     <tr><td>Shop, cart, checkout</td><td>Ztor eShop, limited to the artist’s products</td><td class="dim">—</td><td class="mig"><b><span class="badge ztor">ZTOR</span> from day one</b></td></tr>
-    <tr><td>Payment page &amp; merchant</td><td>Option 1: Ztor’s payment page and merchant account</td><td>Option 2, under review: LLOUD collects on its own Stripe; Ztor keeps the order ledger and gets a verified “paid” confirmation. LLOUD is the seller of record</td><td class="mig"><b><span class="badge assumed">OPEN</span> decided after sizing</b>Option 1: Ztor from day one. Option 2: LLOUD stays the merchant; nothing forces a move later.</td></tr>
+    <tr><td>Payment page &amp; merchant</td><td>Ztor keeps the order ledger and adds an “external payment” method: the order waits, then LLOUD’s backend confirms “paid” with a signed call <span class="badge assumed">TO SIZE</span></td><td>LLOUD’s backend collects on LLOUD’s own Stripe account and confirms to Ztor. LLOUD is the seller of record; statement says LLOUD</td><td class="mig"><b><span class="badge lloud">LLOUD</span>, stays LLOUD</b>Nothing forces a move later. Fallback if Ztor’s piece can’t be slotted in time: Ztor’s payment page.</td></tr>
     <tr><td>Account &amp; order emails</td><td>Ztor sender with LLOUD’s logo; LLOUD sender later</td><td>LLOUD’s own mailer</td><td class="mig"><b><span class="badge ztor">ZTOR</span> from day one</b>LLOUD can’t send these without account and order events from Ztor’s backend. Sends <i>as</i> LLOUD once the brand sender is built.</td></tr>
     <tr><td>Marketing emails, CRM, analytics</td><td class="dim">—</td><td>LLOUD’s own tools</td><td class="mig"><b><span class="badge lloud">LLOUD</span>, stays LLOUD</b>Nothing needed from Ztor.</td></tr>
-    <tr><td>Delivery</td><td>Pickup with a QR code; Ztor ops closes LLOUD-shipped orders by hand. Shipping is a later eShop build</td><td>LLOUD collects the address on its own site after purchase and ships with its own courier</td><td class="mig"><b><span class="badge later">LLOUD → ZTOR</span> when shipping is built</b>Until then: address data outside Ztor, manual order status, support split in two.</td></tr>
-    <tr><td>VIP &amp; loyalty</td><td>Ztor keeps the order ledger, creates members in the loyalty vendor and posts paid / refund events to it; lloud.club reads points and tiers through the Creator API</td><td>LLOUD configures the rules, tiers and VIP-only products in the vendor, and displays and gates them on lloud.club (front end only)</td><td class="mig"><b><span class="badge later">VENDOR → ZTOR</span> with the platform layer</b>The points ledger is imported by Ztor account id and tiers are recomputed in Ztor. Until then VIP-only purchase is enforced on lloud.club only.</td></tr>
+    <tr><td>Delivery</td><td>Pickup with a QR code; Ztor ops closes LLOUD-shipped orders by hand. Shipping is a later eShop build</td><td>LLOUD collects the address at its checkout, keeps it in its backend and ships with its own courier</td><td class="mig"><b><span class="badge later">LLOUD → ZTOR</span> when shipping is built</b>Until then: address data outside Ztor, manual order status, support split in two.</td></tr>
+    <tr><td>VIP &amp; loyalty</td><td>Nothing at launch, as long as points count lloud.club orders only (a small feed if Lisa’s ztor.com orders must count too)</td><td>LLOUD’s backend awards points from the payments it processes, on a vendor or its own engine, keyed by the Ztor account id; serves points and tiers to lloud.club; gates VIP-only purchases at its checkout</td><td class="mig"><b><span class="badge later">LLOUD → ZTOR</span> with the platform layer</b>The points ledger is imported by Ztor account id, ztor.com orders are backfilled from history, tiers are recomputed in Ztor.</td></tr>
     <tr><td>Domain, DNS, site build</td><td class="dim">—</td><td>LLOUD’s own; adds a few DNS records once when the brand sender comes</td><td class="mig"><b><span class="badge lloud">LLOUD</span>, stays LLOUD</b></td></tr>
   </tbody>
 </table>
@@ -132,8 +132,8 @@ td.mig b{display:block; margin-bottom:2px}
 
 <h2>3 · When</h2>
 <div class="timeline">
-  <div class="tl a"><div class="date">first half of December 2026</div><h3>Launch</h3><ul><li>Identity, shop and checkout on Ztor’s API; LLOUD’s site, social login, loyalty + VIP, delivery and marketing</li><li>After Ztor’s eShop goes live (Nov 30)</li><li>Fans see Ztor at the email sender, plus the payment page and statement under option 1</li></ul></div>
-  <div class="tl b"><div class="date">by Oct 30 · decision</div><h3>Payment option</h3><ul><li>Option 1: fans pay on Ztor’s page; statement says Ztor</li><li>Option 2: LLOUD collects on its own Stripe, Ztor keeps the order ledger; statement says LLOUD</li><li>Decided after the dev team sizes option 2</li></ul></div>
+  <div class="tl a"><div class="date">December 2026, or early January</div><h3>Launch</h3><ul><li>Identity, shop and checkout on Ztor’s API; LLOUD’s site and backend for payment, loyalty + VIP, social login, delivery and marketing</li><li>After Ztor’s eShop goes live (Nov 30)</li><li>Fans see Ztor only at the email sender</li></ul></div>
+  <div class="tl b"><div class="date">by Oct 30 · to size</div><h3>Ztor’s small pieces</h3><ul><li>The “external payment” method on the order, so LLOUD’s backend can mark it paid</li><li>Sign-in with LLOUD’s own social apps</li><li>Their slot decides December vs early January</li></ul></div>
   <div class="tl c"><div class="date">by end of March 2027 · conditional</div><h3>Platform layer on Ztor, then migrate</h3><ul><li>Brand settings in Creator Studio, brand sender, Ztor-held social login keys, shipping, Ztor loyalty engine</li><li>LLOUD’s direct pieces move back as each lands: social keys, points ledger, delivery</li><li>Needs parallel dev streams and decisions in November</li></ul></div>
 </div>
 
@@ -141,7 +141,7 @@ td.mig b{display:block; margin-bottom:2px}
 <div class="cols">
   <div class="box"><h3>From LLOUD</h3><ul>
     <li>A business entity for the Google / Apple / Facebook / LINE developer accounts</li>
-    <li>LLOUD’s team owns the front end: the site, social-login buttons, loyalty display and VIP gating, the delivery form; and configures the loyalty vendor. Plus a Stripe business account if option 2</li>
+    <li>LLOUD’s team owns the site and a backend service: Stripe on LLOUD’s own account, loyalty + VIP, delivery, and the “paid” confirmation to Ztor. LLOUD is the seller of record</li>
     <li>Answers: launch date and first drop · same account on ztor.com OK? · points per brand or per creator · who builds lloud.club</li>
   </ul></div>
   <div class="box"><h3>Where moving onto Ztor later costs something</h3><ul>
@@ -151,9 +151,9 @@ td.mig b{display:block; margin-bottom:2px}
     <li>Everything else starts on Ztor or never moves</li>
   </ul></div>
   <div class="box"><h3>Open on Ztor’s side</h3><ul>
-    <li>Payment option 2 to be sized; under option 1 the launch runs on whichever gateway is live</li><li>A loyalty-vendor integration (members + order events) with a read proxy in the Creator API, and a token-exchange endpoint for LLOUD’s social apps</li>
+    <li>Ztor’s own gateway is only the fallback</li><li>The “external payment” method on the order, and a token-exchange endpoint for LLOUD’s social apps; both to be sized</li>
     <li>The sign-in API’s date (sprint started Oct 1)</li>
-    <li>The loyalty vendor is not chosen yet; Ztor’s own engine comes with the platform layer, and LLOUD’s rules become its spec</li>
+    <li>Ztor’s own loyalty engine comes with the platform layer; LLOUD’s rules become its spec</li>
   </ul></div>
 </div>
 
