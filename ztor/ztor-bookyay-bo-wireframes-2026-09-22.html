@@ -122,7 +122,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 </div>
 
 <nav aria-label="Sections">
-<a href="#s0">全流程</a><a href="#s1">1 · 建立活動</a><a href="#s2">2 · 編輯活動</a><a href="#s3">3 · 訂單與作廢</a><a href="#s4">4 · 報表</a><a href="#s5">5 · API · Webhook</a><a href="#s6">6 · 每場設定</a><a href="#s7">7 · 掃票不變</a><a href="#s8">8 · 範圍 · 待確認</a><a href="#s9">9 · Biz 欄位取捨</a>
+<a href="#s0">全流程</a><a href="#s1">1 · 建立活動</a><a href="#s2">2 · 編輯活動</a><a href="#s3">3 · 訂單與作廢</a><a href="#s4">4 · 報表</a><a href="#s5">5 · API · Webhook</a><a href="#s6">6 · 每場設定</a><a href="#s7">7 · 掃票不變</a><a href="#s8">8 · 範圍 · 待確認</a><a href="#s9">9 · Biz 欄位取捨</a><a href="#s10">10 · 設計師對照 → 要送什麼</a>
 </nav>
 
 <!-- S0 -->
@@ -633,6 +633,86 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <span class="chip decide">發佈狀態：留言說不要、Jeff 說要留 — 與 Jesse 確認「不做 UI ≠ 不傳」</span>
 <span class="chip decide">免費門票：走模式，還是請 Eric 開放現價填 0？（biz 傾向後者）</span>
 </div>
+</div>
+</section>
+
+
+<!-- S10 -->
+<section id="s10">
+<div class="shead"><span class="snum">10</span><h2>設計師對照表 → Bookyay 要送什麼（2026-10-05）</h2></div>
+<div class="req"><b>需求</b>：設計師的 rulebook（5.1.6.1 v2.38 · D354）寫明 <b>Ztor 會匯入哪些欄位</b> — 也就等於 <b>Bookyay 要送哪些欄位</b>。這份取代先前逐欄猜測，是 feed 的契約。Ztor FE／Creator Studio 由設計師負責，本頁只看 Bookyay 端。（dev spec §0.5）</div>
+<p class="goal">三個重點：<b>活動詳情要分段送</b>、<b>每張門票人數決定套票換算</b>、<b>一時段只匯入第一種票</b>。</p>
+<div class="wf">
+  <div class="states"><span class="lbl">View</span>
+    <button aria-pressed="true" data-for="s10a">要送 / 不要送</button>
+    <button aria-pressed="false" data-for="s10b">活動詳情分段</button>
+    <button aria-pressed="false" data-for="s10c">套票換算</button>
+    <button aria-pressed="false" data-for="s10d">⚠ 三個衝突</button>
+  </div>
+
+  <div data-panel="s10a" class="on">
+    <table class="t steps" style="margin-top:4px">
+      <tr><th>Bookyay 欄位</th><th>Ztor 去處</th><th>Ztor 鎖定</th></tr>
+      <tr><td>活動名稱</td><td>活動名稱</td><td>可改（改名不回寫）</td></tr>
+      <tr><td>國家／地區</td><td>活動國家</td><td>鎖定</td></tr>
+      <tr><td><b>活動語言</b></td><td>活動語言（複選）</td><td>鎖定 — <b>所有選取值都要送</b></td></tr>
+      <tr><td>活動地點 / 地區</td><td>場地名稱 / 完整地址</td><td>鎖定</td></tr>
+      <tr><td><b>集合地點 · 交通</b></td><td>場次 › 集合地點 · 交通</td><td>鎖定 — <b>各自獨立欄位</b></td></tr>
+      <tr><td>活動圖片 / <b>活動相簿</b></td><td>主視覺 / 圖庫（最多 10）</td><td>不鎖 · 原圖 1:1 不裁切</td></tr>
+      <tr><td><b>活動詳情（多段）</b></td><td>描述區塊</td><td>第 1 段鎖定 — <b>要分段送</b></td></tr>
+      <tr><td>門票名稱 / 現價(HKD)</td><td>票種名稱 / 票價</td><td>鎖定 · HKD 為基準</td></tr>
+      <tr><td><b>每張門票人數 n</b></td><td>組合包每套張數</td><td>鎖定 — <b>n≥2 觸發套票換算</b></td></tr>
+      <tr><td>時段人數上限</td><td>門票張數</td><td>鎖定 · 套票取 n 的整數倍</td></tr>
+      <tr><td>活動開始／完結日期時間</td><td>場次日期＋起訖時間</td><td>鎖定 · 跨日自動開啟</td></tr>
+      <tr><td>門票發售／停售日期時間</td><td>開賣／停售設定</td><td>鎖定</td></tr>
+      <tr><td>活動性質 公開／私人</td><td>顯示設定 顯示／隱藏</td><td><b>不鎖</b> — 只當預設值</td></tr>
+    </table>
+    <div class="box"><b>不用送</b>：活動主辦名稱 · 活動類別／子類別 · 標籤 · 最少／最大人數 · 活動包括 · 需要攜帶的物品 · 活動須知 · 門票簡介 · 手續費 · 主辦者自行提供門票 · 動態QR · 轉贈（含次數／期限）· 保護頁 · 活動主題 · 發佈狀態（作為表單欄位）</div>
+    <div class="gone"><b>注意 — 又是 BR-10a 的坑</b>：rulebook 的「不帶入」指<b>不變成 Ztor 可編輯的表單欄位</b>。<b>發佈狀態與進階設定 flags 仍然要在 feed 裡</b> — 上下架 webhook 讀前者，API 用後者擋設定不符的活動。<b>表單範圍 ≠ feed 範圍</b></div>
+    <div class="box new"><b>09-24 修正</b>：標籤、最少／最大人數先前被加進對照表，rulebook 明確<b>不帶入</b> — 已移除</div>
+  </div>
+
+  <div data-panel="s10b">
+    <div class="box new" style="margin-top:0"><b>活動詳情不能只給一整塊 HTML</b> — Ztor 依段落拆成描述區塊</div>
+    <div class="flow">
+      <div class="fstep by"><b>Bookyay 活動詳情</b>多段，每段無標題<br>段內含文字／圖片／影片</div><div class="farr">→</div>
+      <div class="fstep zt"><b>段 1 文字</b>→ 描述第一個文字區塊<span class="pill warn">鎖定</span></div><div class="farr">→</div>
+      <div class="fstep zt"><b>段 2 起</b>每段一個文字區塊，順序照舊<span class="pill ok">可編輯</span></div><div class="farr">→</div>
+      <div class="fstep zt"><b>段內圖片／影片</b>各自一個區塊，排在該段文字之後</div>
+    </div>
+    <div class="box new"><b>對 API 的影響</b>：<code>content</code> 給一個 HTML 字串<b>不夠</b>。feed 要帶段落結構，例如<br><code>description: [ { seq, text, media: [ { type, url, seq } ] } ]</code></div>
+    <div class="box">格式：粗體／清單／斜體／連結保留；標題字級等其他格式去掉只留文字。只有 1 段 → 不產生其他區塊；0 段 → 第一個區塊留空但仍鎖定</div>
+  </div>
+
+  <div data-panel="s10c">
+    <div class="box new" style="margin-top:0"><b>Ztor 的一張票 = 一個人。</b>Bookyay「每張門票人數 n ≥ 2」的套票，匯入時自動拆成<b>隱藏的 1 人票 + 每場一組組合包</b> — 粉絲只看到套票，數字與金額都算回 Bookyay 原值</div>
+    <table class="t" style="margin-top:4px">
+      <tr><th>項目</th><th>算法</th></tr>
+      <tr><td>1 人票票價</td><td>Bookyay 現價 ÷ n（可有小數，199 ÷ 2 = 99.5）</td></tr>
+      <tr><td>1 人票張數</td><td><code>floor(時段人數上限 ÷ n) × n</code></td></tr>
+      <tr><td>組合包售價</td><td>n × 1 人票價 = <b>Bookyay 現價</b></td></tr>
+      <tr><td>組合包鎖定套數</td><td><code>floor(時段人數上限 ÷ n)</code></td></tr>
+      <tr><td>早鳥（n ≥ 2）</td><td>落在組合包的限時折扣：<code>1 − 早鳥價 ÷ 現價</code></td></tr>
+    </table>
+    <div class="box"><b>Bookyay 端不用建任何東西</b> — 只要把 <b>現價 · 每張門票人數 · 時段人數上限 · 早鳥價 · 優惠完結時間</b> 正確送出即可。金額一律 HKD</div>
+    <div class="gone"><b>每張門票人數是關鍵欄位</b>：漏送或預設成 1，整個套票換算就錯了</div>
+  </div>
+
+  <div data-panel="s10d">
+    <table class="t steps" style="margin-top:4px">
+      <tr><th>#</th><th>衝突</th><th>要誰決定</th></tr>
+      <tr><td>A</td><td><b>早鳥優惠</b> — 設計師 rulebook 寫<b>帶入＋鎖定</b>（n=1 落在門票、n≥2 落在組合包）；但 09-23 biz Figma 是 <b>Phase 1 不做</b>，Jesse 問「Phase 2 可以有嗎？」。v0.4 已把 <code>earlyBirdPrice</code>／<code>earlyBirdEndTime</code> 從 API-2 拿掉 → <b>若 rulebook 為準就要加回來</b></td><td>Jeff + Jesse</td></tr>
+      <tr><td>B</td><td><b>送貨服務＋運費</b> — 設計師：帶入 → 取票方式＝<b>順豐寄送＋運費</b>，鎖定；我們的 BO-11 runbook 寫<b>送貨服務不勾</b>（純電子票）→ Phase 1 到底支不支援實體寄送？</td><td>Jeff + Biz</td></tr>
+      <tr><td>C</td><td><b>一時段只匯入第一種票</b> — 設計師：多種票時只帶排第一的，其餘顯示略過提示。<b>Bookyay 營運必須一個時段只放一種票，或把要賣的排第一</b>，否則庫存會悄悄少掉（Bookyay 端不會報錯）</td><td>確認可接受</td></tr>
+    </table>
+    <div class="box new"><b>C 已寫進 BO-11 營運守則</b>；A 與 B 擋住 API-2 定稿</div>
+  </div>
+</div>
+<div class="notes" style="margin-top:12px">
+<span class="chip">rulebook = Ztor 匯入什麼 = Bookyay 要送什麼 <code>dev spec §0.5</code></span>
+<span class="chip">活動詳情要分段，不能只給 HTML <code>§0.5a</code></span>
+<span class="chip">每張門票人數驅動套票換算 <code>§0.5b</code></span>
+<span class="chip decide">A 早鳥 · B 送貨運費 — 擋 API-2 定稿</span>
 </div>
 </section>
 
