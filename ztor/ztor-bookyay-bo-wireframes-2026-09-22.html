@@ -280,7 +280,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <ul class="pinlist">
       <li data-k="g1" aria-selected="false"><span class="num keep">1</span><span><b>修改（需重新提交批核）</b> — 照現行流程。<b>送審期間 Ztor 繼續賣已核准版本</b>；新版核准才推 <code>event.updated</code>，Ztor 更新欄位、營運人工 email 通知買家 <code>BR-42</code></span></li>
       <li data-k="g2" aria-selected="false"><span class="num keep">2</span><span><b>暫停發售 / 暫時下架</b> — 這才是「停賣」訊號 → <code>event.paused</code> → Ztor 自動下架；恢復則 <code>event.resumed</code> <code>BR-04</code></span></li>
-      <li data-k="g3" aria-selected="false"><span class="num bg">3</span><span><b>整場取消</b> → <code>event.cancelled</code>：已售票全部作廢、未售票全部收回，Ztor 下架並通知買家，退款由營運在金流後台執行 <code>BR-43</code></span></li>
+      <li data-k="g3" aria-selected="false"><span class="num bg">3</span><span><b>整場取消</b> → <code>event.cancelled</code>：已售票全部作廢、未售票全部收回，Ztor 下架，營運手動 email 通知買家（不自動發信），退款由營運在金流後台執行 <code>BR-43</code></span></li>
     </ul>
   </div></div>
   <div data-panel="p2b"><div class="shotwrap">
@@ -340,7 +340,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     </figure>
     <ul class="pinlist">
       <li data-k="j1" aria-selected="false"><span class="num new">1</span><span><b>訂單來源顯示 Ztor</b> — 順便修正現況：同一筆訂單在列表顯示 <code>BO</code>、詳情顯示 <code>Back Office</code>、報表顯示 <code>網頁</code> <code>BO-5</code></span></li>
-      <li data-k="j2" aria-selected="false"><span class="num keep">2</span><span><b>取消訂單</b> → 狀態「撤銷」→ 推 <code>ticket.voided</code> 給 Ztor → 買家錢包變「已取消」＋ 自動 email <code>BR-40</code></span></li>
+      <li data-k="j2" aria-selected="false"><span class="num keep">2</span><span><b>取消訂單</b> → 狀態「撤銷」→ 推 <code>ticket.voided</code> 給 Ztor → 買家錢包變「已取消」；營運手動 email 買家（不自動發信）<code>BR-40</code></span></li>
       <li data-k="j3" aria-selected="false"><span class="num new">3</span><span><b>兩道防呆</b>：① 已入場的票不可作廢（顯示掃描時間）② 通路狀態仍是 <span class="pill gray">pool</span> 的訂單不可從這裡取消 — 提示先在 Ztor CS 手動同步 <code>BO-7</code></span></li>
     </ul>
     <div class="box"><b>作廢 SOP</b>：① Ztor CS 手動回寫 → ② 訂單管理以通路參考搜尋 → ③ 取消訂單。錢不動 — 營運在 Ztor 金流後台退款</div>
@@ -424,7 +424,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td><code>event.paused</code> / <code>resumed</code></td><td>暫停發售 · 暫時下架 · 改回草稿</td><td>自動下架 / 重新上架</td></tr>
       <tr><td><code>event.updated</code></td><td>修訂<b>核准生效</b>時（非送審時）</td><td>更新鎖定欄位；營運人工 email 買家</td></tr>
       <tr><td><code>event.cancelled</code></td><td>整場取消</td><td>下架 · 全部票已取消 · 營運退款</td></tr>
-      <tr><td><code>ticket.voided</code></td><td>取消訂單（已售的通路訂單）</td><td>錢包「已取消」＋自動 email</td></tr>
+      <tr><td><code>ticket.voided</code></td><td>取消訂單（已售的通路訂單）</td><td>錢包「已取消」；營運手動 email（不自動發信）</td></tr>
       <tr><td><code>allocation.return_requested</code></td><td>上限調低核准 · 關閉 Ztor 開關</td><td>挑出未售票立即回寫</td></tr>
       <tr><td><code>allocation.changed</code></td><td>預開／加票／收回確認／撤銷</td><td>可售量增減；歸零＝完售（不下架）</td></tr>
       <tr><td><code>ticket.redeemed</code> <span class="pill gray">選配</span></td><td>Organizer App 掃描</td><td>錢包「已使用」（否則每小時拉一次）</td></tr>

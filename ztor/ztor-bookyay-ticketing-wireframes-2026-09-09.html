@@ -357,7 +357,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <!-- S6 -->
 <section id="s6">
 <div class="shead"><span class="snum">6</span><h2>Admin CS · 交易管理（作廢與回寫）</h2></div>
-<p class="goal">客服信箱進來的請求在這裡落地：查訂單 → <b>作廢在 Bookyay BO 執行（09-16）</b> → webhook 回推 Ztor + 自動 email 買家；CS 唯讀追蹤。系統不動錢 — 金額在金流後台退。</p>
+<p class="goal">客服信箱進來的請求在這裡落地：查訂單 → <b>作廢在 Bookyay BO 執行（09-16）</b> → webhook 回推 Ztor；營運手動 email 買家（不自動發信，10-07）；CS 唯讀追蹤。系統不動錢 — 金額在金流後台退。</p>
 <div class="stage">
 <div class="wf">
   <div class="states"><span class="lbl">View</span>
@@ -379,8 +379,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   </div>
   <div data-panel="s6b">
     <span class="screenlbl">CS · 作廢狀態（#ORD-1041 套組）— 執行在 Bookyay BO</span>
-    <div class="box" style="margin-top:0"><b>作廢流程（09-16 改向）</b><br>· 營運在 <b>Bookyay BO</b> 執行作廢 → <b>webhook 推回 Ztor</b><br>· 🎫 票 QR #T-0531 立即失效（門口掃描顯示紅色）<br>· 📦 取貨 QR #P-0207 失效<br>· 可<b>逐品項作廢</b>（09-09）：票與周邊各自作廢（票券作廢≠套組作廢）<br>· 系統<b>自動 email</b> 通知買家</div>
-    <div class="box"><span class="pill warn">提醒</span> 金額 NT$2,400 請至 Stripe / Antom 後台退回 — 系統不動錢<br><span class="pill gray">作廢通知：系統自動 email 買家（09-16）</span></div>
+    <div class="box" style="margin-top:0"><b>作廢流程（09-16 改向）</b><br>· 營運在 <b>Bookyay BO</b> 執行作廢 → <b>webhook 推回 Ztor</b><br>· 🎫 票 QR #T-0531 立即失效（門口掃描顯示紅色）<br>· 📦 取貨 QR #P-0207 失效<br>· 可<b>逐品項作廢</b>（09-09）：票與周邊各自作廢（票券作廢≠套組作廢）<br>· <b>營運手動 email</b> 通知買家（系統不自動發信）</div>
+    <div class="box"><span class="pill warn">提醒</span> 金額 NT$2,400 請至 Stripe / Antom 後台退回 — 系統不動錢<br><span class="pill gray">作廢通知：營運手動 email 買家（10-07）</span></div>
     <div class="box"><span class="pill gray">CS 無作廢按鈕 — 作廢於 Bookyay BO 操作（09-16）</span></div>
   </div>
   <div data-panel="s6c">
@@ -433,7 +433,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="screenlbl">Bookyay ↔ Ztor · 兩條通道</span>
     <div class="box" style="margin-top:0"><b>→ 給 Ztor 的 API feed（下行）</b><br>活動資料 · allocation 數量 · 更新 · <b>掃描狀態（已入場/未入場，BR-64 新增）</b>（Ztor 每小時拉取 + 手動 + <b>webhook 即時推送</b>：發布/草稿/取消/作廢/庫存 — 09-16）</div>
     <div class="box"><b>← 接收 Ztor 回寫（上行，每日批次）</b><br>🎫 票券狀態（assigned / voided / returned）· 📊 庫存 burn-down · 💳 交易明細（09-16 加：Ztor 訂單號 · 用戶 id（去識別）· 訂單類型 一般/套組）<br><span class="pill gray">冪等可重放 · 不含買家個資</span></div>
-    <div class="box"><b>作廢（09-16 定案）</b>：作廢在 Bookyay BO 執行 → webhook 推回 Ztor + 自動 email 買家；與掃描端天然一致 <span class="pill ok">已定案</span></div>
+    <div class="box"><b>作廢（09-16 定案）</b>：作廢在 Bookyay BO 執行 → webhook 推回 Ztor；營運手動 email 買家（10-07 改，不自動發信）；與掃描端天然一致 <span class="pill ok">已定案</span></div>
   </div>
   <div data-panel="s7c">
     <span class="screenlbl">Bookyay BO · 銷售報表</span>
