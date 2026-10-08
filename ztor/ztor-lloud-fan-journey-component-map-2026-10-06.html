@@ -40,14 +40,15 @@ h2{font-size:16px; letter-spacing:1.2px; text-transform:uppercase; color:var(--m
 .badge.assumed{border:1px dashed #B58900; color:#8A6A00; background:#fff}
 
 /* journey cards */
-.journey{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px}
-.card{border:1px solid var(--border); border-radius:14px; padding:12px 12px 10px; background:#fff; display:flex; flex-direction:column; gap:8px; min-height:108px}
+.journey{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:10px}
+.card{border:1px solid var(--border); border-radius:14px; padding:12px 12px 10px; background:#fff; display:flex; flex-direction:column; gap:6px}
 .card .step{font-size:10px; color:var(--muted-foreground); font-family:var(--mono)}
 .card h3{font-size:13.5px}
-.card .when{display:flex; flex-direction:column; gap:5px; margin-top:auto; font-size:11px; color:var(--muted-foreground)}
-.card .when > div{display:flex; justify-content:space-between; align-items:center; gap:6px}
-.card .when span:first-child{white-space:nowrap}
-.card .when .badge{white-space:normal; text-align:right; line-height:1.3}
+.card .stack{display:flex; flex-direction:column; margin-top:2px; font-size:11px}
+.card .stack > div{display:grid; grid-template-columns:52px 1fr; gap:6px; align-items:start; padding:5px 0; border-top:1px solid var(--border)}
+.card .lab{font-family:var(--mono); font-size:10px; letter-spacing:.3px; color:var(--muted-foreground); padding-top:3px}
+.card .val{color:var(--foreground); line-height:1.4}
+.card .val .badge{margin-right:2px}
 .card.z{border-top:3px solid var(--ztor)} .card.l{border-top:3px solid var(--lloud)}
 
 /* table */
@@ -85,31 +86,88 @@ td.mig b{display:block; margin-bottom:2px}
 
 <header>
   <h1>LLOUD on Ztor: what fans see, who runs it, when it moves</h1>
-  <p class="sub">Component by component, instead of “Option A vs Option B”. Fans can’t tell an API layer from a platform; they see whichever features exist on launch day. So each piece of the journey is marked <b>Ztor</b> or <b>LLOUD</b>, with the date it moves onto Ztor if it starts on LLOUD’s side. <b>Approach as of Oct 6:</b> identity and commerce on Ztor’s Creator API; LLOUD runs its own front end and a backend service for payment, loyalty + VIP, social login and delivery; the platform layer on Ztor later, then migrate.</p>
+  <p class="sub">Component by component, instead of “Option A vs Option B”. Fans can’t tell an API layer from a platform; they see whichever features exist on launch day. So each piece of the journey is marked <b>Ztor</b> or <b>LLOUD</b>, and whether it moves onto Ztor later if it starts on LLOUD’s side. <b>Approach as of Oct 6:</b> identity and commerce on Ztor’s Creator API; LLOUD runs its own front end and a backend service for payment, loyalty + VIP, social login and delivery; the platform layer on Ztor later, then migrate.</p>
   <div class="legend">
     <span><span class="badge ztor">ZTOR</span> runs on Ztor (Creator API, eShop, accounts)</span>
     <span><span class="badge lloud">LLOUD</span> runs on LLOUD’s side (site, own apps, own tools)</span>
     <span><span class="badge later">→ ZTOR LATER</span> starts on LLOUD, moves onto Ztor</span>
+    <span><span class="badge mixed">VENDOR</span> a third-party tool LLOUD’s backend calls</span>
     <span><span class="badge assumed">TO SIZE</span> small Ztor piece, dev team to size</span>
   </div>
   <div class="note"><b>Rule of thumb:</b> anything touching money, orders or the account stays on Ztor. Presentation, social-login buttons and outbound marketing can be LLOUD’s. Dates are the PM’s planning estimates; the dev team hasn’t sized them.</div>
 </header>
 
-<h2>1 · What fans see in December, touchpoint by touchpoint</h2>
+<h2>1 · What fans see in December, and what sits in each layer</h2>
+<p class="sub" style="margin-top:0">Each touchpoint, split four ways. <b>FE</b> = the screen the fan is on · <b>API</b> = what that screen calls · <b>Backend</b> = who does the work behind it · <b>Record</b> = where the data or money ends up. The card’s top colour is the FE layer, which is all the fan can tell.</p>
 <div class="journey">
-  <div class="card l"><span class="step">01</span><h3>The site</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div></div></div>
-  <div class="card l"><span class="step">02</span><h3>Sign-in page</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div></div></div>
-  <div class="card l"><span class="step">03</span><h3>Social login buttons</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD’s own apps</span></div></div></div>
-  <div class="card l"><span class="step">04</span><h3>Catalog &amp; product pages</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div></div></div>
-  <div class="card l"><span class="step">05</span><h3>Cart &amp; checkout screens</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div></div></div>
-  <div class="card l"><span class="step">06</span><h3>Payment page</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD collects</span></div></div></div>
-  <div class="card l"><span class="step">07</span><h3>Card statement</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div></div></div>
-  <div class="card z"><span class="step">08</span><h3>Account &amp; order emails</h3><div class="when"><div><span>December</span><span class="badge ztor">Ztor · LLOUD logo</span></div></div></div>
-  <div class="card l"><span class="step">09</span><h3>Delivery</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD ships · pickup</span></div></div></div>
-  <div class="card l"><span class="step">10</span><h3>VIP &amp; loyalty</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD’s own</span></div></div></div>
-  <div class="card l"><span class="step">11</span><h3>Marketing emails</h3><div class="when"><div><span>December</span><span class="badge lloud">LLOUD</span></div></div></div>
+  <div class="card l"><span class="step">01</span><h3>The site</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge lloud">LLOUD</span> lloud.club, built and hosted by LLOUD</span></div>
+    <div><span class="lab">API</span><span class="val dim">—</span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge lloud">LLOUD</span> domain, DNS, hosting</span></div>
+    <div><span class="lab">Record</span><span class="val dim">—</span></div>
+  </div></div>
+  <div class="card l"><span class="step">02</span><h3>Sign-in page</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge lloud">LLOUD</span> lloud.club’s own page</span></div>
+    <div><span class="lab">API</span><span class="val"><span class="badge ztor">ZTOR</span> Creator API, account sign-in</span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge ztor">ZTOR</span> accounts</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge ztor">ZTOR</span> one Ztor account per fan, same on ztor.com</span></div>
+  </div></div>
+  <div class="card l"><span class="step">03</span><h3>Social login buttons</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge lloud">LLOUD</span> buttons on lloud.club</span></div>
+    <div><span class="lab">API</span><span class="val"><span class="badge ztor">ZTOR</span> token exchange: Ztor accepts the provider token <span class="badge assumed">TO SIZE</span></span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge lloud">LLOUD</span> LLOUD’s own Google / Apple / Facebook / LINE apps hold the keys</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge ztor">ZTOR</span> provider ID linked to the Ztor account</span></div>
+  </div></div>
+  <div class="card l"><span class="step">04</span><h3>Catalog &amp; product pages</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge lloud">LLOUD</span> lloud.club</span></div>
+    <div><span class="lab">API</span><span class="val"><span class="badge ztor">ZTOR</span> Creator API, catalog</span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge ztor">ZTOR</span> eShop, limited to the artist’s products</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge ztor">ZTOR</span> products, prices, stock</span></div>
+  </div></div>
+  <div class="card l"><span class="step">05</span><h3>Cart &amp; checkout screens</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge lloud">LLOUD</span> lloud.club, including the address form</span></div>
+    <div><span class="lab">API</span><span class="val"><span class="badge ztor">ZTOR</span> Creator API, cart and order</span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge ztor">ZTOR</span> eShop order, waiting for payment</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge ztor">ZTOR</span> the order ledger; address stored on the order</span></div>
+  </div></div>
+  <div class="card l"><span class="step">06</span><h3>Payment page</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge lloud">LLOUD</span> lloud.club</span></div>
+    <div><span class="lab">API</span><span class="val"><span class="badge lloud">LLOUD</span> LLOUD’s backend, then a signed “paid” call to Ztor’s external-payment method <span class="badge assumed">TO SIZE</span></span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge lloud">LLOUD</span> Stripe on LLOUD’s own account; LLOUD is the seller of record</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge ztor">ZTOR</span> order marked paid · <span class="badge lloud">LLOUD</span> the money, at LLOUD’s Stripe</span></div>
+  </div></div>
+  <div class="card l"><span class="step">07</span><h3>Card statement</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val dim">— the fan’s bank app</span></div>
+    <div><span class="lab">API</span><span class="val dim">—</span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge lloud">LLOUD</span> Stripe statement descriptor says LLOUD</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge lloud">LLOUD</span> payout to LLOUD’s Stripe balance</span></div>
+  </div></div>
+  <div class="card z"><span class="step">08</span><h3>Account &amp; order emails</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge ztor">ZTOR</span> Ztor’s templates with LLOUD’s logo</span></div>
+    <div><span class="lab">API</span><span class="val dim">— fired by Ztor’s account and order events</span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge ztor">ZTOR</span> Ztor’s mailer and sender address</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge ztor">ZTOR</span> account and order events</span></div>
+  </div></div>
+  <div class="card l"><span class="step">09</span><h3>Delivery</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge lloud">LLOUD</span> address at checkout, order status on lloud.club, pickup QR</span></div>
+    <div><span class="lab">API</span><span class="val"><span class="badge lloud">LLOUD</span> LLOUD’s backend sends the address with the “paid” confirmation</span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge lloud">LLOUD</span> LLOUD’s own courier; Ztor ops closes the order by hand</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge ztor">ZTOR</span> address and status on the Ztor order</span></div>
+  </div></div>
+  <div class="card l"><span class="step">10</span><h3>VIP &amp; loyalty</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge lloud">LLOUD</span> points, tiers and the VIP gate at checkout</span></div>
+    <div><span class="lab">API</span><span class="val"><span class="badge lloud">LLOUD</span> LLOUD’s backend</span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge mixed">VENDOR</span> loyalty vendor awards points from LLOUD’s payments</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge mixed">VENDOR</span> points ledger keyed by Ztor account id; no LLOUD database</span></div>
+  </div></div>
+  <div class="card l"><span class="step">11</span><h3>Marketing emails</h3><div class="stack">
+    <div><span class="lab">FE</span><span class="val"><span class="badge lloud">LLOUD</span> LLOUD’s own templates and sender</span></div>
+    <div><span class="lab">API</span><span class="val dim">—</span></div>
+    <div><span class="lab">Backend</span><span class="val"><span class="badge lloud">LLOUD</span> LLOUD’s own CRM, mailer, analytics</span></div>
+    <div><span class="lab">Record</span><span class="val"><span class="badge lloud">LLOUD</span> LLOUD’s own list; nothing needed from Ztor</span></div>
+  </div></div>
 </div>
-<p class="sub" style="margin-top:10px">In December, Ztor is visible at one point: the sender of account and order emails, with LLOUD’s logo. Everything else reads as LLOUD.</p>
+<p class="sub" style="margin-top:10px">In December, Ztor is visible at one point: the sender of account and order emails, with LLOUD’s logo. Everything else reads as LLOUD. Underneath, every account, catalog and order record sits on Ztor; the money sits at LLOUD’s Stripe and the points at the loyalty vendor.</p>
 
 <h2>2 · Component map</h2>
 <div class="tablewrap">
