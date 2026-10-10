@@ -599,7 +599,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td>9</td><td>門票種類</td><td><b>不設門票</b> 模式 — 完全不開票，Ztor 無票可賣可掃</td></tr>
     </table>
     <div class="box"><b>對 Ztor 的意思</b>：這些欄位不拉、不顯示、不做 UI。Bookyay 端要不要留是他們的事</div>
-    <div class="box new"><b>10-09 更新（Jeff 總原則）</b>：上面 #2–#8 的欄位改為<b>照收</b>，顯示與否由 FE 決定；折扣／早鳥照收且不可改；#9 不設門票仍不能當 Ztor 活動。詳見 §10</div>
+    <div class="box new"><b>10-09 更新（Jeff 總原則）</b>：上面 #2–#8 的欄位改為<b>照收</b>，顯示與否由 FE 決定（<b>#4 手續費照收但 Ztor 不使用</b>）；折扣／早鳥照收且不可改；#9 不設門票仍不能當 Ztor 活動。詳見 §10</div>
     <div class="box new"><b>09-24 補充</b>：#1 基本資料全部保留。對照表原本漏了三個該步驟的欄位，已補上 — <b>標籤</b>、<b>最少/最大人數</b>、<b>活動語言</b>。⚠ 最少/最大人數是活動人數參考，<b>不是票券庫存</b></div>
   </div>
 
@@ -666,7 +666,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td>按門票人數生成 QR</td><td><code>isCreateUserTicketByHeadCnt</code></td><td><span class="pill ok">照收</span> 一票一碼或一人一碼</td></tr>
       <tr><td>折扣優惠 · 早鳥優惠</td><td><code>originalPrice</code>＋折後價 · <code>earlyBirdPrice</code>／<code>EndTime</code></td><td><span class="pill ok">照收</span> Ztor 端不可改</td></tr>
       <tr><td>活動限購 · 本門票限購</td><td>活動與票的 <code>maxPurchase*</code></td><td>兩層都送</td></tr>
-      <tr><td>手續費</td><td><code>fee</code> · <code>isShowFee</code></td><td><span class="pill ok">照收</span> 顯示與否由 FE 決定</td></tr>
+      <tr><td>手續費</td><td><code>fee</code> · <code>isShowFee</code></td><td><span class="pill gray">照收・不使用</span> Ztor 不顯示、不收取</td></tr>
       <tr><td><b>門票種類（每個時段）</b></td><td><code>tickets[]</code> · <code>sortSeq</code></td><td><b>全部</b>都送，照 BO 順序，共用時段人數上限</td></tr>
       <tr><td>時段名稱 · 過早入場</td><td><code>name</code> · <code>earlyEntryInMin</code></td><td>處理方式欄位名待確認</td></tr>
       <tr><td>發售時間（二選一）</td><td><code>isPublishTimeAsSellTime</code></td><td>直接送模式，不再用「空白時間」表示</td></tr>
@@ -710,7 +710,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td>G</td><td>場地／時間變更通知</td><td>不是 feed 問題；BR-42 營運手動寄信不變</td></tr>
       <tr><td>H</td><td>不設門票</td><td>不能當 Ztor 活動</td></tr>
       <tr><td>1</td><td>套票換算</td><td><span class="pill ok">照原樣</span></td></tr>
-      <tr><td>2</td><td>資訊欄位＋手續費</td><td><span class="pill ok">照收</span> 顯示與否由 FE 決定</td></tr>
+      <tr><td>2</td><td>資訊欄位＋手續費</td><td><span class="pill ok">照收</span> 資訊欄位顯示與否由 FE 決定；<b>手續費照收但 Ztor 不使用</b>（10-10）</td></tr>
       <tr><td>3</td><td>直接促銷同意</td><td><span class="pill ok">照收</span></td></tr>
     </table>
     <div class="box new"><b>營運守則（BO-11）新增</b>：送貨服務不勾、只有電子票 · 2.3 只做單一時段、單次活動 · 一個時段可以多種票，照想給粉絲看的順序排 · 不設門票不能開 Ztor 活動</div>
@@ -723,7 +723,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td>2</td><td>套票拆 1 人票＋組合包、÷ n、折扣改百分比；「按門票人數生成 QR」不帶入</td><td>套票照原樣，QR 設定照收</td></tr>
       <tr><td>3</td><td>順豐寄送＋運費帶入（示範 <code>hsinchu-vinyl-sf</code>）</td><td>只有電子票，到店自取也不做</td></tr>
       <tr><td>4</td><td>release2.4</td><td>Ztor <b>2.3</b></td></tr>
-      <tr><td>5</td><td>直接促銷同意、標籤、人數、活動包括、攜帶物品、須知、門票簡介、手續費、時段名稱：不帶入</td><td>照收，顯示與否由 FE 決定</td></tr>
+      <tr><td>5</td><td>直接促銷同意、標籤、人數、活動包括、攜帶物品、須知、門票簡介、時段名稱：不帶入</td><td>照收，顯示與否由 FE 決定（手續費照收但 Ztor 不使用，畫面結果不變）</td></tr>
       <tr><td>6</td><td>活動相簿：待確認</td><td>照收</td></tr>
       <tr><td>7</td><td>場地／時間變更「照樣寄出活動變更通知」</td><td>站內通知還是 email？email 維持營運手動（BR-42）</td></tr>
       <tr><td>8</td><td>CS 顯示「已撤銷」</td><td>買家端一律「已取消」（BR-40 · A9）</td></tr>

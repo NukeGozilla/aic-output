@@ -51,6 +51,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <!-- ═══════════════ EN ═══════════════ -->
 <div class="en">
 <h1>Bookyay → Ztor Event Field Mapping (draft — for biz / Jesse to confirm)</h1>
+<div style="border:1.5px solid var(--coral);background:#fbefec;border-radius:var(--r);padding:12px 16px;margin:0 0 18px;font-size:14px;line-height:1.6"><b>⚠ Out of date (last updated 2026-09-18).</b> Jeff's 2026-10-09 rule: Bookyay sends every event, session and ticket field except shipping and personal data; Ztor captures it and differs only in UI and currency. Rows marked "Do not pull" below no longer limit the feed. The current contract is the <a href="https://github.com/ztor20/Features/blob/main/draft/bookyay-ticketing/bookyay-side-dev-spec-2026-09-22.md">Bookyay-side dev spec v0.6 §0.5</a>.</div>
 <p><i>2026-09-08 · English version 2026-09-09 · from the 09-08 standup (CS already covers most Bookyay fields; FE not yet aligned) · parent rule: BRD v1.3 §6b / BR-10 · tick row by row at the 09-09 meeting</i></p>
 <div class="rev"><b>rev 09-09:</b> legend added (from BR-10) · 8 review fixes — authority labels unified · event type / lineup / event status split by authority · QR payload and scan status flagged as ticket-level feeds · change-notification markers on date, doors, venue · T&amp;C row · series/show sequence promoted to Must pull<br><b>rev 09-16/17:</b> pricing ruled (HKD base + CS per-currency rounding, band = open #2) · "add, never edit" gains exceptions (event name editable; images re-uploaded) · Lineup not pulled · doors hidden on FE · multi-show UI hidden · end time optional · webhook real-time sync · standard-mode events only · change notices = manual email</div>
 <p><b>Three questions, answered per field:</b> ① Pull it from Bookyay? ② Where does Ztor use it (FE buyer pages / CS admin)? ③ Who is the authority (feed-locked / feed · override allowed / Ztor-owned)?</p>
@@ -138,6 +139,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <!-- ═══════════════ ZH ═══════════════ -->
 <div class="zh">
 <h1>Bookyay → Ztor 活動欄位對照（草案，供 biz / Jesse 確認）</h1>
+<div style="border:1.5px solid var(--coral);background:#fbefec;border-radius:var(--r);padding:12px 16px;margin:0 0 18px;font-size:14px;line-height:1.6"><b>⚠ 本頁已過時（最後更新 2026-09-18）。</b>Jeff 2026-10-09 總原則：除寄送與個資外，Bookyay 送出活動、時段、門票的全部欄位；Ztor 照收，只差在 UI 呈現與幣別。下方標「不拉」的列不再限制 feed。現行契約見 <a href="https://github.com/ztor20/Features/blob/main/draft/bookyay-ticketing/bookyay-side-dev-spec-2026-09-22.md">Bookyay-side dev spec v0.6 §0.5</a>。</div>
 <p><i>2026-09-08 · 依據 09-08 standup（CS 已涵蓋多數 Bookyay 欄位；FE 尚未對齊）· 母規則 BRD v1.3 §6b/BR-10 · 供 09-09 會議逐列打勾</i></p>
 <div class="rev"><b>rev 09-09：</b>加圖例（依 BR-10）· 審閱修正 8 項 — 權威標籤統一 · 活動類型／Lineup／活動狀態拆分權威 · QR payload 與掃描狀態標為票券層級 feed · 日期／doors／場地加變更通知標記 · 新增 T&amp;C 列 · 系列／場次序升為必拉<br><b>rev 09-16/17：</b>票價定案（HKD 基準＋CS 逐幣整數微調，幅度 = open #2）· 「新增不改」新增例外（活動名稱可覆寫；圖片 Ztor 重上傳）· Lineup 不拉 · doors FE 不顯示 · 多場次 UI 隱藏 · 結束時間選填 · webhook 即時同步 · 只同步普通活動模式 · 變更通知改人工 email</div>
 <p><b>三個問題，逐欄位回答：</b> ① 要不要從 Bookyay 拉？ ② Ztor 端用在哪（FE 買家頁 / CS 管理）？ ③ 誰是權威（feed 鎖定 / feed，可覆寫 / Ztor 自建）？</p>
