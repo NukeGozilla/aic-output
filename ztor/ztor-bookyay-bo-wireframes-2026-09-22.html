@@ -200,7 +200,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <li data-k="c2" aria-selected="false"><span class="num keep">2</span><span><b>活動限購</b> — 每人總限購／每次交易限購／限購次數在這裡設，Ztor 拉取後於結帳執行 <code>BR-22</code></span></li>
       <li data-k="c3" aria-selected="false"><span class="num keep">3</span><span><b>票種＝Ztor 的販售選項</b> — 逐筆帶到 Ztor 活動頁 <code>API-2</code></span></li>
     </ul>
-    <div class="gone"><b>此頁不搬的欄位（biz 09-23）</b>：<b>手續費</b>（#4，不向買家收）· <b>折扣／早鳥優惠</b>（#5，Ztor 自有促銷）· <b>不設門票</b> 模式（#9）。<b>免費門票</b>（#10）<b>要搬</b> → 見 §9</div>
+    <div class="box"><b>此頁欄位一律照送（10-09 Jeff 總原則，推翻 biz 09-23 的「不搬」）</b>：<b>手續費</b>（#4）照送但 <b>Ztor 不使用</b> · <b>折扣優惠／早鳥優惠</b>（#5）照送且 <b>Ztor 端不可改</b> · <b>免費門票</b>（#10）照送 · <b>套票</b>原樣照送。唯一例外：<b>不設門票</b>模式（#9）的活動<b>不能</b>當 Ztor 活動。詳見 §10</div>
   </div></div>
 
   <div data-panel="p1d"><div class="shotwrap">
@@ -214,7 +214,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <ul class="pinlist">
       <li data-k="d1" aria-selected="false"><span class="num keep">1</span><span><b>時段人數上限＝給 Ztor 的整場數量</b> — 不需另外填分配數；take-all <code>BR-02</code></span></li>
       <li data-k="d2" aria-selected="false"><span class="num bg">2</span><span><b>背景</b>：核准後系統依此上限預開等量門票（1,000 + 5 = 1,005 張 QR）<code>BO-4</code></span></li>
-      <li data-k="d3" aria-selected="false"><span class="num keep">3</span><span><b>逐時段票種</b> — 階段性售票＝一個時段一個票種；同時段票種共用上限 <code>API-2</code></span></li>
+      <li data-k="d3" aria-selected="false"><span class="num keep">3</span><span><b>逐時段票種</b> — 同一時段的<b>所有</b>票種都帶，共用時段人數上限 <code>§0.6-C</code>。<b>階段性售票＝一個時段一階段：資料照送，但 Ztor 2.3 不支援</b> <code>BO-11</code></span></li>
     </ul>
   </div></div>
 
@@ -228,7 +228,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <div class="hl keep" data-k="e4" data-on="false" style="left:43.0%;top:35.8%;width:37.5%;height:2.4%"></div><button class="pin keep" style="left:43.0%;top:35.8%" data-k="e4" aria-pressed="false">4</button>
     </figure>
     <ul class="pinlist">
-      <li data-k="e1" aria-selected="false"><span class="num bg">1</span><span><b>背景</b>：這些開關經 API 傳給 Ztor（<code>flags</code>）— 設定不符的活動 Ztor 會拒絕匯入並提示，避免票到現場掃不過 <code>API-2</code></span></li>
+      <li data-k="e1" aria-selected="false"><span class="num bg">1</span><span><b>背景</b>：這些開關以 <b>Bookyay 自己的欄位名</b>傳給 Ztor（<code>isDynamicQR</code> · <code>isTicketCanTransfer</code> · <code>isInputPassword</code> …，不另包成 <code>flags</code>）— 設定不符的活動 Ztor 會拒絕匯入並提示，避免票到現場掃不過 <code>API-2</code></span></li>
       <li data-k="e2" aria-selected="false"><span class="num keep">2</span><span><b>門票由主辦者自行提供 = 不勾</b> — QR 必須由 BOOKYAY 產生（掃票契約）<code>BR-02/03</code></span></li>
       <li data-k="e3" aria-selected="false"><span class="num keep">3</span><span><b>動態 QR = 不勾</b> — Phase 1 靜態 QR（09-09 定案）</span></li>
       <li data-k="e4" aria-selected="false"><span class="num keep">4</span><span><b>轉贈門票 = 不勾</b> — 轉贈在 Ztor 端不支援，留待 Phase 2</span></li>
@@ -410,9 +410,9 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><th>#</th><th>介面</th><th>給 Ztor 什麼</th><th>BRD</th></tr>
       <tr><td><b>API-0</b></td><td>金鑰認證 <code>Bearer</code></td><td>去識別（無買家欄位）· 分頁 · 金額以「分」為單位 · <code>updatedSince</code> 增量</td><td>§8</td></tr>
       <tr><td><b>API-1</b></td><td><code>GET /events</code></td><td>只回「Ztor 活動＝ON」且預開完成的一般活動 · 三語標題／內文 · 私人旗標 · 購買上限 · <b>時區</b> · 上下架狀態</td><td>BR-04/10/20/22</td></tr>
-      <tr><td><b>API-2</b></td><td><code>GET /events/{id}</code></td><td>＋ 時段（上限＝分配量、售票時窗）· 票種（HKD 價、逐票種時窗、上限）· 條款 · 進階設定 flags</td><td>BR-12/14/25</td></tr>
+      <tr><td><b>API-2</b></td><td><code>GET /events/{id}</code></td><td>＋ <code>sessions[]</code>（<code>limitHeadCnt</code> ＝分配量；<b>售票時窗在時段上</b>：<code>openSellTime</code> / <code>closeSellTime</code> / <code>preSellTime</code>）· <code>sessions[].tickets[]</code>（<code>price</code> HKD · <code>headCnt</code> · 限購；<b>票種本身沒有時窗</b>）· <code>tncs</code> · 進階設定以 Bookyay 原欄位名</td><td>BR-12/14/25</td></tr>
       <tr><td><b>API-3</b></td><td><code>GET /events/{id}/tickets</code></td><td>每張預開票：<b>QR 內容</b> · 票種 · 通路狀態 · 是否已入場／入場時間</td><td>BR-02/30/64</td></tr>
-      <tr><td><b>API-4</b></td><td><code>GET …/availability</code></td><td>下單前確認：逐票種未售數 · 是否在售 · 上下架狀態（純查詢，無副作用）</td><td>BR-21</td></tr>
+      <tr><td><b>API-4</b></td><td><code>GET …/availability</code></td><td>下單前確認：未售數 · <code>saleOpen</code>（<b>逐時段</b>，非逐票種）· 上下架狀態（純查詢，無副作用）</td><td>BR-21</td></tr>
       <tr><td><b>API-5</b></td><td><code>POST /syncback</code></td><td>Ztor → Bookyay：交易明細（含售出票種）· 票券狀態 · 庫存對帳；冪等可重放，含買家個資的欄位直接拒收</td><td>BR-60/61/63</td></tr>
     </table>
     <div class="box new"><b>假 API 先行</b>：規格與 mock 先出，Creator Studio 團隊不必等 Bookyay 端完成就能開工（09-21 與 Eric 的共識）<code>API-7</code></div>
@@ -459,17 +459,20 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><th>步驟</th><th>設定</th><th>為什麼</th></tr>
       <tr><td>1 基本資料</td><td><b>一般活動</b>（非票務活動、非優先訂票）· <b>Ztor 活動 = ON</b></td><td>Phase 1 只支援一般活動；開關＝進 feed（BR-01/02）</td></tr>
       <tr><td>2 詳細資料</td><td><b>條款及細則</b> 填該場條款並開啟顯示</td><td>Ztor 沿用 Bookyay 條款，不另建（BR-14）</td></tr>
-      <tr><td>2 詳細資料</td><td><b>活動包括 · 需要攜帶的物品</b> — 不影響 Ztor</td><td>biz 09-23 #2/#3：不搬；填不填隨 Bookyay（§9）</td></tr>
+      <tr><td>2 詳細資料</td><td><b>活動包括 · 需要攜帶的物品 · 活動須知</b> — 照常填</td><td><b>10-09 改判</b>：biz 09-23 曾標「不搬」，現在<b>照送</b>（<code>includes[]</code> · <code>carries[]</code> · <code>notices[]</code>），顯不顯示由 Ztor FE 決定（§0.5 總原則）</td></tr>
       <tr><td>3 門票種類</td><td><b>自定門票</b> · 名稱 · <b>現價 HKD</b> · 每張門票人數</td><td>HKD 為基準價，Ztor 依匯率表換算、逐幣微調（BR-25）</td></tr>
       <tr><td>3 門票種類</td><td><b>活動限購</b>：每人總限購 · 每次交易限購 · 限購次數</td><td>購買上限在 Bookyay 設定，Ztor 拉取後於結帳執行（BR-22）</td></tr>
-      <tr><td>4 門票時段</td><td>單一時段（MVP）· <b>時段人數上限 = 給 Ztor 的整場數量</b> · 售票時窗</td><td>上限＝預開張數；階段性售票＝逐時段一個票種（BR-02）</td></tr>
+      <tr><td>3 門票種類</td><td><b>套票</b> 照 Bookyay 既有方式設定</td><td><b>原樣帶過去</b>：套票就是一個票種（人數 &gt; 1），不拆成隱藏單人票＋自動組合（§0.5b）</td></tr>
+      <tr><td>4 門票時段</td><td>單一時段（MVP）· <b>時段人數上限 = 給 Ztor 的整場數量</b> · 售票時窗</td><td>上限＝預開張數；售票時窗設在<b>時段</b>上。階段性售票（逐時段一階段）資料照送，<b>Ztor 2.3 不支援</b></td></tr>
       <tr><td>7 發佈</td><td><b>私人活動</b>（只在 Ztor 賣時）· 不勾「設定為測試資料」</td><td>隱藏上架＋私人連結（BR-20）· 測試資料不進 feed</td></tr>
     </table>
     <div class="box"><b>不用做</b>：預留門票 · 選座 · 分配數量 · 移交 — 發佈核准後系統自動預開</div>
   </div>
   <div data-panel="s6b">
     <div class="box native" style="margin-top:0"><b>QR CODE 門票設定</b>：BOOKYAY 自動生成 QR（預設）· 門票由主辦者自行提供 <b>不勾</b> · 使用動態 QR <b>不勾</b> · 可以轉贈門票 <b>不勾</b></div>
-    <div class="box native"><b>實名登記</b> 不勾 · <b>開啟優惠碼校驗</b> 不勾（折扣由 Ztor 端處理）· <b>保護頁</b> 不勾 · <b>送貨服務</b> 不勾（電子門票）</div>
+    <div class="box new"><b>按門票人數生成門票 QR Code ＝ 勾選</b>（Q11）— 每張門票人數 ≥ 2 的票種一律要開，<b>n 人票就發 n 張 QR</b>，對應預開票池的逐人開票 <code>BO-4 · BO-11</code></div>
+    <div class="box native"><b>實名登記</b> 不勾 · <b>開啟優惠碼校驗</b> 不勾 · <b>保護頁</b> 不勾 · <b>送貨服務</b> 不勾（<b>純電子門票</b>，不做順豐寄送／到店自取）</div>
+    <div class="box"><b>注意</b>：Bookyay 的<b>折扣優惠與早鳥優惠照常設定、照常帶到 Ztor</b>（§0.6-A/D）。這裡不勾的「開啟優惠碼校驗」是<b>優惠碼</b>功能，兩件事不同</div>
     <div class="box new">這些開關經 API 傳給 Ztor — 設定不符的活動 Ztor 會拒絕匯入並提示，避免票到現場掃不過</div>
   </div>
 </div>
@@ -621,7 +624,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <table class="t" style="margin-top:4px">
       <tr><th>欄位</th><th>為什麼還是要拉</th></tr>
       <tr><td><b>發佈狀態</b><br><span class="pill bad">留言衝突</span></td><td>Jesse 留言寫「活動主題<b>還有發佈狀態</b>在 ztor 上都不需要」（Agnes agree），但 Jeff 09-23 裁定<b>發佈狀態要留</b> — <code>event.published</code>／<code>event.paused</code> webhook 就是讀它。<br><b>相容說法</b>：Ztor 不複製審批流程 UI，但狀態值仍要經 feed 傳過來。<b>需與 Jesse 確認用詞</b>，別讓開發讀成「不用傳」</td></tr>
-      <tr><td><b>進階設定 QR 三個開關</b><br><span class="pill gray">#6</span></td><td>經 API-2 <code>flags</code> 傳給 Ztor，讓 Ztor 能<b>擋掉設定不符的活動</b>（例如誤開動態 QR）。只有「控制項」是 Bookyay 專用</td></tr>
+      <tr><td><b>進階設定 QR 三個開關</b><br><span class="pill gray">#6</span></td><td>經 API-2 以 <b>Bookyay 原欄位名</b>傳給 Ztor（不包成 <code>flags</code>），讓 Ztor 能<b>擋掉設定不符的活動</b>（例如誤開動態 QR）。只有「控制項」是 Bookyay 專用</td></tr>
     </table>
     <div class="box"><b>手續費（#4）的連動</b>：買家端不收手續費 → Ztor 只有平台費，且<b>由創作者支付</b>（與 Beamco 相同，ADR 2026-09-23）。欄位對照表已標「不傳」</div>
   </div>
