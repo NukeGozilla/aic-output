@@ -114,7 +114,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="wrap">
 <div class="docnav" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px"><a href="ztor-bookyay-ticketing-brd.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">BRD v1.3</a><a href="ztor-bookyay-ticketing-wireframes-2026-09-09.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">Feature wireframes</a><a href="ztor-bookyay-field-mapping-2026-09-08.html" style="display:inline-block;border:1.5px solid var(--line);background:var(--panel);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--txt);text-decoration:none">Field mapping</a><a href="ztor-bookyay-bo-wireframes-2026-09-22.html" style="display:inline-block;border:1.5px solid var(--gold);background:var(--gold-bg);border-radius:16px;padding:5px 14px;font-size:12px;font-weight:800;color:var(--gold);text-decoration:none">Bookyay BO changes</a></div>
 <h1>Bookyay BO — 要改什麼、要建什麼</h1>
-<p class="sub">Ztor × Bookyay 寄售整合 · 直接標在現有 UAT 後台畫面上（2026-09-22 擷取，唯讀）· 框起來的就是對應位置 · 點編號看說明 · 契約：<a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · 開發票：<code>bookyay-side-dev-spec-2026-09-22.md</code>（BO-1…11 · API-0…7）· Phase 1 活動型態＝<b>一般活動（活動管理）</b></p>
+<p class="sub">Ztor × Bookyay 寄售整合 · 直接標在現有 UAT 後台畫面上（2026-09-22 擷取，唯讀）· 框起來的就是對應位置 · 點編號看說明 · 契約：<a href="ztor-bookyay-ticketing-brd.html">BRD v1.3</a> · 需求文件：<code>bookyay-side-dev-spec-2026-09-22.md</code>（BO-1…11）· 技術附錄：<code>bookyay-api-contract-2026-09-22.md</code>（API-0…7 · 欄位名）· Phase 1 活動型態＝<b>一般活動（活動管理）</b></p>
 <div class="legend">
 <span><i class="sw" style="border:2.5px solid #2e7d5f;background:rgba(46,125,95,.12)"></i><b>新 UI</b> — 畫面上看得到的新東西</span>
 <span><i class="sw" style="border:2.5px dashed #2f5f9e;background:rgba(47,95,158,.10)"></i><b>背景</b> — 系統自動做，沒有畫面</span>
@@ -122,7 +122,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 </div>
 
 <nav aria-label="Sections">
-<a href="#s0">全流程</a><a href="#s1">1 · 建立活動</a><a href="#s2">2 · 編輯活動</a><a href="#s3">3 · 訂單與作廢</a><a href="#s4">4 · 報表</a><a href="#s5">5 · API · Webhook</a><a href="#s6">6 · 每場設定</a><a href="#s7">7 · 掃票不變</a><a href="#s8">8 · 範圍 · 待確認</a><a href="#s9">9 · Biz 欄位取捨</a><a href="#s10">10 · Bookyay 要送什麼（10-09）</a>
+<a href="#s0">全流程</a><a href="#s1">1 · 建立活動</a><a href="#s2">2 · 編輯活動</a><a href="#s3">3 · 訂單與作廢</a><a href="#s4">4 · 報表</a><a href="#s5">5 · API · Webhook</a><a href="#s6">6 · 每場設定</a><a href="#s7">7 · 掃票不變</a><a href="#s8">8 · 範圍 · 待確認</a><a href="#s9">9 · 要送什麼</a>
 </nav>
 
 <!-- S0 -->
@@ -200,7 +200,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <li data-k="c2" aria-selected="false"><span class="num keep">2</span><span><b>活動限購</b> — 每人總限購／每次交易限購／限購次數在這裡設，Ztor 拉取後於結帳執行 <code>BR-22</code></span></li>
       <li data-k="c3" aria-selected="false"><span class="num keep">3</span><span><b>票種＝Ztor 的販售選項</b> — 逐筆帶到 Ztor 活動頁 <code>API-2</code></span></li>
     </ul>
-    <div class="box"><b>此頁欄位一律照送（10-09 Jeff 總原則，推翻 biz 09-23 的「不搬」）</b>：<b>手續費</b>（#4）照送但 <b>Ztor 不使用</b> · <b>折扣優惠／早鳥優惠</b>（#5）照送且 <b>Ztor 端不可改</b> · <b>免費門票</b>（#10）照送 · <b>套票</b>原樣照送。唯一例外：<b>不設門票</b>模式（#9）的活動<b>不能</b>當 Ztor 活動。詳見 §10</div>
+    <div class="box"><b>此頁欄位一律照送（10-09 Jeff 總原則，推翻 biz 09-23 的「不搬」）</b>：<b>手續費</b>（#4）照送但 <b>Ztor 不使用</b> · <b>折扣優惠／早鳥優惠</b>（#5）照送且 <b>Ztor 端不可改</b> · <b>免費門票</b>（#10）照送 · <b>套票</b>原樣照送。唯一例外：<b>不設門票</b>模式（#9）的活動<b>不能</b>當 Ztor 活動 <code>§9</code></div>
   </div></div>
 
   <div data-panel="p1d"><div class="shotwrap">
@@ -577,179 +577,33 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 
 <!-- S9 -->
 <section id="s9">
-<div class="shead"><span class="snum">9</span><h2>Biz 欄位取捨（2026-09-23 Figma 確認）</h2></div>
-<div class="req"><b>需求</b>：Cheryl + Agnes 逐欄位檢視 Bookyay 活動精靈，標出<b>不需要搬到 Ztor</b>的功能（1–9）與<b>要搬的</b>（10）。Ztor 端據此不做 UI，Bookyay 端照常使用。（BRD §3 · BR-10a · BR-26）</div>
-<p class="goal">重點：這份清單是<b>欄位層級</b>，不是模組層級 — 全部落在活動精靈的步驟裡面。</p>
+<div class="shead"><span class="snum">9</span><h2>要送什麼 · 一句話</h2></div>
+<div class="req"><b>總原則（Jeff 2026-10-09）</b>：「我們沿用 bookyay 所有規則，不重新發明輪子。<b>bookyay 把資料送過來，ztor 照收</b>。ztor 的差別只有 UI 呈現和幣別。」<br>金額一律 <b>HKD</b>；Ztor 自行換算其他幣別並可微調，不回寫。<b>欄位名與結構照 Bookyay，不改名、不另外包裝</b>（Q13）。</div>
 <div class="stage">
 <div class="wf">
-  <div class="states"><span class="lbl">View</span>
-    <button aria-pressed="true" data-for="s9a">不搬（1–9）</button>
-    <button aria-pressed="false" data-for="s9b">要搬（10）免費門票</button>
-    <button aria-pressed="false" data-for="s9c">⚠ 兩個例外</button>
-  </div>
-
-  <div data-panel="s9a" class="on">
-    <table class="t steps" style="margin-top:4px">
-      <tr><th>#</th><th>步驟</th><th>不搬的功能</th></tr>
-      <tr><td>1</td><td>基本資料</td><td><span class="pill ok">全部保留</span> 該步驟沒有任何排除 — 欄位全拉（Jeff 09-24）</td></tr>
-      <tr><td>2</td><td>詳細資料</td><td><b>活動包括</b>（食品和飲品 / 入場券 / 裝備及材料 / 其他）</td></tr>
-      <tr><td>3</td><td>詳細資料</td><td><b>需要攜帶的物品</b></td></tr>
-      <tr><td>4</td><td>門票種類</td><td><b>本單品項有手續費 + 手續費</b> — 不向買家收手續費</td></tr>
-      <tr><td>5</td><td>門票種類</td><td><b>折扣優惠</b>（前提：Ztor 自有促銷）+ <b>早鳥優惠</b> <span class="pill warn">Phase 2 要</span> — Jesse：「Phase 1 用其他方式處理，Phase 2 可以有嗎？」Agnes：小型活動蠻需要</td></tr>
-      <tr><td>6</td><td>進階設定</td><td><b>QR CODE 門票設定</b>（主辦者自行提供 / 動態QR / 可轉贈）+ <b>保護頁</b></td></tr>
-      <tr><td>7</td><td>發佈</td><td><b>設定為測試資料</b> + <b>設定是否只可直接購買</b></td></tr>
-      <tr><td>8</td><td>發佈</td><td><b>活動主題</b>（6 個首頁推薦位）<span class="pill bad">留言說連發佈狀態也不要</span> — Jeff 裁定發佈狀態要留，見「兩個例外」</td></tr>
-      <tr><td>9</td><td>門票種類</td><td><b>不設門票</b> 模式 — 完全不開票，Ztor 無票可賣可掃</td></tr>
-    </table>
-    <div class="box"><b>對 Ztor 的意思</b>：這些欄位不拉、不顯示、不做 UI。Bookyay 端要不要留是他們的事</div>
-    <div class="box new"><b>10-09 更新（Jeff 總原則）</b>：上面 #2–#8 的欄位改為<b>照收</b>，顯示與否由 FE 決定（<b>#4 手續費照收但 Ztor 不使用</b>）；折扣／早鳥照收且不可改；#9 不設門票仍不能當 Ztor 活動。詳見 §10</div>
-    <div class="box new"><b>09-24 補充</b>：#1 基本資料全部保留。對照表原本漏了三個該步驟的欄位，已補上 — <b>標籤</b>、<b>最少/最大人數</b>、<b>活動語言</b>。⚠ 最少/最大人數是活動人數參考，<b>不是票券庫存</b></div>
-  </div>
-
-  <div data-panel="s9b">
-    <div class="box new" style="margin-top:0"><b>10 · 免費門票（現價 HKD 0）</b> — 唯一要帶過去的功能</div>
-    <div class="flow">
-      <div class="fstep by"><b>Bookyay</b>免費門票模式 · 現價 0<span class="pill gray">不變</span></div><div class="farr">→</div>
-      <div class="fstep zt"><b>Ztor FE</b>顯示「<b>領取</b>」而非「購買」<span class="pill ok">新 UI</span></div><div class="farr">→</div>
-      <div class="fstep zt"><b>結帳</b><b>略過付款流程</b>（不呼叫金流、無付款紀錄）<span class="pill ok">新</span></div><div class="farr">→</div>
-      <div class="fstep by"><b>之後全部不變</b>開票 · QR · 錢包 · 回寫（金額 0）<span class="pill gray">沿用</span></div>
-    </div>
-    <div class="box"><b>不是架構缺口</b>（Jeff 09-23）：購買流程本身不動，只是入口按鈕換成「領取」並跳過付款那一段</div>
-    <div class="box new"><b>真正的問題（Jesse 留言）</b>：會有「免費門票」這個模式，只是因為<b>「自訂門票」的現價不能填 0</b>。Jesse 與 Agnes 都傾向<b>請 Eric 開放現價可填 0</b> → 就不用多支援一種門票模式。<b>擇一後才開工</b></div>
-    <div class="gone"><b>別和 #9 混淆</b>：<b>免費門票</b>＝價格 0，仍然開票、仍有 QR、仍要掃；<b>不設門票</b>＝完全不開票，Ztor 沒有東西可賣</div>
-  </div>
-
-  <div data-panel="s9c">
-    <div class="box new" style="margin-top:0"><b>「不搬」＝ Ztor 不做 UI，不等於不拉資料</b></div>
-    <table class="t" style="margin-top:4px">
-      <tr><th>欄位</th><th>為什麼還是要拉</th></tr>
-      <tr><td><b>發佈狀態</b><br><span class="pill bad">留言衝突</span></td><td>Jesse 留言寫「活動主題<b>還有發佈狀態</b>在 ztor 上都不需要」（Agnes agree），但 Jeff 09-23 裁定<b>發佈狀態要留</b> — <code>event.published</code>／<code>event.paused</code> webhook 就是讀它。<br><b>相容說法</b>：Ztor 不複製審批流程 UI，但狀態值仍要經 feed 傳過來。<b>需與 Jesse 確認用詞</b>，別讓開發讀成「不用傳」</td></tr>
-      <tr><td><b>進階設定 QR 三個開關</b><br><span class="pill gray">#6</span></td><td>經 API-2 以 <b>Bookyay 原欄位名</b>傳給 Ztor（不包成 <code>flags</code>），讓 Ztor 能<b>擋掉設定不符的活動</b>（例如誤開動態 QR）。只有「控制項」是 Bookyay 專用</td></tr>
-    </table>
-    <div class="box"><b>手續費（#4）的連動</b>：買家端不收手續費 → Ztor 只有平台費，且<b>由創作者支付</b>（與 Beamco 相同，ADR 2026-09-23）。欄位對照表已標「不傳」</div>
-  </div>
-</div>
-<div class="notes">
-<span class="chip">欄位層級清單，不是模組層級 <code>BRD §3 · BR-10a</code></span>
-<span class="chip">免費門票＝領取按鈕＋略過付款，其餘不變 <code>BR-26</code></span>
-<span class="chip">#1 基本資料 全部保留；補回 3 個原表漏列欄位：標籤 · 最少/最大人數 · 活動語言 <code>09-24</code></span>
-<span class="chip decide">最少/最大人數 ≠ 票券庫存 — 分配量看「時段人數上限」，別接錯</span>
-<span class="chip decide">發佈狀態：留言說不要、Jeff 說要留 — 與 Jesse 確認「不做 UI ≠ 不傳」</span>
-<span class="chip decide">免費門票：走模式，還是請 Eric 開放現價填 0？（biz 傾向後者）</span>
-</div>
-</div>
-</section>
-
-
-<!-- S10 -->
-<section id="s10">
-<div class="shead"><span class="snum">10</span><h2>Bookyay 要送什麼（2026-10-09 · Jeff 裁定 · 設計師 D391）</h2></div>
-<div class="req"><b>需求</b>：<b>Jeff 10-09 總原則</b> — 沿用 Bookyay 全部規則，不重新發明；Bookyay 送資料，Ztor 照收；Ztor 只差在 <b>UI 呈現</b>與<b>幣別</b>（Bookyay 送港幣，Ztor 換算成其他幣別，必要時可調價）。設計師 rulebook（5.1.6.1 v2.61 · D391）<b>只決定 Ztor 端怎麼呈現</b>，不再決定 Bookyay 送什麼。<b>欄位名一律用 Bookyay 原本的</b>，不改名、不另包物件（10-10）。（dev spec v0.7 §0.5–§0.7）</div>
-<p class="goal">三個重點：<b>除了寄送與個資，全部都送</b>、<b>照 Bookyay 原本的欄位名與結構</b>、<b>套票照原樣</b>。</p>
-<div class="wf">
-  <div class="states"><span class="lbl">View</span>
-    <button aria-pressed="true" data-for="s10a">要送 / 不送</button>
-    <button aria-pressed="false" data-for="s10b">活動詳情</button>
-    <button aria-pressed="false" data-for="s10c">套票照原樣</button>
-    <button aria-pressed="false" data-for="s10d">Jeff 10-09 裁定</button>
-    <button aria-pressed="false" data-for="s10e">⚠ 與設計師的差異</button>
-  </div>
-
-  <div data-panel="s10a" class="on">
-    <table class="t steps" style="margin-top:4px">
-      <tr><th>Bookyay 欄位</th><th>原生欄位</th><th>要注意</th></tr>
-      <tr><td><b>活動語言</b></td><td><code>speakIn</code></td><td><b>所有選取值</b>都要送</td></tr>
-      <tr><td>標籤 · 最少／最大人數</td><td><code>tagword</code> · <code>minHeadCnt</code>／<code>maxHeadCnt</code></td><td><span class="pill ok">恢復</span> 人數只是參考，<b>不是庫存</b></td></tr>
-      <tr><td>集合地點 · 交通</td><td><code>address.assemblePlace*</code> · <code>traffic*</code></td><td>各自獨立欄位</td></tr>
-      <tr><td>活動相簿</td><td><code>photos[]</code></td><td><span class="pill ok">照收</span></td></tr>
-      <tr><td><b>活動詳情（多段）</b></td><td><code>intros[]</code> · <code>content*</code></td><td>照 Bookyay 原樣送；怎麼顯示由設計師決定</td></tr>
-      <tr><td>活動包括 · 攜帶物品 · 須知 · 門票簡介</td><td><code>includes</code> · <code>carries</code> · <code>notices</code> · 票 <code>intros</code></td><td><span class="pill ok">照收</span> 顯示與否由 FE 決定</td></tr>
-      <tr><td>直接促銷同意</td><td><code>promotionAgreement</code></td><td><span class="pill ok">照收</span></td></tr>
-      <tr><td><b>每張門票人數 n</b></td><td><code>headCnt</code></td><td>關鍵欄位，不可漏送或預設 1</td></tr>
-      <tr><td>按門票人數生成 QR</td><td><code>isCreateUserTicketByHeadCnt</code></td><td><span class="pill warn">Ztor 活動一律開</span> n 人票 = n 個 QR（Q11）</td></tr>
-      <tr><td>折扣優惠 · 早鳥優惠</td><td><code>originalPrice</code>＋折後價 · <code>earlyBirdPrice</code>／<code>EndTime</code></td><td><span class="pill ok">照收</span> Ztor 端不可改</td></tr>
-      <tr><td>活動限購 · 本門票限購</td><td>活動與票的 <code>maxPurchase*</code></td><td>兩層都送</td></tr>
-      <tr><td>手續費</td><td><code>fee</code> · <code>isShowFee</code></td><td><span class="pill gray">照收・不使用</span> Ztor 不顯示、不收取</td></tr>
-      <tr><td><b>門票種類（每個時段）</b></td><td><code>tickets[]</code> · <code>sortSeq</code></td><td><b>全部</b>都送，照 BO 順序，共用時段人數上限</td></tr>
-      <tr><td>時段名稱 · 過早入場</td><td><code>name</code> · <code>earlyEntryInMin</code></td><td>處理方式照 Bookyay 原本的欄位名</td></tr>
-      <tr><td><b>發售／停售時間</b></td><td><code>openSellTime</code> · <code>closeSellTime</code> · <code>preSellTime</code></td><td>在<b>時段</b>上，門票種類沒有自己的時窗（10-10 更正）</td></tr>
-      <tr><td>發售時間（二選一）</td><td><code>isPublishTimeAsSellTime</code></td><td>直接送模式，不再用「空白時間」表示</td></tr>
-    </table>
-    <div class="gone"><b>不送</b>：<b>寄送</b>（此活動需要送貨服務 · 運費 · 到店自取 — <code>isNeedDelivery</code>／<code>deliveryType</code>／<code>deliveryAmount</code>，只有電子票）· <b>個資</b>（API-0）</div>
-    <div class="box"><b>不是資料</b>：手動發出全部訂單的門票電郵、取得連結與下載 — 這是 BO 操作，沒東西可送</div>
-  </div>
-
-  <div data-panel="s10b">
-    <div class="box new" style="margin-top:0"><b>活動詳情照 Bookyay 原樣送</b> — 活動的 <code>intros[]</code>（每筆有 <code>kind</code>、<code>sortSeq</code>、<code>mime</code>…）加上 <code>content</code>／<code>contentEn</code>／<code>contentCn</code>。<b>不另建新結構</b>（Jeff 10-10）</div>
-    <div class="flow">
-      <div class="fstep by"><b>Bookyay</b>照原本存的樣子送出<br><code>intros[]</code>（照 <code>sortSeq</code>）</div><div class="farr">→</div>
-      <div class="fstep zt"><b>Ztor</b>全部照收</div><div class="farr">→</div>
-      <div class="fstep zt"><b>設計師</b>決定怎麼顯示<span class="pill warn">目前：一段一區塊，整份鎖定</span></div>
-    </div>
-    <div class="gone">v0.5–v0.6 要求 Bookyay 另建 <code>description: [ { seq, text, media[] } ]</code> — <b>已撤回</b>：<code>intros[]</code> 本身就是 Bookyay 的分段結構</div>
-  </div>
-
-  <div data-panel="s10c">
-    <div class="box new" style="margin-top:0"><b>Jeff 10-09：套票照原樣。</b>Bookyay「每張門票人數 n ≥ 2」的套票，在 Ztor 就是<b>一張 n 人的票</b> — 價格、限購、折扣、早鳥、QR 設定都照 Bookyay</div>
-    <table class="t" style="margin-top:4px">
-      <tr><th>項目</th><th>做法</th></tr>
-      <tr><td>Bookyay 要送</td><td><code>headCnt</code> · <code>isCreateUserTicketByHeadCnt</code> · 現價與其他金額（HKD）</td></tr>
-      <tr><td>設計師的換算</td><td><span class="pill bad">不採用</span> 隱藏 1 人票＋自動組合包、現價 ÷ n（199 ÷ 2 = 99.5）、折扣改百分比</td></tr>
-      <tr><td><b>預先開票（Q11，10-10 裁定）</b></td><td>Ztor 活動的 n 人票<b>一律開「按門票人數生成 QR」</b> → 每人一個 QR，各用一個預先開立的 UTK；Bookyay 不需新邏輯。關掉的話一個 QR 要讓 n 人入場，一人一碼的庫存無法表示</td></tr>
-    </table>
-  </div>
-
-  <div data-panel="s10d">
-    <table class="t steps" style="margin-top:4px">
-      <tr><th>#</th><th>題目</th><th>裁定（Jeff 10-09）</th></tr>
-      <tr><td>總原則</td><td>Bookyay 規則</td><td>照收不重做；只差 UI 與幣別</td></tr>
-      <tr><td>幣別</td><td>金額</td><td>Bookyay 送 HKD；Ztor 換算其他幣別，可調價</td></tr>
-      <tr><td>A</td><td>早鳥優惠</td><td><span class="pill ok">照收</span> 不可改</td></tr>
-      <tr><td>B</td><td>送貨＋運費</td><td><span class="pill bad">只有電子票</span> 寄送資料與邏輯全拿掉（含到店自取）</td></tr>
-      <tr><td>C</td><td>一時段只匯入第一種票</td><td><span class="pill ok">反轉</span> 全部門票都收，共用時段人數上限</td></tr>
-      <tr><td>D · E</td><td>折扣＋本門票限購 · 活動相簿</td><td>照總原則：照收</td></tr>
-      <tr><td>F</td><td>版本</td><td><b>2.3</b>（設計師寫的 release2.4 要改）；多時段／重覆活動照送，Ztor 端標不可帶入</td></tr>
-      <tr><td>G</td><td>場地／時間變更通知</td><td>不是 feed 問題；BR-42 營運手動寄信不變</td></tr>
-      <tr><td>H</td><td>不設門票</td><td>不能當 Ztor 活動</td></tr>
-      <tr><td>1</td><td>套票換算</td><td><span class="pill ok">照原樣</span></td></tr>
-      <tr><td>2</td><td>資訊欄位＋手續費</td><td><span class="pill ok">照收</span> 資訊欄位顯示與否由 FE 決定；<b>手續費照收但 Ztor 不使用</b>（10-10）</td></tr>
-      <tr><td>3</td><td>直接促銷同意</td><td><span class="pill ok">照收</span></td></tr>
-      <tr><td>Q11</td><td>n 人票的預先開票</td><td>按門票人數生成 QR <b>一律開</b>；n 人票 = n 個 UTK</td></tr>
-      <tr><td>Q12</td><td>活動詳情結構</td><td>照 Bookyay 原樣送；設計師決定怎麼顯示</td></tr>
-      <tr><td>Q13</td><td>欄位名</td><td><b>照 Bookyay 原本的</b>，不改名</td></tr>
-      <tr><td>時窗</td><td>逐票種販售時窗</td><td>更正：時窗在<b>時段</b>上，門票種類沒有</td></tr>
-      <tr><td>2.3</td><td>分階段販售（一階段一時段）</td><td>資料照收，Ztor 2.3 不支援</td></tr>
-    </table>
-    <div class="box new"><b>營運守則（BO-11）新增</b>：送貨服務不勾、只有電子票 · 2.3 只做單一時段、單次活動（分階段開多個時段也不支援）· 一個時段可以多種票，照想給粉絲看的順序排 · n 人票一律開「按門票人數生成 QR」· 不設門票不能開 Ztor 活動</div>
-  </div>
-
-  <div data-panel="s10e">
-    <table class="t steps" style="margin-top:4px">
-      <tr><th>#</th><th>設計師 D391</th><th>依 Jeff 10-09 改成</th></tr>
-      <tr><td>1</td><td>一時段只帶第一種票＋略過提示</td><td>全部門票都收，共用時段人數上限</td></tr>
-      <tr><td>2</td><td>套票拆 1 人票＋組合包、÷ n、折扣改百分比；「按門票人數生成 QR」不帶入</td><td>套票照原樣，QR 設定照收</td></tr>
-      <tr><td>3</td><td>順豐寄送＋運費帶入（示範 <code>hsinchu-vinyl-sf</code>）</td><td>只有電子票，到店自取也不做</td></tr>
-      <tr><td>4</td><td>release2.4</td><td>Ztor <b>2.3</b></td></tr>
-      <tr><td>5</td><td>直接促銷同意、標籤、人數、活動包括、攜帶物品、須知、門票簡介、時段名稱：不帶入</td><td>照收，顯示與否由 FE 決定（手續費照收但 Ztor 不使用，畫面結果不變）</td></tr>
-      <tr><td>6</td><td>活動相簿：待確認</td><td>照收</td></tr>
-      <tr><td>7</td><td>場地／時間變更「照樣寄出活動變更通知」</td><td>站內通知還是 email？email 維持營運手動（BR-42）</td></tr>
-      <tr><td>8</td><td>CS 顯示「已撤銷」</td><td>買家端一律「已取消」（BR-40 · A9）</td></tr>
-      <tr><td>9</td><td>2.3 到店自取標「不可帶入」</td><td>feed 不再帶寄送資料 → 改由 BO-11 營運守則把關</td></tr>
-    </table>
-    <div class="box">這些都是 <b>Ztor 端</b>（Creator Studio／FE）的改動，Bookyay 不用開發</div>
-  </div>
+  <table class="t steps" style="margin-top:0">
+    <tr><th>精靈步驟</th><th>要注意的（其餘照送即可）</th></tr>
+    <tr><td>1 基本資料</td><td><b>活動語言</b>送全部選項，不只第一個 · <b>最少／最大人數是人數參考，不是票券庫存</b></td></tr>
+    <tr><td>2 詳細資料</td><td><b>集合地點</b>與<b>交通</b>是獨立欄位，不要併進地址 · 活動圖片送原始 1:1 1200×1200 不裁切 · <b>活動詳情照原樣分段送</b>，含該段圖片與影片</td></tr>
+    <tr><td>3 門票種類</td><td><b>每張門票人數</b>是關鍵欄位，不可省略或預設為 1 · 免費門票＝現價 0，Ztor 自行判定 · <b>手續費照送但 Ztor 不使用</b>（不向買家顯示或收取）</td></tr>
+    <tr><td>4 門票時段</td><td><b>時段人數上限由該時段所有票種共用</b> · 該時段的<b>每一個</b>票種都要送，照後台排序 · 重覆活動把<b>每一個日期</b>展開成獨立時段</td></tr>
+    <tr><td>5 進階設定與發佈</td><td><b>售票時窗在「時段」上，票種本身沒有時窗</b> · <b>發佈狀態必須送</b>（Ztor 的上下架靠它）· 測試資料的活動不進 feed</td></tr>
+  </table>
+  <div class="box"><b>兩件不送</b>：<b>寄送相關</b>一律不送（純電子門票，不做運費／順豐寄送／到店自取）· <b>個資</b>一律不送</div>
+  <div class="box new"><b>進階設定四個開關維持關閉</b>（主辦者自行提供 · 動態 QR · 轉贈 · 保護頁）— 但<b>照樣經 API 送出</b>，好讓 Ztor 擋掉設定不符的活動，而不是等到現場才發現</div>
+  <div class="box"><b>逐欄對照</b>、biz 09-23 取捨紀錄、要回頭跟設計師講的 9 點 → 需求文件 <code>bookyay-side-dev-spec</code> §4 · §8 · §10；Bookyay 原欄位名 → <code>bookyay-api-contract</code> §0.2</div>
 </div>
 <div class="notes" style="margin-top:12px">
-<span class="chip">除了寄送與個資，全部都送 <code>dev spec §0.5</code></span>
-<span class="chip">欄位名與結構照 Bookyay，不改名 <code>Q13</code></span>
-<span class="chip">活動詳情照 Bookyay 原樣送 <code>§0.5a</code></span>
-<span class="chip">套票照原樣，一張票 n 人 <code>§0.5b</code></span>
+<span class="chip">除了寄送與個資，全部都送</span>
+<span class="chip">欄位名照 Bookyay，不改名 <code>Q13</code></span>
+<span class="chip">套票照原樣，一張票 n 人 <code>§4b</code></span>
 <span class="chip">n 人票一律開「按門票人數生成 QR」<code>Q11</code></span>
 <span class="chip">販售時窗在時段上 <code>API-2</code></span>
 </div>
+</div>
 </section>
 
-<footer>畫面擷取自 Bookyay UAT 後台 2026-09-22（唯讀瀏覽，未建立或修改任何資料；報表截圖中的買家欄位已隱藏）· 契約＝BRD v1.3 · 開發票＝bookyay-side-dev-spec-2026-09-22.md · Model C（一票一筆通路訂單）</footer>
+<footer>畫面擷取自 Bookyay UAT 後台 2026-09-22（唯讀瀏覽，未建立或修改任何資料；報表截圖中的買家欄位已隱藏）· 契約＝BRD v1.3 · 需求＝bookyay-side-dev-spec-2026-09-22.md · 技術附錄＝bookyay-api-contract-2026-09-22.md · Model C（一票一筆通路訂單）</footer>
 </div>
 <script>
 document.querySelectorAll('.states').forEach(function(group){
