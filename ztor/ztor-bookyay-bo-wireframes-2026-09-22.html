@@ -185,12 +185,12 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <tr><td>5 進階設定與發佈</td><td><b>售票時窗在「時段」上，票種本身沒有時窗</b> · <b>發佈狀態必須送</b>（Ztor 的上下架靠它）· 測試資料的活動不進 feed</td></tr>
   </table>
   <div class="box key"><b>⚠ 幣別只有一個地方要管：回寫的交易紀錄</b><br>票賣掉時，回寫帶<b>買家實付金額＋幣別</b>（例如 TWD 800），Bookyay 照收。<br><b>其餘全部 HKD、單向</b> — 價格、限購、折扣、早鳥、報表都是。其他幣別的價格在 Ztor 端設定，<b>Bookyay 不換算、不檢查</b> <code>BO-6 · API-5</code></div>
-  <div class="box"><b>兩件不送</b>：<b>寄送相關</b>一律不送（純電子門票，不做運費／順豐寄送／到店自取）· <b>個資</b>一律不送</div>
+  <div class="box"><b>只有一件不送：個資</b> — 買家欄位、主辦者電話／email 一律不送。其餘<b>全部照送</b>，包含 Ztor 用不到的（手續費、<b>寄送設定</b>）<br><span class="mut" style="font-size:11.5px">寄送設定照送，但 <b>Ztor 只做電子門票</b>，收到就忽略 — 跟手續費一樣。好處是：旗標有送過來，<b>Ztor 就能擋掉誤開「送貨服務」的活動</b>，不必靠營運記得不要勾</span></div>
   <div class="box"><b>進階設定四個開關維持關閉</b>（主辦者自行提供 · 動態 QR · 轉贈 · 保護頁）— 但<b>照樣經 API 送出</b>，好讓 Ztor 擋掉設定不符的活動，而不是等到現場才發現</div>
   <div class="box"><b>逐欄對照</b>、biz 09-23 取捨紀錄、要回頭跟設計師講的 9 點 → 需求文件 <code>bookyay-side-dev-spec</code> §4 · §8 · §10；Bookyay 原欄位名 → <code>bookyay-api-contract</code> §0.2</div>
 </div>
 <div class="notes" style="margin-top:12px">
-<span class="chip">除了寄送與個資，全部都送</span>
+<span class="chip">除了個資，全部都送</span>
 <span class="chip">欄位名照 Bookyay，不改名 <code>Q13</code></span>
 <span class="chip">套票照原樣，一張票 n 人 <code>§4b</code></span>
 <span class="chip">n 人票一律開「按門票人數生成 QR」<code>Q11</code></span>
@@ -573,7 +573,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   <div data-panel="s6b">
     <div class="box native" style="margin-top:0"><b>QR CODE 門票設定</b>：BOOKYAY 自動生成 QR（預設）· 門票由主辦者自行提供 <b>不勾</b> · 使用動態 QR <b>不勾</b> · 可以轉贈門票 <b>不勾</b></div>
     <div class="box"><b>按門票人數生成門票 QR Code ＝ 勾選</b>（Q11）— 每張門票人數 ≥ 2 的票種一律要開，<b>n 人票就發 n 張 QR</b>，對應預開票池的逐人開票 <code>BO-4 · BO-11</code></div>
-    <div class="box native"><b>實名登記</b> 不勾 · <b>開啟優惠碼校驗</b> 不勾 · <b>保護頁</b> 不勾 · <b>送貨服務</b> 不勾（<b>純電子門票</b>，不做順豐寄送／到店自取）</div>
+    <div class="box native"><b>實名登記</b> 不勾 · <b>開啟優惠碼校驗</b> 不勾 · <b>保護頁</b> 不勾 · <b>送貨服務</b> 不勾（<b>純電子門票</b>，不做順豐寄送／到店自取 — 這個旗標會送到 Ztor，勾了會被擋下）</div>
     <div class="box"><b>注意</b>：Bookyay 的<b>折扣優惠與早鳥優惠照常設定、照常帶到 Ztor</b>（§0.6-A/D）。這裡不勾的「開啟優惠碼校驗」是<b>優惠碼</b>功能，兩件事不同</div>
     <div class="box">這些開關經 API 傳給 Ztor — 設定不符的活動 Ztor 會拒絕匯入並提示，避免票到現場掃不過</div>
   </div>

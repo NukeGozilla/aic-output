@@ -95,7 +95,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <p><b>In — Bookyay side:</b></p>
 <ul>
 <li><code>ztor_tag</code> support in Bookyay's system — lets their ops/finance split Bookyay-channel vs Ztor-channel sales in reporting (BR-60/62)</li>
-<li>Event + allocation API feed to Ztor: <b>every event, session and ticket field except shipping and personal data</b> (BR-10a, 10-09), quantity, lifecycle + scan status — hourly pull + <b>real-time webhook push</b> for lifecycle / void / inventory (BR-04, 09-16); only 普通活動模式 events enter the feed (09-16)</li>
+<li>Event + allocation API feed to Ztor: <b>every event, session and ticket field except personal data</b> (BR-10a; shipping included from 10-12 — Ztor ignores it), quantity, lifecycle + scan status — hourly pull + <b>real-time webhook push</b> for lifecycle / void / inventory (BR-04, 09-16); only 普通活動模式 events enter the feed (09-16)</li>
 <li>Pre-issue QRs at allocation; take back returned QRs on reduce / release-back (BR-02/51/52)</li>
 <li>Accept the batch sync-back: ticket status · inventory burn-down · transactions (BR-60/63)</li>
 <li>Per-artist <code>organizer_login</code> accounts for venue scanning (BR-31 — ruled 09-16: one Bookyay organizer account per artist)</li>
@@ -114,7 +114,7 @@ footer{margin-top:40px;color:var(--muted);font-size:11.5px}
 <li>WhatsApp / IG support channels</li>
 <li>Organizer partnerships</li>
 <li>Bookyay storefront changes</li>
-<li><b>Physical ticket delivery</b> — 順豐寄送 · 運費 · 到店自取. <b>E-ticket only</b>; no shipping data in the feed and no shipping logic on either side (Jeff 10-09)</li>
+<li><b>Physical ticket delivery</b> — 順豐寄送 · 運費 · 到店自取. <b>E-ticket only</b>, and no shipping logic on either side. <b style="color:#b4462f">rev 10-12:</b> the shipping <i>fields</i> are nonetheless <b>sent</b> like everything else and ignored on Ztor — one capture rule rather than two, and the flags let Ztor <b>refuse</b> an event with 送貨服務 on</li>
 <li><b>Bookyay event-wizard features Ztor does not offer</b> — kept OFF on Bookyay and sent <b>under their own Bookyay field names</b> (no <code>flags</code> wrapper — Q13) so Ztor can refuse a mis-configured event: QR CODE 門票設定 controls (主辦者自行提供 · 動態 QR · 轉贈) · 保護頁. <b>不設門票</b> events can't be imported (BR-26). <b>設定為測試資料</b> events never enter the feed. <i>(Replaces the 09-23 biz exclusion list: under the 10-09 capture rule its other fields — 活動包括 · 需要攜帶的物品 · 手續費 · 折扣/早鳥 · 只可直接購買 · 活動主題 — are captured, see BR-10a.)</i></li>
 </ul>
 <h2>4 · Actors &amp; surfaces</h2>
