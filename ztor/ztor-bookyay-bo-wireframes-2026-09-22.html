@@ -178,7 +178,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <tr><th>精靈步驟</th><th>要注意的（其餘照送即可）</th></tr>
     <tr><td>1 基本資料</td><td><b>活動語言</b>送全部選項，不只第一個 · <b>最少／最大人數是人數參考，不是票券庫存</b></td></tr>
     <tr><td>2 詳細資料</td><td><b>集合地點</b>與<b>交通</b>是獨立欄位，不要併進地址 · 活動圖片送原始 1:1 1200×1200 不裁切 · <b>活動詳情照原樣分段送</b>，含該段圖片與影片</td></tr>
-    <tr><td>3 門票種類</td><td><b>每張門票人數</b>是關鍵欄位，不可省略或預設為 1 · 免費門票＝現價 0，Ztor 自行判定 · <b>手續費照送但 Ztor 不使用</b>（不向買家顯示或收取）</td></tr>
+    <tr><td>3 門票種類</td><td><b>每張門票人數</b>是關鍵欄位，不可省略或預設為 1 · 免費門票＝現價 0，Ztor 自行判定 · <b>手續費照送但 Ztor 不使用</b>（不向買家顯示或收取）· <b>折扣優惠／早鳥優惠照送但 Ztor 不套用</b> — Ztor 以現價開賣，促銷走自家優惠碼</td></tr>
     <tr><td>4 門票時段</td><td><b>時段人數上限由該時段所有票種共用</b> · 該時段的<b>每一個</b>票種都要送，照後台排序 · 重覆活動把<b>每一個日期</b>展開成獨立時段</td></tr>
     <tr><td>5 進階設定與發佈</td><td><b>售票時窗在「時段」上，票種本身沒有時窗</b> · <b>發佈狀態必須送</b>（Ztor 的上下架靠它）· 測試資料的活動不進 feed</td></tr>
   </table>
@@ -459,10 +459,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
         <div class="botitle"><span class="boicon">$</span>金額拆解</div>
         <table>
           <tr><th style="width:42%">項目</th><th style="width:16%">HKD</th><th>來源與說明</th></tr>
-          <tr><td>門票原價（2 × 250）</td><td>500</td><td class="mut"><code>originalPrice</code></td></tr>
-          <tr><td>Bookyay 折扣優惠</td><td>−100</td><td class="mut">Bookyay 自己設的，照 feed 帶入，Ztor 不可改</td></tr>
-          <tr><td>Bookyay 早鳥優惠</td><td>—</td><td class="mut">未在早鳥期間內（<code>earlyBirdPrice</code> / <code>earlyBirdEndTime</code>）</td></tr>
-          <tr style="background:var(--teal-bg)"><td><b>門票認列小計</b></td><td><b>400</b></td><td><span class="pill blue">計入 Bookyay 票務收入</span></td></tr>
+          <tr style="background:var(--teal-bg)"><td><b>門票 二人套票（2 × 200）</b></td><td><b>400</b></td><td><span class="pill blue">計入 Bookyay 票務收入</span> <span class="mut">Bookyay <code>price</code>（現價）</span></td></tr>
           <tr><td>Ztor 優惠碼 <code>SUMMER50</code></td><td>−50</td><td class="mut"><b>Ztor 自家促銷，Ztor 吸收</b> — 不影響上面的認列金額<span class="bdg">6</span></td></tr>
           <tr><td>商品 巡演 T-shirt × 2</td><td>160</td><td><span class="pill mch">不計入票務收入</span> <span class="mut">Ztor eShop</span><span class="bdg">5</span></td></tr>
           <tr><td>手續費</td><td>—</td><td class="mut">Ztor 不向買家收，通路訂單不產生手續費行</td></tr>
@@ -486,7 +483,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <li><span class="num new">2</span><span><b>買家實付金額＋幣別</b> — 幣別只有這裡會出現；其餘全部 HKD、單向（§1）</span></li>
       <li><span class="num new">3</span><span><b>「組合訂單」≠ Bookyay 的「套票」</b> — Bookyay 的<b>套票</b>是<b>一張票進 n 個人</b>（<code>headCnt</code>≥2，票種層級）；Ztor 的<b>組合訂單</b>是<b>門票＋商品一起買</b>（訂單層級）。同一筆可以兩者都有，不要混用同一個詞</span></li>
       <li><span class="num new">5</span><span><b>商品只是記錄，不是 Bookyay 的生意</b> — 照列品項與金額，好讓「買家實付」說得通；但<b>不建訂單、不管庫存、不出貨、不計入 Bookyay 票務收入</b>。票務收入只認門票那幾行</span></li>
-      <li><span class="num new">6</span><span><b>兩種折扣要分得開</b> — <b>Bookyay 自己設的</b>折扣／早鳥<b>會</b>降低認列金額（那本來就是 Bookyay 的定價）；<b>Ztor 的優惠碼</b>是 Ztor 自家促銷、<b>Ztor 自行吸收</b>，<b>不</b>降低 Bookyay 的認列金額。兩者都要照列出來，否則「買家實付」兜不回去</span></li>
+      <li><span class="num new">6</span><span><b>Ztor 的折扣只有一種：Ztor 優惠碼</b> — Bookyay 的<b>折扣優惠／早鳥優惠不會在 Ztor 生效</b>（欄位照送、照存，但 Ztor 不套用），Ztor 一律以 Bookyay 的<b>現價</b>開賣。所以這張表不會出現 Bookyay 的折扣行。<br>優惠碼是 <b>Ztor 自家促銷、Ztor 自行吸收</b>，<b>不</b>降低 Bookyay 的認列金額 — 但要列出來，否則「買家實付」兜不回去</span></li>
       <li><span class="num new">4</span><span><b>入口</b>：通路訂單列 與 訂單報表 都可以點進來。<b>唯讀</b> — Bookyay 不編輯 Ztor 交易</span></li>
     </ul>
   <div class="box"><b>入場統計</b>不需修改（讀門票狀態）；只需把入場率分母改為「已售」張數，否則預開未售的票會稀釋比率</div>
