@@ -70,6 +70,21 @@ section{margin-top:38px;scroll-margin-top:64px}
 .box.new{border-color:var(--teal);border-style:solid;background:var(--teal-bg)}
 .box.new::before{content:"NEW · ";font-weight:800;color:var(--teal);font-size:10.5px;letter-spacing:.5px}
 .box.key{border-color:var(--gold);border-style:solid;background:var(--gold-bg)}
+.bo{border:1.5px solid var(--line);border-radius:8px;background:#fff;overflow:hidden;font-size:12.5px;margin-top:4px}
+.bo .bohead{background:#3f3a35;color:#fff;padding:7px 12px;font-size:11.5px;font-weight:700;display:flex;justify-content:space-between}
+.bo .bosec{padding:13px 16px;border-bottom:1px solid var(--line)}
+.bo .bosec:last-child{border-bottom:0}
+.bo .botitle{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13.5px;margin:0 0 10px}
+.bo .boicon{width:22px;height:22px;border-radius:5px;background:var(--wf);border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);flex:0 0 auto}
+.bo .kv{display:grid;grid-template-columns:132px 1fr;gap:6px 14px}
+.bo .k{color:var(--muted);text-align:right}
+.bo table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:2px}
+.bo th{background:var(--wf);text-align:left;padding:5px 8px;border:1px solid var(--line);font-weight:700;white-space:nowrap}
+.bo td{padding:5px 8px;border:1px solid var(--line)}
+.bo .mut{color:var(--muted);font-size:11.5px}
+.bdg{display:inline-flex;width:17px;height:17px;border-radius:50%;background:var(--teal);color:#fff;font-size:10.5px;font-weight:800;align-items:center;justify-content:center;margin-left:5px;vertical-align:middle}
+@media (max-width:700px){.bo .kv{grid-template-columns:1fr}.bo .k{text-align:left;font-weight:700}}
+
 .box.native{border-color:var(--line);border-style:solid;background:#fff}
 .box.native::before{content:"NATIVE · ";font-weight:800;color:var(--muted);font-size:10.5px;letter-spacing:.5px}
 .box.opt{border-color:var(--blue);border-style:dotted;background:var(--blue-bg)}
@@ -397,9 +412,44 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <li data-k="m3" aria-selected="false"><span class="num new">3</span><span><b>認列規則</b>：<span class="pill gray">pool</span> 不算銷售（顯示為「通路持有」）· <span class="pill ok">sold</span> 才計入金額；收入以 <b>付款時間</b> 記日，不是訂單建立日 <code>BO-10</code></span></li>
       <li data-k="m4" aria-selected="false"><span class="num keep">4</span><span><b>顧客欄永遠是 Ztor 佔位</b> — 通路訂單不帶買家個資；需要買家細節時由 Ztor 端查 <code>BR-61</code></span></li>
     </ul>
-    <div class="box new"><b>要建：Ztor 交易明細頁</b>（一筆 Ztor 訂單一頁）<br>一筆 Bookyay 訂單只裝<b>一張票</b>，所以 Ztor 一次買三張會變成三筆 Bookyay 訂單 — 從訂單列只看得到其中一條腿，看不到這筆交易。需要一個以 <b>Ztor 訂單</b>為單位的唯讀明細頁：
-    <div style="margin-top:5px">· <b>買家實付金額＋幣別</b>（例如 TWD 800），旁邊併列 HKD<br>· <b>整筆的內容</b> — 這筆 Ztor 訂單裡的每一張票、票種、各自金額，<b>套票要看得出是套票</b>（<code>orderType</code> solo／bundle）<br>· <b>Ztor 用戶代碼</b> — 只有不可逆的 <code>ztorUserRef</code>。<span style="color:var(--coral)"><b>⚠ 不是姓名／email／電話，也不可以顯示成那樣</b></span>（BR-61）；用途是認得出「同一個買家」，但 Bookyay 不持有任何個資<br>· 付款時間 · Ztor 端狀態（僅供參考，不驅動票券狀態）</div>
-    <div style="margin-top:5px">入口：通路訂單列 與 訂單報表 都可以點進來。<b>唯讀</b>，Bookyay 不編輯 Ztor 交易 <code>BO-5</code></div></div>
+    <div class="box new"><b>要建：Ztor 交易明細頁</b> — 一筆 Bookyay 訂單只裝<b>一張票</b>，Ztor 一次買三張就散成三筆訂單，從訂單列看不到「這筆交易」。需要一頁以 <b>Ztor 訂單</b>為單位的唯讀明細 <code>BO-5</code></div>
+    <div class="bo">
+      <div class="bohead"><span>訂單管理 › 通路訂單 › Ztor 交易明細<span class="bdg">4</span></span><span>唯讀</span></div>
+      <div class="bosec">
+        <div class="botitle"><span class="boicon">i</span>交易基本資料</div>
+        <div class="kv">
+          <div class="k">Ztor 訂單編號</div><div class="v"><b>ZT-ORD-1042</b></div>
+          <div class="k">通路</div><div class="v"><span class="pill blue">Ztor</span></div>
+          <div class="k">訂單類型</div><div class="v">套票 <span class="mut">bundle</span><span class="bdg">3</span></div>
+          <div class="k">付款時間</div><div class="v">2026/11/03 09:12:41 <span class="mut">· 報表以這個時間記日，不是訂單建立日</span></div>
+          <div class="k">Ztor 端狀態</div><div class="v">已付款 <span class="mut">· 僅供參考，不驅動票券狀態</span></div>
+          <div class="k">Ztor 用戶代碼</div><div class="v"><code>u_9f8e7d</code><span class="bdg">1</span></div>
+        </div>
+      </div>
+      <div class="bosec">
+        <div class="botitle"><span class="boicon">$</span>金額</div>
+        <div class="kv">
+          <div class="k">買家實付</div><div class="v"><b>TWD 800</b><span class="bdg">2</span></div>
+          <div class="k">報表認列</div><div class="v"><b>HKD 200</b> <span class="mut">· 定價，非換算回推值；報表加總用這個</span></div>
+          <div class="k">手續費</div><div class="v"><span class="mut">—（Ztor 不收，通路訂單不產生手續費行）</span></div>
+        </div>
+      </div>
+      <div class="bosec">
+        <div class="botitle"><span class="boicon">▤</span>門票內容<span class="mut" style="font-weight:400">（這筆 Ztor 訂單裡的每一張票）</span></div>
+        <table>
+          <tr><th>#</th><th>票券編號</th><th>票種</th><th>時段</th><th>認列 HKD</th><th>通路狀態</th><th>Bookyay 訂單</th></tr>
+          <tr><td>1</td><td><code>UTK…58848</code></td><td>二人套票</td><td>11/08 19:30</td><td>200</td><td><span class="pill ok">sold</span></td><td><code>ORD…66368</code></td></tr>
+          <tr><td>2</td><td><code>UTK…58849</code></td><td>二人套票</td><td>11/08 19:30</td><td>200</td><td><span class="pill ok">sold</span></td><td><code>ORD…66369</code></td></tr>
+        </table>
+        <div class="mut" style="margin-top:6px">兩張票同屬一筆 Ztor 訂單，但在 Bookyay 是<b>兩筆各自獨立的訂單</b> — 這頁就是把它們拼回同一筆交易</div>
+      </div>
+    </div>
+    <ul class="pinlist" style="margin-top:8px">
+      <li><span class="num new">1</span><span><b>Ztor 用戶代碼只能是不可逆代碼</b> — <span style="color:var(--coral)"><b>不是姓名／email／電話，也不可以顯示成那樣</b></span>（BR-61）。用途只有一個：認得出「同一個買家」回購，但 Bookyay 不持有任何個資</span></li>
+      <li><span class="num new">2</span><span><b>買家實付金額＋幣別</b> — 幣別只有這裡會出現；其餘全部 HKD、單向（§9）</span></li>
+      <li><span class="num new">3</span><span><b>套票要看得出是套票</b> — <code>orderType</code> solo／bundle，整筆的票一起列出來</span></li>
+      <li><span class="num new">4</span><span><b>入口</b>：通路訂單列 與 訂單報表 都可以點進來。<b>唯讀</b> — Bookyay 不編輯 Ztor 交易</span></li>
+    </ul>
   <div class="box"><b>入場統計</b>不需修改（讀門票狀態）；只需把入場率分母改為「已售」張數，否則預開未售的票會稀釋比率</div>
   </div>
 </div>
