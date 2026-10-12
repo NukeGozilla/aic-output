@@ -253,7 +253,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <div class="hl bg" data-k="f4" data-on="false" style="left:40.4%;top:78.4%;width:40.0%;height:2.9%"></div><button class="pin bg" style="left:40.4%;top:78.4%" data-k="f4" aria-pressed="false">4</button>
     </figure>
     <ul class="pinlist">
-      <li data-k="f1" aria-selected="false"><span class="num keep">1</span><span><b>私人活動</b> — <b>Ztor 活動不需要特別勾這個</b>：Ztor 活動開關本身就讓 bookyay.com 不販售。只有在 Bookyay 另外想把 bookyay.com 頁面整個藏起來時才用</span></li>
+      <li data-k="f1" aria-selected="false"><span class="num keep">1</span><span><b>私人活動 ＝ 每場 Ztor 活動都要開</b> — Phase 1 的預期是 Ztor 活動在 <b>bookyay.com 完全看不到、也不販售</b>。Ztor 活動開關負責「不販售」，<b>私人活動</b> 才是把頁面從 bookyay.com 的瀏覽與搜尋移除（只剩直接連結）<br><b>建議做成強制</b>：Ztor 活動 ON 就自動設為私人活動並鎖住 — 漏勾的話活動會公開出現在 bookyay.com 卻買不了 <code>BO-2</code></span></li>
       <li data-k="f2" aria-selected="false"><span class="num keep">2</span><span><b>設定為測試資料 = 不勾</b> — 測試資料的活動不進 Ztor feed <code>API-1</code></span></li>
       <li data-k="f3" aria-selected="false"><span class="num new">3</span><span><b>發佈前確認</b> — 「核准後將開出 1,005 張票並交付 Ztor」。<b>發佈＝不可回頭</b>：核准後開關就鎖住，這是最後一次確認 <code>BO-2 · BO-4</code></span></li>
       <li data-k="f4" aria-selected="false"><span class="num bg">4</span><span><b>背景</b>：狀態進入 <b>已發佈</b> 當下啟動預開 → 完成後推 <code>allocation.changed</code> ＋ <code>event.published</code>，活動才出現在 Ztor <code>BO-4 · API-6</code></span></li>
@@ -394,7 +394,10 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <li data-k="m3" aria-selected="false"><span class="num new">3</span><span><b>認列規則</b>：<span class="pill gray">pool</span> 不算銷售（顯示為「通路持有」）· <span class="pill ok">sold</span> 才計入金額；收入以 <b>付款時間</b> 記日，不是訂單建立日 <code>BO-10</code></span></li>
       <li data-k="m4" aria-selected="false"><span class="num keep">4</span><span><b>顧客欄永遠是 Ztor 佔位</b> — 通路訂單不帶買家個資；需要買家細節時由 Ztor 端查 <code>BR-61</code></span></li>
     </ul>
-    <div class="box"><b>入場統計</b>不需修改（讀門票狀態）；只需把入場率分母改為「已售」張數，否則預開未售的票會稀釋比率</div>
+    <div class="box new"><b>要建：Ztor 交易明細頁</b>（一筆 Ztor 訂單一頁）<br>一筆 Bookyay 訂單只裝<b>一張票</b>，所以 Ztor 一次買三張會變成三筆 Bookyay 訂單 — 從訂單列只看得到其中一條腿，看不到這筆交易。需要一個以 <b>Ztor 訂單</b>為單位的唯讀明細頁：
+    <div style="margin-top:5px">· <b>買家實付金額＋幣別</b>（例如 TWD 800），旁邊併列 HKD<br>· <b>整筆的內容</b> — 這筆 Ztor 訂單裡的每一張票、票種、各自金額，<b>套票要看得出是套票</b>（<code>orderType</code> solo／bundle）<br>· <b>Ztor 用戶代碼</b> — 只有不可逆的 <code>ztorUserRef</code>。<span style="color:var(--coral)"><b>⚠ 不是姓名／email／電話，也不可以顯示成那樣</b></span>（BR-61）；用途是認得出「同一個買家」，但 Bookyay 不持有任何個資<br>· 付款時間 · Ztor 端狀態（僅供參考，不驅動票券狀態）</div>
+    <div style="margin-top:5px">入口：通路訂單列 與 訂單報表 都可以點進來。<b>唯讀</b>，Bookyay 不編輯 Ztor 交易 <code>BO-5</code></div></div>
+  <div class="box"><b>入場統計</b>不需修改（讀門票狀態）；只需把入場率分母改為「已售」張數，否則預開未售的票會稀釋比率</div>
   </div>
 </div>
 <div class="notes" style="margin-top:12px">
