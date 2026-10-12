@@ -253,7 +253,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <div class="hl bg" data-k="f4" data-on="false" style="left:40.4%;top:78.4%;width:40.0%;height:2.9%"></div><button class="pin bg" style="left:40.4%;top:78.4%" data-k="f4" aria-pressed="false">4</button>
     </figure>
     <ul class="pinlist">
-      <li data-k="f1" aria-selected="false"><span class="num keep">1</span><span><b>私人活動</b> — 只在 Ztor 賣的活動用這個：bookyay.com 隱藏，Ztor 隱藏上架＋私人連結 <code>BR-20</code></span></li>
+      <li data-k="f1" aria-selected="false"><span class="num keep">1</span><span><b>私人活動</b> — <b>Ztor 活動不需要特別勾這個</b>：Ztor 活動開關本身就讓 bookyay.com 不販售。只有在 Bookyay 另外想把 bookyay.com 頁面整個藏起來時才用</span></li>
       <li data-k="f2" aria-selected="false"><span class="num keep">2</span><span><b>設定為測試資料 = 不勾</b> — 測試資料的活動不進 Ztor feed <code>API-1</code></span></li>
       <li data-k="f3" aria-selected="false"><span class="num new">3</span><span><b>發佈前確認</b> — 「核准後將開出 1,005 張票並交付 Ztor」。<b>發佈＝不可回頭</b>：核准後開關就鎖住，這是最後一次確認 <code>BO-2 · BO-4</code></span></li>
       <li data-k="f4" aria-selected="false"><span class="num bg">4</span><span><b>背景</b>：狀態進入 <b>已發佈</b> 當下啟動預開 → 完成後推 <code>allocation.changed</code> ＋ <code>event.published</code>，活動才出現在 Ztor <code>BO-4 · API-6</code></span></li>
@@ -301,7 +301,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <li data-k="h1" aria-selected="false"><span class="num bg">1</span><span><b>上限調高</b>（1,000 → 1,200）核准後：系統自動預開差額 200 張 → <code>allocation.changed</code>，Ztor 可售量即時增加 <code>BR-50</code></span></li>
       <li data-k="h2" aria-selected="false"><span class="num new">2</span><span><b>上限調低＝提出收回</b>（不是直接取消）→ 時段列顯示 <span class="pill warn">收回中 100</span> <code>BO-8</code></span></li>
     </ul>
-    <div class="box key"><b>收回為什麼要三步</b>：Bookyay 這邊的「未售」數字落後一個同步週期。直接取消會把 Ztor 剛賣掉的票標成收回 → 買家到場被拒。<br><b>① Bookyay 提出</b>（要收回 100）→ <b>② Ztor 挑出真正未售的票</b>立即回寫（不足就回少）→ <b>③ Bookyay 確認</b>取消那些訂單、庫存歸還。24 小時無回應＝逾時，什麼都不動。<span class="pill ok">已收回 100</span> <span class="pill warn">部分 96/100</span> <span class="pill bad">逾時</span></div>
+    <div class="box key"><b>收回為什麼要三步</b>：Bookyay 讀到「未售 100」到真的去取消的這段空檔，可能剛好又賣掉一張。直接取消會把 Ztor 剛賣掉的票標成收回 → 買家到場被拒。只有 Ztor 能挑出「回答當下確定還沒賣掉」的票。<br><b>① Bookyay 提出</b>（要收回 100）→ <b>② Ztor 挑出真正未售的票</b>立即回寫（不足就回少）→ <b>③ Bookyay 確認</b>取消那些訂單、庫存歸還。24 小時無回應＝逾時，什麼都不動。<span class="pill ok">已收回 100</span> <span class="pill warn">部分 96/100</span> <span class="pill bad">逾時</span></div>
   </div></div>
 </div>
 <div class="notes" style="margin-top:12px">
@@ -348,7 +348,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <ul class="pinlist">
       <li data-k="j1" aria-selected="false"><span class="num new">1</span><span><b>訂單來源顯示 Ztor</b> — 順便修正現況：同一筆訂單在列表顯示 <code>BO</code>、詳情顯示 <code>Back Office</code>、報表顯示 <code>網頁</code> <code>BO-5</code></span></li>
       <li data-k="j2" aria-selected="false"><span class="num keep">2</span><span><b>取消訂單</b> → 狀態「撤銷」→ 推 <code>ticket.voided</code> 給 Ztor → 買家錢包變「已取消」；營運手動 email 買家（不自動發信）<code>BR-40</code></span></li>
-      <li data-k="j3" aria-selected="false"><span class="num new">3</span><span><b>兩道防呆</b>：① 已入場的票不可作廢（顯示掃描時間）② 通路狀態仍是 <span class="pill gray">pool</span> 的訂單不可從這裡取消 — 提示先在 Ztor CS 手動同步 <code>BO-7</code></span></li>
+      <li data-k="j3" aria-selected="false"><span class="num new">3</span><span><b>兩道防呆</b>：① 已入場的票不可作廢（顯示掃描時間）② 通路狀態仍是 <span class="pill gray">pool</span> 的訂單不可從這裡取消 — <code>pool</code> 是還沒賣掉的通路庫存，要收回走 §3 收回流程；作廢只用在真的有人買走的票 <code>BO-7</code></span></li>
     </ul>
     <div class="box"><b>作廢 SOP</b>：① Ztor CS 手動回寫 → ② 訂單管理以通路參考搜尋 → ③ 取消訂單。錢不動 — 營運在 Ztor 金流後台退款</div>
   </div></div>
@@ -518,7 +518,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <span class="screenlbl">報表 › 票務活動入場統計（既有）</span>
     <div class="box native" style="margin-top:0">逐活動／逐時段 已入場 · 未入場 · 匯出 — 照舊使用，不需改</div>
     <div class="box">同一份資料經 API-3 回給 Ztor → Creator Studio 顯示<b>唯讀</b>的 已入場／未入場 名單（BR-64）</div>
-    <div class="box">活動當天建議手動同步一次，讓入場率分母（已售張數）即時正確</div>
+    <div class="box">回寫是<b>每賣一張就即時送</b>，Bookyay 的已售張數本來就是最新的 — <b>活動當天不需要特別手動同步</b></div>
   </div>
 </div>
 <div class="notes">
@@ -550,7 +550,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td>Q7</td><td>你們正在開發的 <b>修改門票類別</b> / Event 相關功能，與這裡的訂單頁改動是否同一塊？</td><td>排程衝突</td><td>Jesse / Eric</td></tr>
       <tr><td>Q10</td><td>財務：通路訂單<b>不產生手續費行</b>、收入以付款時間記日 — 可接受？</td><td>分成 / 月結報表</td><td>Agnes</td></tr>
     </table>
-    <div class="box key"><b>已定案</b>：回寫 <b>每小時</b> 一次＋可手動（排程設定，不加開發量）· <b>作廢一律由 Bookyay 營運執行</b> — Ztor 客服不開 BO 帳號，不做通路營運角色 · <b>售票時窗結束不自動收回</b>未售票</div>
+    <div class="box key"><b>已定案</b>：<b>每賣出一張票就即時回寫一次</b>（另有每小時對帳與手動按鈕）· <b>作廢一律由 Bookyay 營運執行</b> — Ztor 客服不開 BO 帳號，不做通路營運角色 · <b>售票時窗結束不自動收回</b>未售票</div>
   </div>
   <div data-panel="s8b">
     <div class="box" style="margin-top:0"><b>A · 假期前可動工（不等任何回覆）</b><br>通路設定資料 + webhook 基礎建設（BO-1/9）· Channel API 認證與活動列表（API-0/1）· <b>OpenAPI + mock</b>（API-7）讓 Creator Studio 團隊平行開工</div>
