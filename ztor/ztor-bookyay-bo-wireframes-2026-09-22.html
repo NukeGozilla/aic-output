@@ -170,13 +170,12 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <img src="img/bookyay-bo/a-event-list.png" alt="Bookyay 後台活動列表" loading="lazy">
       <div class="hl new" data-k="a1" data-on="false" style="left:75.6%;top:21.3%;width:19.0%;height:5.6%"></div><button class="pin new" style="left:75.6%;top:21.3%" data-k="a1" aria-pressed="false">1</button>
       <div class="hl new" data-k="a2" data-on="false" style="left:91.1%;top:48.6%;width:7.3%;height:8.7%"></div><button class="pin new" style="left:91.1%;top:48.6%" data-k="a2" aria-pressed="false">2</button>
-      <div class="hl new" data-k="a3" data-on="false" style="left:83.3%;top:57.3%;width:7.8%;height:8.2%"></div><button class="pin new" style="left:83.3%;top:57.3%" data-k="a3" aria-pressed="false">3</button>
-    </figure>
+          </figure>
     <ul class="pinlist">
       <li data-k="a1" aria-selected="false"><span class="num new">1</span><span><b>新增「通路」篩選</b> — 全部／Bookyay／Ztor，營運一眼看出哪些活動在 Ztor 賣 <code>BO-2</code></span></li>
-      <li data-k="a2" aria-selected="false"><span class="num new">2</span><span><b>新增「通路」「預開」欄位</b> — 顯示 <span class="pill blue">Ztor</span> 與已預開張數 <code>BO-2/4</code></span></li>
-      <li data-k="a3" aria-selected="false"><span class="num new">3</span><span><b>預開狀態</b> — <span class="pill ok">已預開 1,005</span> / <span class="pill warn">預開中</span> / <span class="pill bad">失敗（可重試）</span> <code>BO-4</code></span></li>
+      <li data-k="a2" aria-selected="false"><span class="num new">2</span><span><b>新增「通路」欄位</b> — 顯示 <span class="pill blue">Ztor</span>，讓 全部 檢視也分得出來 <code>BO-2</code></span></li>
     </ul>
+    <div class="box"><b>預開不做任何畫面</b>（Jeff 10-11）：發佈核准後系統自己把票開完，列表上<b>不顯示張數、不顯示進度</b>。失敗才需要有人知道 — <b>系統自動重試</b>，重試用盡才寫進 <code>通路紀錄</code> 並寄信給通路設定裡的通知信箱 <code>BO-1 · BO-4</code></div>
   </div></div>
 
   <div data-panel="p1b"><div class="shotwrap">
@@ -187,10 +186,11 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <div class="hl keep" data-k="b2" data-on="false" style="left:40.4%;top:11.6%;width:40.6%;height:21.2%"></div><button class="pin keep" style="left:40.4%;top:11.6%" data-k="b2" aria-pressed="false">2</button>
     </figure>
     <ul class="pinlist">
-      <li data-k="b1" aria-selected="false"><span class="num new">1</span><span><b>Ztor 活動</b> <span class="toggle"></span> 於 Ztor 販售（整場）<br>開啟後：進 Ztor feed · 發佈核准自動預開 · bookyay.com 不販售此活動 · 只在一般活動出現 <code>BO-2</code></span></li>
+      <li data-k="b1" aria-selected="false"><span class="num new">1</span><span><b>Ztor 活動</b> <span class="toggle"></span> 於 Ztor 販售（整場）<br>開啟後：進 Ztor feed · 發佈核准自動預開 · bookyay.com 不販售此活動 · 只在一般活動出現<br><b>只能在發佈前設定</b>：活動一旦已發佈，這個開關就<b>鎖住不能再開</b>（Jeff 10-11）<code>BO-2</code></span></li>
       <li data-k="b2" aria-selected="false"><span class="num keep">2</span><span><b>其餘欄位全部不變</b> — 名稱／主辦／類別／地區／語言照原樣填，經 feed 帶到 Ztor（Ztor 端唯讀）<code>BR-10</code></span></li>
     </ul>
-    <div class="box"><b>關閉開關</b>＝撤銷分配：僅在尚無 Ztor 售出時允許（走 §3 收回流程）；已有售出則提示改走整場取消</div>
+    <div class="box new"><b>已發佈的活動不能再改成 Ztor 活動</b>（Jeff 10-11）：預開是<b>發佈核准當下</b>觸發的，事後才開開關會讓活動進了 Ztor 卻<b>一張票都沒有</b>。開關在已發佈的活動上顯示為<b>唯讀並附原因</b>。要把既有活動改到 Ztor 賣 → 先下架改成草稿再發佈，或等之後的版本支援（本期不做）</div>
+    <div class="box"><b>關閉開關</b>＝撤銷分配，<b>不受上面的鎖影響</b>：僅在尚無 Ztor 售出時允許（走 §3 收回流程）；已有售出則提示改走整場取消</div>
   </div></div>
 
   <div data-panel="p1c"><div class="shotwrap">
@@ -254,7 +254,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <ul class="pinlist">
       <li data-k="f1" aria-selected="false"><span class="num keep">1</span><span><b>私人活動</b> — 只在 Ztor 賣的活動用這個：bookyay.com 隱藏，Ztor 隱藏上架＋私人連結 <code>BR-20</code></span></li>
       <li data-k="f2" aria-selected="false"><span class="num keep">2</span><span><b>設定為測試資料 = 不勾</b> — 測試資料的活動不進 Ztor feed <code>API-1</code></span></li>
-      <li data-k="f3" aria-selected="false"><span class="num new">3</span><span><b>預開摘要</b> — 「核准後將預開 1,005 張並交付 Ztor」<code>BO-4</code></span></li>
+      <li data-k="f3" aria-selected="false"><span class="num new">3</span><span><b>發佈前確認</b> — 「核准後將開出 1,005 張票並交付 Ztor」。<b>發佈＝不可回頭</b>：核准後開關就鎖住，這是最後一次確認 <code>BO-2 · BO-4</code></span></li>
       <li data-k="f4" aria-selected="false"><span class="num bg">4</span><span><b>背景</b>：狀態進入 <b>已發佈</b> 當下啟動預開 → 完成後推 <code>allocation.changed</code> ＋ <code>event.published</code>，活動才出現在 Ztor <code>BO-4 · API-6</code></span></li>
     </ul>
     <div class="gone"><b>此頁不搬（biz 09-23）</b>：<b>活動主題</b>（#8，Bookyay 自家首頁版位）· <b>設定為測試資料 / 只可直接購買</b>（#7）。<br><b>但「發佈狀態」要留</b> — webhook 就是讀它（#8 只排除活動主題）</div>
