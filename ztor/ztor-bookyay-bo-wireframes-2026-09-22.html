@@ -158,7 +158,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   <div class="fstep by"><b>① 建一般活動</b>門票種類 · 門票時段 · HKD<span class="pill gray">不變</span></div><div class="farr">→</div>
   <div class="fstep by"><b>② 勾 Ztor 活動</b>基本資料一個開關<span class="pill ok">新 UI</span></div><div class="farr">→</div>
   <div class="fstep zt"><b>③ Ztor 匯入並上架</b>API 拉活動／票種／庫存<br><b>此時還沒有任何票</b><span class="pill blue">Ztor</span></div><div class="farr">→</div>
-  <div class="fstep by"><b>④ 鎖位</b>進結帳時向 Bookyay <b>鎖住座位</b><br>鎖到了才收款<span class="pill ok">新 API</span></div><div class="farr">→</div>
+  <div class="fstep by"><b>④ 鎖位</b>進結帳時向 Bookyay <b>鎖住座位</b><br>鎖到了才收款 · 可延長<span class="pill ok">新 API</span></div><div class="farr">→</div>
   <div class="fstep by"><b>⑤ 確認成單</b>把鎖位轉成訂單<br>開 QR 回傳<span class="pill ok">新 API</span></div><div class="farr">→</div>
   <div class="fstep by"><b>⑥ 作廢</b>取消訂單＝作廢<span class="pill gray">沿用</span></div>
 </div>
@@ -514,10 +514,10 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td><b>API-2</b></td><td><code>GET /events/{id}</code></td><td>＋ <code>sessions[]</code>（<code>limitHeadCnt</code> ＝分配量；<b>售票時窗在時段上</b>：<code>openSellTime</code> / <code>closeSellTime</code> / <code>preSellTime</code>）· <code>sessions[].tickets[]</code>（<code>price</code> HKD · <code>headCnt</code> · 限購；<b>票種本身沒有時窗</b>）· <code>tncs</code> · 進階設定以 Bookyay 原欄位名</td><td>BR-12/14/25</td></tr>
       <tr><td><b>API-3</b></td><td><code>GET /events/{id}/tickets</code></td><td><b>只回入場狀態</b>：是否已入場／入場時間。<b>不再整批回 QR</b> — QR 在賣出當下由 API-5 回傳</td><td>BR-64</td></tr>
       <tr><td><b>API-4</b></td><td><code>GET …/availability</code></td><td>列表／售罄顯示用：<code>remaining</code> · <code>saleOpen</code>（<b>逐時段</b>）· 上下架狀態。<b>不鎖任何東西</b> — 真正鎖位是 API-5a。<code>remaining</code> 要扣掉生效中的鎖位</td><td>BR-21</td></tr>
-      <tr style="background:var(--teal-bg)"><td><b>API-5a</b> ⭐</td><td><code>POST /holds</code></td><td><b>鎖位</b>。粉絲一進結帳就呼叫，Bookyay <b>從庫存裡扣住這個位子</b>，回 <code>holdId</code> ＋ 到期時間。<b>鎖到了 Ztor 才收款</b>。<br>可售量＝上限 − 已售 − <b>生效中的鎖位</b>；兩個人搶最後一位，只有一個鎖得到。<b>時限要比 Ztor 的 15 分鐘再長一點</b>，到期自動釋放，放棄結帳也可以提早釋放</td><td>BR-21</td></tr>
+      <tr style="background:var(--teal-bg)"><td><b>API-5a</b> ⭐</td><td><code>POST /holds</code></td><td><b>鎖位</b>。粉絲一進結帳就呼叫，Bookyay <b>從庫存裡扣住這個位子</b>，回 <code>holdId</code> ＋ 到期時間。<b>鎖到了 Ztor 才收款</b>。<br>可售量＝上限 − 已售 − <b>生效中的鎖位</b>；兩個人搶最後一位，只有一個鎖得到。<b>時限要比 Ztor 的 15 分鐘再長一點</b>，到期自動釋放，放棄結帳也可以提早釋放。<br>快到期而粉絲要求延長時，Ztor 呼叫 <code>POST /holds/{id}/extend</code> <b>延長原本那個鎖位</b>，不是放掉再重新鎖（Jeff 10-12 定案）— 放掉再鎖會在空檔被別人搶走。新到期時間<b>由 Bookyay 給</b>，而且<b>要有次數上限</b>（建議最多 2 次）：可以無限延長的鎖位等於庫存被默默吃掉</td><td>BR-21</td></tr>
       <tr style="background:var(--teal-bg)"><td><b>API-5b</b> ⭐</td><td><code>POST /orders</code></td><td><b>確認成單</b>。收完款呼叫，把<b>那個鎖位</b>轉成訂單、開 UTK、<b>回傳 QR</b>。不是重新搶庫存。<br>同步、要快（p95 &lt; 2 秒）、<b>以 Ztor 訂單號冪等</b>。鎖位已過期 → 回 <code>410</code> <b>直接拒絕</b>，不要默默重搶 — 粉絲已經付錢了，要讓營運知道</td><td>BR-02/60/63</td></tr>
     </table>
-    <div class="box key"><b>⚠ 會出事的就是 API-5a／5b 這兩支</b>：其他都是讀取，重試無害。<br><b>成單重複執行</b>＝同一個位子賣兩次、粉絲到現場被拒 — 冪等鍵用 <b>Ztor 訂單號</b>，做成資料庫唯一索引，不要只靠程式判斷。<br><b>鎖位不會過期</b>＝庫存被默默吃掉，這個更難發現：時限一定要由 Bookyay 自己強制，不能靠 Ztor 記得來解鎖</div>
+    <div class="box key"><b>⚠ 會出事的就是 API-5a／5b 這兩支</b>：其他都是讀取，重試無害。<br><b>成單重複執行</b>＝同一個位子賣兩次、粉絲到現場被拒 — 冪等鍵用 <b>Ztor 訂單號</b>，做成資料庫唯一索引，不要只靠程式判斷。<br><b>鎖位不會過期</b>＝庫存被默默吃掉，這個更難發現：時限一定要由 Bookyay 自己強制，不能靠 Ztor 記得來解鎖（可以無限延長的鎖位是同一件事，所以延長次數也要設上限）</div>
     <div class="box key"><b>假 API 先行</b>：規格與 mock 先出，Creator Studio 團隊不必等 Bookyay 端完成就能開工<code>API-7</code></div>
   </div>
   <div data-panel="p5b">
@@ -638,7 +638,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   <div data-panel="s8a" class="on">
     <table class="t asks" style="margin-top:4px">
       <tr><th>#</th><th>問題</th><th>擋住什麼</th><th>誰</th></tr>
-      <tr style="background:var(--teal-bg)"><td><b>最優先</b></td><td><b>鎖位 ＋ 成單這兩支 API 做得到嗎？</b><br>① <code>POST /holds</code>：粉絲進結帳就從庫存鎖住座位，回 holdId ＋到期時間，<b>時限由 Bookyay 自己強制</b>，到期自動釋放。<br>② <code>POST /orders</code>：收款後把那個鎖位轉成訂單、開票、回傳 QR，<b>以 Ztor 訂單號冪等</b>，p95 &lt; 2 秒。<br>這是 10-12 定案、取代預開的新作法。<b>請確認「做不做得到」與大概工期 — 最該先回的一題，沒有備案。</b><br>另：粉絲要求延長結帳時間時，你們偏好做 <code>extend</code> 還是讓 Ztor 重新鎖一次？</td><td><b>整個整合</b>（這兩支不行就要重新設計）</td><td>Eric / Jesse</td></tr>
+      <tr style="background:var(--teal-bg)"><td><b>最優先</b></td><td><b>鎖位 ＋ 成單這兩支 API 做得到嗎？</b><br>① <code>POST /holds</code>：粉絲進結帳就從庫存鎖住座位，回 holdId ＋到期時間，<b>時限由 Bookyay 自己強制</b>，到期自動釋放。<br>② <code>POST /orders</code>：收款後把那個鎖位轉成訂單、開票、回傳 QR，<b>以 Ztor 訂單號冪等</b>，p95 &lt; 2 秒。<br>這是 10-12 定案、取代預開的新作法。<b>請確認「做不做得到」與大概工期 — 最該先回的一題，沒有備案。</b><br>③ <code>POST /holds/{id}/extend</code>：粉絲要求延長結帳時間時<b>延長原鎖位</b>（Jeff 10-12 定案：延長，不重搶），不佔新庫存、不會回售罄、延長次數有上限 — 請一起評估。</td><td><b>整個整合</b>（這兩支不行就要重新設計）</td><td>Eric / Jesse</td></tr>
       <tr><td>Q1</td><td><b>Organizer App 驗的 QR 是什麼字串？</b>格式、是否整張票生命週期不變</td><td>API-5 建單回傳的 QR</td><td>Jesse / Eric</td></tr>
       <tr><td>Q2</td><td>活動 <code>stage</code> 代碼表（500 = 已發佈？）與 <code>valid</code> 意義</td><td>webhook 狀態對應</td><td>Jesse</td></tr>
     </table>
