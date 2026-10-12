@@ -121,6 +121,12 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <span><i class="sw" style="border:2.5px solid #6b6558;background:rgba(107,101,88,.08)"></i><b>不變</b> — 沿用現有欄位／動作</span>
 </div>
 
+<div class="legend" style="display:block;line-height:1.75">
+<b style="font-size:12.5px;color:var(--txt)">名詞</b> — 這兩個詞是這份文件為了說明而用的，<b>Bookyay 後台沒有這兩個詞</b>
+<div style="margin-top:4px"><b style="color:var(--txt)">通路</b>＝銷售通路，本案只有一個：<b>Ztor</b>。<code>通路訂單</code>／<code>通路狀態</code>／<code>通路參考</code>／<code>通路夥伴</code> 都是指 Ztor 這一側。對應 Bookyay 票務活動裡的英文字 <b>Consignment</b>（預留代碼 <code>Cn</code>）。</div>
+<div style="margin-top:3px"><b style="color:var(--txt)">預開</b>＝預先開票。<b>發佈核准時一次把整場門票全部產生出來</b>，買家還沒出現就已經有 QR，交給 Ztor 去賣。<b style="color:var(--coral)">⚠ 不是 Bookyay 既有的「預留門票」</b>（座位表那一套，本案不做 — 見 §1）。</div>
+</div>
+
 <nav aria-label="Sections">
 <a href="#s0">全流程</a><a href="#s1">1 · 建立活動</a><a href="#s2">2 · 編輯活動</a><a href="#s3">3 · 訂單與作廢</a><a href="#s4">4 · 報表</a><a href="#s5">5 · API · Webhook</a><a href="#s6">6 · 每場設定</a><a href="#s7">7 · 掃票不變</a><a href="#s8">8 · 範圍 · 待確認</a><a href="#s9">9 · 要送什麼</a>
 </nav>
@@ -307,7 +313,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <!-- S3 -->
 <section id="s3">
 <div class="shead"><span class="snum">3</span><h2>訂單管理 · 作廢（退款）</h2></div>
-<div class="req"><b>需求</b>：Ztor 的銷售要出現在既有訂單與報表（<code>ztor_tag</code> 分渠道）；買家要退款時，<b>作廢在 Bookyay BO 執行</b>並即時通知 Ztor 更新錢包與發信。系統不碰錢 — 退款由營運在金流後台執行。（BR-40 · BR-41 · BR-60 · BR-61）</div>
+<div class="req"><b>需求</b>：Ztor 的銷售要出現在既有訂單與報表（<code>ztor_tag</code> 分通路）；買家要退款時，<b>作廢在 Bookyay BO 執行</b>並即時通知 Ztor 更新錢包與發信。系統不碰錢 — 退款由營運在金流後台執行。（BR-40 · BR-41 · BR-60 · BR-61）</div>
 <div class="wf">
   <div class="states"><span class="lbl">畫面</span>
     <button aria-pressed="true" data-for="p3a">訂單列表</button>
@@ -324,7 +330,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <div class="hl new" data-k="i4" data-on="false" style="left:1.7%;top:36.0%;width:96.5%;height:6.7%"></div><button class="pin new" style="left:1.7%;top:36.0%" data-k="i4" aria-pressed="false">4</button>
     </figure>
     <ul class="pinlist">
-      <li data-k="i1" aria-selected="false"><span class="num new">1</span><span><b>購票來源加一個值：Ztor</b> — 現有是 Bookyay／BO。這就是 <code>ztor_tag</code>，財務用它分渠道 <code>BO-5</code></span></li>
+      <li data-k="i1" aria-selected="false"><span class="num new">1</span><span><b>購票來源加一個值：Ztor</b> — 現有是 Bookyay／BO。這就是 <code>ztor_tag</code>，財務用它分通路 <code>BO-5</code></span></li>
       <li data-k="i2" aria-selected="false"><span class="num new">2</span><span><b>新增「通路狀態」「通路參考」欄</b> — <span class="pill gray">pool</span> 未售 / <span class="pill ok">sold</span> 已售 / <span class="pill bad">voided</span> 已作廢 / returned 已收回；通路參考＝Ztor 訂單號 <code>BO-5/6</code></span></li>
       <li data-k="i3" aria-selected="false"><span class="num keep">3</span><span><b>取消訂單 = 作廢</b> — 沿用現有按鈕與「撤銷」狀態，不另建作廢功能 <code>BR-40</code></span></li>
       <li data-k="i4" aria-selected="false"><span class="num new">4</span><span><b>預設隱藏 pool 列</b> — 否則一場活動 1,000 筆未售訂單會淹沒真實訂單（篩選才顯示）<code>BO-5</code></span></li>
@@ -369,8 +375,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 
 <!-- S4 -->
 <section id="s4">
-<div class="shead"><span class="snum">4</span><h2>報表 · 分渠道</h2></div>
-<div class="req"><b>需求</b>：MVP 日常報表的家就是 Bookyay BO — 財務要能把 Bookyay 自售與 Ztor 渠道分開看，而且<b>預開但未售的票不能被算成銷售</b>。（BR-60 · BR-62 · A5 同集團不結算）</div>
+<div class="shead"><span class="snum">4</span><h2>報表 · 分通路</h2></div>
+<div class="req"><b>需求</b>：MVP 日常報表的家就是 Bookyay BO — 財務要能把 Bookyay 自售與 Ztor 通路分開看，而且<b>預開但未售的票不能被算成銷售</b>。（BR-60 · BR-62 · A5 同集團不結算）</div>
 <div class="wf">
   <div class="shotwrap">
     <span class="shotlbl">報表 › 訂單報表（買家欄位已於截圖隱藏）</span>
@@ -383,7 +389,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     </figure>
     <ul class="pinlist">
       <li data-k="m1" aria-selected="false"><span class="num new">1</span><span><b>新增「通路」篩選</b> — 全部／Bookyay／BO／Ztor，各張銷售報表都加（活動售票／分成／月結）＋匯出含新欄位 <code>BO-10</code></span></li>
-      <li data-k="m2" aria-selected="false"><span class="num keep">2</span><span><b>訂單來源欄＝渠道</b> — Ztor 銷售在既有報表就看得到，不需要另建一張報表 <code>BR-62</code></span></li>
+      <li data-k="m2" aria-selected="false"><span class="num keep">2</span><span><b>訂單來源欄＝通路</b> — Ztor 銷售在既有報表就看得到，不需要另建一張報表 <code>BR-62</code></span></li>
       <li data-k="m3" aria-selected="false"><span class="num new">3</span><span><b>認列規則</b>：<span class="pill gray">pool</span> 不算銷售（顯示為「通路持有」）· <span class="pill ok">sold</span> 才計入金額；收入以 <b>付款時間</b> 記日，不是訂單建立日 <code>BO-10</code></span></li>
       <li data-k="m4" aria-selected="false"><span class="num keep">4</span><span><b>顧客欄永遠是 Ztor 佔位</b> — 通路訂單不帶買家個資；需要買家細節時由 Ztor 端查 <code>BR-61</code></span></li>
     </ul>
@@ -560,7 +566,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     </div>
     <div class="row">
       <div class="box" style="background:#fff"><b>App 內購票</b><br>Web 先行，App 導流＋訂單唯讀</div>
-      <div class="box" style="background:#fff"><b>公司間金流結算</b><br>同集團，只用 ztor_tag 分渠道</div>
+      <div class="box" style="background:#fff"><b>公司間金流結算</b><br>同集團，只用 ztor_tag 分通路</div>
       <div class="box" style="background:#fff"><b>bookyay.com 前台改版</b><br>只多一條：Ztor 活動在 bookyay.com 不販售</div>
     </div>
     <div class="box">套票管理 · NFT · 優惠管理（Bookyay 端）皆不在這次整合範圍</div>
