@@ -13,14 +13,12 @@ h1{font-size:21px;margin:0 0 4px}
 h1:first-letter{color:var(--gold)}
 .sub{color:var(--muted);font-size:12.5px;margin-bottom:12px}
 .sub a{color:var(--gold);font-weight:600;text-decoration:none}
-nav{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 0;border-bottom:1.5px solid var(--line);display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
-nav::-webkit-scrollbar{display:none}
+nav{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 0;border-bottom:1.5px solid var(--line);display:flex;gap:8px;flex-wrap:wrap}
 nav a{flex:0 0 auto;white-space:nowrap}
-section{scroll-margin-top:64px}
 @media (max-width:700px){table.t{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}}
 nav a{border:1.5px solid var(--line);background:var(--panel);border-radius:20px;padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--txt);text-decoration:none}
 nav a:hover,nav a:focus-visible{border-color:var(--gold);background:var(--gold-bg);outline:none}
-section{margin-top:38px;scroll-margin-top:64px}
+section{margin-top:38px;scroll-margin-top:var(--navh,64px)}
 .shead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:6px}
 .snum{background:var(--gold);color:#fff;border-radius:8px;padding:2px 10px;font-weight:800;font-size:13px}
 .shead h2{font-size:16px;margin:0;color:var(--gold)}
@@ -162,7 +160,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   <div class="fstep by"><b>③ 核准 → 自動預開</b>上限 N = N 張 QR 交給 Ztor<span class="pill blue">背景</span></div><div class="farr">→</div>
   <div class="fstep zt"><b>④ Ztor 匯入販售</b>API 拉活動／票／庫存<span class="pill blue">Ztor</span></div><div class="farr">→</div>
   <div class="fstep by"><b>⑤ 回寫</b>訂單 <code>pool→sold</code><span class="pill ok">新</span></div><div class="farr">→</div>
-  <div class="fstep by"><b>⑥ 作廢／收回</b>取消訂單 · 改上限<span class="pill gray">沿用</span></div>
+  <div class="fstep by"><b>⑥ 作廢／收回</b>取消訂單＝作廢<br>調低時段人數上限＝收回<span class="pill gray">沿用</span></div>
 </div>
 <div class="row" style="margin-top:10px">
   <div class="box native"><b>Bookyay 端不用建</b>：活動精靈 · 門票種類／時段 · 私人活動＋私人連結 · 活動限購 · 每藝人主辦者 · 入場統計 · 取消訂單 · 修改門票類別</div>
@@ -704,6 +702,16 @@ document.querySelectorAll('.shotwrap').forEach(function(w){
   });
   w.addEventListener('mouseleave', function(){ sync(null); });
 });
+
+/* keep anchor landings clear of the sticky nav, whatever height it wraps to */
+(function(){
+  var nav=document.querySelector('nav');
+  if(!nav) return;
+  function setNavH(){ document.documentElement.style.setProperty('--navh',(nav.offsetHeight+10)+'px'); }
+  setNavH();
+  window.addEventListener('resize',setNavH);
+  if(window.ResizeObserver) new ResizeObserver(setNavH).observe(nav);
+})();
 </script>
 </body>
 </html>
