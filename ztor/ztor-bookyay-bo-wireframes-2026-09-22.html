@@ -335,8 +335,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     </figure>
     <ul class="pinlist">
       <li data-k="g1" aria-selected="false"><span class="num keep">1</span><span><b>修改（需重新提交批核）</b> — 照現行流程。<b>送審期間 Ztor 繼續賣已核准版本</b>；新版核准才推 <code>event.updated</code>，Ztor 更新欄位、營運人工 email 通知買家 <code>BR-42</code></span></li>
-      <li data-k="g2" aria-selected="false"><span class="num keep">2</span><span><b>暫停發售 / 暫時下架</b> — 這才是「停賣」訊號 → <code>event.paused</code> → Ztor 自動下架；恢復則 <code>event.resumed</code> <code>BR-04</code></span></li>
-      <li data-k="g3" aria-selected="false"><span class="num bg">3</span><span><b>整場取消</b> → <code>event.cancelled</code>：已售票全部作廢、未售票全部收回，Ztor 下架，營運手動 email 通知買家（不自動發信），退款由營運在金流後台執行 <code>BR-43</code></span></li>
+      <li data-k="g2" aria-selected="false"><span class="num keep">2</span><span><b>暫停發售 / 暫時下架</b> — 這才是「停賣」訊號 → <code>event.paused</code> → <b>Ztor 前台把購買鈕關掉</b>（活動還看得到，不會自動消失）；恢復則 <code>event.resumed</code> 重新開賣 <code>BR-04</code></span></li>
+      <li data-k="g3" aria-selected="false"><span class="num bg">3</span><span><b>整場取消</b> → <code>event.cancelled</code>：已售票全部作廢、未售票全部收回，<b>Ztor 前台關掉購買鈕</b>；營運手動 email 通知買家（不自動發信），退款由營運在金流後台執行。<br><b>要讓活動從 Creator Studio 消失，得由 Ztor 營運自己在 CS 取消這場活動</b> — Bookyay 推的訊息只負責停賣，不會自動移除 <code>BR-43</code></span></li>
     </ul>
   </div></div>
   <div data-panel="p2b"><div class="shotwrap">
@@ -440,7 +440,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <li data-k="m1" aria-selected="false"><span class="num new">1</span><span><b>新增「通路」篩選</b> — 全部／Bookyay／BO／Ztor，各張銷售報表都加（活動售票／分成／月結）＋匯出含新欄位 <code>BO-10</code></span></li>
       <li data-k="m2" aria-selected="false"><span class="num keep">2</span><span><b>訂單來源欄＝通路</b> — Ztor 銷售在既有報表就看得到，不需要另建一張報表 <code>BR-62</code></span></li>
       <li data-k="m3" aria-selected="false"><span class="num new">3</span><span><b>認列規則</b>：<span class="pill gray">pool</span> 不算銷售（顯示為「通路持有」）· <span class="pill ok">sold</span> 才計入金額；收入以 <b>付款時間</b> 記日，不是訂單建立日 <code>BO-10</code></span></li>
-      <li data-k="m4" aria-selected="false"><span class="num keep">4</span><span><b>顧客欄永遠是 Ztor 佔位</b> — 通路訂單不帶買家個資；需要買家細節時由 Ztor 端查 <code>BR-61</code></span></li>
+      <li data-k="m4" aria-selected="false"><span class="num keep">4</span><span><b>售出的通路訂單帶真實買家資料</b> — 顧客名稱／電郵／電話照常顯示，<b>Bookyay 客服可以直接支援打來的粉絲</b>（作廢本來就是 Bookyay 營運執行）。<br><b>未售出的 <code>pool</code> 訂單沒有買家</b>，顧客欄維持 Ztor 佔位，賣掉才寫入 <code>BO-5/6</code></span></li>
     </ul>
     <div class="box new"><b>要建：Ztor 交易明細頁</b> — 一筆 Bookyay 訂單只裝<b>一張票</b>，Ztor 一次買三張就散成三筆訂單，從訂單列看不到「這筆交易」。需要一頁以 <b>Ztor 訂單</b>為單位的唯讀明細 <code>BO-5</code></div>
     <div class="bo">
@@ -453,7 +453,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
           <div class="k">訂單類型</div><div class="v"><b>組合訂單</b> <span class="mut"><code>bundle</code> — 門票＋商品</span><span class="bdg">3</span></div>
           <div class="k">付款時間</div><div class="v">2026/11/03 09:12:41 <span class="mut">· 報表以這個時間記日，不是訂單建立日</span></div>
           <div class="k">Ztor 端狀態</div><div class="v">已付款 <span class="mut">· 僅供參考，不驅動票券狀態</span></div>
-          <div class="k">Ztor 用戶代碼</div><div class="v"><code>u_9f8e7d</code><span class="bdg">1</span></div>
+          <div class="k">買家</div><div class="v"><b>陳大文</b> · taiman@example.com · +852 9000 0000<span class="bdg">1</span></div>
+          <div class="k">Ztor 用戶代碼</div><div class="v"><code>u_9f8e7d</code> <span class="mut">· 同一帳號回購用這個認</span></div>
         </div>
       </div>
       <div class="bosec">
@@ -483,7 +484,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       </div>
     </div>
     <ul class="pinlist" style="margin-top:8px">
-      <li><span class="num new">1</span><span><b>Ztor 用戶代碼只能是不可逆代碼</b> — <span style="color:var(--coral)"><b>不是姓名／email／電話，也不可以顯示成那樣</b></span>（BR-61）。用途只有一個：認得出「同一個買家」回購，但 Bookyay 不持有任何個資</span></li>
+      <li><span class="num new">1</span><span><b>買家資料照常顯示</b> — 姓名／email／電話都帶過來，<b>Bookyay 客服接到粉絲電話可以直接處理</b>（作廢本來就是 Bookyay 營運執行）。<code>ztorUserRef</code> 一併保留，它是認得出「同一個帳號回購」用的</span></li>
       <li><span class="num new">2</span><span><b>買家實付金額＋幣別</b> — 幣別只有這裡會出現；其餘全部 HKD、單向（§1）</span></li>
       <li><span class="num new">3</span><span><b>「組合訂單」≠ Bookyay 的「套票」</b> — Bookyay 的<b>套票</b>是<b>一張票進 n 個人</b>（<code>headCnt</code>≥2，票種層級）；Ztor 的<b>組合訂單</b>是<b>門票＋商品一起買</b>（訂單層級）。同一筆可以兩者都有，不要混用同一個詞</span></li>
       <li><span class="num new">5</span><span><b>商品只是記錄，不是 Bookyay 的生意</b> — 照列品項與金額，好讓「買家實付」說得通；但<b>不建訂單、不管庫存、不出貨、不計入 Bookyay 票務收入</b>。票務收入只認門票那幾行</span></li>
