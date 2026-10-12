@@ -382,7 +382,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <li data-k="i1" aria-selected="false"><span class="num new">1</span><span><b>購票來源加一個值：Ztor</b> — 現有是 Bookyay／BO。這就是 <code>ztor_tag</code>，財務用它分通路 <code>BO-5</code></span></li>
       <li data-k="i2" aria-selected="false"><span class="num new">2</span><span><b>新增「通路狀態」「通路參考」欄</b> — <span class="pill gray">pool</span> 未售 / <span class="pill ok">sold</span> 已售 / <span class="pill bad">voided</span> 已作廢 / returned 已收回；通路參考＝Ztor 訂單號 <code>BO-5/6</code></span></li>
       <li data-k="i3" aria-selected="false"><span class="num keep">3</span><span><b>取消訂單 = 作廢</b> — 沿用現有按鈕與「撤銷」狀態，不另建作廢功能 <code>BR-40</code></span></li>
-      <li data-k="i4" aria-selected="false"><span class="num new">4</span><span><b>預設隱藏 pool 列</b> — 否則一場活動 1,000 筆未售訂單會淹沒真實訂單（篩選才顯示）<code>BO-5</code></span></li>
+      <li data-k="i4" aria-selected="false"><span class="num new">4</span><span><b>訂單列表預設不顯示 <code>pool</code> 的訂單</b> — 預開會讓一場活動一次產生 <b>1,000 筆 0 元佔位訂單</b>（顧客＝Ztor），不過濾掉就會把 Bookyay 自己的真實訂單淹沒。<br>不是刪掉：用「通路狀態」篩選就看得到，用訂單編號／通路參考也一定搜得到；<b>賣掉後變 <code>sold</code>，就自動回到正常檢視</b> <code>BO-5</code></span></li>
     </ul>
   </div></div>
   <div data-panel="p3b"><div class="shotwrap">
