@@ -307,7 +307,6 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="notes" style="margin-top:12px">
 <span class="chip">已售出的票永遠不會被收回 <code>BR-51</code></span>
 <span class="chip">審核中的修訂不影響 Ztor 販售 — 以已核准版本為準</span>
-<span class="chip decide">售票時窗結束時自動收回未售票（BR-52）在只賣 Ztor 的活動還需要嗎？</span>
 </div>
 </section>
 
@@ -370,7 +369,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="notes" style="margin-top:12px">
 <span class="chip">回寫是冪等的：同一批次重送不會重複計算 <code>API-5</code></span>
 <span class="chip">回寫內容不含買家姓名／email／電話 <code>BR-61</code></span>
-<span class="chip decide">Q7 — 你們正在開發的「修改門票類別」與這裡的訂單頁改動是否同一塊？</span>
+<span class="chip">通路訂單的認列、記日、退款都沿用 Bookyay 既有做法</span>
 </div>
 </section>
 
@@ -401,7 +400,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   </div>
 </div>
 <div class="notes" style="margin-top:12px">
-<span class="chip decide">Q10 — 財務：通路訂單不產生手續費行、收入以付款時間記日，可接受？</span>
+<span class="chip">財務沿用 Bookyay 既有流程；收入<b>以付款時間</b>記日，不是訂單建立日</span>
 </div>
 </section>
 
@@ -449,7 +448,6 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 </div>
 <div class="notes" style="margin-top:12px">
 <span class="chip decide">Q1 — Organizer App 驗的 QR 是什麼字串？（唯一擋住 API-3 定稿的問題）</span>
-<span class="chip decide">Q3 — 先前 Damai 寄售有沒有做過 partner API／匯出可重用？</span>
 <span class="chip decide">Q9 — 現有的 queue／排程機制可重用於 webhook 推送嗎？</span>
 </div>
 </section>
@@ -548,10 +546,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><th>#</th><th>問題</th><th>擋住什麼</th><th>誰</th></tr>
       <tr><td>Q1</td><td><b>Organizer App 驗的 QR 是什麼字串？</b>格式、是否整張票生命週期不變</td><td>API-3 預開票交付</td><td>Jesse / Eric</td></tr>
       <tr><td>Q2</td><td>活動 <code>stage</code> 代碼表（500 = 已發佈？）與 <code>valid</code> 意義</td><td>webhook 狀態對應</td><td>Jesse</td></tr>
-      <tr><td>Q3</td><td>先前 <b>Damai</b> 寄售有沒有做過 partner API / 匯出可重用?</td><td>可能省一整塊</td><td>Jesse</td></tr>
-      <tr><td>Q6′</td><td>背景一次產生 1,000+ 張票可行？預開先掛預設票種、售出後以<b>修改門票類別</b>改為實際票種 — <b>可程式化呼叫嗎？</b></td><td><b>BO-4 整個作法</b>（不能呼叫就要重新設計）</td><td>Eric</td></tr>
-      <tr><td>Q7</td><td>你們正在開發的 <b>修改門票類別</b> / Event 相關功能，與這裡的訂單頁改動是否同一塊？</td><td>排程衝突</td><td>Jesse / Eric</td></tr>
-      <tr><td>Q10</td><td>財務：通路訂單<b>不產生手續費行</b>、收入以付款時間記日 — 可接受？</td><td>分成 / 月結報表</td><td>Agnes</td></tr>
+      <tr><td>Q6′</td><td><b>修改門票類別可以用程式呼叫嗎？</b>背景一次產生 1,000+ 張票可行嗎？<br>預開時無法知道買家會挑哪個票種（上限是整個時段共用），所以一律先掛<b>該時段的預設票種</b>；售出回寫後要把那筆訂單改成<b>實際售出的票種</b>。<br>另：09-22 檢視當天看到貴團隊在測這個功能 — <b>何時上線？會不會動到同一批訂單畫面？</b></td><td><b>BO-4 整個作法</b>（不能呼叫就要重新設計）</td><td>Eric / Jesse</td></tr>
     </table>
     <div class="box key"><b>已定案</b>：<b>每賣出一張票就即時回寫一次</b>（另有每小時對帳與手動按鈕）· <b>作廢一律由 Bookyay 營運執行</b> — Ztor 客服不開 BO 帳號，不做通路營運角色 · <b>售票時窗結束不自動收回</b>未售票</div>
   </div>
