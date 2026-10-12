@@ -189,8 +189,8 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <li data-k="b1" aria-selected="false"><span class="num new">1</span><span><b>Ztor 活動</b> <span class="toggle"></span> 於 Ztor 販售（整場）<br>開啟後：進 Ztor feed · 發佈核准自動預開 · bookyay.com 不販售此活動 · 只在一般活動出現<br><b>只能在發佈前設定</b>：活動一旦已發佈，這個開關就<b>鎖住不能再開</b>（Jeff 10-11）<code>BO-2</code></span></li>
       <li data-k="b2" aria-selected="false"><span class="num keep">2</span><span><b>其餘欄位全部不變</b> — 名稱／主辦／類別／地區／語言照原樣填，經 feed 帶到 Ztor（Ztor 端唯讀）<code>BR-10</code></span></li>
     </ul>
-    <div class="box new"><b>已發佈的活動不能再改成 Ztor 活動</b>（Jeff 10-11）：預開是<b>發佈核准當下</b>觸發的，事後才開開關會讓活動進了 Ztor 卻<b>一張票都沒有</b>。開關在已發佈的活動上顯示為<b>唯讀並附原因</b>。要把既有活動改到 Ztor 賣 → 先下架改成草稿再發佈，或等之後的版本支援（本期不做）</div>
-    <div class="box"><b>關閉開關</b>＝撤銷分配，<b>不受上面的鎖影響</b>：僅在尚無 Ztor 售出時允許（走 §3 收回流程）；已有售出則提示改走整場取消</div>
+    <div class="box new"><b>開關只能在發佈前設定，發佈後雙向鎖死</b>（Jeff 10-11）：活動一旦已發佈，這個開關<b>開也不能開、關也不能關</b>，顯示為唯讀並附原因。<br>原因：預開是<b>發佈核准當下</b>觸發的 — 事後才開會讓活動進了 Ztor 卻<b>一張票都沒有</b>；而「用關開關把活動從 Ztor 撤下來」這條路<b>不做</b>。
+    <div style="margin-top:5px"><b>誤設成 Ztor 活動怎麼辦？</b>用已經有的那條路：<b>把時段人數上限改成 0</b>（走 §3 收回流程）。未售的票全部收回、座位回到 Bookyay 自己可賣，活動在 Ztor 端顯示<b>完售</b>（仍上架，<code>BR-51</code>）；要完全看不到由 Ztor 客服隱藏。<b>已經有人買了就沒辦法撤</b> — 那些粉絲手上是有效票，只能走<b>整場取消</b>（§3），那是商業決定。<br>要把既有活動改到 Ztor 賣 → 先下架改成草稿再發佈，或等之後的版本支援（本期不做）</div></div>
   </div></div>
 
   <div data-panel="p1c"><div class="shotwrap">
@@ -432,7 +432,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td><code>event.cancelled</code></td><td>整場取消</td><td>下架 · 全部票已取消 · 營運退款</td></tr>
       <tr><td><code>ticket.voided</code></td><td>取消訂單（已售的通路訂單）</td><td>錢包「已取消」；營運手動 email（不自動發信）</td></tr>
       <tr><td><code>allocation.return_requested</code></td><td>上限調低核准 · 關閉 Ztor 開關</td><td>挑出未售票立即回寫</td></tr>
-      <tr><td><code>allocation.changed</code></td><td>預開／加票／收回確認／撤銷</td><td>可售量增減；歸零＝完售（不下架）</td></tr>
+      <tr><td><code>allocation.changed</code></td><td>預開／加票／收回確認</td><td>可售量增減；<b>歸零＝完售，不下架</b> <code>BR-51</code></td></tr>
       <tr><td><code>ticket.redeemed</code> <span class="pill gray">選配</span></td><td>Organizer App 掃描</td><td>錢包「已使用」（否則每小時拉一次）</td></tr>
     </table>
     <div class="box new"><b>送達保證</b>：簽章驗證 · 失敗自動重試（1分→24小時）· 後台可查紀錄並重送 · 每則帶完整現況，順序顛倒也不會出錯 <code>BO-9</code></div>
