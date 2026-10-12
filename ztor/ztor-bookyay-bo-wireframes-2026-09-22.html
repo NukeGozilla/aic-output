@@ -202,7 +202,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <div class="hl keep" data-k="c3" data-on="false" style="left:29.2%;top:15.5%;width:12.6%;height:19.4%"></div><button class="pin keep" style="left:29.2%;top:15.5%" data-k="c3" aria-pressed="false">3</button>
     </figure>
     <ul class="pinlist">
-      <li data-k="c1" aria-selected="false"><span class="num keep">1</span><span><b>現價 HKD ＝ 基準價</b> — Ztor 依平台匯率表換算 USD/SGD/TWD，CS 逐幣微調整數 <code>BR-25</code></span></li>
+      <li data-k="c1" aria-selected="false"><span class="num keep">1</span><span><b>現價 HKD ＝ 基準價</b> — 換算與逐幣微調都在 <b>Ztor 端</b>做（匯率表在 Ztor），<b>Bookyay 這邊只填 HKD，不需要管其他幣別</b> <code>BR-25</code></span></li>
       <li data-k="c2" aria-selected="false"><span class="num keep">2</span><span><b>活動限購</b> — 每人總限購／每次交易限購／限購次數在這裡設，Ztor 拉取後於結帳執行 <code>BR-22</code></span></li>
       <li data-k="c3" aria-selected="false"><span class="num keep">3</span><span><b>票種＝Ztor 的販售選項</b> — 逐筆帶到 Ztor 活動頁 <code>API-2</code></span></li>
     </ul>
@@ -419,7 +419,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td><b>API-2</b></td><td><code>GET /events/{id}</code></td><td>＋ <code>sessions[]</code>（<code>limitHeadCnt</code> ＝分配量；<b>售票時窗在時段上</b>：<code>openSellTime</code> / <code>closeSellTime</code> / <code>preSellTime</code>）· <code>sessions[].tickets[]</code>（<code>price</code> HKD · <code>headCnt</code> · 限購；<b>票種本身沒有時窗</b>）· <code>tncs</code> · 進階設定以 Bookyay 原欄位名</td><td>BR-12/14/25</td></tr>
       <tr><td><b>API-3</b></td><td><code>GET /events/{id}/tickets</code></td><td>每張預開票：<b>QR 內容</b> · 票種 · 通路狀態 · 是否已入場／入場時間</td><td>BR-02/30/64</td></tr>
       <tr><td><b>API-4</b></td><td><code>GET …/availability</code></td><td>下單前確認：未售數 · <code>saleOpen</code>（<b>逐時段</b>，非逐票種）· 上下架狀態（純查詢，無副作用）</td><td>BR-21</td></tr>
-      <tr><td><b>API-5</b></td><td><code>POST /syncback</code></td><td>Ztor → Bookyay：交易明細（含售出票種）· 票券狀態 · 庫存對帳；冪等可重放，含買家個資的欄位直接拒收</td><td>BR-60/61/63</td></tr>
+      <tr><td><b>API-5</b></td><td><code>POST /syncback</code></td><td>Ztor → Bookyay：交易明細（含售出票種、<b>買家實付金額＋幣別</b>，另附 HKD 供報表加總）· 票券狀態 · 庫存對帳；冪等可重放，含買家個資的欄位直接拒收</td><td>BR-60/61/63</td></tr>
     </table>
     <div class="box new"><b>假 API 先行</b>：規格與 mock 先出，Creator Studio 團隊不必等 Bookyay 端完成就能開工（09-21 與 Eric 的共識）<code>API-7</code></div>
   </div>
@@ -584,7 +584,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <!-- S9 -->
 <section id="s9">
 <div class="shead"><span class="snum">9</span><h2>要送什麼 · 一句話</h2></div>
-<div class="req"><b>總原則（Jeff 2026-10-09）</b>：「我們沿用 bookyay 所有規則，不重新發明輪子。<b>bookyay 把資料送過來，ztor 照收</b>。ztor 的差別只有 UI 呈現和幣別。」<br>金額一律 <b>HKD</b>；Ztor 自行換算其他幣別並可微調，不回寫。<b>欄位名與結構照 Bookyay，不改名、不另外包裝</b>（Q13）。</div>
+<div class="req"><b>總原則（Jeff 2026-10-09）</b>：「我們沿用 bookyay 所有規則，不重新發明輪子。<b>bookyay 把資料送過來，ztor 照收</b>。ztor 的差別只有 UI 呈現和幣別。」<br><b>價格一律 HKD 單向送出</b>；其他幣別的價格由 <b>Ztor 自行換算與微調</b>，Bookyay <b>不持有、不換算、不檢查</b>任何非 HKD 價格。<b>欄位名與結構照 Bookyay，不改名、不另外包裝</b>（Q13）。</div>
 <div class="stage">
 <div class="wf">
   <table class="t steps" style="margin-top:0">
@@ -595,6 +595,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
     <tr><td>4 門票時段</td><td><b>時段人數上限由該時段所有票種共用</b> · 該時段的<b>每一個</b>票種都要送，照後台排序 · 重覆活動把<b>每一個日期</b>展開成獨立時段</td></tr>
     <tr><td>5 進階設定與發佈</td><td><b>售票時窗在「時段」上，票種本身沒有時窗</b> · <b>發佈狀態必須送</b>（Ztor 的上下架靠它）· 測試資料的活動不進 feed</td></tr>
   </table>
+  <div class="box new"><b>⚠ Bookyay 唯一要管幣別的地方：回寫的交易紀錄</b>（Jeff 10-11）<br>票賣掉時，回寫要帶<b>買家實際付了多少、付的是什麼幣別</b>（例如 TWD 800），這是該筆交易的事實，Bookyay 照收即可。<b>其餘全部 HKD、單向</b> — feed、價格、限購、折扣、早鳥、報表都是。只要有人要 Bookyay 在「回寫交易紀錄」以外的地方換算或檢查別的幣別，那就是做錯了 <code>BO-6 · API-5</code></div>
   <div class="box"><b>兩件不送</b>：<b>寄送相關</b>一律不送（純電子門票，不做運費／順豐寄送／到店自取）· <b>個資</b>一律不送</div>
   <div class="box new"><b>進階設定四個開關維持關閉</b>（主辦者自行提供 · 動態 QR · 轉贈 · 保護頁）— 但<b>照樣經 API 送出</b>，好讓 Ztor 擋掉設定不符的活動，而不是等到現場才發現</div>
   <div class="box"><b>逐欄對照</b>、biz 09-23 取捨紀錄、要回頭跟設計師講的 9 點 → 需求文件 <code>bookyay-side-dev-spec</code> §4 · §8 · §10；Bookyay 原欄位名 → <code>bookyay-api-contract</code> §0.2</div>
