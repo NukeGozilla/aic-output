@@ -146,6 +146,12 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div style="margin-top:3px"><b style="color:var(--txt)">預開</b>＝預先開票。<b>發佈核准時一次把整場門票全部產生出來</b>，買家還沒出現就已經有 QR，交給 Ztor 去賣。<b style="color:var(--coral)">⚠ 不是 Bookyay 既有的「預留門票」</b>（座位表那一套，本案不做 — 見 §2）。</div>
 </div>
 
+<div class="legend" style="display:block;border-color:#b4462f;background:#fbefec;line-height:1.7">
+<b style="font-size:13px;color:#b4462f">⚠ 這份 wireframe 尚未反映 2026-10-12 dev sync 的改動 — 正在重畫</b>
+<div style="margin-top:4px;font-size:12.5px">10-12 的會議把整個模型換掉了：<b>門票改成「賣出當下才開票」，不再事先全部預開</b>。因此 <b>預開（BO-4）、pool 狀態、收回流程（BO-8）、批次回寫（BO-6／API-5）全部取消</b>，改成<b>購買當下由 Ztor 呼叫 Bookyay 建單並當場發 QR</b>一支 API。<br>
+下面 §2 建立活動、§4 訂單、§5 報表、§6 API 仍是舊模型，<b>請以需求文件為準</b>：<code>bookyay-side-dev-spec-2026-09-22.md</code>（v1.0）。</div>
+</div>
+
 <nav aria-label="Sections">
 <a href="#s0">全流程</a><a href="#s1">1 · What Bookyay Sends</a><a href="#s2">2 · 建立活動</a><a href="#s3">3 · 編輯活動</a><a href="#s4">4 · 訂單與作廢</a><a href="#s5">5 · 報表</a><a href="#s6">6 · API · Webhook</a><a href="#s7">7 · 每場設定</a><a href="#s8">8 · 掃票不變</a><a href="#s9">9 · 範圍 · 待確認</a>
 </nav>
