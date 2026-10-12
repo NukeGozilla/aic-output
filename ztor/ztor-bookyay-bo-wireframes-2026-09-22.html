@@ -546,12 +546,11 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
       <tr><td>Q1</td><td><b>Organizer App 驗的 QR 是什麼字串？</b>格式、是否整張票生命週期不變</td><td>API-3 預開票交付</td><td>Jesse / Eric</td></tr>
       <tr><td>Q2</td><td>活動 <code>stage</code> 代碼表（500 = 已發佈？）與 <code>valid</code> 意義</td><td>webhook 狀態對應</td><td>Jesse</td></tr>
       <tr><td>Q3</td><td>先前 <b>Damai</b> 寄售有沒有做過 partner API / 匯出可重用?</td><td>可能省一整塊</td><td>Jesse</td></tr>
-      <tr><td>Q6′</td><td>背景一次產生 1,000+ 張票可行？預開先掛預設票種、售出後以<b>修改門票類別</b>改為實際票種 — 可程式化呼叫嗎？</td><td>BO-4 預開作法</td><td>Eric</td></tr>
+      <tr><td>Q6′</td><td>背景一次產生 1,000+ 張票可行？預開先掛預設票種、售出後以<b>修改門票類別</b>改為實際票種 — <b>可程式化呼叫嗎？</b></td><td><b>BO-4 整個作法</b>（不能呼叫就要重新設計）</td><td>Eric</td></tr>
       <tr><td>Q7</td><td>你們正在開發的 <b>修改門票類別</b> / Event 相關功能，與這裡的訂單頁改動是否同一塊？</td><td>排程衝突</td><td>Jesse / Eric</td></tr>
       <tr><td>Q10</td><td>財務：通路訂單<b>不產生手續費行</b>、收入以付款時間記日 — 可接受？</td><td>分成 / 月結報表</td><td>Agnes</td></tr>
-      <tr><td>新</td><td><b>售票時窗結束時自動收回未售票</b>（BR-52）在只賣 Ztor 的活動還需要嗎？</td><td>BO-8 是否要做</td><td>Biz</td></tr>
     </table>
-    <div class="box"><b>Jeff 待決</b>：回寫頻率 <b>每小時</b> 取代每日（不加開發量，縮短作廢等待）· Ztor 客服是否給 Bookyay BO 帳號（否則作廢一律由 Bookyay 營運執行）</div>
+    <div class="box key"><b>已定案</b>：回寫 <b>每小時</b> 一次＋可手動（排程設定，不加開發量）· <b>作廢一律由 Bookyay 營運執行</b> — Ztor 客服不開 BO 帳號，不做通路營運角色 · <b>售票時窗結束不自動收回</b>未售票</div>
   </div>
   <div data-panel="s8b">
     <div class="box" style="margin-top:0"><b>A · 假期前可動工（不等任何回覆）</b><br>通路設定資料 + webhook 基礎建設（BO-1/9）· Channel API 認證與活動列表（API-0/1）· <b>OpenAPI + mock</b>（API-7）讓 Creator Studio 團隊平行開工</div>
@@ -576,7 +575,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="notes">
 <span class="chip">Foundation slice needs no answers — start before the holiday</span>
 <span class="chip">Q1 is the only hard blocker on an API contract</span>
-<span class="chip decide">今天要關：Q1 · Q7 · 回寫頻率</span>
+<span class="chip decide">還要 Bookyay 回覆：Q1（擋 API-3）· Q6′（擋 BO-4 作法）</span>
 </div>
 </div>
 </section>
