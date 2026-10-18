@@ -1130,7 +1130,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   <div data-panel="s8a" class="on">
     <table class="t asks" style="margin-top:4px">
       <tr><th>#</th><th>問題</th><th>擋住什麼</th><th>誰</th></tr>
-      <tr style="background:var(--teal-bg)"><td><b>最優先</b></td><td><b>鎖位 ＋ 成單這兩支 API 做得到嗎？</b><br>① <code>POST /holds</code>：粉絲進結帳就從庫存鎖住座位，回 holdId ＋到期時間，<b>時限由 Bookyay 自己強制</b>，到期自動釋放。<br>② <code>POST /orders</code>：收款後把那個鎖位轉成訂單、開票、回傳 QR，<b>以 Ztor 訂單號冪等</b>，p95 &lt; 2 秒。<br>這是 10-12 定案、取代預開的新作法。<b>請確認「做不做得到」與大概工期 — 最該先回的一題，沒有備案。</b><br>③ <code>POST /holds/{id}/extend</code>：粉絲要求延長結帳時間時<b>延長原鎖位</b>（Jeff 10-12 定案：延長，不重搶），不佔新庫存、不會回售罄、延長次數有上限 — 請一起評估。</td><td><b>整個整合</b>（這兩支不行就要重新設計）</td><td>Eric / Jesse</td></tr>
+      <tr style="background:var(--teal-bg)"><td><b>最優先</b></td><td><b>三支 API：鎖位、成單、延長 — 這是需求，不是詢價</b><br>① <code>POST /holds</code>：粉絲進結帳就從庫存鎖住座位，回 holdId ＋到期時間，<b>時限由 Bookyay 自己強制</b>，到期自動釋放。<br>② <code>POST /orders</code>：收款後把那個鎖位轉成訂單、開票、回傳 QR，<b>以 Ztor 訂單號冪等</b>，p95 &lt; 2 秒。<br>③ <code>POST /holds/{id}/extend</code>：粉絲要求延長結帳時間時<b>延長原鎖位</b>（延長，不重搶），不佔新庫存、不會回售罄、延長次數有上限。<br><b>10-12 定案，取代預開；10-15 dev sync 已當定案討論。怎麼實作、要多久，由開發團隊自己評估 — 我們要的是工期，不是可行性答覆。</b></td><td><b>整個整合</b></td><td>Eric</td></tr>
       <tr><td>Q1</td><td><b>Organizer App 驗的 QR 是什麼字串？</b>格式、是否整張票生命週期不變</td><td>API-5 建單回傳的 QR</td><td>Jesse / Eric</td></tr>
       <tr><td>Q2</td><td>活動 <code>stage</code> 代碼表（500 = 已發佈？）與 <code>valid</code> 意義</td><td>webhook 狀態對應</td><td>Jesse</td></tr>
     </table>
@@ -1159,7 +1159,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="notes">
 <span class="chip">Foundation slice needs no answers — start before the holiday</span>
 <span class="chip">Q1 is the only hard blocker on an API contract</span>
-<span class="chip decide">最優先：<b>鎖位＋成單兩支 API 做不做得到</b>（沒有備案）· 其次 Q1 — QR 字串格式</span>
+<span class="chip decide">最優先：<b>鎖位／成單／延長三支 API 的工期</b>（需求已定，實作由開發決定）· 其次 Q1 — QR 字串格式</span>
 </div>
 </div>
 </div>
@@ -1176,7 +1176,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
   <div data-panel="s8a" class="on">
     <table class="t asks" style="margin-top:4px">
       <tr><th>#</th><th>Question</th><th>What it blocks</th><th>Who</th></tr>
-      <tr style="background:var(--teal-bg)"><td><b>Top priority</b></td><td><b>Can you build the hold + confirm pair?</b><br>① <code>POST /holds</code> — reserve the seat against capacity the moment a fan enters checkout, returning a holdId and an expiry, with <b>the TTL enforced by Bookyay</b> and automatic release on expiry.<br>② <code>POST /orders</code> — after payment, convert that hold into an order, issue the ticket and return the QR, <b>idempotent on the Ztor order number</b>, p95 &lt; 2 s.<br>This was decided on 10-12 and replaces pre-issue. <b>We need to know whether it can be built and roughly how long — the first question to answer, and there is no fallback.</b><br>③ <code>POST /holds/{id}/extend</code> — when a fan asks for more time, <b>extend the existing hold</b> (Jeff's call, 10-12: extend, never re-take). It takes no new capacity, can never answer sold out, and the number of renewals is capped. Please estimate this one too.</td><td><b>The whole integration</b> — if the pair cannot be built, the design goes back to the drawing board</td><td>Eric / Jesse</td></tr>
+      <tr style="background:var(--teal-bg)"><td><b>Top priority</b></td><td><b>Three endpoints: hold, confirm, extend — this is a requirement, not a request for a quote</b><br>① <code>POST /holds</code> — reserve the seat against capacity the moment a fan enters checkout, returning a holdId and an expiry, with <b>the TTL enforced by Bookyay</b> and automatic release on expiry.<br>② <code>POST /orders</code> — after payment, convert that hold into an order, issue the ticket and return the QR, <b>idempotent on the Ztor order number</b>, p95 &lt; 2 s.<br>③ <code>POST /holds/{id}/extend</code> — when a fan asks for more time, <b>extend the existing hold</b> rather than re-taking it. It takes no new capacity, can never answer sold out, and the number of renewals is capped.<br><b>Decided 10-12, replacing pre-issue, and discussed as settled at the 10-15 dev sync. How it is built and how long it takes are for the dev team to work out — what we need back is the estimate, not a feasibility verdict.</b></td><td><b>The whole integration</b></td><td>Eric</td></tr>
       <tr><td>Q1</td><td><b>What exact QR string does the Organizer App validate?</b> The format, and whether it stays fixed for the ticket's life</td><td>The QR returned by the API-5 confirm</td><td>Jesse / Eric</td></tr>
       <tr><td>Q2</td><td>The event <code>stage</code> code table (500 = 已發佈?) and what <code>valid</code> means</td><td>Webhook state mapping</td><td>Jesse</td></tr>
     </table>
@@ -1205,7 +1205,7 @@ footer{margin-top:44px;color:var(--muted);font-size:11.5px}
 <div class="notes">
 <span class="chip">Foundation slice needs no answers — start before the holiday</span>
 <span class="chip">Q1 is the only hard blocker on an API contract</span>
-<span class="chip decide">Top priority: <b>can the hold + confirm pair be built</b> (no fallback) · then Q1 — the QR string format</span>
+<span class="chip decide">Top priority: <b>the estimate for hold / confirm / extend</b> (the requirement is settled; the build is dev's call) · then Q1 — the QR string format</span>
 </div>
 </div>
 </div>
