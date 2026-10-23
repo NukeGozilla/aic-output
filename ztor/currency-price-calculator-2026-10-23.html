@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Currency Price Approach</title>
+<style>
+  /* Wireframe, 2026-10-23. Tokens follow Creator Studio dark (as in L's FX page). Rates are illustrative. */
+  :root {
+    --canvas: #0a0a0a; --panel: #131313; --prop: #1e1e1e;
+    --text-1: rgba(255,255,255,.95); --text-2: rgba(255,255,255,.65); --text-3: rgba(255,255,255,.45);
+    --border: rgba(255,255,255,.12); --border-strong: rgba(255,255,255,.22);
+    --spot: #ffa33f; --ok: #5fd08a; --warn: #ffcf5a; --bad: #ff6b6b;
+    --font: 'Satoshi','Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 32px 16px 80px; background: var(--canvas); color: var(--text-1); font: 400 15px/24px var(--font); }
+  .page { max-width: 1080px; margin: 0 auto; }
+  .eyebrow { color: var(--spot); font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; margin: 0 0 8px; }
+  h1 { font-size: 28px; line-height: 1.2; margin: 0 0 8px; }
+  h2 { font-size: 18px; margin: 0 0 4px; }
+  p { margin: 0; }
+  .sub { color: var(--text-2); }
+  .tabs { display: flex; gap: 8px; margin: 12px 0 16px; }
+  .tabs button { font: inherit; color: var(--text-2); background: var(--panel); border: 1px solid var(--border); border-radius: 999px; padding: 6px 16px; cursor: pointer; }
+  .tabs button[aria-selected="true"] { color: #271302; background: var(--spot); border-color: var(--spot); font-weight: 600; }
+  .screen { border: 1px solid var(--border-strong); border-radius: 16px; background: var(--panel); overflow: hidden; }
+  .bar { display: flex; justify-content: space-between; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--prop); color: var(--text-3); font-size: 13px; }
+  .body { padding: 20px; display: grid; gap: 20px; }
+  .base { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; padding: 16px; border: 1px dashed var(--border-strong); border-radius: 12px; }
+  .base .val { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .base .lbl { color: var(--text-3); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .tag { display: inline-block; font-size: 12px; line-height: 18px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text-2); }
+  .scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+  table { width: 100%; min-width: 820px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  thead th { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-3); font-weight: 500; background: var(--prop); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.cur { font-weight: 700; }
+  td.muted { color: var(--text-2); }
+  .lock::before { content: "🔒 "; font-size: 11px; }
+  input.price { width: 110px; font: inherit; font-weight: 700; color: var(--text-1); background: var(--canvas); border: 1px solid var(--border-strong); border-radius: 8px; padding: 6px 10px; }
+  input.price:focus { outline: 2px solid var(--spot); outline-offset: 1px; }
+  input.price.below { border-color: var(--bad); }
+  .pill { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+  .pill.ok { color: var(--ok); background: rgba(95,208,138,.12); }
+  .pill.warn { color: var(--warn); background: rgba(255,207,90,.12); }
+  .pill.bad { color: var(--bad); background: rgba(255,107,107,.12); }
+  .pill.na { color: var(--text-3); background: var(--prop); }
+  .hint { font-size: 12px; color: var(--text-3); display: block; }
+  .hint.err { color: var(--bad); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: var(--canvas); }
+  .card h3 { margin: 0 0 8px; font-size: 14px; color: var(--text-2); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+  .fans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+  .fan { border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center; }
+  .fan b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .fan span { font-size: 12px; color: var(--text-3); }
+  .alert { border-left: 3px solid var(--warn); background: rgba(255,207,90,.06); border-radius: 0 10px 10px 0; padding: 12px 14px; margin-top: 8px; font-size: 14px; }
+  .alert.bad { border-color: var(--bad); background: rgba(255,107,107,.06); }
+  .alert.none { border-color: var(--ok); background: rgba(95,208,138,.05); color: var(--text-2); }
+  .alert button { margin-top: 8px; font: inherit; font-size: 13px; font-weight: 600; color: #271302; background: var(--spot); border: 0; border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+  .sim { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 14px; color: var(--text-2); }
+  .sim input[type=range] { width: 220px; accent-color: var(--spot); }
+  .sim output { font-weight: 700; color: var(--text-1); min-width: 52px; }
+  .notes { margin-top: 32px; color: var(--text-2); font-size: 14px; }
+  .notes li { margin-bottom: 6px; }
+  .actions { display: flex; justify-content: flex-end; gap: 8px; }
+  .actions span { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-strong); font-size: 14px; }
+  .actions span.primary { background: var(--spot); border-color: var(--spot); color: #271302; font-weight: 600; }
+  .lead { font-size: 18px; line-height: 28px; max-width: 760px; }
+  .brief { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0 12px; }
+  .brief > div { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; background: var(--panel); }
+  .brief h2 { font-size: 13px; color: var(--spot); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .brief ul, .open ol { margin: 0; padding-left: 18px; color: var(--text-2); font-size: 14px; line-height: 22px; }
+  .open { border: 1px solid var(--border); border-left: 3px solid var(--warn); border-radius: 0 12px 12px 0; padding: 14px 16px; }
+  .open > b { display: block; margin-bottom: 4px; }
+  .open ol b { color: var(--text-1); }
+  .fine { margin-top: 8px; font-size: 13px; color: var(--text-3); }
+  h2.wf { margin-top: 40px; }
+  h2.wf span { font-size: 13px; font-weight: 400; color: var(--text-3); }
+  [hidden] { display: none !important; }
+  @media (max-width: 760px) {
+    .row2 { grid-template-columns: 1fr; }
+    .fans { grid-template-columns: repeat(2, 1fr); }
+    .brief { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <p class="eyebrow">Currency proposal (option 5b) · for management, end of October · 2026-10-23</p>
+  <h1>Fixed local prices, swap fee built in</h1>
+  <p class="lead">Fans see one price in their own currency, and it stays the same every day. A swap fee inside that price covers FX, so Ztor's 5% is never touched.</p>
+
+  <div class="brief">
+    <div><h2>Fans</h2><ul><li>Their own currency, by the country they registered in</li><li>Same round price every day</li><li>No conversion line, no "approx."</li></ul></div>
+    <div><h2>Ops set it</h2><ul><li>Base: Bookyay's HKD price (tickets) or the creator's price (eShop)</li><li>Round up freely, never below the lowest allowed</li><li>Swap fee per currency, admin-only</li></ul></div>
+    <div><h2>Rate alert</h2><ul><li>Warns at half the cushion used</li><li>Act now at break-even</li><li>Only the fan's currency weakening is urgent</li></ul></div>
+  </div>
+
+  <div class="open"><b>Need answers</b>
+    <ol><li><b>Susan:</b> PayPal and Antom's real FX charges. These set the swap fees.</li><li>After X hours at break-even: auto-reprice or pause?</li><li>Fits 26 Oct UAT as admin-only, or launch slips?</li></ol>
+    <p class="fine">Replaces the finance rate table, the FX buffer inside the 5% fee and the ±5% hand-adjust. Popcorn, movies, Watch Party, AIC and crowdfund are unchanged.</p>
+  </div>
+
+  <h2 class="wf">Creator Studio · try it <span>(rates and swap fees are placeholders)</span></h2>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="event">Event ticket</button>
+    <button role="tab" aria-selected="false" data-tab="shop">eShop merch</button>
+  </div>
+
+  <!-- EVENT -->
+  <section class="screen" id="tab-event">
+    <div class="bar"><span>Creator Studio › Events › Live in Taipei › <b>Ticket pricing</b></span><span>Sale window: 1 Nov – 15 Dec</span></div>
+    <div class="body">
+      <div class="base">
+        <div><div class="lbl">Base price (from Bookyay)</div><div class="val">HKD 1,000</div></div>
+        <div><div class="lbl">Ticket type</div><div>General admission</div></div>
+        <span class="tag lock">Synced from Bookyay, read-only</span>
+      </div>
+      <div class="scroll"><table data-calc="event"></table></div>
+      <div class="sim"><span>Demo: move today's rates by</span><input type="range" min="-4" max="4" step="0.1" value="0" data-sim="event"><output data-out="event">0.0%</output><span class="hint">(+ = fan's currency weaker)</span></div>
+      <div class="row2">
+        <div class="card"><h3>What fans see, every day</h3><div class="fans" data-fans="event"></div></div>
+        <div class="card"><h3>Rate alerts</h3><div data-alerts="event"></div></div>
+      </div>
+      <div class="actions"><span>Cancel</span><span class="primary">Save prices</span></div>
+    </div>
+  </section>
+
+  <!-- ESHOP -->
+  <section class="screen" id="tab-shop" hidden>
+    <div class="bar"><span>Creator Studio › Shop › Products › Tour hoodie › <b>Pricing</b></span><span>No sale window: price stays until changed</span></div>
+    <div class="body">
+      <div class="base">
+        <div><div class="lbl">Base price (creator's settlement currency)</div><div class="val">SGD 40</div></div>
+        <div><div class="lbl">Creator</div><div>Denise · settles in SGD</div></div>
+        <span class="tag lock">Settlement currency set at onboarding</span>
+      </div>
+      <div class="scroll"><table data-calc="shop"></table></div>
+      <div class="sim"><span>Demo: move today's rates by</span><input type="range" min="-4" max="4" step="0.1" value="1.9" data-sim="shop"><output data-out="shop">+1.9%</output><span class="hint">(+ = fan's currency weaker)</span></div>
+      <div class="row2">
+        <div class="card"><h3>What fans see, every day</h3><div class="fans" data-fans="shop"></div></div>
+        <div class="card"><h3>Rate alerts</h3><div data-alerts="shop"></div></div>
+      </div>
+      <div class="actions"><span>Cancel</span><span class="primary">Save prices</span></div>
+    </div>
+  </section>
+
+  <ul class="notes">
+    <li><b>Lowest allowed</b> = base × rate when the price was set × (1 + swap fee). Ops can round up but can't save below it.</li>
+    <li><b>Swap fee</b> = the payment provider's conversion charge (assumed 1%) plus a safety cushion. Admin-only, per currency pair.</li>
+    <li><b>Break-even rate</b> = the rate at which this price stops covering the base after the provider's charge. It's saved with the price.</li>
+    <li><b>Alerts:</b> <i>Warning</i> at half the room used · <i>Act now</i> at break-even (auto-reprice or pause after X hours, to decide). Only the fan's currency getting weaker is urgent.</li>
+  </ul>
+</main>
+
+<script>
+const PROVIDER = 0.01;
+const DATA = {
+  event: { base: 'HKD', amount: 1000, rows: [
+    { cur: 'HKD', fan: 'Hong Kong', rate: 1,     fee: 0,     price: 1000 },
+    { cur: 'TWD', fan: 'Taiwan',    rate: 4.10,  fee: 0.035, price: 4250 },
+    { cur: 'SGD', fan: 'Singapore', rate: 0.172, fee: 0.025, price: 178 },
+    { cur: 'USD', fan: 'Everyone else', rate: 0.128, fee: 0.015, price: 130 },
+  ]},
+  shop: { base: 'SGD', amount: 40, rows: [
+    { cur: 'SGD', fan: 'Singapore', rate: 1,     fee: 0,     price: 40 },
+    { cur: 'HKD', fan: 'Hong Kong', rate: 5.81,  fee: 0.025, price: 240 },
+    { cur: 'TWD', fan: 'Taiwan',    rate: 23.84, fee: 0.035, price: 990 },
+    { cur: 'USD', fan: 'Everyone else', rate: 0.744, fee: 0.025, price: 31 },
+  ]},
+};
+const sim = { event: 0, shop: 1.9 };
+const dp = r => r < 1 ? 4 : r < 10 ? 3 : 2;
+const money = (c, v) => c + ' ' + v.toLocaleString('en-US', { maximumFractionDigits: 2 });
+const roundUp = (cur, v) => cur === 'TWD' || cur === 'HKD' ? Math.ceil(v / 10) * 10 : Math.ceil(v);
+
+function state(d, r) {
+  const today = (r.mkt ?? r.rate) * (1 + sim[d] / 100);
+  const floor = DATA[d].amount * r.rate * (1 + r.fee);
+  const be = r.price * (1 - PROVIDER) / DATA[d].amount;
+  const room = be / r.rate - 1, used = today / r.rate - 1;
+  let s = 'ok';
+  if (r.fee === 0) s = 'na';
+  else if (r.price === null) s = 'none';
+  else if (today >= be) s = 'bad';
+  else if (used >= room / 2) s = 'warn';
+  const suggest = roundUp(r.cur, DATA[d].amount * today * (1 + r.fee));
+  return { today, floor, be, room, used, s, suggest };
+}
+
+// A price the field can't parse yet (empty, or "17." mid-typing) is null.
+const valid = r => r.price !== null;
+const below = (r, x) => r.fee !== 0 && valid(r) && r.price < x.floor;
+const hint = (r, x) => !valid(r) ? ['err', 'Enter a price'] : below(r, x) ? ['err', 'Below the lowest allowed'] : ['', 'Round up freely'];
+const pill = x => `<span class="pill ${x.s}">${{ ok: `OK · ${(x.room * 100).toFixed(1)}% room`, warn: `Warning · ${(x.used * 100).toFixed(1)}% of ${(x.room * 100).toFixed(1)}% used`, bad: 'Act now · losing money', na: 'No swap', none: '—' }[x.s]}</span>`;
+
+function render(d) {
+  const D = DATA[d];
+  const t = document.querySelector(`[data-calc="${d}"]`);
+  t.innerHTML = `<thead><tr><th>Fans in</th><th>Currency</th><th>Rate when set<br>(1 ${D.base} =)</th><th>Today's rate</th><th>Swap fee</th><th>Lowest allowed</th><th>Your price</th><th>Break-even rate</th><th>Status</th></tr></thead><tbody>` +
+    D.rows.map((r, i) => {
+      const x = state(d, r);
+      const same = r.fee === 0;
+      const [hc, ht] = hint(r, x);
+      return `<tr data-row="${i}"><td class="muted">${r.fan}</td><td class="cur">${r.cur}</td>
+        <td class="muted">${same ? '—' : r.rate.toFixed(dp(r.rate))}</td>
+        <td class="muted">${same ? '—' : x.today.toFixed(dp(r.rate))}</td>
+        <td class="muted lock">${(r.fee * 100).toFixed(1)}%</td>
+        <td class="muted">${same ? '—' : money(r.cur, Math.round(x.floor * 100) / 100)}</td>
+        <td>${same ? `<b>${money(r.cur, r.price)}</b><span class="hint">= base price</span>` :
+          `<input class="price${hc ? ' below' : ''}" type="text" inputmode="decimal" autocomplete="off" value="${valid(r) ? r.price : ''}" data-d="${d}" data-i="${i}" aria-label="${r.cur} price"><span class="hint ${hc}" data-hint>${ht}</span>`}</td>
+        <td class="muted" data-be>${same || !valid(r) ? '—' : x.be.toFixed(dp(r.rate))}</td>
+        <td data-status>${pill(x)}</td></tr>`;
+    }).join('') + '</tbody>';
+  renderSide(d);
+}
+
+// While someone types, only the cells that depend on the price change. The input itself is never rebuilt,
+// so the cursor, a half-typed "17.", an empty field and undo all survive.
+function refreshRow(d, i) {
+  const r = DATA[d].rows[i], x = state(d, r);
+  const tr = document.querySelector(`[data-calc="${d}"] tr[data-row="${i}"]`);
+  const [hc, ht] = hint(r, x);
+  tr.querySelector('input.price').classList.toggle('below', !!hc);
+  const h = tr.querySelector('[data-hint]'); h.className = `hint ${hc}`; h.textContent = ht;
+  tr.querySelector('[data-be]').textContent = valid(r) ? x.be.toFixed(dp(r.rate)) : '—';
+  tr.querySelector('[data-status]').innerHTML = pill(x);
+  renderSide(d);
+}
+
+function renderSide(d) {
+  const D = DATA[d];
+  document.querySelector(`[data-fans="${d}"]`).innerHTML = D.rows.map(r =>
+    `<div class="fan"><b>${valid(r) ? money(r.cur, r.price) : '—'}</b><span>${r.fan}</span></div>`).join('');
+
+  const alerts = D.rows.map((r, i) => ({ r, i, x: state(d, r) })).filter(a => a.x.s === 'warn' || a.x.s === 'bad');
+  document.querySelector(`[data-alerts="${d}"]`).innerHTML = alerts.length ? alerts.map(a =>
+    `<div class="alert ${a.x.s === 'bad' ? 'bad' : ''}"><b>${a.r.cur}: ${a.x.s === 'bad' ? 'every sale now loses money' : 'rate is moving against this price'}</b><br>
+     Today ${a.x.today.toFixed(dp(a.r.rate))} vs break-even ${a.x.be.toFixed(dp(a.r.rate))}. Suggested new price: <b>${money(a.r.cur, a.x.suggest)}</b>.
+     ${a.x.s === 'bad' ? '<br><span class="hint err">Auto-reprice or pause in X hours if not reset.</span>' : ''}
+     <br><button data-apply="${d}" data-i="${a.i}">Apply suggested price</button></div>`).join('') :
+    `<div class="alert none">No alerts. Every price still covers the base price at today's rate.</div>`;
+}
+
+document.addEventListener('input', e => {
+  if (e.target.matches('input.price')) {
+    const { d, i } = e.target.dataset;
+    const v = e.target.value.replace(/,/g, '').trim();
+    DATA[d].rows[i].price = /^\d+(\.\d{0,2})?$/.test(v) && Number(v) > 0 ? Number(v) : null;
+    refreshRow(d, i);
+  }
+  if (e.target.matches('[data-sim]')) {
+    const d = e.target.dataset.sim; sim[d] = Number(e.target.value);
+    document.querySelector(`[data-out="${d}"]`).textContent = (sim[d] > 0 ? '+' : '') + sim[d].toFixed(1) + '%';
+    render(d);
+  }
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-apply]');
+  if (b) {
+    const d = b.dataset.apply, r = DATA[d].rows[b.dataset.i];
+    // Applying re-bases this row on today's rate: the new price, floor and break-even all use it.
+    const x = state(d, r);
+    if (r.mkt === undefined) r.mkt = r.rate;
+    r.rate = x.today; r.price = x.suggest;
+    render(d);
+  }
+  const t = e.target.closest('[data-tab]');
+  if (t) {
+    document.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', x === t));
+    document.getElementById('tab-event').hidden = t.dataset.tab !== 'event';
+    document.getElementById('tab-shop').hidden = t.dataset.tab !== 'shop';
+  }
+});
+render('event'); render('shop');
+</script>
+</body>
+</html>
