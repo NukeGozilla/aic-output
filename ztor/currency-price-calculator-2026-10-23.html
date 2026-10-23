@@ -41,7 +41,10 @@
   .lock::before { content: "🔒 "; font-size: 11px; }
   input.price { width: 110px; font: inherit; font-weight: 700; color: var(--text-1); background: var(--canvas); border: 1px solid var(--border-strong); border-radius: 8px; padding: 6px 10px; }
   input.price:focus { outline: 2px solid var(--spot); outline-offset: 1px; }
-  input.price.below { border-color: var(--bad); }
+  input.price.below, input.fee.bad { border-color: var(--bad); }
+  input.fee { width: 58px; font: inherit; color: var(--text-1); background: var(--canvas); border: 1px solid var(--border-strong); border-radius: 8px; padding: 4px 8px; margin-right: 4px; }
+  .nowrap { white-space: nowrap; }
+  input.fee:focus { outline: 2px solid var(--spot); outline-offset: 1px; }
   .pill { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
   .pill.ok { color: var(--ok); background: rgba(95,208,138,.12); }
   .pill.warn { color: var(--warn); background: rgba(255,207,90,.12); }
@@ -152,7 +155,7 @@
 
   <ul class="notes">
     <li><b>Lowest allowed</b> = base × rate when the price was set × (1 + swap fee). Ops can round up but can't save below it.</li>
-    <li><b>Swap fee</b> = the payment provider's conversion charge (assumed 1%) plus a safety cushion. Admin-only, per currency pair.</li>
+    <li><b>Swap fee</b> = the payment provider's conversion charge (assumed 1%) plus a safety cushion. Set by admin per currency pair (editable here); creators see it locked.</li>
     <li><b>Break-even rate</b> = the rate at which this price stops covering the base after the provider's charge. It's saved with the price.</li>
     <li><b>Alerts:</b> <i>Warning</i> at half the room used · <i>Act now</i> at break-even, then auto-reprice after X hours (to decide). Only the fan's currency getting weaker is urgent.</li>
   </ul>
@@ -175,6 +178,7 @@ const DATA = {
   ]},
 };
 const sim = { event: 0, shop: 1.9 };
+for (const D of Object.values(DATA)) D.rows.forEach(r => { r.same = r.cur === D.base; });
 const dp = r => r < 1 ? 4 : r < 10 ? 3 : 2;
 const money = (c, v) => c + ' ' + v.toLocaleString('en-US', { maximumFractionDigits: 2 });
 const roundUp = (cur, v) => cur === 'TWD' || cur === 'HKD' ? Math.ceil(v / 10) * 10 : Math.ceil(v);
@@ -185,7 +189,7 @@ function state(d, r) {
   const be = r.price * (1 - PROVIDER) / DATA[d].amount;
   const room = be / r.rate - 1, used = today / r.rate - 1;
   let s = 'ok';
-  if (r.fee === 0) s = 'na';
+  if (r.same) s = 'na';
   else if (r.price === null) s = 'none';
   else if (today >= be) s = 'bad';
   else if (used >= room / 2) s = 'warn';
@@ -195,23 +199,23 @@ function state(d, r) {
 
 // A price the field can't parse yet (empty, or "17." mid-typing) is null.
 const valid = r => r.price !== null;
-const below = (r, x) => r.fee !== 0 && valid(r) && r.price < x.floor;
+const below = (r, x) => !r.same && valid(r) && r.price < x.floor;
 const hint = (r, x) => !valid(r) ? ['err', 'Enter a price'] : below(r, x) ? ['err', 'Below the lowest allowed'] : ['', 'Round up freely'];
 const pill = x => `<span class="pill ${x.s}">${{ ok: `OK · ${(x.room * 100).toFixed(1)}% room`, warn: `Warning · ${(x.used * 100).toFixed(1)}% of ${(x.room * 100).toFixed(1)}% used`, bad: 'Act now · losing money', na: 'No swap', none: '—' }[x.s]}</span>`;
 
 function render(d) {
   const D = DATA[d];
   const t = document.querySelector(`[data-calc="${d}"]`);
-  t.innerHTML = `<thead><tr><th>Fans in</th><th>Currency</th><th>Rate when set<br>(1 ${D.base} =)</th><th>Today's rate</th><th>Swap fee</th><th>Lowest allowed</th><th>Your price</th><th>Break-even rate</th><th>Status</th></tr></thead><tbody>` +
+  t.innerHTML = `<thead><tr><th>Fans in</th><th>Currency</th><th>Rate when set<br>(1 ${D.base} =)</th><th>Today's rate</th><th>Swap fee<br>(admin)</th><th>Lowest allowed</th><th>Your price</th><th>Break-even rate</th><th>Status</th></tr></thead><tbody>` +
     D.rows.map((r, i) => {
       const x = state(d, r);
-      const same = r.fee === 0;
+      const same = r.same;
       const [hc, ht] = hint(r, x);
       return `<tr data-row="${i}"><td class="muted">${r.fan}</td><td class="cur">${r.cur}</td>
         <td class="muted">${same ? '—' : r.rate.toFixed(dp(r.rate))}</td>
         <td class="muted">${same ? '—' : x.today.toFixed(dp(r.rate))}</td>
-        <td class="muted lock">${(r.fee * 100).toFixed(1)}%</td>
-        <td class="muted">${same ? '—' : money(r.cur, Math.round(x.floor * 100) / 100)}</td>
+        <td class="muted">${same ? '<span class="lock">0.0%</span>' : `<span class="nowrap"><input class="fee" type="text" inputmode="decimal" autocomplete="off" value="${(r.fee * 100).toFixed(1)}" data-d="${d}" data-i="${i}" aria-label="${r.cur} swap fee">%</span>`}</td>
+        <td class="muted" data-floor>${same ? '—' : money(r.cur, Math.round(x.floor * 100) / 100)}</td>
         <td>${same ? `<b>${money(r.cur, r.price)}</b><span class="hint">= base price</span>` :
           `<input class="price${hc ? ' below' : ''}" type="text" inputmode="decimal" autocomplete="off" value="${valid(r) ? r.price : ''}" data-d="${d}" data-i="${i}" aria-label="${r.cur} price"><span class="hint ${hc}" data-hint>${ht}</span>`}</td>
         <td class="muted" data-be>${same || !valid(r) ? '—' : x.be.toFixed(dp(r.rate))}</td>
@@ -228,6 +232,7 @@ function refreshRow(d, i) {
   const [hc, ht] = hint(r, x);
   tr.querySelector('input.price').classList.toggle('below', !!hc);
   const h = tr.querySelector('[data-hint]'); h.className = `hint ${hc}`; h.textContent = ht;
+  tr.querySelector('[data-floor]').textContent = money(r.cur, Math.round(x.floor * 100) / 100);
   tr.querySelector('[data-be]').textContent = valid(r) ? x.be.toFixed(dp(r.rate)) : '—';
   tr.querySelector('[data-status]').innerHTML = pill(x);
   renderSide(d);
@@ -253,6 +258,14 @@ document.addEventListener('input', e => {
     const v = e.target.value.replace(/,/g, '').trim();
     DATA[d].rows[i].price = /^\d+(\.\d{0,2})?$/.test(v) && Number(v) > 0 ? Number(v) : null;
     refreshRow(d, i);
+  }
+  if (e.target.matches('input.fee')) {
+    const { d, i } = e.target.dataset;
+    const v = e.target.value.trim();
+    // 0–20%; anything else keeps the last good fee and flags the field.
+    const ok = /^\d+(\.\d?)?$/.test(v) && Number(v) <= 20;
+    e.target.classList.toggle('bad', !ok);
+    if (ok) { DATA[d].rows[i].fee = Number(v) / 100; refreshRow(d, i); }
   }
   if (e.target.matches('[data-sim]')) {
     const d = e.target.dataset.sim; sim[d] = Number(e.target.value);
