@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>IP Marketplace Approach</title>
+<style>
+  /* Layout: one scrolling brief — question → what we heard → three layers → wireframes → phasing → decisions.
+     Tokens inherited from ztor-ip-bank-backoffice-wireframe.html (Ztor Creator Studio dark/gold). Single dark theme by choice. */
+  :root{
+    --bg:#0c0c0e; --panel:#161617; --panel2:#1d1d1f; --line:#2c2c30; --line2:#3a3a40;
+    --txt:#ece9e3; --muted:#9a978f; --faint:#6a6862;
+    --gold:#cda063; --gold-d:#3b2f23; --gold-line:#5d4a2f;
+    --green:#5bb07a; --green-d:#13241a; --green-line:#2f5d3f;
+    --red:#d06a6a; --red-d:#241313; --red-line:#5d2f2f;
+    --violet:#9a7bc0; --teal:#5fae8d;
+    --radius:11px; --r-sm:8px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",sans-serif;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--font);font-size:14px;line-height:1.5}
+  .wrap{max-width:1180px;margin:0 auto;padding-block:28px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+  /* header */
+  .hdr{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+  .brand{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--faint)}
+  .brand b{color:var(--gold);font-weight:700}
+  h1{font-size:26px;margin:6px 0 4px;letter-spacing:-.3px;text-wrap:balance}
+  .sub{color:var(--muted);font-size:13.5px;max-width:720px;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px}
+  .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);border-radius:999px;padding:4px 10px;font-size:11.5px;color:var(--muted);background:var(--panel)}
+  .pill.gold{border-color:var(--gold-line);background:var(--gold-d);color:var(--gold)}
+  .pill.red{border-color:var(--red-line);background:var(--red-d);color:var(--red)}
+  .pill.green{border-color:var(--green-line);background:var(--green-d);color:var(--green)}
+
+  /* sections */
+  section{margin-bottom:34px}
+  .eyebrow{font-size:10.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+  h2{font-size:19px;margin:0 0 6px;letter-spacing:-.2px;text-wrap:balance}
+  h3{font-size:14px;margin:0 0 8px}
+  .lead{color:var(--muted);margin:0 0 14px;max-width:760px}
+  ul{margin:0;padding-left:18px}
+  li{margin:4px 0}
+  li::marker{color:var(--faint)}
+  .src{color:var(--faint);font-size:11.5px}
+  a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-line)}
+  a:hover{border-bottom-color:var(--gold)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;min-width:0}
+  .card.hl{border-color:var(--gold-line);background:linear-gradient(180deg,#1a1712,var(--panel))}
+  .card .tag{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+  .card.hl .tag{color:var(--gold)}
+
+  /* option columns */
+  .opt h3{font-size:16px}
+  .opt .q{color:var(--muted);font-size:13px;margin:0 0 10px}
+  .opt .risk{color:var(--red);font-size:12.5px;margin-top:8px}
+
+  /* three layers */
+  .layers{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;align-items:stretch}
+  .layer{position:relative;padding:16px 18px 16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);min-width:0}
+  .layer .n{position:absolute;top:-11px;left:14px;background:var(--bg);border:1px solid var(--line2);border-radius:999px;padding:2px 9px;font-size:11px;color:var(--muted)}
+  .layer.now{border-color:var(--gold-line)} .layer.now .n{color:var(--gold);border-color:var(--gold-line)}
+  .layer.later{opacity:.72}
+  .layer h3{margin-top:4px}
+  .layer .who{font-size:12px;color:var(--muted);margin-bottom:8px}
+  .layer .state{margin-top:10px;font-size:12px;color:var(--green)}
+  .layer .state.warn{color:var(--gold)}
+  .arrowrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--faint);font-size:12px;margin-top:12px}
+  .arrowrow b{color:var(--txt);font-weight:600}
+  .arrowrow .ar{color:var(--gold)}
+
+  /* wireframes */
+  .frames{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+  .frame{border:1px solid var(--line2);border-radius:var(--radius);background:#0a0a0b;overflow:hidden;min-width:0}
+  .frame .bar{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);background:#101012;font-size:11.5px;color:var(--muted)}
+  .frame .bar .dot{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+  .frame .bar .url{margin-left:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:var(--faint)}
+  .frame .body{padding:12px}
+  .frame .cap{padding:10px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);background:#101012}
+  .frame .cap b{color:var(--txt)}
+  .wf-h{font-size:15px;font-weight:700;margin:2px 0 8px}
+  .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .chip{border:1px solid var(--line2);border-radius:999px;padding:3px 8px;font-size:10.5px;color:var(--muted);background:var(--panel)}
+  .chip.on{border-color:var(--gold-line);background:var(--gold-d);color:var(--gold)}
+  .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+  .ipc{border:1px solid var(--line);border-radius:7px;background:var(--panel);overflow:hidden;font-size:10.5px}
+  .ipc .th{height:52px;background:repeating-linear-gradient(135deg,#1f1f22 0 6px,#19191b 6px 12px);position:relative}
+  .ipc .th i{position:absolute;top:5px;left:5px;font-style:normal;font-size:9px;border-radius:4px;padding:1px 5px;background:var(--gold-d);color:var(--gold);border:1px solid var(--gold-line)}
+  .ipc .th i.ct{background:var(--green-d);color:var(--green);border-color:var(--green-line)}
+  .ipc .tx{padding:6px 7px}
+  .ipc .tx b{display:block;font-size:11px;color:var(--txt)}
+  .ipc .tx span{color:var(--faint)}
+  .ipc .tx em{display:block;font-style:normal;color:var(--gold);margin-top:3px}
+  .row{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .row:last-child{border-bottom:none}
+  .row .k{color:var(--faint)} .row .v{color:var(--txt);text-align:right}
+  .hero{height:84px;border-radius:7px;background:repeating-linear-gradient(135deg,#1f1f22 0 6px,#19191b 6px 12px);border:1px solid var(--line);margin-bottom:9px;display:flex;align-items:flex-end;padding:8px}
+  .hero b{font-size:13px}
+  .lic{border:1px solid var(--line);border-radius:7px;padding:7px 9px;margin:5px 0;font-size:11.5px;display:flex;justify-content:space-between;gap:8px}
+  .lic.sel{border-color:var(--gold-line);background:var(--gold-d)}
+  .lic .r{width:11px;height:11px;border-radius:50%;border:1px solid var(--line2);flex:0 0 auto;margin-top:2px}
+  .lic.sel .r{border-color:var(--gold);background:var(--gold)}
+  .lic .t{flex:1;min-width:0}
+  .lic .t small{display:block;color:var(--faint)}
+  .lic .p{color:var(--gold);white-space:nowrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;width:100%;border-radius:7px;padding:8px 12px;font-size:12px;font-weight:600;background:var(--gold);color:#1a1206;border:1px solid var(--gold);margin-top:8px}
+  .btn.ghost{background:transparent;color:var(--txt);border-color:var(--line2);font-weight:500}
+  .note{font-size:10.5px;color:var(--faint);margin-top:6px}
+  table.wf{width:100%;border-collapse:collapse;font-size:11px}
+  table.wf th{text-align:left;color:var(--faint);font-weight:600;font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;padding:6px 6px;border-bottom:1px solid var(--line)}
+  table.wf td{padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.wf tr:last-child td{border-bottom:none}
+  .st{display:inline-block;border-radius:999px;padding:1px 7px;font-size:9.5px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
+  .st.ok{border-color:var(--green-line);background:var(--green-d);color:var(--green)}
+  .st.pend{border-color:var(--gold-line);background:var(--gold-d);color:var(--gold)}
+  .st.exp{border-color:var(--red-line);background:var(--red-d);color:var(--red)}
+  .field{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;font-size:11.5px;align-items:center}
+  .field .k{color:var(--faint)}
+  .field .in{border:1px solid var(--line2);border-radius:6px;padding:5px 8px;background:var(--panel2);color:var(--muted);min-height:26px}
+  .field .in.sel{color:var(--txt)}
+  .cb{display:inline-block;width:10px;height:10px;border:1px solid var(--line2);border-radius:2px;margin-right:4px;vertical-align:-1px}
+  .cb.on{background:var(--gold);border-color:var(--gold)}
+
+  /* phasing table */
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+  table.ph{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+  table.ph th{text-align:left;color:var(--faint);font-weight:600;font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;padding:12px 14px;border-bottom:1px solid var(--line)}
+  table.ph td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.ph tr:last-child td{border-bottom:none}
+  table.ph td.p{white-space:nowrap;font-weight:600}
+  table.ph td.p small{display:block;font-weight:500;color:var(--faint)}
+  table.ph tr.now td{background:#171410}
+  table.ph tr.now td.p{color:var(--gold)}
+
+  /* decisions */
+  .dec{counter-reset:d}
+  .dec .card{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;margin-bottom:10px}
+  .dec .card::before{counter-increment:d;content:counter(d);width:26px;height:26px;border-radius:50%;border:1px solid var(--gold-line);background:var(--gold-d);color:var(--gold);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+  .dec h3{margin:3px 0 4px}
+  .dec p{margin:0;color:var(--muted);font-size:13px}
+  .dec .for{font-size:11.5px;color:var(--faint);margin-top:4px}
+
+  footer{border-top:1px solid var(--line);margin-top:40px;padding-top:14px;color:var(--faint);font-size:11.5px;line-height:1.7}
+  @media (max-width:520px){ .cards3{grid-template-columns:repeat(2,1fr)} .field{grid-template-columns:1fr} h1{font-size:22px} }
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hdr">
+  <div>
+    <div class="brand"><b>Ztor</b> · Creator economy · 2.0</div>
+    <h1>IP Marketplace — approach &amp; wireframe for discussion</h1>
+    <p class="sub">For the biz + content team at the IT regular meeting. Goal: get a reaction on positioning, first audience, seed inventory and home. Nothing here is decided.</p>
+  </div>
+  <div class="meta">
+    <span class="pill red">Draft · for reaction</span>
+    <span class="pill">2026-11-02</span>
+    <span class="pill">Owner: Jeff</span>
+  </div>
+</header>
+
+<!-- 1. The question -->
+<section>
+  <div class="eyebrow">1 · The question for this meeting</div>
+  <h2>How do we take the IP Marketplace to the AI-creator community?</h2>
+  <p class="lead">L's framing (Nov 1): push it out as a content-creation tool on its own, or as part of a whole suite of features.</p>
+  <div class="grid g2">
+    <div class="card opt">
+      <div class="tag">Option A</div>
+      <h3>A tool: "Rent licensed IP for your AI videos"</h3>
+      <p class="q">IP Marketplace alone. Creators rent, make the video anywhere, publish anywhere.</p>
+      <ul>
+        <li>Narrow, fast, one sentence to explain</li>
+        <li>Works with a small inventory</li>
+        <li>Lands before the rest of 2.0 is live</li>
+      </ul>
+      <div class="risk">Risk: we look like a stock-asset site; no reason to stay on Ztor.</div>
+    </div>
+    <div class="card opt">
+      <div class="tag">Option B</div>
+      <h3>A suite: IP + contests + publishing + revenue rails</h3>
+      <p class="q">Rent IP → create → enter AIC → publish on Ztor → earn through the waterfall.</p>
+      <ul>
+        <li>Bigger story, the "Follow the Money" pitch</li>
+        <li>Lock-in: the content lives and earns on Ztor</li>
+        <li>Needs Creator Studio, AIC and payouts live first</li>
+      </ul>
+      <div class="risk">Risk: slow; a lot must be true before the first creator sees value.</div>
+    </div>
+  </div>
+  <div class="card hl" style="margin-top:14px">
+    <div class="tag">Proposed stance to react to (Jeff's draft, not agreed)</div>
+    A is the door, B is the room. Market the tool to the AI-creator community; the suite is what they find after signing up. First listings are contest packs, so the content team gets value on day one.
+  </div>
+</section>
+
+<!-- 2. What we heard -->
+<section>
+  <div class="eyebrow">2 · What we heard so far</div>
+  <h2>Demand on the content side is thin today; the push is from the business side</h2>
+  <div class="grid g3">
+    <div class="card">
+      <div class="tag">Content team (HK) · Oct 26 IT meeting</div>
+      <ul>
+        <li>Each AIC contest has one fixed theme and one IP; creators should not pick freely</li>
+        <li>AIC back office already shares the IP pack to registrants by link, so for contests "what we have is enough"</li>
+        <li>Marketplace is a broader use case; HK does not need it yet, TW is not using IP Bank either</li>
+        <li>Agnes + Cheryl to work out details; HK writes use cases once a prototype is up</li>
+      </ul>
+      <div class="src"><a href="https://app.notion.com/p/Ztor-Ztor-IT-regular-meeting-2026-10-26-4059ca6e76ac818397d6d8dca135404c">Meeting notes</a></div>
+    </div>
+    <div class="card">
+      <div class="tag">Sep 21 IT meeting</div>
+      <ul>
+        <li>HK's live IP deals are handled offline and will not go into IP Bank; TW has no closed IP deals</li>
+        <li>IP Bank roll-out waits for the Marketplace; no use case without it</li>
+        <li>Roadmap puts IP Marketplace last: eShop → MBTI → Event tickets → MediaVote → Auction → IP Marketplace (Oct 26 order)</li>
+        <li>HK/TW owe a written use case</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="tag">L · Nov 1</div>
+      <ul>
+        <li>Three layers: register an IP (face/likeness, movie content, script, song melody) → UI to add IP → UI of the marketplace</li>
+        <li>The registry alone "already makes us a viable product"; UI is not relevant at that stage, devs can inject into the DB</li>
+        <li>Jeff's reply: registry stays internal (ops/dev); marketplace is a must, on the Ztor site, creators sign up as Ztor users</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Three layers -->
+<section>
+  <div class="eyebrow">3 · Three layers, built in this order</div>
+  <h2>Registry first (internal), marketplace second (Ztor site), owner upload last</h2>
+  <div class="layers" style="margin-top:16px">
+    <div class="layer now">
+      <span class="n">Layer 1 · now</span>
+      <h3>IP Registry</h3>
+      <div class="who">Internal · ops + dev</div>
+      <ul>
+        <li>IP types: likeness · character · footage/stills · script · music · contest pack</li>
+        <li>Owner (linked user or temp account), consent on file</li>
+        <li>Asset pack, permitted uses, licence options, visibility</li>
+      </ul>
+      <div class="state">Mostly exists: IP Bank back office (add entry, owner link, 3 payout models, earnings report). Add the marketplace fields.</div>
+    </div>
+    <div class="layer now">
+      <span class="n">Layer 2 · next</span>
+      <h3>Marketplace</h3>
+      <div class="who">Ztor site · creators are Ztor users</div>
+      <ul>
+        <li>Browse → IP detail with licence sheet → request / rent</li>
+        <li>Download the pack, track licences in "My licences"</li>
+        <li>Contest packs listed first; open rentals on the same surface</li>
+      </ul>
+      <div class="state warn">To confirm: Jul 23 ruling placed IP Bank inside Creator Studio, not the fan site.</div>
+    </div>
+    <div class="layer later">
+      <span class="n">Layer 3 · later</span>
+      <h3>Add-IP UI</h3>
+      <div class="who">IP owners · self-serve</div>
+      <ul>
+        <li>Owner uploads IP, sets terms and price</li>
+        <li>Ops approves before listing (consent gate stays)</li>
+        <li>Public iStock-style browse once inventory justifies it</li>
+      </ul>
+      <div class="state warn">Gated on inventory count, no date.</div>
+    </div>
+  </div>
+  <div class="arrowrow">Rental flow: <b>Owner registers</b> <span class="ar">→</span> <b>Creator finds &amp; requests</b> <span class="ar">→</span> <b>Owner / ops approves</b> <span class="ar">→</span> <b>Pack delivered, licence logged</b> <span class="ar">→</span> <b>Creator publishes</b> <span class="ar">→</span> <b>Owner paid via IP Bank payout model</b></div>
+</section>
+
+<!-- 4. Wireframes -->
+<section>
+  <div class="eyebrow">4 · Wireframe · Layer 2 on the Ztor site, plus the internal registry form</div>
+  <h2>Three creator screens and one ops form</h2>
+  <p class="lead">Placeholder content. Prices and IP names are examples, not offers.</p>
+  <div class="frames">
+
+    <!-- A: browse -->
+    <div class="frame">
+      <div class="bar"><span class="dot"></span><span class="dot"></span>Ztor · IP Marketplace<span class="url">ztor.com/ip</span></div>
+      <div class="body">
+        <div class="wf-h">Rent licensed IP for your AI videos</div>
+        <div class="chips"><span class="chip on">All</span><span class="chip">Likeness</span><span class="chip">Character</span><span class="chip">Footage</span><span class="chip">Script</span><span class="chip">Music</span><span class="chip">Contest packs</span></div>
+        <div class="chips"><span class="chip">Use: AIC contest</span><span class="chip">Single project</span><span class="chip">Rev-share</span></div>
+        <div class="cards3">
+          <div class="ipc"><div class="th"><i class="ct">Contest · Nov</i></div><div class="tx"><b>AIC Nov theme pack</b><span>Licensor A · 12 stills, 3 clips</span><em>Free with entry</em></div></div>
+          <div class="ipc"><div class="th"><i>Likeness</i></div><div class="tx"><b>Artist face &amp; voice</b><span>Artist · owner-approved</span><em>From HK$ —</em></div></div>
+          <div class="ipc"><div class="th"><i>Character</i></div><div class="tx"><b>Film character</b><span>Studio · non-exclusive</span><em>From HK$ —</em></div></div>
+          <div class="ipc"><div class="th"><i>Footage</i></div><div class="tx"><b>Film stills set</b><span>Licensor B</span><em>From HK$ —</em></div></div>
+          <div class="ipc"><div class="th"><i>Music</i></div><div class="tx"><b>Theme melody</b><span>Composer</span><em>Rev-share</em></div></div>
+          <div class="ipc"><div class="th"><i>Script</i></div><div class="tx"><b>Short-film script</b><span>Writer</span><em>From HK$ —</em></div></div>
+        </div>
+      </div>
+      <div class="cap"><b>A · Browse.</b> Filter by IP type and permitted use. Contest packs sit beside open rentals. Login required to open a card (public browse later).</div>
+    </div>
+
+    <!-- B: detail -->
+    <div class="frame">
+      <div class="bar"><span class="dot"></span><span class="dot"></span>IP detail<span class="url">ztor.com/ip/film-character</span></div>
+      <div class="body">
+        <div class="hero"><b>Film character · Studio X</b></div>
+        <div class="row"><span class="k">Included</span><span class="v">Character sheet · 12 stills · 3 clips · usage guide</span></div>
+        <div class="row"><span class="k">Allowed</span><span class="v">AI video, short film, social clips</span></div>
+        <div class="row"><span class="k">Not allowed</span><span class="v">Political · adult · resale of assets</span></div>
+        <div class="row"><span class="k">Exclusivity</span><span class="v">Non-exclusive · max 20 concurrent</span></div>
+        <div class="row"><span class="k">Credit</span><span class="v">Required · "Licensed via Ztor"</span></div>
+        <h3 style="margin:10px 0 4px;font-size:12.5px">Licence</h3>
+        <div class="lic sel"><span class="r"></span><span class="t">Contest use <small>AIC Nov entrants · valid to Nov 30</small></span><span class="p">Free</span></div>
+        <div class="lic"><span class="r"></span><span class="t">Single project <small>One video · 90 days · publish anywhere</small></span><span class="p">HK$ —</span></div>
+        <div class="lic"><span class="r"></span><span class="t">Revenue share <small>Publish on Ztor · % of project net</small></span><span class="p">— %</span></div>
+        <div class="btn">Request licence</div>
+        <div class="note">Owner approves each request (consent gate). Status: Pending → Approved → pack unlocked.</div>
+      </div>
+      <div class="cap"><b>B · IP detail.</b> What is in the pack, what you may do, and the licence options. Prices shown; whether the rev-share % is shown is open.</div>
+    </div>
+
+    <!-- C: my licences -->
+    <div class="frame">
+      <div class="bar"><span class="dot"></span><span class="dot"></span>My licences<span class="url">ztor.com/account/ip</span></div>
+      <div class="body">
+        <div class="wf-h">My licences</div>
+        <table class="wf">
+          <thead><tr><th>IP</th><th>Licence</th><th>Status</th><th>Expires</th></tr></thead>
+          <tbody>
+            <tr><td>AIC Nov theme pack</td><td>Contest</td><td><span class="st ok">Approved</span></td><td>Nov 30</td></tr>
+            <tr><td>Film character</td><td>Single project</td><td><span class="st pend">Pending owner</span></td><td>—</td></tr>
+            <tr><td>Theme melody</td><td>Rev-share</td><td><span class="st ok">Approved</span></td><td>Rolling</td></tr>
+            <tr><td>Film stills set</td><td>Single project</td><td><span class="st exp">Expired</span></td><td>Sep 12</td></tr>
+          </tbody>
+        </table>
+        <div class="btn ghost">Download pack</div>
+        <div class="btn ghost">Publish on Ztor with this licence</div>
+        <div class="note">Approved licences unlock the pack download and attach to the project when published on Ztor.</div>
+      </div>
+      <div class="cap"><b>C · My licences.</b> One place for status, expiry, pack download and the hand-off into publishing.</div>
+    </div>
+
+    <!-- D: registry form (internal) -->
+    <div class="frame">
+      <div class="bar"><span class="dot"></span><span class="dot"></span>Back office · IP Bank · Add IP<span class="url">internal</span></div>
+      <div class="body">
+        <div class="field">
+          <span class="k">IP name</span><span class="in sel">Film character</span>
+          <span class="k">Type</span><span class="in sel">Character ▾</span>
+          <span class="k">Owner</span><span class="in sel">Studio X (temp account) ▾</span>
+          <span class="k">Consent</span><span class="in sel">licence-agreement.pdf · signed</span>
+          <span class="k">Asset pack</span><span class="in sel">pack-v1.zip · 48 MB</span>
+          <span class="k">Allowed uses</span><span class="in"><span class="cb on"></span>AI video <span class="cb on"></span>Short film <span class="cb on"></span>Social <span class="cb"></span>Commercial ads</span>
+          <span class="k">Licence options</span><span class="in"><span class="cb on"></span>Contest (free) <span class="cb on"></span>Single project HK$ — <span class="cb"></span>Rev-share — %</span>
+          <span class="k">Payout model</span><span class="in sel">Flat fee · MG · Net rev-share ≤ 50% ▾</span>
+          <span class="k">Concurrent cap</span><span class="in sel">20</span>
+          <span class="k">Visibility</span><span class="in sel">Contest only · Marketplace · Public ▾</span>
+        </div>
+        <div class="btn">Save &amp; list</div>
+      </div>
+      <div class="cap"><b>D · Registry (Layer 1).</b> Existing IP Bank entry plus the marketplace fields. Ops fills it; no owner-facing UI yet.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Phasing -->
+<section>
+  <div class="eyebrow">5 · Phasing</div>
+  <h2>Start with what ops already does by hand, on a page</h2>
+  <div class="tbl">
+    <table class="ph">
+      <thead><tr><th>Phase</th><th>What ships</th><th>Build</th><th>Needs first</th></tr></thead>
+      <tbody>
+        <tr class="now"><td class="p">P0 · Seed<small>weeks</small></td><td>Ops/dev register 5–10 IPs in IP Bank BO with asset-pack links and licence terms</td><td>New fields only</td><td>Legal clearance per IP</td></tr>
+        <tr class="now"><td class="p">P1 · Marketplace lite</td><td>Browse + detail + request. Ops approves and sends the pack link (what AIC BO does today). Contest packs are the first listings</td><td>2–3 pages, no payment</td><td>P0 · positioning call</td></tr>
+        <tr><td class="p">P2 · Transact</td><td>Flat-fee checkout, licence ledger with expiry, owner payout through the three IP Bank payout models, earnings in the IP Bank report</td><td>Payment + ledger</td><td>P1 traction · pricing shape</td></tr>
+        <tr><td class="p">P3 · Scale</td><td>Owner self-serve add-IP, public iStock-style browse, asset delivery into AI tools</td><td>Owner UI + public site</td><td>Inventory count</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 6. Decisions -->
+<section class="dec">
+  <div class="eyebrow">6 · What we need from biz + content</div>
+  <h2>Seven calls to make or park</h2>
+  <div class="card"><div><h3>Positioning and first audience</h3><p>Tool (A) or suite (B)? First buyers: AIC contest entrants, or AI creators outside Ztor?</p><div class="for">Biz · L</div></div></div>
+  <div class="card"><div><h3>Seed inventory</h3><p>Which 5–10 IPs can we legally list on day one, and from whom: HK's offline deals, the celebrity-licence company, licensor stills?</p><div class="for">Content HK/TW · legal</div></div></div>
+  <div class="card"><div><h3>Contest packs as the first listing type</h3><p>OK with the content team? Replaces the AIC BO share link, or sits beside it?</p><div class="for">Content · Agnes / Cheryl</div></div></div>
+  <div class="card"><div><h3>Home</h3><p>Ztor main site with creators as Ztor users (Jeff, Nov 1), or inside Creator Studio (ruling of Jul 23)?</p><div class="for">L · Jeff</div></div></div>
+  <div class="card"><div><h3>Pricing shape for P1</h3><p>Contest use free with entry; single project flat fee; rev-share later? Show the rental fee and hide the rev-share %?</p><div class="for">Biz · Susan</div></div></div>
+  <div class="card"><div><h3>Public browse before login</h3><p>Yes or no, and at what inventory count?</p><div class="for">Biz</div></div></div>
+  <div class="card"><div><h3>Priority</h3><p>Stays last after Auction, or does P1-lite move up since it is mostly ops plus two or three pages?</p><div class="for">Jeff · dev leads</div></div></div>
+</section>
+
+<footer>
+  Sources: IT regular meeting 2026-10-26 (Notion) · IT regular meeting 2026-09-21 · L on WhatsApp 2026-11-01 · IP Bank ADRs Jun 8, Jul 15, Jul 22, Jul 23, Jul 24, Aug 17, Sep 21 · Follow the Money deck.<br>
+  Not covered here: payout math and settlement (P2), owner self-serve (P3). Solution-architect review runs after the positioning call.<br>
+  Visual system: Ztor Creator Studio dark/gold, inherited from ztor-ip-bank-backoffice-wireframe.html.
+</footer>
+
+</div>
+</body>
+</html>
