@@ -128,6 +128,16 @@
   .cb{display:inline-block;width:10px;height:10px;border:1px solid var(--line2);border-radius:2px;margin-right:4px;vertical-align:-1px}
   .cb.on{background:var(--gold);border-color:var(--gold)}
 
+  /* flowchart */
+  .flow{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:10px 6px 4px}
+  .flow svg{display:block;min-width:1100px;width:100%;height:auto;color:var(--txt)}
+  .flow figcaption{font-size:12px;color:var(--muted);padding:8px 10px 6px}
+  .flow figcaption b{color:var(--txt)}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--muted);margin-top:8px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{display:inline-block;width:22px;height:0;border-top:2px solid var(--txt)}
+  .legend i.gold{border-color:var(--gold)} .legend i.dash{border-top-style:dashed}
+
   /* phasing table */
   .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
   table.ph{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
@@ -280,9 +290,62 @@
   <div class="arrowrow">Rental flow: <b>Owner registers</b> <span class="ar">→</span> <b>Creator finds &amp; requests</b> <span class="ar">→</span> <b>Owner / ops approves</b> <span class="ar">→</span> <b>Pack delivered, licence logged</b> <span class="ar">→</span> <b>Creator publishes</b> <span class="ar">→</span> <b>Owner paid via IP Bank payout model</b></div>
 </section>
 
-<!-- 4. Wireframes -->
+<!-- 4. End-to-end flow -->
 <section>
-  <div class="eyebrow">4 · Wireframe · Layer 2 on the Ztor site, plus the internal registry form</div>
+  <div class="eyebrow">4 · End-to-end flow</div>
+  <h2>From a signed licence to the owner getting paid</h2>
+  <p class="lead">One rental, start to finish, across the four parties. The gold hop is the consent gate; dashed steps are manual in P1 and automated in P2.</p>
+  <figure class="flow" style="margin:0">
+    <svg viewBox="0 0 1290 470" role="img" aria-label="End-to-end IP Marketplace flow across four lanes: owner registers and approves, ops lists and delivers, creator requests and publishes, platform logs the licence and pays the owner">
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="ah-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--gold)"/></marker></defs>
+    <rect x="0" y="20" width="1290" height="110" fill="var(--panel)" opacity=".6"/>
+    <line x1="0" y1="20" x2="1290" y2="20" stroke="currentColor" opacity=".15"/>
+    <text x="12" y="36" font-size="10" letter-spacing="1.2" fill="var(--faint)">IP OWNER / LICENSOR</text>
+    <rect x="0" y="130" width="1290" height="110" fill="var(--bg)" opacity=".6"/>
+    <line x1="0" y1="130" x2="1290" y2="130" stroke="currentColor" opacity=".15"/>
+    <text x="12" y="146" font-size="10" letter-spacing="1.2" fill="var(--faint)">OPS · BACK OFFICE</text>
+    <rect x="0" y="240" width="1290" height="110" fill="var(--panel)" opacity=".6"/>
+    <line x1="0" y1="240" x2="1290" y2="240" stroke="currentColor" opacity=".15"/>
+    <text x="12" y="256" font-size="10" letter-spacing="1.2" fill="var(--faint)">CREATOR · ZTOR USER</text>
+    <rect x="0" y="350" width="1290" height="110" fill="var(--bg)" opacity=".6"/>
+    <line x1="0" y1="350" x2="1290" y2="350" stroke="currentColor" opacity=".15"/>
+    <text x="12" y="366" font-size="10" letter-spacing="1.2" fill="var(--faint)">ZTOR PLATFORM</text>
+    <line x1="0" y1="460" x2="1290" y2="460" stroke="currentColor" opacity=".15"/>
+    <rect x="84" y="44" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="150" y="61" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Sign licence</text><text x="150" y="75" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">consent on file</text><text x="150" y="89" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">deliver asset pack</text>
+    <rect x="234" y="154" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="300" y="171" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Register IP</text><text x="300" y="185" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">IP Bank BO: type, uses,</text><text x="300" y="199" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">licence options, pack</text>
+    <rect x="234" y="374" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="300" y="391" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Listing live</text><text x="300" y="405" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">on the Marketplace</text><text x="300" y="419" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">(visibility rule)</text>
+    <rect x="384" y="264" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="450" y="281" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Sign up / log in</text><text x="450" y="295" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">browse, open</text><text x="450" y="309" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">IP detail</text>
+    <rect x="534" y="264" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="600" y="281" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Pick licence</text><text x="600" y="295" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">contest · project ·</text><text x="600" y="309" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">rev-share → request</text>
+    <rect x="534" y="44" width="132" height="62" rx="7" fill="var(--gold-d)" stroke="var(--gold)" stroke-width="1.2"/><text x="600" y="61" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="var(--gold)">Approve / reject</text><text x="600" y="75" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">consent gate</text><text x="600" y="89" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">(or ops, on a standing rule)</text>
+    <rect x="684" y="374" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="750" y="391" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Licence logged</text><text x="750" y="405" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">term · concurrent cap ·</text><text x="750" y="419" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">expiry</text>
+    <rect x="834" y="154" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 4"/><text x="900" y="171" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">P1: ops emails</text><text x="900" y="185" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">the pack link</text><text x="900" y="199" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">(manual until P2)</text>
+    <rect x="834" y="264" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="900" y="281" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Download pack</text><text x="900" y="295" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">create with</text><text x="900" y="309" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">AI tools</text>
+    <rect x="984" y="264" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="1050" y="281" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Enter AIC /</text><text x="1050" y="295" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">publish on Ztor</text><text x="1050" y="309" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">(or elsewhere, per licence)</text>
+    <rect x="984" y="374" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="1050" y="391" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Revenue in</text><text x="1050" y="405" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">PPV · prize · ads</text><text x="1050" y="419" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">→ waterfall, platform fee</text>
+    <rect x="1134" y="44" width="132" height="62" rx="7" fill="var(--panel2)" stroke="currentColor" stroke-width="1.2"/><text x="1200" y="61" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="currentColor">Owner paid</text><text x="1200" y="75" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">flat · MG · net rev-share</text><text x="1200" y="89" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--muted)">IP Bank report → wallet</text>
+    <path d="M150 106 V185 H232" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/><text x="160" y="150" font-size="10.5" fill="var(--muted)" text-anchor="start">pack + terms</text>
+    <path d="M300 216 V372" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/><text x="310" y="300" font-size="10.5" fill="var(--muted)" text-anchor="start">listing published</text>
+    <path d="M366 405 H450 V328" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/><text x="376" y="398" font-size="10.5" fill="var(--muted)" text-anchor="start">sees listing</text>
+    <path d="M516 295 H532" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/>
+    <path d="M600 264 V108" fill="none" stroke="var(--gold)" stroke-width="1.4" marker-end="url(#ah-gold)"/><text x="608" y="200" font-size="10.5" fill="var(--gold)" text-anchor="start">request</text>
+    <path d="M666 75 H750 V372" fill="none" stroke="var(--gold)" stroke-width="1.4" marker-end="url(#ah-gold)"/><text x="690" y="66" font-size="10.5" fill="var(--gold)" text-anchor="start">approved</text>
+    <path d="M816 405 H900 V328" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/><text x="825" y="398" font-size="10.5" fill="var(--muted)" text-anchor="start">unlocks pack (P2)</text>
+    <path d="M666 90 H900 V152" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ah)"/><text x="790" y="104" font-size="10.5" fill="var(--muted)" text-anchor="middle">approved (P1)</text>
+    <path d="M900 218 V262" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ah)"/>
+    <path d="M966 295 H982" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/>
+    <path d="M1050 328 V372" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/><text x="1058" y="355" font-size="10.5" fill="var(--muted)" text-anchor="start">views / sales</text>
+    <path d="M1116 405 H1200 V108" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/><text x="1130" y="398" font-size="10.5" fill="var(--muted)" text-anchor="start">payout per payout model</text>
+    <text x="600" y="128" font-size="10" fill="var(--faint)" text-anchor="middle">reject → creator notified, no pack</text>
+    <text x="750" y="448" font-size="10" fill="var(--faint)" text-anchor="middle">expiry → licence ends, renew or stop</text>
+    </svg>
+    <figcaption><b>Read left to right.</b> Ops lists what the owner has cleared; the creator requests a licence; the owner (or ops on a standing rule) approves; the platform logs the licence and unlocks the pack; the creator publishes; revenue runs through the waterfall and the owner is paid through the payout model chosen at registration.</figcaption>
+  </figure>
+  <div class="legend"><span><i class="gold"></i>consent gate (owner pre-approval)</span><span><i class="dash"></i>P1 manual step, automated in P2</span><span><i></i>every phase</span></div>
+</section>
+
+<!-- 5. Wireframes -->
+<section>
+  <div class="eyebrow">5 · Wireframe · Layer 2 on the Ztor site, plus the internal registry form</div>
   <h2>Three creator screens and one ops form</h2>
   <p class="lead">Placeholder content. Prices and IP names are examples, not offers.</p>
   <div class="frames">
@@ -370,9 +433,9 @@
   </div>
 </section>
 
-<!-- 5. Phasing -->
+<!-- 6. Phasing -->
 <section>
-  <div class="eyebrow">5 · Phasing</div>
+  <div class="eyebrow">6 · Phasing</div>
   <h2>Start with what ops already does by hand, on a page</h2>
   <div class="tbl">
     <table class="ph">
@@ -387,9 +450,9 @@
   </div>
 </section>
 
-<!-- 6. Decisions -->
+<!-- 7. Decisions -->
 <section class="dec">
-  <div class="eyebrow">6 · What we need from biz + content</div>
+  <div class="eyebrow">7 · What we need from biz + content</div>
   <h2>Seven calls to make or park</h2>
   <div class="card"><div><h3>Positioning and first audience</h3><p>Tool (A) or suite (B)? First buyers: AIC contest entrants, or AI creators outside Ztor?</p><div class="for">Biz · L</div></div></div>
   <div class="card"><div><h3>Seed inventory</h3><p>Which 5–10 IPs can we legally list on day one, and from whom: HK's offline deals, the celebrity-licence company, licensor stills?</p><div class="for">Content HK/TW · legal</div></div></div>
