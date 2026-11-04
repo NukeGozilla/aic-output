@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>LLOUD Fast Lane</title>
-<meta name="description" content="How LLOUD features get built on the Creator API and how they reach Ztor: the fast lane, the Ztor stream, the cycle, the fold-in, the features in the lane, the board.">
+<meta name="description" content="How LLOUD features get built on the Ztor platform behind a per-site switch and how ztor.com turns them on: the fast lane, the Ztor stream, the cycle, promotion, the features in the lane, the board.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
@@ -68,7 +68,7 @@
   .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
   .board{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px;margin:10px 0 12px}
   .col{border:1px solid var(--border);border-radius:10px;padding:8px 8px 10px;background:var(--muted);min-width:0}
-  .col b{display:block;font-size:11.5px;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .col b{display:block;font-size:11.5px;margin-bottom:6px;line-height:1.25;min-height:29px}
   .col .c{background:#fff;border:1px solid var(--border);border-radius:6px;height:14px;margin-top:4px}
   .col.m{border-color:var(--primary)} .col.m b{color:var(--brand-ink)}
   .col.end{border-style:dashed}
@@ -83,7 +83,7 @@
 <header class="hdr">
   <div class="brand">ZTOR · <b>LLOUD + Creator API</b></div>
   <h1>The fast lane: how LLOUD features get built, and how they reach Ztor</h1>
-  <p class="sub">A LLOUD feature is specced in one page, designed, built on the Creator API and shipped on lloud.club first. The business team then sees it working and decides how it folds into ztor.com.</p>
+  <p class="sub">A LLOUD feature is specced in one page, designed, built on the Ztor platform behind a per-site switch, and shipped on lloud.club first. Ztor has the feature from day one; ztor.com turns it on only after the business team reviews it and it goes through Creator Studio, the ztor.com front end and UAT.</p>
   <div class="meta">
     <span class="pill hot">Draft for discussion</span>
     <span class="pill">4 Nov 2026</span>
@@ -94,14 +94,14 @@
 
 <section>
   <div class="eyebrow">01 · In one line</div>
-  <p class="one">LLOUD is Ztor's fast lane. Product → design → build → live on LLOUD → shown to the business team → they decide: fold into Ztor, keep it LLOUD-only, or drop it.</p>
+  <p class="one">LLOUD is a white label of Ztor, and Ztor's fast lane. Every feature is a Ztor platform feature with a per-site switch: on for LLOUD, off for ztor.com. Product → design → build → live on LLOUD → shown to the business team → they decide when ztor.com turns it on. Built in the lane is beta grade; live on ztor.com still takes biz review, Creator Studio, ztor.com front end and UAT.</p>
 </section>
 
 <section>
   <div class="eyebrow">02 · The flow</div>
   <h2>Two lanes, one foundation</h2>
   <div class="flow">
-    <svg viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LLOUD fast lane flowchart: intake, spec, design, build, ship on LLOUD, show, fold-in decision into the Ztor stream, LLOUD-only or dropped; shared Ztor foundation underneath">
+    <svg viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LLOUD fast lane flowchart: intake, spec, design, build, ship on LLOUD, show, promotion decision into the Ztor stream, later or rework; shared Ztor foundation underneath">
       <defs>
         <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6E6E68"/></marker>
         <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22C55E"/></marker>
@@ -142,13 +142,13 @@
       <g>
         <rect class="bx" x="550" y="62" width="150" height="70" stroke="#71717A"/>
         <text class="t" x="625" y="92" text-anchor="middle">Build</text>
-        <text class="s" x="625" y="110" text-anchor="middle">dev team · LLOUD branch</text>
+        <text class="s" x="625" y="110" text-anchor="middle">dev team · per-site switch</text>
       </g>
       <path class="ar" d="M700,97 L718,97"/>
       <g>
         <rect class="bx" x="720" y="62" width="150" height="70" stroke="#71717A"/>
         <text class="t" x="795" y="92" text-anchor="middle">Ship on LLOUD</text>
-        <text class="s" x="795" y="110" text-anchor="middle">smoke test · beta grade</text>
+        <text class="s" x="795" y="110" text-anchor="middle">switch on · beta grade</text>
       </g>
       <path class="ar" d="M870,97 L888,97"/>
       <g>
@@ -160,23 +160,24 @@
       <!-- Decision -->
       <path class="ar" d="M965,132 L965,168"/>
       <polygon points="965,172 1012,217 965,262 918,217" fill="#FFFFFF" stroke="#22C55E" stroke-width="2"/>
-      <text class="t" x="965" y="221" text-anchor="middle">Fold in?</text>
+      <text class="t" x="965" y="213" text-anchor="middle">Turn on for</text>
+      <text class="t" x="965" y="230" text-anchor="middle">ztor.com?</text>
 
       <!-- Outcomes left of the diamond -->
       <path class="ar" d="M918,210 L852,196"/>
       <rect class="bx" x="700" y="174" width="150" height="44" stroke="#22C55E"/>
-      <text class="t" x="775" y="200" text-anchor="middle">LLOUD-only</text>
+      <text class="t" x="775" y="200" text-anchor="middle">Later · switch stays off</text>
       <path class="ar" d="M918,224 L852,248"/>
       <rect class="bx" x="700" y="228" width="150" height="44" stroke="#71717A" stroke-dasharray="5 4"/>
-      <text class="t" x="775" y="254" text-anchor="middle">Dropped</text>
+      <text class="t" x="775" y="254" text-anchor="middle">Conflict · rework</text>
 
       <!-- Fold arrow into lane 2 -->
       <path class="arg" d="M965,262 L965,300 L115,300 L115,348"/>
-      <text class="al" x="540" y="293" text-anchor="middle">fold into Ztor · same task, moved onto the Ztor boards</text>
+      <text class="al" x="540" y="293" text-anchor="middle">promote · same task moves onto the Ztor boards · biz review · Creator Studio · ztor.com front end · UAT</text>
 
       <!-- Lane 2: Ztor stream -->
       <rect class="lane" x="20" y="318" width="1060" height="124" rx="12"/>
-      <text class="lbl" x="1066" y="336" text-anchor="end">ZTOR STREAM · TODAY'S WORKFLOW</text>
+      <text class="lbl" x="1066" y="336" text-anchor="end">ZTOR STREAM · PROMOTION RUNS TODAY'S WORKFLOW</text>
 
       <g>
         <rect class="bx" x="40" y="350" width="150" height="70" stroke="#ffa33f"/>
@@ -216,7 +217,7 @@
 
       <!-- Foundation -->
       <rect x="20" y="460" width="1060" height="44" rx="10" fill="rgba(255,163,63,.14)" stroke="#ffa33f" stroke-width="1.5"/>
-      <text class="t" x="550" y="487" text-anchor="middle">On Ztor for both lanes: identity · orders · payment · loyalty ledger · Creator API</text>
+      <text class="t" x="550" y="487" text-anchor="middle">On Ztor for both lanes: identity · orders · payment · loyalty ledger · Creator API · every lane feature, behind a per-site switch</text>
     </svg>
   </div>
   <div class="legend">
@@ -235,56 +236,68 @@
     <tr><th></th><th>Ztor stream (today)</th><th>LLOUD fast lane</th></tr>
     <tr><td>Entry gate</td><td>BRD → biz alignment → design → dev</td><td class="hl">One-page spec, product + L approve → design → build. No biz / ops gate before build.</td></tr>
     <tr><td>Surfaces</td><td>ztor.com, Creator Studio, Bookyay BO, app</td><td class="hl">lloud.club + the Creator API + the LLOUD console</td></tr>
+    <tr><td>Where the feature lives</td><td>Ztor platform, on for every site</td><td class="hl">Ztor platform, behind a per-site switch: on for LLOUD, off for ztor.com</td></tr>
     <tr><td>Release</td><td>Release train (2.3 Nov 30 · 2.4 Jan 13 …), UAT per release</td><td class="hl">Two-week cycles, dev team sets the actual; December and January drops are fixed points</td></tr>
     <tr><td>Quality bar</td><td>UAT, zero-bug intent</td><td class="hl">Pitch / beta grade: acceptance checks + smoke test</td></tr>
-    <tr><td>Back office</td><td>Creator Studio</td><td class="hl">LLOUD console as interim admin; Creator Studio screens when a feature folds in</td></tr>
+    <tr><td>Back office</td><td>Creator Studio</td><td class="hl">LLOUD console holds the switch and settings for now; Creator Studio screens are built when a feature is promoted</td></tr>
     <tr><td>Business rules</td><td>Decided before build</td><td class="hl">Configurable; decided by seeing it work</td></tr>
-    <tr><td>Biz team comes in</td><td>Before build</td><td class="hl">After it ships on LLOUD (fold-in review)</td></tr>
+    <tr><td>Biz team comes in</td><td>Before build</td><td class="hl">After it ships on LLOUD (promotion review)</td></tr>
+    <tr><td>ztor.com sees it</td><td>At release</td><td class="hl">Not until promoted. Built in the lane is not production-ready for ztor.com.</td></tr>
     <tr><td>Code</td><td>Creator API main · Creator Studio · eShop dev team</td><td class="hl">LLOUD branch of the Creator API + the site</td></tr>
     <tr><td>Owner</td><td>Product team / biz team per feature</td><td class="hl">Product (lane owner) · L (sponsor)</td></tr>
   </table>
   </div>
-  <p class="lead" style="margin-top:10px">Both streams share one foundation: identity, orders, payment and the loyalty ledger live on Ztor. The fast lane adds Creator API capabilities and site features on top; it never forks the foundation.</p>
+  <p class="lead" style="margin-top:10px">Both streams share one foundation: identity, orders, payment and the loyalty ledger live on Ztor. The fast lane adds platform capabilities and site features on top; it never forks the foundation, and LLOUD never gets a feature Ztor does not have.</p>
 </section>
 
 <section>
   <div class="eyebrow">04 · The cycle</div>
-  <h2>Product → design → build → ship → show → fold</h2>
+  <h2>Product → design → build → ship → show → promote</h2>
   <div class="steps">
     <div class="step"><b>Intake</b><span>L or the product team: what LLOUD needs and why now</span><em>continuous</em></div>
-    <div class="step"><b>Spec · 1 page</b><span>Fan behaviour · creator / ops behaviour · Creator API change · config home · 3–6 acceptance checks · fold-in note</span><em>product + L approve · 1–2 days</em></div>
+    <div class="step"><b>Spec · 1 page</b><span>Fan behaviour · creator / ops behaviour · Creator API change · which values are per-site config · 3–6 acceptance checks · promotion note</span><em>product + L approve · 1–2 days</em></div>
     <div class="step"><b>Design</b><span>Design team for the fan side; Creator Studio dev team restyles the LLOUD console</span><em>2–4 days</em></div>
-    <div class="step"><b>Build</b><span>Dev team on the LLOUD branch: API change + site + console config</span><em>1–2 weeks</em></div>
+    <div class="step"><b>Build</b><span>Dev team on the LLOUD branch: platform change behind a per-site switch + site + console config</span><em>1–2 weeks</em></div>
     <div class="step"><b>Ship on LLOUD</b><span>Smoke test against the acceptance checks; live on lloud.club</span><em>1–2 days</em></div>
-    <div class="step"><b>Show</b><span>Demo to L, then a fold-in brief at the Tuesday Ztor 2.0 requirement alignment</span><em>next alignment</em></div>
+    <div class="step"><b>Show</b><span>Demo to L, then a promotion brief at the Tuesday Ztor 2.0 requirement alignment</span><em>next alignment</em></div>
   </div>
 </section>
 
 <section>
-  <div class="eyebrow">05 · Fold-in</div>
+  <div class="eyebrow">05 · Promotion</div>
   <h2>How a LLOUD feature reaches ztor.com</h2>
-  <div class="grid g2">
+  <p class="lead">Ztor has every feature; ztor.com shows it only when promoted. Nothing is dropped unless it conflicts with what Ztor is doing. Promotion is work, not a toggle.</p>
+  <div class="grid g3">
     <div class="card ops">
       <div class="tag">The biz team sees three things</div>
       <ul>
         <li><b>The feature working</b> on lloud.club, and what LLOUD learned from it</li>
         <li><b>What Ztor would need</b>: Creator Studio screens, ztor.com front end, any policy question</li>
-        <li><b>A recommendation</b> from product: adopt as is, adapt, LLOUD-only, or drop</li>
+        <li><b>A recommendation</b> from product: promote now, promote later, or rework</li>
+      </ul>
+    </div>
+    <div class="card dev">
+      <div class="tag">Promotion is four pieces of work</div>
+      <ul>
+        <li><b>Biz review</b>, with a BRD only if a business policy is involved</li>
+        <li><b>Creator Studio build</b> for the ops surface</li>
+        <li><b>ztor.com front end</b> integration</li>
+        <li><b>UAT</b> on the release train</li>
       </ul>
     </div>
     <div class="card site">
-      <div class="tag">Back office folds too</div>
+      <div class="tag">Back office moves too</div>
       <ul>
         <li>Today the LLOUD AI console holds the settings for fast-lane features (brand, sign-in, missions, vault, points rules)</li>
-        <li>As a feature folds into Ztor, its settings move into <b>Creator Studio</b>, the back office Ztor actually uses</li>
+        <li>When a feature is promoted, its switch and settings move into <b>Creator Studio</b>, the back office Ztor actually uses</li>
         <li>End state: the console keeps partner set-up only; everything creator-facing lives in Creator Studio</li>
       </ul>
     </div>
   </div>
   <div class="out" style="margin-top:12px">
-    <div class="card fan"><b>Fold into Ztor</b><span class="who">Same task moves onto the Feature Board and the Roadmap release. Ztor-stream work from here.</span></div>
-    <div class="card site"><b>LLOUD-only</b><span class="who">Stays a channel feature. Revisit when a second artist site wants it.</span></div>
-    <div class="card dev"><b>Drop</b><span class="who">Removed from LLOUD or left dormant.</span></div>
+    <div class="card fan"><b>Promote now</b><span class="who">Same task moves onto the Feature Board and the Roadmap release. Ztor-stream work from here.</span></div>
+    <div class="card site"><b>Later</b><span class="who">The switch stays off for ztor.com. Nothing is lost; the biz team schedules it.</span></div>
+    <div class="card dev"><b>Conflict · rework</b><span class="who">It clashes with a Ztor rule. Ztor's rule wins; LLOUD's variant is reworked as per-site config.</span></div>
   </div>
 </section>
 
@@ -302,7 +315,7 @@
         <li>Upgrades instant; every downgrade waits 14 days with a notice</li>
         <li>Points shown as dB on LLOUD, Ztor loyalty points underneath</li>
       </ul>
-      <div class="src">Paid membership is a money rule: product decides whether it runs in the lane or goes through the Ztor stream.</div>
+      <div class="src">Built as a per-site platform feature: L's levels and rules are LLOUD's config; Ztor's locked loyalty Phase 0 is untouched while the switch is off for ztor.com. Paid membership is a money rule: product decides before build.</div>
     </div>
     <div class="card site">
       <div class="tag">Auction · Front Row and above</div>
@@ -330,15 +343,15 @@
     <div class="col"><b>Design</b><div class="c"></div><div class="c"></div></div>
     <div class="col"><b>Build</b><div class="c"></div><div class="c"></div></div>
     <div class="col"><b>On LLOUD</b></div>
-    <div class="col"><b>Fold-in review</b></div>
-    <div class="col end"><b>Folded into Ztor</b></div>
-    <div class="col end"><b>LLOUD-only</b></div>
-    <div class="col end"><b>Dropped</b></div>
+    <div class="col"><b>Promote to ztor.com?</b></div>
+    <div class="col end"><b>On ztor.com</b></div>
+    <div class="col end"><b>Off for ztor.com</b></div>
+    <div class="col end"><b>Conflict · rework</b></div>
   </div>
   <div class="grid g3">
-    <div class="card ops"><div class="tag">One card = one feature</div><ul><li>It moves left to right as the work moves; the column is the status</li><li>The card holds the ask, the spec link, the acceptance checks and the fold-in note; detail stays in the spec</li><li>Assignee = whoever owns the current step</li></ul></div>
-    <div class="card dev"><div class="tag">Milestones and the end columns</div><ul><li>Milestones = the Roadmap phase tickets, shared with the Roadmap board, not copied</li><li>A card that folds into Ztor is added to the Feature Board and the Roadmap, then parked in Folded into Ztor</li><li>LLOUD-only and Dropped close the card here</li></ul></div>
-    <div class="card fan"><div class="tag">When we look at it</div><ul><li>Monday Ztor dev sync: walk the board with L and the dev team</li><li>Tuesday Ztor 2.0 requirement alignment: fold-in reviews with the biz team</li><li>No new meeting</li></ul></div>
+    <div class="card ops"><div class="tag">One card = one feature</div><ul><li>It moves left to right as the work moves; the column is the status</li><li>The card holds the ask, the spec link, the acceptance checks and the promotion note; detail stays in the spec</li><li>Assignee = whoever owns the current step</li></ul></div>
+    <div class="card dev"><div class="tag">Milestones and the end columns</div><ul><li>Milestones = the Roadmap phase tickets, shared with the Roadmap board, not copied</li><li>A promoted card is added to the Feature Board and the Roadmap, then parked in On ztor.com once live there</li><li>Off for ztor.com parks the card with the switch off; Conflict · rework sends it back to Spec as per-site config</li></ul></div>
+    <div class="card fan"><div class="tag">When we look at it</div><ul><li>Monday Ztor dev sync: walk the board with L and the dev team</li><li>Tuesday Ztor 2.0 requirement alignment: promotion reviews with the biz team</li><li>No new meeting</li></ul></div>
   </div>
 </section>
 
