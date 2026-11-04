@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>LLOUD Fast Lane</title>
-<meta name="description" content="How LLOUD features get built on the Creator API and how they reach Ztor: the fast lane, the Ztor stream, the cycle, the boundary, the fold-in.">
+<meta name="description" content="How LLOUD features get built on the Creator API and how they reach Ztor: the fast lane, the Ztor stream, the cycle, the fold-in, the features in the lane, the board.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@
   .card .tag{font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted-foreground);margin-bottom:4px}
   .card.ops{border-top:3px solid var(--ops)} .card.site{border-top:3px solid var(--site)} .card.dev{border-top:3px solid var(--dev)} .card.fan{border-top:3px solid var(--fan)}
   .card .who{font-size:12px;color:var(--muted-foreground)}
-  .card .t{font-size:11.5px;color:var(--brand-ink);margin-top:6px}
+  .card .src{font-size:11.5px;color:var(--brand-ink);margin-top:8px}
   table{width:100%;border-collapse:collapse;font-size:13px}
   th{text-align:left;color:var(--muted-foreground);font-weight:600;font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--border)}
   td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
@@ -53,19 +53,25 @@
   .flow svg{display:block;width:100%;min-width:720px;height:auto}
   .legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:var(--muted-foreground);margin:10px 2px 0}
   .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
-  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
-  .box{border:1px solid var(--border);border-radius:12px;padding:14px 16px}
-  .box.ok{border-color:#bfe8cc;background:#f3fbf5} .box.ask{border-color:#ffd9ab;background:#fff8ef}
-  .box h3{display:flex;align-items:center;gap:8px}
-  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
   .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;counter-reset:s}
   .step{border:1px solid var(--border);border-radius:12px;padding:12px 14px;position:relative}
   .step::before{counter-increment:s;content:counter(s);position:absolute;top:-10px;left:12px;background:var(--background);border:1px solid var(--border);border-radius:999px;font-size:11px;padding:1px 8px;color:var(--muted-foreground)}
   .step b{display:block;font-size:13.5px;margin:4px 0 2px}
   .step span{font-size:12px;color:var(--muted-foreground);display:block}
   .step em{font-style:normal;font-size:11.5px;color:var(--brand-ink);display:block;margin-top:6px}
-  .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+  .out{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
   .out .card b{display:block;margin-bottom:4px}
+  .lvl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 6px;font-size:12.5px}
+  .lvl span{border:1px solid var(--border);border-radius:999px;padding:3px 10px;background:var(--muted)}
+  .lvl span.card-l{border-color:var(--primary);background:var(--selected-surface);color:var(--brand-ink);font-weight:500}
+  .lvl i{color:var(--muted-foreground);font-style:normal}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .board{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px;margin:10px 0 12px}
+  .col{border:1px solid var(--border);border-radius:10px;padding:8px 8px 10px;background:var(--muted);min-width:0}
+  .col b{display:block;font-size:11.5px;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .col .c{background:#fff;border:1px solid var(--border);border-radius:6px;height:14px;margin-top:4px}
+  .col.m{border-color:var(--primary)} .col.m b{color:var(--brand-ink)}
+  .col.end{border-style:dashed}
   .foot{color:var(--muted-foreground);font-size:11.5px;border-top:1px solid var(--border);padding-top:12px;margin-top:36px}
   a{color:var(--brand-ink)}
   @media (max-width:600px){h1{font-size:22px} .one{font-size:15px}}
@@ -81,8 +87,8 @@
   <div class="meta">
     <span class="pill hot">Draft for discussion</span>
     <span class="pill">4 Nov 2026</span>
-    <span class="pill">Owner: Jeff</span>
-    <span class="pill">For: L · Eric · Dolly · Nan · biz team</span>
+    <span class="pill">Owner: Product</span>
+    <span class="pill">For: L · dev · design · product · biz team</span>
   </div>
 </header>
 
@@ -124,19 +130,19 @@
       <g>
         <rect class="bx" x="210" y="62" width="150" height="70" stroke="#ffa33f"/>
         <text class="t" x="285" y="92" text-anchor="middle">Spec · 1 page</text>
-        <text class="s" x="285" y="110" text-anchor="middle">Jeff + L OK</text>
+        <text class="s" x="285" y="110" text-anchor="middle">product + L OK</text>
       </g>
       <path class="ar" d="M360,97 L378,97"/>
       <g>
         <rect class="bx" x="380" y="62" width="150" height="70" stroke="#266DF0"/>
         <text class="t" x="455" y="92" text-anchor="middle">Design</text>
-        <text class="s" x="455" y="110" text-anchor="middle">Dolly</text>
+        <text class="s" x="455" y="110" text-anchor="middle">design team</text>
       </g>
       <path class="ar" d="M530,97 L548,97"/>
       <g>
         <rect class="bx" x="550" y="62" width="150" height="70" stroke="#71717A"/>
         <text class="t" x="625" y="92" text-anchor="middle">Build</text>
-        <text class="s" x="625" y="110" text-anchor="middle">Eric · LLOUD branch</text>
+        <text class="s" x="625" y="110" text-anchor="middle">dev team · LLOUD branch</text>
       </g>
       <path class="ar" d="M700,97 L718,97"/>
       <g>
@@ -166,7 +172,7 @@
 
       <!-- Fold arrow into lane 2 -->
       <path class="arg" d="M965,262 L965,300 L115,300 L115,348"/>
-      <text class="al" x="540" y="293" text-anchor="middle">fold into Ztor · multi-home the task</text>
+      <text class="al" x="540" y="293" text-anchor="middle">fold into Ztor · same task, moved onto the Ztor boards</text>
 
       <!-- Lane 2: Ztor stream -->
       <rect class="lane" x="20" y="318" width="1060" height="124" rx="12"/>
@@ -187,7 +193,7 @@
       <g>
         <rect class="bx" x="380" y="350" width="150" height="70" stroke="#22C55E"/>
         <text class="t" x="455" y="380" text-anchor="middle">Biz alignment</text>
-        <text class="s" x="455" y="398" text-anchor="middle">Agnes · Cheryl · Susan</text>
+        <text class="s" x="455" y="398" text-anchor="middle">biz team</text>
       </g>
       <path class="ar" d="M530,385 L548,385"/>
       <g>
@@ -227,15 +233,15 @@
   <div class="tablewrap">
   <table>
     <tr><th></th><th>Ztor stream (today)</th><th>LLOUD fast lane</th></tr>
-    <tr><td>Entry gate</td><td>BRD → biz alignment → design → dev</td><td class="hl">One-page spec, Jeff + L approve → design → build. No biz / ops gate before build.</td></tr>
+    <tr><td>Entry gate</td><td>BRD → biz alignment → design → dev</td><td class="hl">One-page spec, product + L approve → design → build. No biz / ops gate before build.</td></tr>
     <tr><td>Surfaces</td><td>ztor.com, Creator Studio, Bookyay BO, app</td><td class="hl">lloud.club + the Creator API + the LLOUD console</td></tr>
-    <tr><td>Release</td><td>Release train (2.3 Nov 30 · 2.4 Jan 13 …), UAT per release</td><td class="hl">Two-week cycles, Eric sets the actual; December and January drops are fixed points</td></tr>
+    <tr><td>Release</td><td>Release train (2.3 Nov 30 · 2.4 Jan 13 …), UAT per release</td><td class="hl">Two-week cycles, dev team sets the actual; December and January drops are fixed points</td></tr>
     <tr><td>Quality bar</td><td>UAT, zero-bug intent</td><td class="hl">Pitch / beta grade: acceptance checks + smoke test</td></tr>
-    <tr><td>Back office</td><td>Creator Studio</td><td class="hl">LLOUD console as interim admin; Creator Studio screens only when a feature folds in</td></tr>
+    <tr><td>Back office</td><td>Creator Studio</td><td class="hl">LLOUD console as interim admin; Creator Studio screens when a feature folds in</td></tr>
     <tr><td>Business rules</td><td>Decided before build</td><td class="hl">Configurable; decided by seeing it work</td></tr>
     <tr><td>Biz team comes in</td><td>Before build</td><td class="hl">After it ships on LLOUD (fold-in review)</td></tr>
     <tr><td>Code</td><td>Creator API main · Creator Studio · eShop dev team</td><td class="hl">LLOUD branch of the Creator API + the site</td></tr>
-    <tr><td>Owner</td><td>Nan / Jesse per feature</td><td class="hl">Jeff (lane owner) · L (sponsor)</td></tr>
+    <tr><td>Owner</td><td>Product team / biz team per feature</td><td class="hl">Product (lane owner) · L (sponsor)</td></tr>
   </table>
   </div>
   <p class="lead" style="margin-top:10px">Both streams share one foundation: identity, orders, payment and the loyalty ledger live on Ztor. The fast lane adds Creator API capabilities and site features on top; it never forks the foundation.</p>
@@ -245,127 +251,98 @@
   <div class="eyebrow">04 · The cycle</div>
   <h2>Product → design → build → ship → show → fold</h2>
   <div class="steps">
-    <div class="step"><b>Intake</b><span>L, Jeff or the product team: what LLOUD needs and why now</span><em>continuous</em></div>
-    <div class="step"><b>Spec · 1 page</b><span>Fan behaviour · creator / ops behaviour · Creator API change · config home · 3–6 acceptance checks · fold-in note</span><em>Jeff + L approve · 1–2 days</em></div>
-    <div class="step"><b>Design</b><span>Dolly for the fan side; 超偉 / 超敏 restyle the LLOUD console</span><em>2–4 days</em></div>
-    <div class="step"><b>Build</b><span>Eric's team on the LLOUD branch: API change + site + console config</span><em>1–2 weeks</em></div>
+    <div class="step"><b>Intake</b><span>L or the product team: what LLOUD needs and why now</span><em>continuous</em></div>
+    <div class="step"><b>Spec · 1 page</b><span>Fan behaviour · creator / ops behaviour · Creator API change · config home · 3–6 acceptance checks · fold-in note</span><em>product + L approve · 1–2 days</em></div>
+    <div class="step"><b>Design</b><span>Design team for the fan side; Creator Studio dev team restyles the LLOUD console</span><em>2–4 days</em></div>
+    <div class="step"><b>Build</b><span>Dev team on the LLOUD branch: API change + site + console config</span><em>1–2 weeks</em></div>
     <div class="step"><b>Ship on LLOUD</b><span>Smoke test against the acceptance checks; live on lloud.club</span><em>1–2 days</em></div>
     <div class="step"><b>Show</b><span>Demo to L, then a fold-in brief at the Tuesday Ztor 2.0 requirement alignment</span><em>next alignment</em></div>
   </div>
 </section>
 
 <section>
-  <div class="eyebrow">05 · The boundary</div>
-  <h2>What the lane may touch, and what needs a call first</h2>
-  <div class="two">
-    <div class="box ok">
-      <h3><span class="dot" style="background:#22C55E"></span>In the lane, no gate</h3>
-      <ul>
-        <li>New Creator API endpoints and fields, scoped to the channel</li>
-        <li>New per-channel settings (precedent: points board shared or separate)</li>
-        <li>LLOUD site features and LLOUD console screens</li>
-        <li>Loyalty, missions and vault rules for LLOUD's own board</li>
-      </ul>
-    </div>
-    <div class="box ask">
-      <h3><span class="dot" style="background:#ffa33f"></span>Jeff's call before Build</h3>
-      <ul>
-        <li>Anything a fan on ztor.com would see or feel</li>
-        <li>Money rules: payment methods, currency, fees, payout, void</li>
-        <li>Shared data: identity, order schema, the shared loyalty board, ztor.com's tier bands</li>
-        <li>Bookyay / ticketing integration</li>
-        <li>Ztor's locked Phase 0 loyalty rules (LLOUD gets its own model; Ztor keeps Phase 0)</li>
-      </ul>
-    </div>
-  </div>
-  <p class="lead" style="margin-top:10px">Whether a capability is switched off for ztor.com is decided per spec, not by a standing rule. New work is designed so the two sites can separate later (dev sync, 19 Oct).</p>
-</section>
-
-<section>
-  <div class="eyebrow">06 · Fold-in</div>
+  <div class="eyebrow">05 · Fold-in</div>
   <h2>How a LLOUD feature reaches ztor.com</h2>
   <div class="grid g2">
     <div class="card ops">
-      <div class="tag">The brief (one page, for the biz team)</div>
+      <div class="tag">The biz team sees three things</div>
       <ul>
-        <li><b>What it is</b>: 30-second demo on lloud.club</li>
-        <li><b>What LLOUD learned</b>: usage, L's feedback, what changed</li>
-        <li><b>What Ztor would need</b>: Creator Studio screens, ztor.com FE, any policy question</li>
-        <li><b>Options</b>: adopt as is · adapt · LLOUD-only · drop, with Jeff's recommendation</li>
-        <li><b>Cost</b>: Eric's sizing of the Ztor half (the API half is done)</li>
+        <li><b>The feature working</b> on lloud.club, and what LLOUD learned from it</li>
+        <li><b>What Ztor would need</b>: Creator Studio screens, ztor.com front end, any policy question</li>
+        <li><b>A recommendation</b> from product: adopt as is, adapt, LLOUD-only, or drop</li>
       </ul>
     </div>
-    <div class="out">
-      <div class="card fan"><b>Fold into Ztor</b><span class="who">Task multi-homed onto the Feature Board and the Roadmap release; BRD only if a business policy is involved. Ztor-stream work from here.</span></div>
-      <div class="card site"><b>LLOUD-only</b><span class="who">Stays a channel feature. Revisit when a second artist site wants it.</span></div>
-      <div class="card dev"><b>Drop</b><span class="who">Removed from LLOUD or left dormant.</span></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="eyebrow">07 · Example</div>
-  <h2>Membership card</h2>
-  <div class="grid g3">
-    <div class="card ops"><div class="tag">Why this one</div>Out of Ztor's loyalty MVP (30 Oct). Parked as "LLOUD Phase 1+" (3 Nov). L wants it.</div>
-    <div class="card site"><div class="tag">Spec + design</div>Card in the fan pass: tier, member number, join date, QR for offline check-in. Card art set in the console. One screen.</div>
-    <div class="card dev"><div class="tag">Build + ship</div>One read endpoint from existing loyalty + account data, one channel setting. December drop on lloud.club.</div>
-    <div class="card fan"><div class="tag">Show + fold</div>Brief at the next alignment. Likely questions: paid membership? one card per artist on ztor.com? If adopted: Creator Studio card settings under the 2.4 loyalty admin.</div>
-  </div>
-</section>
-
-<section>
-  <div class="eyebrow">08 · First cycle</div>
-  <h2>Design review of staging, then the December drop</h2>
-  <div class="grid g2">
     <div class="card site">
-      <div class="tag">Design (Dolly) · from Ilham's SSO Platforms brief, 2 Nov</div>
+      <div class="tag">Back office folds too</div>
       <ul>
-        <li>A · Fan sign-in pages: sign in, password, create account, reset, staff sign-in + 9 copy-only states</li>
-        <li>B · Partner console: landing, switcher, overview, branding, site &amp; URLs, sign-in buttons, security, credentials, integration, emails, email domain, team</li>
-        <li>C · Profile settings: account menu, security &amp; access, connected accounts, delete platform</li>
-        <li>D · Emails: one layout, 6 order emails × 3 languages, 2 Ztor system emails</li>
-        <li>zh-TW / zh-HK wording for the sign-in pages and system emails</li>
-        <li>LLOUD site staging review: the gap list for shop.ilhamfadhil.com</li>
+        <li>Today the LLOUD AI console holds the settings for fast-lane features (brand, sign-in, missions, vault, points rules)</li>
+        <li>As a feature folds into Ztor, its settings move into <b>Creator Studio</b>, the back office Ztor actually uses</li>
+        <li>End state: the console keeps partner set-up only; everything creator-facing lives in Creator Studio</li>
       </ul>
     </div>
-    <div class="card dev">
-      <div class="tag">Build (Eric) · LLOUD branch</div>
-      <ul>
-        <li>November version stays frozen in UAT</li>
-        <li>December optimisation drop: SKU field, "Limited" label, pickup wording, UAT fixes, L's requests</li>
-        <li>Config: tier names and bands, MEMBER −10% promo code, campaign / offline points codes</li>
-        <li>Next specs: social login providers (L to name), membership card</li>
-      </ul>
-    </div>
+  </div>
+  <div class="out" style="margin-top:12px">
+    <div class="card fan"><b>Fold into Ztor</b><span class="who">Same task moves onto the Feature Board and the Roadmap release. Ztor-stream work from here.</span></div>
+    <div class="card site"><b>LLOUD-only</b><span class="who">Stays a channel feature. Revisit when a second artist site wants it.</span></div>
+    <div class="card dev"><b>Drop</b><span class="who">Removed from LLOUD or left dormant.</span></div>
   </div>
 </section>
 
 <section>
-  <div class="eyebrow">09 · Who does what</div>
-  <div class="tablewrap">
-  <table>
-    <tr><th>Role</th><th>Who</th><th>In the lane</th></tr>
-    <tr><td>Lane owner</td><td>Jeff</td><td>Approves specs with L, runs fold-in reviews, tells the biz team</td></tr>
-    <tr><td>Sponsor</td><td>L</td><td>Asks, prioritises, approves specs, accepts what ships</td></tr>
-    <tr><td>Product team</td><td>Jeff + Nan</td><td>One-page specs; Nan keeps Ztor's loyalty Phase 0 locked</td></tr>
-    <tr><td>Design</td><td>Dolly · 超偉 / 超敏</td><td>Fan side · LLOUD console restyle</td></tr>
-    <tr><td>Build</td><td>Eric's team</td><td>AI developer + Indonesian dev, LLOUD branch</td></tr>
-    <tr><td>Smoke test</td><td>Eric's tester + Jeff</td><td>Acceptance checks from the spec</td></tr>
-    <tr><td>Fold-in decision</td><td>Agnes · Cheryl · Jesse (+ Susan when policy)</td><td>Fold / LLOUD-only / drop</td></tr>
-  </table>
+  <div class="eyebrow">06 · In the lane now</div>
+  <h2>Membership and auction</h2>
+  <p class="lead">Both come from L's spec "LLOUD membership &amp; auction mechanics" (3 Nov). Neither is in Ztor's current loyalty MVP, so they run in the fast lane first.</p>
+  <div class="cols">
+    <div class="card ops">
+      <div class="tag">Membership card · LLOUD Club</div>
+      <div class="lvl"><span>1 Fan</span><i>→</i><span>2 Ranked Fan</span><i>→</i><span class="card-l">3 Front Row · the card</span><i>→</i><span>4 Inner Circle</span></div>
+      <ul>
+        <li>Front Row = join LLOUD Club (paid), or win a competition, or reach the points bar</li>
+        <li>Inner Circle = Club member <b>and</b> the points bar; at most 1% of fans; money alone never gets there</li>
+        <li>Upgrades instant; every downgrade waits 14 days with a notice</li>
+        <li>Points shown as dB on LLOUD, Ztor loyalty points underneath</li>
+      </ul>
+      <div class="src">Paid membership is a money rule: product decides whether it runs in the lane or goes through the Ztor stream.</div>
+    </div>
+    <div class="card site">
+      <div class="tag">Auction · Front Row and above</div>
+      <ul>
+        <li>Lot announced at least 7 days ahead; opening price set per lot in Creator Studio</li>
+        <li>Round 1: 3-day public round, soft close, raise ladder</li>
+        <li>Cut: top 10 by each fan's own highest bid</li>
+        <li>Round 2: 15-minute sealed round; fans see only their own bid</li>
+        <li>Tie → tiebreak rounds until one highest; no sealed bids → random draw</li>
+        <li>Winner pays; a later level drop never blocks payment</li>
+      </ul>
+      <div class="src">Still open in L's spec: payment deadline and non-payment, a public round with zero bids, the membership price, the sealed-round floor.</div>
+    </div>
   </div>
+  <p class="lead" style="margin-top:10px">Next in: social login providers on the hosted sign-in, members-only pieces, presale window. The December and January drops carry what is ready.</p>
 </section>
 
 <section>
-  <div class="eyebrow">10 · Cadence and board</div>
-  <div class="grid g2">
-    <div class="card ops"><div class="tag">Meetings</div><ul><li>Monday Ztor dev sync (Eric, L): walk the board</li><li>Tuesday Ztor 2.0 requirement alignment: fold-in briefs</li><li>No new meeting</li></ul></div>
-    <div class="card dev"><div class="tag">Asana · LLOUD fast lane</div><ul><li>Sections are the lane steps: Milestones · Intake · Spec · Design · Build · On LLOUD · Fold-in review · Folded into Ztor · LLOUD-only · Dropped</li><li>Milestones = the Roadmap phase tickets, multi-homed, not copied</li><li>Ticket = scope, link, ask; detail lives in the spec</li></ul></div>
+  <div class="eyebrow">07 · The board</div>
+  <h2>How we use the Asana board "LLOUD fast lane"</h2>
+  <div class="board">
+    <div class="col m"><b>Milestones</b><div class="c"></div><div class="c"></div></div>
+    <div class="col"><b>Intake</b><div class="c"></div><div class="c"></div><div class="c"></div></div>
+    <div class="col"><b>Spec</b><div class="c"></div></div>
+    <div class="col"><b>Design</b><div class="c"></div><div class="c"></div></div>
+    <div class="col"><b>Build</b><div class="c"></div><div class="c"></div></div>
+    <div class="col"><b>On LLOUD</b></div>
+    <div class="col"><b>Fold-in review</b></div>
+    <div class="col end"><b>Folded into Ztor</b></div>
+    <div class="col end"><b>LLOUD-only</b></div>
+    <div class="col end"><b>Dropped</b></div>
+  </div>
+  <div class="grid g3">
+    <div class="card ops"><div class="tag">One card = one feature</div><ul><li>It moves left to right as the work moves; the column is the status</li><li>The card holds the ask, the spec link, the acceptance checks and the fold-in note; detail stays in the spec</li><li>Assignee = whoever owns the current step</li></ul></div>
+    <div class="card dev"><div class="tag">Milestones and the end columns</div><ul><li>Milestones = the Roadmap phase tickets, shared with the Roadmap board, not copied</li><li>A card that folds into Ztor is added to the Feature Board and the Roadmap, then parked in Folded into Ztor</li><li>LLOUD-only and Dropped close the card here</li></ul></div>
+    <div class="card fan"><div class="tag">When we look at it</div><ul><li>Monday Ztor dev sync: walk the board with L and the dev team</li><li>Tuesday Ztor 2.0 requirement alignment: fold-in reviews with the biz team</li><li>No new meeting</li></ul></div>
   </div>
 </section>
 
-<p class="foot">Visual system: Ztor Creator Studio light (design-systems / CS r2.2 tokens). Source plan: ztor-docs/outputs/architecture/lloud-fast-lane-plan-2026-11-04.md · flow source: outputs/diagrams/lloud-fast-lane-flow-2026-11-04.md. Durations are planning estimates; Eric sizes before any date goes out.</p>
+<p class="foot">Visual system: Ztor Creator Studio light (design-systems / CS r2.2 tokens). Source plan: ztor-docs/outputs/architecture/lloud-fast-lane-plan-2026-11-04.md · flow source: outputs/diagrams/lloud-fast-lane-flow-2026-11-04.md · membership and auction rules: L's spec, 3 Nov 2026. Durations are planning estimates; the dev team sizes before any date goes out.</p>
 </div>
 </body>
 </html>
