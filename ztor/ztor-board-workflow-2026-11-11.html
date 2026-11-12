@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ztor Board Workflow (2026-11-11)</title>
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --ink: #111827;
+    --ink-soft: #374151;
+    --muted: #6b7280;
+    --line: #e5e1d8;
+    --card: #ffffff;
+    --shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
+
+    --pre-dev: #6366f1;
+    --build:   #f97316;
+    --qa:      #0d9488;
+    --qa-dk:   #0f766e;
+    --uat:     #2563eb;
+    --biz:     #7c3aed;
+    --ship:    #059669;
+    --bug:     #dc2626;
+    --park:    #6b7280;
+    --ming:    #b45309;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+      "PingFang TC", "Microsoft JhengHei", sans-serif; }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 36px 28px 80px; }
+
+  /* Typography */
+  h1  { font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 6px; }
+  .sub { color: var(--ink-soft); font-size: 15px; margin-bottom: 36px; }
+  h2  { font-size: 19px; font-weight: 700; margin: 44px 0 14px;
+        padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+  h3  { font-size: 15px; font-weight: 700; color: var(--ink-soft); margin: 22px 0 10px; }
+  p   { color: var(--ink-soft); line-height: 1.6; margin: 0 0 12px; font-size: 14px; }
+  code { background: #f1efe9; padding: 1px 6px; border-radius: 4px; font-size: 12.5px; }
+
+  /* Legend */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px 20px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 18px; margin-bottom: 28px;
+    font-size: 12.5px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 7px; color: var(--ink-soft); }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+  .swatch.dashed { background: transparent;
+    border: 2px dashed var(--biz); width: 14px; height: 14px; }
+
+  /* ═══════════════════════════════════════════════
+     INTAKE MINI-DIAGRAM
+  ═══════════════════════════════════════════════ */
+  .intake-frame {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 18px 22px; margin-bottom: 20px;
+  }
+  .intake-row {
+    display: grid; grid-template-columns: minmax(220px, 1.1fr) 130px minmax(280px, 1.6fr);
+    gap: 14px; align-items: stretch;
+  }
+  .intake-source {
+    background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+    border: 1.5px solid #d1d5db; border-radius: 10px;
+    padding: 14px 16px; display: flex; flex-direction: column; justify-content: center;
+  }
+  .intake-source .lbl {
+    font-size: 9px; font-weight: 800; letter-spacing: .14em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .intake-source .name { font-size: 15px; font-weight: 800; color: var(--ink); margin-top: 4px; }
+  .intake-source .meta { font-size: 11.5px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  .intake-pivot {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--muted); padding: 0 4px;
+  }
+  .intake-pivot .arr { font-size: 26px; line-height: 1; color: var(--ink-soft); }
+  .intake-pivot .lbl {
+    font-size: 9.5px; font-weight: 800; letter-spacing: .12em;
+    color: var(--muted); text-transform: uppercase; margin-top: 4px; text-align: center;
+  }
+  .intake-dests { display: flex; flex-direction: column; gap: 8px; }
+  .intake-dest {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 10px; font-size: 13px;
+    border: 1.5px solid;
+  }
+  .intake-dest.bug-d  { background: #fef2f2; border-color: #fecaca; }
+  .intake-dest.req-d  { background: #eef2ff; border-color: #c7d2fe; }
+  .intake-dest .tag {
+    font-size: 9.5px; font-weight: 800; letter-spacing: .1em;
+    padding: 4px 9px; border-radius: 5px; flex-shrink: 0; white-space: nowrap;
+  }
+  .intake-dest.bug-d .tag { background: var(--bug); color: white; }
+  .intake-dest.req-d .tag { background: var(--pre-dev); color: white; }
+  .intake-dest .target { font-weight: 700; color: var(--ink); }
+  .intake-dest .into { color: var(--muted); font-size: 12px; }
+  .intake-dest .into strong { color: var(--ink-soft); }
+
+  @media (max-width: 760px) {
+    .intake-row { grid-template-columns: 1fr; }
+    .intake-pivot { flex-direction: row; gap: 8px; }
+  }
+
+  /* ═══════════════════════════════════════════════
+     SWIMLANE PIPELINE
+  ═══════════════════════════════════════════════ */
+  .pipeline-frame {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px 22px 20px;
+    margin-bottom: 28px;
+  }
+  .swimlane-wrap { overflow-x: auto; }
+  .swimlane-svg {
+    width: 100%;
+    min-width: 880px;
+    height: auto;
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC",
+      "PingFang TC", "Microsoft JhengHei", sans-serif;
+  }
+
+  /* Hard rule callout */
+  .hard-rule {
+    margin: 18px 0 0;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-radius: 12px; padding: 14px 22px;
+  }
+  .hard-rule .hr-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ming); margin-bottom: 5px;
+  }
+  .hard-rule .hr-rule {
+    font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .hard-rule .hr-detail { font-size: 12.5px; color: #4b5563; line-height: 1.6; }
+  .hard-rule .hr-detail strong { color: var(--ming); }
+  .hard-rule .hr-detail code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; border: 1px solid #f9d470;
+  }
+
+  /* Biz validation note */
+  .biz-note {
+    margin-top: 12px;
+    background: #faf5ff; border-left: 3px solid var(--biz);
+    border-radius: 6px; padding: 12px 16px;
+    font-size: 13px; color: var(--ink-soft); line-height: 1.6;
+  }
+  .biz-note strong { color: var(--biz); }
+  .biz-note code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; border: 1px solid #ddd6fe;
+  }
+
+  /* Parked states */
+  .parked-section {
+    margin-top: 12px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .parked-label {
+    font-size: 11px; font-weight: 800; color: var(--muted);
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+  .parked-pill {
+    background: #f3f4f6; border: 1.5px solid #d1d5db;
+    border-radius: 8px; padding: 6px 14px;
+    font-size: 12.5px; color: var(--park); font-weight: 600;
+  }
+  .parked-pill em {
+    font-style: normal; font-weight: 400; font-size: 11.5px;
+    margin-left: 6px; color: var(--muted);
+  }
+
+  /* Gate split */
+  .gate-split {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  .gate-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .gate-card.qa-c  { border-top: 4px solid var(--qa); }
+  .gate-card.uat-c { border-top: 4px solid var(--uat); }
+  .gate-card.biz-c { border-top: 4px solid var(--biz); }
+  .gate-card h4 { margin: 0 0 4px; font-size: 15px; font-weight: 700; }
+  .gate-card.qa-c  h4 { color: var(--qa-dk); }
+  .gate-card.uat-c h4 { color: var(--uat); }
+  .gate-card.biz-c h4 { color: var(--biz); }
+  .gate-card .who { font-size: 12px; color: var(--muted); margin-bottom: 10px; letter-spacing: .03em; }
+  .gate-card .question {
+    font-size: 13.5px; font-weight: 600; font-style: italic;
+    color: var(--ink); margin-bottom: 10px;
+    padding: 7px 12px; background: #fafafa; border-radius: 6px;
+  }
+  .gate-card dl { margin: 0; }
+  .gate-card dt {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--muted); margin-top: 10px;
+  }
+  .gate-card dd {
+    margin: 3px 0 0; font-size: 13px; color: var(--ink-soft); line-height: 1.5;
+  }
+
+  /* Simplified small-change flow */
+  .small-flow {
+    display: flex; align-items: center; gap: 4px; padding: 18px 20px;
+    flex-wrap: wrap; justify-content: center;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    margin-bottom: 14px;
+  }
+  .sf-pill {
+    padding: 10px 16px; border-radius: 22px;
+    color: white; font-size: 12.5px; font-weight: 700;
+    white-space: nowrap;
+  }
+  .sf-pill .num {
+    display: inline-block; opacity: .6; font-size: 11px; margin-right: 4px;
+  }
+  .sf-arrow { color: var(--ink-soft); font-size: 18px; padding: 0 2px; }
+
+  /* Bug submission flow — 4 sources → 1 destination */
+  .bugflow-frame {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 22px 24px; margin-bottom: 14px;
+  }
+  .bugflow-row {
+    display: grid; grid-template-columns: 1.2fr 130px 1.2fr;
+    gap: 16px; align-items: center;
+  }
+  .bugflow-sources { display: flex; flex-direction: column; gap: 8px; }
+  .bugflow-source {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 10px 14px; border-radius: 9px;
+    font-size: 13px; line-height: 1.3;
+    border: 1.5px solid;
+  }
+  .bugflow-source .who { font-weight: 700; color: var(--ink); flex-shrink: 0; }
+  .bugflow-source .where { font-size: 11.5px; color: var(--muted); }
+  .bugflow-source.qa-bf  { background: #f0fdfa; border-color: #99e6d8; }
+  .bugflow-source.uat-bf { background: #eff6ff; border-color: #93c5fd; }
+  .bugflow-source.biz-bf { background: #faf5ff; border-color: #c7d2fe; }
+  .bugflow-source.prod-bf { background: #fef2f2; border-color: #fecaca; }
+
+  .bugflow-pivot {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .bugflow-pivot .arr { font-size: 30px; color: var(--ink-soft); line-height: 1; }
+  .bugflow-pivot .lbl {
+    font-size: 9.5px; font-weight: 800; letter-spacing: .12em;
+    color: var(--muted); text-transform: uppercase; margin-top: 4px; text-align: center; line-height: 1.4;
+  }
+
+  .bugflow-dest {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border: 2px solid var(--bug); border-radius: 11px;
+    padding: 16px 18px; text-align: center;
+  }
+  .bugflow-dest .dest-name {
+    font-size: 16px; font-weight: 800; color: var(--bug); letter-spacing: .02em;
+  }
+  .bugflow-dest .dest-meta {
+    font-size: 12px; color: #7f1d1d; margin-top: 5px; line-height: 1.5;
+  }
+  .bugflow-dest .dest-meta code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 11.5px; border: 1px solid #fecaca; color: var(--bug);
+  }
+
+  /* Required fields list */
+  .bug-fields {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 18px 22px; margin-bottom: 14px;
+  }
+  .bug-fields .bf-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .14em;
+    color: var(--bug); text-transform: uppercase; margin-bottom: 12px;
+  }
+  .bug-fields ul { margin: 0; padding-left: 0; list-style: none; }
+  .bug-fields li {
+    font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 7px;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .bug-fields li::before {
+    content: "✓"; color: var(--ship); font-weight: 800; font-size: 13px; flex-shrink: 0;
+  }
+  .bug-fields li strong { color: var(--ink); }
+  .bug-fields li code {
+    background: #f3f4f6; padding: 1px 6px; border-radius: 4px; font-size: 12px;
+  }
+
+  /* Feature ticket side note */
+  .feature-side-note {
+    background: #fff7ed; border-left: 3px solid var(--build);
+    border-radius: 6px; padding: 12px 16px; margin-bottom: 14px;
+    font-size: 13px; color: var(--ink-soft); line-height: 1.6;
+  }
+  .feature-side-note .fsn-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .14em;
+    color: var(--build); text-transform: uppercase; margin-bottom: 4px;
+  }
+  .feature-side-note code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; border: 1px solid #fed7aa;
+  }
+  .found-in-callout {
+    background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+    border: 1px solid #c7d2fe; border-radius: 12px;
+    padding: 16px 22px;
+  }
+  .found-in-callout .fi-label {
+    font-size: 10px; font-weight: 800; letter-spacing: .14em;
+    text-transform: uppercase; color: #6366f1; margin-bottom: 4px;
+  }
+  .found-in-callout .fi-name {
+    font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 10px;
+  }
+  .found-in-callout .fi-name code {
+    background: #fff; padding: 2px 8px; border-radius: 5px;
+    font-size: 13.5px; border: 1px solid #c7d2fe;
+  }
+  .found-in-callout .fi-rows {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .fi-row {
+    font-size: 12px; font-weight: 700; padding: 4px 12px;
+    border-radius: 6px; letter-spacing: .04em;
+  }
+  .fi-row.qa-fi   { background: #d1f7f0; color: var(--qa-dk); border: 1px solid #99e6d8; }
+  .fi-row.uat-fi  { background: #dbeafe; color: var(--uat); border: 1px solid #93c5fd; }
+  .fi-row.biz-fi  { background: #ede9fe; color: var(--biz); border: 1px solid #c7d2fe; }
+  .fi-row.prod-fi { background: #fee2e2; color: var(--bug); border: 1px solid #fecaca; }
+  .found-in-callout .fi-meta { font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; }
+  .found-in-callout .fi-meta code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; border: 1px solid #c7d2fe;
+  }
+
+  /* Boards table */
+  table {
+    width: 100%; border-collapse: collapse;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 11px 14px; text-align: left;
+    border-bottom: 1px solid var(--line); vertical-align: top;
+  }
+  th { background: #faf8f3; font-weight: 700; font-size: 12.5px;
+       letter-spacing: .04em; color: var(--ink); }
+  tr:last-child td { border-bottom: none; }
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 6px;
+    font-size: 11px; font-weight: 600;
+  }
+  .pill.feat { background: #ede9fe; color: #6366f1; }
+  .pill.bug  { background: #fee2e2; color: var(--bug); }
+  .pill.ship-p { background: #d1fae5; color: var(--ship); }
+  .pill.ops-p { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+
+  /* Daily rhythm */
+  .rhythm { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .rhythm-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .rhythm-card.qa-r  { border-left: 4px solid var(--qa); }
+  .rhythm-card.uat-r { border-left: 4px solid var(--ming); }
+  .rhythm-card .when {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .rhythm-card.qa-r  .when { color: var(--qa-dk); }
+  .rhythm-card.uat-r .when { color: var(--ming); }
+  .rhythm-card .what { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+
+  /* Kill list */
+  .kill {
+    background: #fef2f2; border: 1px solid #fecaca;
+    border-radius: 10px; padding: 16px 20px;
+  }
+  .kill h4 { margin: 0 0 8px; color: var(--bug); font-size: 14px; }
+  .kill ul { margin: 0; padding-left: 20px; }
+  .kill li { font-size: 13.5px; color: #7f1d1d; line-height: 1.6; margin-bottom: 5px; }
+  .kill code {
+    background: #fff; padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; color: var(--ink); border: 1px solid #fecaca;
+  }
+
+  /* Footer */
+  .footer { margin-top: 44px; text-align: center; color: var(--muted); font-size: 12px; }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    .gate-split, .rhythm, .bugflow-row { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+
+  /* Cross-page nav (link to QA gate sub-workflow) */
+  .crosslink {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 16px;
+    font-size: 12.5px; font-weight: 600; color: var(--ink-soft);
+    text-decoration: none; margin: 0 0 24px;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .crosslink:hover { border-color: var(--qa); color: var(--qa-dk); background: #f0fdfa; }
+  .crosslink .arr { font-size: 14px; }
+  .crosslink .badge {
+    background: var(--qa); color: white; font-size: 9.5px; font-weight: 800;
+    letter-spacing: .12em; padding: 2px 7px; border-radius: 5px;
+    text-transform: uppercase;
+  }
+
+  /* Language tabs */
+  .lang-tabs {
+    display: flex; gap: 2px; margin: 0 0 24px;
+    border-bottom: 2px solid var(--line);
+  }
+  .lang-tab {
+    padding: 10px 22px; background: transparent; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    font-family: inherit; letter-spacing: .02em;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .lang-tab:hover { color: var(--ink-soft); }
+  .lang-tab.active { color: var(--pre-dev); border-bottom-color: var(--pre-dev); }
+  .lang-tab:focus-visible { outline: 2px solid var(--pre-dev); outline-offset: 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="lang-tabs" role="tablist">
+    <button class="lang-tab active" data-lang="en" role="tab">English</button>
+    <button class="lang-tab" data-lang="zh" role="tab">中文</button>
+  </div>
+  <div class="lang-content lang-en">
+  <h1>Ztor Board Workflow</h1>
+  <div class="sub">One ticket, several boards · two doors in · weekly grooming · 2026-11-11 · draft for team review</div>
+  <div class="legend"><div class="legend-item"><div class="swatch" style="background:var(--park)"></div>Intake</div><div class="legend-item"><div class="swatch" style="background:var(--pre-dev)"></div>Grooming (product team)</div><div class="legend-item"><div class="swatch" style="background:var(--biz)"></div>Business decision</div><div class="legend-item"><div class="swatch" style="background:var(--build)"></div>Product board</div><div class="legend-item"><div class="swatch" style="background:var(--uat)"></div>Release (Roadmap)</div><div class="legend-item"><div class="swatch" style="background:var(--ship)"></div>Live</div><div class="legend-item"><div class="swatch" style="background:var(--bug)"></div>Bug</div></div>
+
+  <h2>Two doors in — pick by who you are</h2>
+  <div class="intake-frame" style="margin-bottom:12px"><div class="intake-row">
+    <div class="intake-source"><div class="lbl">PRODUCT · BIZ · L · QA</div><div class="name">An idea, or something found in a meeting or in testing</div><div class="meta">One card, with a one-line why. No need to pick a product.</div></div>
+    <div class="intake-pivot"><div class="arr">→</div><div class="lbl">Drop it in</div></div>
+    <div class="intake-dests"><div class="intake-dest req-d"><span class="tag">IDEA</span><span><span class="target">Ztor. Master · Inbox</span> <span class="into">→ sorted at the weekly grooming</span></span></div></div>
+  </div></div>
+<div class="intake-frame" style="margin-bottom:12px"><div class="intake-row">
+    <div class="intake-source"><div class="lbl">OPERATIONS</div><div class="name">A change request on something already live</div><div class="meta">Use the request form on the board.</div></div>
+    <div class="intake-pivot"><div class="arr">→</div><div class="lbl">Submit to</div></div>
+    <div class="intake-dests"><div class="intake-dest req-d"><span class="tag">CHANGE</span><span><span class="target">Ztor. Change & Feature Requests · Items to discuss</span> <span class="into">→ triaged by Jeff</span></span></div></div>
+  </div></div>
+<div class="intake-frame" style="margin-bottom:12px"><div class="intake-row">
+    <div class="intake-source"><div class="lbl">QA · ANYONE</div><div class="name">A plain bug</div><div class="meta">Steps, expected, actual, screenshot.</div></div>
+    <div class="intake-pivot"><div class="arr">→</div><div class="lbl">File on</div></div>
+    <div class="intake-dests"><div class="intake-dest bug-d"><span class="tag">BUG</span><span><span class="target">Production or UAT bug board</span> <span class="into">→ dev fixes it; it does not pass through Master</span></span></div></div>
+  </div></div>
+
+  <h2>How a ticket travels — one ticket, never copied</h2>
+  <p>The same ticket is added to the next board. Its comments, status and history go with it.</p>
+  <div class="small-flow"><div class="sf-pill" style="background: var(--park);"><span class="num">1</span>Master · Inbox</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--pre-dev);"><span class="num">2</span>Weekly grooming</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">3</span>Product board · Backlog</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">4</span>Next up</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--uat);"><span class="num">5</span>Roadmap release column</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">6</span>Live ✓</div></div>
+  <div class="biz-note"><strong>Rule:</strong> nothing found in a meeting or in testing goes straight into a release column. It passes grooming first.</div>
+
+  <h2>Weekly grooming — every Inbox card leaves by one exit</h2>
+  <p>Product team, weekly, before the biz and ops calls. The Inbox is emptied every session. On Master, pick a board in the <code>Send to</code> field and the card moves there by itself.</p>
+  <table><thead><tr><th style="width:30%">It is…</th><th>Goes to</th><th style="width:14%">Who</th></tr></thead><tbody><tr><td><strong>A bug</strong></td><td>Production or UAT bug board</td><td>Jeff</td></tr>
+<tr><td><strong>Needed in the release now in build</strong></td><td>That release column on the Roadmap. If it changes scope or date, it goes to <code>To discuss</code> first.</td><td>Jeff + Eric</td></tr>
+<tr><td><strong>For a later release</strong></td><td>The product board · <code>Backlog</code></td><td>Jeff</td></tr>
+<tr><td><strong>A quick build first on lloud.club</strong></td><td>LLOUD fast lane · <code>Open with L</code></td><td>Jeff + L</td></tr>
+<tr><td><strong>Needs a business call</strong></td><td>Master · <code>To discuss</code></td><td>Jeff</td></tr>
+<tr><td><strong>No product board for its area</strong></td><td>Feature Board · <code>Ideas to discuss</code></td><td>Jeff</td></tr>
+<tr><td><strong>Not doing</strong></td><td>Closed, with a one-line reason as a comment</td><td>Jeff</td></tr></tbody></table>
+
+  <h2>Business decisions — on Master</h2>
+  <p>On any board, set Status to <code>Management Decision</code>. The ticket appears on Master · To discuss for the next biz call. The decision is written as a comment on the ticket.</p>
+  <div class="small-flow"><div class="sf-pill" style="background: var(--biz);"><span class="num">1</span>To discuss</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--biz);"><span class="num">2</span>Decision pending</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">3</span>Confirmed</div></div>
+  <div class="biz-note">A confirmed card leaves Master after 14 days. The ticket stays on its product board and release.</div>
+
+  <h2>Bugs</h2>
+  <div class="biz-note"><strong>Plain bugs skip Master.</strong> A bug is added to Master · Inbox only when it needs a call: "bug or by design?", a fix that changes behaviour, scope or a release date, or a "bug" that is really a missing feature. It stays on the bug board too.</div>
+
+  <h2>Each board does exactly one job</h2>
+  <table><thead><tr><th style="width:26%">Board</th><th style="width:38%">Its one job</th><th>Columns</th></tr></thead><tbody><tr><td><strong>Ztor. Master</strong></td><td><span class="pill feat">Meeting</span> Inbox, weekly grooming, business decisions</td><td>Inbox · To discuss · Decision pending · Confirmed</td></tr>
+<tr><td><strong>Ztor. Change &amp; Feature Requests</strong></td><td><span class="pill ops-p">Intake</span> Change requests from operations</td><td>Items to discuss · In progress · Backlog · Pending · Completed</td></tr>
+<tr><td><strong>[object Object]<br/><span style="color:var(--muted);font-size:12px;">eShop · Fans &amp; Loyalty · Crowdfunding · IP Bank · Creator Studio · Events</span></strong></td><td><span class="pill feat">What</span> Everything for one product, across releases</td><td>Backlog · Next up · On LLOUD first · In a release · Live · Reference</td></tr>
+<tr><td><strong>Ztor Roadmap - 2026</strong></td><td><span class="pill ship-p">When</span> One column per release</td><td>Triage · release columns · Decks</td></tr>
+<tr><td><strong>Past Product Roadmap</strong></td><td>Releases older than 3 months</td><td>One section per past release</td></tr>
+<tr><td><strong>LLOUD fast lane</strong></td><td>Quick builds on lloud.club before Ztor</td><td>Drop columns · Open with L</td></tr>
+<tr><td><strong>Ztor 2.0 — Feature Board</strong></td><td>Cross-product feature breakdown, and areas with no product board</td><td>Product-area sections</td></tr>
+<tr><td><strong>[object Object]<br/><span style="color:var(--muted);font-size:12px;">Production · UAT · Creator Studio UAT</span></strong></td><td><span class="pill bug">Bugs</span> Every bug, one row each</td><td>Unchanged</td></tr>
+<tr><td><strong>Ztor. Reference</strong></td><td>Decks, brand, plans, sitemaps, test scopes</td><td>Doc &amp; Info</td></tr></tbody></table>
+
+  <h2>What Asana does for you</h2>
+  <p>These rules are being set up now. Until a rule is live, the move is done by hand.</p>
+  <table><thead><tr><th style="width:50%">You do</th><th>Asana does</th></tr></thead><tbody><tr><td><strong>Submit the request form</strong></td><td>Card lands in Change &amp; Feature Requests · Items to discuss, assigned to Jeff</td></tr>
+<tr><td><strong>Pick a board in <code>Send to</code> (Master) or <code>Route to</code> (Change &amp; Feature Requests)</strong></td><td>Card is added to that board and leaves this one</td></tr>
+<tr><td><strong>Set Status to <code>Management Decision</code></strong></td><td>Card is added to Master · To discuss</td></tr>
+<tr><td><strong>Move a product-board card to <code>Next up</code></strong></td><td>Status becomes Requirement</td></tr>
+<tr><td><strong>Move a product-board card to <code>Live</code></strong></td><td>Status becomes Launched and the ticket is completed</td></tr>
+<tr><td><strong>Complete a ticket</strong></td><td>Card moves to the board's Done or Completed column</td></tr></tbody></table>
+
+  <h2>Weekly rhythm</h2>
+  <div class="rhythm"><div class="rhythm-card qa-r"><div class="when">Any time</div><div class="what">Drop ideas in <strong>Master · Inbox</strong>. Ops submits the request form. QA files bugs on the bug boards.</div></div><div class="rhythm-card qa-r"><div class="when">Weekly · product grooming</div><div class="what">Open Master. Empty the <strong>Inbox</strong> and Change &amp; Feature Requests · <strong>Items to discuss</strong>. Each card leaves by one exit.</div></div><div class="rhythm-card uat-r"><div class="when">Weekly · biz and ops calls</div><div class="what">Walk <strong>To discuss</strong> and <strong>Decision pending</strong> on Master. Write each decision as a comment and move the card to Confirmed.</div></div></div>
+  <p style="margin-top:12px">Day-to-day status of work in build is read from the Roadmap and the product boards, not from Master.</p>
+
+  <h2>Retired</h2>
+  <div class="kill"><h4>No longer used</h4><ul><li><strong>Ztor Management</strong> — archived. Its open cards are on Master.</li><li><strong>Core Standup</strong> — no longer a standup board. Renamed <strong>Ztor. Reference</strong>; it keeps the reference cards.</li><li><strong>Roadmap columns 1.17, 1.18, 1.19 and Archived</strong> — moved to Past Product Roadmap.</li></ul></div>
+
+  <div class="footer">Ztor · Board Workflow · 2026-11-11 · draft for team review</div>
+</div>
+  <div class="lang-content lang-zh" hidden>
+  <h1>Ztor 看板工作流程</h1>
+  <div class="sub">一張工單、多個看板 · 兩個入口 · 每週 grooming · 2026-11-11 · 給團隊審閱的草稿</div>
+  <div class="legend"><div class="legend-item"><div class="swatch" style="background:var(--park)"></div>入口</div><div class="legend-item"><div class="swatch" style="background:var(--pre-dev)"></div>Grooming(產品團隊)</div><div class="legend-item"><div class="swatch" style="background:var(--biz)"></div>業務決策</div><div class="legend-item"><div class="swatch" style="background:var(--build)"></div>產品看板</div><div class="legend-item"><div class="swatch" style="background:var(--uat)"></div>發版(Roadmap)</div><div class="legend-item"><div class="swatch" style="background:var(--ship)"></div>已上線</div><div class="legend-item"><div class="swatch" style="background:var(--bug)"></div>Bug</div></div>
+
+  <h2>兩個入口 — 依身分選擇</h2>
+  <div class="intake-frame" style="margin-bottom:12px"><div class="intake-row">
+    <div class="intake-source"><div class="lbl">產品 · 業務 · L · QA</div><div class="name">新想法,或在會議/測試中發現的事項</div><div class="meta">開一張卡片,寫一句原因。不需要選產品。</div></div>
+    <div class="intake-pivot"><div class="arr">→</div><div class="lbl">放進</div></div>
+    <div class="intake-dests"><div class="intake-dest req-d"><span class="tag">想法</span><span><span class="target">Ztor. Master · Inbox</span> <span class="into">→ 每週 grooming 時分類</span></span></div></div>
+  </div></div>
+<div class="intake-frame" style="margin-bottom:12px"><div class="intake-row">
+    <div class="intake-source"><div class="lbl">營運</div><div class="name">對已上線功能的變更需求</div><div class="meta">使用看板上的需求表單。</div></div>
+    <div class="intake-pivot"><div class="arr">→</div><div class="lbl">提交到</div></div>
+    <div class="intake-dests"><div class="intake-dest req-d"><span class="tag">變更</span><span><span class="target">Ztor. Change & Feature Requests · Items to discuss</span> <span class="into">→ 由 Jeff 分類</span></span></div></div>
+  </div></div>
+<div class="intake-frame" style="margin-bottom:12px"><div class="intake-row">
+    <div class="intake-source"><div class="lbl">QA · 任何人</div><div class="name">一般 bug</div><div class="meta">步驟、預期、實際、截圖。</div></div>
+    <div class="intake-pivot"><div class="arr">→</div><div class="lbl">提交到</div></div>
+    <div class="intake-dests"><div class="intake-dest bug-d"><span class="tag">BUG</span><span><span class="target">Production 或 UAT bug 看板</span> <span class="into">→ 開發直接修復,不經過 Master</span></span></div></div>
+  </div></div>
+
+  <h2>工單怎麼走 — 一張工單,不複製</h2>
+  <p>同一張工單會被加到下一個看板,留言、Status 和歷史紀錄都跟著走。</p>
+  <div class="small-flow"><div class="sf-pill" style="background: var(--park);"><span class="num">1</span>Master · Inbox</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--pre-dev);"><span class="num">2</span>每週 grooming</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">3</span>產品看板 · Backlog</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">4</span>Next up</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--uat);"><span class="num">5</span>Roadmap 發版欄</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">6</span>Live ✓</div></div>
+  <div class="biz-note"><strong>規則:</strong>會議或測試中發現的事項,不會直接進發版欄,一律先經過 grooming。</div>
+
+  <h2>每週 grooming — Inbox 每張卡片都從一個出口離開</h2>
+  <p>產品團隊每週一次,在業務與營運會議之前。每次都把 Inbox 清空。在 Master 上用 <code>Send to</code> 欄位選擇看板,卡片會自動移過去。</p>
+  <table><thead><tr><th style="width:30%">這是…</th><th>去哪裡</th><th style="width:14%">誰負責</th></tr></thead><tbody><tr><td><strong>Bug</strong></td><td>Production 或 UAT bug 看板</td><td>Jeff</td></tr>
+<tr><td><strong>必須進目前開發中的版本</strong></td><td>Roadmap 上該版本的欄位。若影響範圍或日期,先進 <code>To discuss</code>。</td><td>Jeff + Eric</td></tr>
+<tr><td><strong>留給之後的版本</strong></td><td>產品看板 · <code>Backlog</code></td><td>Jeff</td></tr>
+<tr><td><strong>先在 lloud.club 快速試做</strong></td><td>LLOUD fast lane · <code>Open with L</code></td><td>Jeff + L</td></tr>
+<tr><td><strong>需要業務決定</strong></td><td>Master · <code>To discuss</code></td><td>Jeff</td></tr>
+<tr><td><strong>所屬範圍沒有產品看板</strong></td><td>Feature Board · <code>Ideas to discuss</code></td><td>Jeff</td></tr>
+<tr><td><strong>不做</strong></td><td>關閉,並留一句原因</td><td>Jeff</td></tr></tbody></table>
+
+  <h2>業務決策 — 在 Master</h2>
+  <p>在任何看板把 Status 設為 <code>Management Decision</code>,工單就會出現在 Master · To discuss,等下一次業務會議。決定寫在工單留言裡。</p>
+  <div class="small-flow"><div class="sf-pill" style="background: var(--biz);"><span class="num">1</span>To discuss</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--biz);"><span class="num">2</span>Decision pending</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">3</span>Confirmed</div></div>
+  <div class="biz-note">Confirmed 的卡片 14 天後離開 Master,工單仍留在產品看板和發版欄。</div>
+
+  <h2>Bug</h2>
+  <div class="biz-note"><strong>一般 bug 不經過 Master。</strong>只有需要討論時才加到 Master · Inbox:「是 bug 還是設計如此?」、修復會改變行為、範圍或發版日期,或其實是缺少的功能。它同時仍留在 bug 看板。</div>
+
+  <h2>每個看板各司其職</h2>
+  <table><thead><tr><th style="width:26%">看板</th><th style="width:38%">唯一用途</th><th>欄位</th></tr></thead><tbody><tr><td><strong>Ztor. Master</strong></td><td><span class="pill feat">會議</span> Inbox、每週 grooming、業務決策</td><td>Inbox · To discuss · Decision pending · Confirmed</td></tr>
+<tr><td><strong>Ztor. Change &amp; Feature Requests</strong></td><td><span class="pill ops-p">入口</span> 營運提出的變更需求</td><td>Items to discuss · In progress · Backlog · Pending · Completed</td></tr>
+<tr><td><strong>[object Object]<br/><span style="color:var(--muted);font-size:12px;">eShop · Fans &amp; Loyalty · Crowdfunding · IP Bank · Creator Studio · Events</span></strong></td><td><span class="pill feat">做什麼</span> 單一產品跨版本的所有項目</td><td>Backlog · Next up · On LLOUD first · In a release · Live · Reference</td></tr>
+<tr><td><strong>Ztor Roadmap - 2026</strong></td><td><span class="pill ship-p">何時</span> 每個版本一欄</td><td>Triage · 各版本欄 · Decks</td></tr>
+<tr><td><strong>Past Product Roadmap</strong></td><td>超過 3 個月的舊版本</td><td>每個舊版本一個 section</td></tr>
+<tr><td><strong>LLOUD fast lane</strong></td><td>在進 Ztor 前先於 lloud.club 快速試做</td><td>Drop 欄 · Open with L</td></tr>
+<tr><td><strong>Ztor 2.0 — Feature Board</strong></td><td>跨產品功能拆解,以及沒有產品看板的範圍</td><td>依產品範圍分 section</td></tr>
+<tr><td><strong>[object Object]<br/><span style="color:var(--muted);font-size:12px;">Production · UAT · Creator Studio UAT</span></strong></td><td><span class="pill bug">Bug</span> 每個 bug 一筆</td><td>不變</td></tr>
+<tr><td><strong>Ztor. Reference</strong></td><td>簡報、品牌、計畫、sitemap、測試範圍</td><td>Doc &amp; Info</td></tr></tbody></table>
+
+  <h2>Asana 自動幫你做的事</h2>
+  <p>這些規則正在設定中。規則上線前,先手動移動。</p>
+  <table><thead><tr><th style="width:50%">你做</th><th>Asana 自動</th></tr></thead><tbody><tr><td><strong>提交需求表單</strong></td><td>卡片進入 Change &amp; Feature Requests · Items to discuss,指派給 Jeff</td></tr>
+<tr><td><strong>在 <code>Send to</code>(Master)或 <code>Route to</code>(Change &amp; Feature Requests)選擇看板</strong></td><td>卡片加到該看板並離開目前看板</td></tr>
+<tr><td><strong>把 Status 設為 <code>Management Decision</code></strong></td><td>卡片加到 Master · To discuss</td></tr>
+<tr><td><strong>把產品看板卡片移到 <code>Next up</code></strong></td><td>Status 變成 Requirement</td></tr>
+<tr><td><strong>把產品看板卡片移到 <code>Live</code></strong></td><td>Status 變成 Launched,工單標記完成</td></tr>
+<tr><td><strong>完成工單</strong></td><td>卡片移到看板的 Done 或 Completed 欄</td></tr></tbody></table>
+
+  <h2>每週節奏</h2>
+  <div class="rhythm"><div class="rhythm-card qa-r"><div class="when">隨時</div><div class="what">把想法放進 <strong>Master · Inbox</strong>。營運提交需求表單。QA 把 bug 提到 bug 看板。</div></div><div class="rhythm-card qa-r"><div class="when">每週 · 產品 grooming</div><div class="what">打開 Master,清空 <strong>Inbox</strong> 以及 Change &amp; Feature Requests · <strong>Items to discuss</strong>。每張卡片從一個出口離開。</div></div><div class="rhythm-card uat-r"><div class="when">每週 · 業務與營運會議</div><div class="what">逐一看 Master 的 <strong>To discuss</strong> 和 <strong>Decision pending</strong>。把決定寫在留言,再把卡片移到 Confirmed。</div></div></div>
+  <p style="margin-top:12px">開發中項目的日常狀態,請看 Roadmap 和產品看板,不是 Master。</p>
+
+  <h2>已停用</h2>
+  <div class="kill"><h4>不再使用</h4><ul><li><strong>Ztor Management</strong> — 已封存,未完成的卡片都在 Master。</li><li><strong>Core Standup</strong> — 不再作為 standup 看板,已改名為 <strong>Ztor. Reference</strong>,保留參考資料卡片。</li><li><strong>Roadmap 的 1.17、1.18、1.19 與 Archived 欄</strong> — 已移到 Past Product Roadmap。</li></ul></div>
+
+  <div class="footer">Ztor · 看板工作流程 · 2026-11-11 · 給團隊審閱的草稿</div>
+</div>
+</div>
+<script>
+  document.querySelectorAll('.lang-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      document.querySelectorAll('.lang-tab').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      document.querySelectorAll('.lang-content').forEach(c => {
+        c.hidden = !c.classList.contains('lang-' + lang);
+      });
+    });
+  });
+</script>
+</body>
+</html>
