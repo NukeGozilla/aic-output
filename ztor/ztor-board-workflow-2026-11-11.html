@@ -451,7 +451,7 @@
   </div>
   <div class="lang-content lang-en">
   <h1>Ztor Board Workflow</h1>
-  <div class="sub">One ticket, several boards · two doors in · weekly grooming · 2026-11-11 · draft for team review</div>
+  <div class="sub">One ticket, several boards · two doors in · weekly grooming · updated 2026-11-16 · draft for team review</div>
   <div class="legend"><div class="legend-item"><div class="swatch" style="background:var(--park)"></div>Intake</div><div class="legend-item"><div class="swatch" style="background:var(--pre-dev)"></div>Grooming (product team)</div><div class="legend-item"><div class="swatch" style="background:var(--biz)"></div>Business decision</div><div class="legend-item"><div class="swatch" style="background:var(--build)"></div>Product board</div><div class="legend-item"><div class="swatch" style="background:var(--uat)"></div>Release (Roadmap)</div><div class="legend-item"><div class="swatch" style="background:var(--ship)"></div>Live</div><div class="legend-item"><div class="swatch" style="background:var(--bug)"></div>Bug</div></div>
 
   <h2>Two doors in — pick by who you are</h2>
@@ -473,59 +473,60 @@
 
   <h2>How a ticket travels — one ticket, never copied</h2>
   <p>The same ticket is added to the next board. Its comments, status and history go with it.</p>
-  <div class="small-flow"><div class="sf-pill" style="background: var(--park);"><span class="num">1</span>Master · Inbox</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--pre-dev);"><span class="num">2</span>Weekly grooming</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">3</span>Product board · Backlog</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">4</span>Next up</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--uat);"><span class="num">5</span>Roadmap release column</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">6</span>Live ✓</div></div>
+  <div class="small-flow"><div class="sf-pill" style="background: var(--park);"><span class="num">1</span>Master · Inbox</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--pre-dev);"><span class="num">2</span>Weekly grooming</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">3</span>Product board · Inbox</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">4</span>Next up</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--uat);"><span class="num">5</span>Roadmap release column</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">6</span>Live ✓</div></div>
   <div class="biz-note"><strong>Rule:</strong> nothing found in a meeting or in testing goes straight into a release column. It passes grooming first.</div>
 
   <h2>Weekly grooming — every Inbox card leaves by one exit</h2>
   <p>Product team, weekly, before the biz and ops calls. The Inbox is emptied every session. On Master, pick a board in the <code>Send to</code> field and the card moves there by itself.</p>
   <table><thead><tr><th style="width:30%">It is…</th><th>Goes to</th><th style="width:14%">Who</th></tr></thead><tbody><tr><td><strong>A bug</strong></td><td>Production or UAT bug board</td><td>Jeff</td></tr>
-<tr><td><strong>Needed in the release now in build</strong></td><td>That release column on the Roadmap. If it changes scope or date, it goes to <code>To discuss</code> first.</td><td>Jeff + Eric</td></tr>
-<tr><td><strong>For a later release</strong></td><td>The product board · <code>Backlog</code></td><td>Jeff</td></tr>
+<tr><td><strong>Needed in the release now in build</strong></td><td>That release column on the Roadmap. If it changes scope or date, it goes to <code>Biz: to discuss</code> first.</td><td>Jeff + Eric</td></tr>
+<tr><td><strong>For a later release</strong></td><td>The product board · <code>Inbox</code>; its owner sorts it into Backlog or Next up</td><td>Jeff</td></tr>
 <tr><td><strong>A quick build first on lloud.club</strong></td><td>LLOUD fast lane · <code>Open with L</code></td><td>Jeff + L</td></tr>
-<tr><td><strong>Needs a business call</strong></td><td>Master · <code>To discuss</code></td><td>Jeff</td></tr>
-<tr><td><strong>No product board for its area</strong></td><td>Feature Board · <code>Ideas to discuss</code></td><td>Jeff</td></tr>
+<tr><td><strong>Needs a business call</strong></td><td>Master · <code>Biz: to discuss</code> (or <code>Internal: to discuss</code> for a product-team call)</td><td>Jeff</td></tr>
+<tr><td><strong>No product board for its area</strong></td><td>Ztor. Platform · <code>Inbox</code></td><td>Jeff</td></tr>
 <tr><td><strong>Not doing</strong></td><td>Closed, with a one-line reason as a comment</td><td>Jeff</td></tr></tbody></table>
 
   <h2>Business decisions — on Master</h2>
-  <p>On any board, set Status to <code>Management Decision</code>. The ticket appears on Master · To discuss for the next biz call. The decision is written as a comment on the ticket.</p>
-  <div class="small-flow"><div class="sf-pill" style="background: var(--biz);"><span class="num">1</span>To discuss</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--biz);"><span class="num">2</span>Decision pending</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">3</span>Confirmed</div></div>
-  <div class="biz-note">A confirmed card leaves Master after 14 days. The ticket stays on its product board and release.</div>
+  <p>On any board, set Status to <code>Management Decision</code>. The ticket appears on Master · Biz: to discuss for the next biz call. The decision is written as a comment on the ticket.</p>
+  <div class="small-flow"><div class="sf-pill" style="background: var(--biz);"><span class="num">1</span>Biz: to discuss</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--biz);"><span class="num">2</span>Biz: decision pending</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">3</span>Decided: brief the team</div></div>
+  <div class="biz-note">Product-team calls use <code>Internal: to discuss</code>. A decided card leaves Master once the team is briefed. The ticket stays on its product board and release.</div>
 
   <h2>Bugs</h2>
   <div class="biz-note"><strong>Plain bugs skip Master.</strong> A bug is added to Master · Inbox only when it needs a call: "bug or by design?", a fix that changes behaviour, scope or a release date, or a "bug" that is really a missing feature. It stays on the bug board too.</div>
 
   <h2>Each board does exactly one job</h2>
-  <table><thead><tr><th style="width:26%">Board</th><th style="width:38%">Its one job</th><th>Columns</th></tr></thead><tbody><tr><td><strong>Ztor. Master</strong></td><td><span class="pill feat">Meeting</span> Inbox, weekly grooming, business decisions</td><td>Inbox · To discuss · Decision pending · Confirmed</td></tr>
-<tr><td><strong>Ztor. Change &amp; Feature Requests</strong></td><td><span class="pill ops-p">Intake</span> Change requests from operations</td><td>Items to discuss · In progress · Backlog · Pending · Completed</td></tr>
-<tr><td><strong>[object Object]<br/><span style="color:var(--muted);font-size:12px;">eShop · Fans &amp; Loyalty · Crowdfunding · IP Bank · Creator Studio · Events</span></strong></td><td><span class="pill feat">What</span> Everything for one product, across releases</td><td>Backlog · Next up · On LLOUD first · In a release · Live · Reference</td></tr>
-<tr><td><strong>Ztor Roadmap - 2026</strong></td><td><span class="pill ship-p">When</span> One column per release</td><td>Triage · release columns · Decks</td></tr>
+  <table><thead><tr><th style="width:26%">Board</th><th style="width:38%">Its one job</th><th>Columns</th></tr></thead><tbody><tr><td><strong>Ztor. Master</strong></td><td><span class="pill feat">Meeting</span> Inbox, weekly grooming, business decisions</td><td>Inbox · Biz: to discuss · Biz: decision pending · Internal: to discuss · Decided: brief the team</td></tr>
+<tr><td><strong>Ztor. Change &amp; Feature Requests</strong></td><td><span class="pill ops-p">Intake</span> Change requests from operations</td><td>Items to discuss · In progress · Backlog · Pending · Routed to product board · Completed</td></tr>
+<tr><td><strong>Product boards (12)<br/><span style="color:var(--muted);font-size:12px;">eShop · Fans &amp; Loyalty · Crowdfunding · IP Bank · Creator Studio · Events &amp; Ticketing · Auction · OTT · Watch Party · Movie Database · AI Competition · Platform</span></strong></td><td><span class="pill feat">What</span> Everything for one product, across releases</td><td>Inbox · Backlog · Next up · Fast lane - LLOUD · In a release · Live · Reference</td></tr>
+<tr><td><strong>Ztor Roadmap - 2026</strong></td><td><span class="pill ship-p">When</span> One column per release</td><td>Release columns · Decks</td></tr>
 <tr><td><strong>Past Product Roadmap</strong></td><td>Releases older than 3 months</td><td>One section per past release</td></tr>
 <tr><td><strong>LLOUD fast lane</strong></td><td>Quick builds on lloud.club before Ztor</td><td>Drop columns · Open with L</td></tr>
-<tr><td><strong>Ztor 2.0 — Feature Board</strong></td><td>Cross-product feature breakdown, and areas with no product board</td><td>Product-area sections</td></tr>
-<tr><td><strong>[object Object]<br/><span style="color:var(--muted);font-size:12px;">Production · UAT · Creator Studio UAT</span></strong></td><td><span class="pill bug">Bugs</span> Every bug, one row each</td><td>Unchanged</td></tr>
+<tr><td><strong>Ztor. Platform</strong></td><td>Work no product owns: back office, account, payments, editor</td><td>Same as the product boards</td></tr>
+<tr><td><strong>Bug boards<br/><span style="color:var(--muted);font-size:12px;">Production · UAT</span></strong></td><td><span class="pill bug">Bugs</span> Every bug, one row each</td><td>Unchanged</td></tr>
 <tr><td><strong>Ztor. Reference</strong></td><td>Decks, brand, plans, sitemaps, test scopes</td><td>Doc &amp; Info</td></tr></tbody></table>
 
   <h2>What Asana does for you</h2>
   <p>These rules are being set up now. Until a rule is live, the move is done by hand.</p>
   <table><thead><tr><th style="width:50%">You do</th><th>Asana does</th></tr></thead><tbody><tr><td><strong>Submit the request form</strong></td><td>Card lands in Change &amp; Feature Requests · Items to discuss, assigned to Jeff</td></tr>
-<tr><td><strong>Pick a board in <code>Send to</code> (Master) or <code>Route to</code> (Change &amp; Feature Requests)</strong></td><td>Card is added to that board and leaves this one</td></tr>
-<tr><td><strong>Set Status to <code>Management Decision</code></strong></td><td>Card is added to Master · To discuss</td></tr>
+<tr><td><strong>Pick a board in <code>Send to</code> (Master) or <code>Route to</code> (Change &amp; Feature Requests)</strong></td><td>Card is added to that board's Inbox. From Master it leaves Master; on Change &amp; Feature Requests it moves to Routed to product board</td></tr>
+<tr><td><strong>Set Status to <code>Management Decision</code></strong></td><td>Card is added to Master · Biz: to discuss</td></tr>
 <tr><td><strong>Move a product-board card to <code>Next up</code></strong></td><td>Status becomes Requirement</td></tr>
 <tr><td><strong>Move a product-board card to <code>Live</code></strong></td><td>Status becomes Launched and the ticket is completed</td></tr>
-<tr><td><strong>Complete a ticket</strong></td><td>Card moves to the board's Done or Completed column</td></tr></tbody></table>
+<tr><td><strong>Move a card into a Roadmap release column</strong></td><td>Its Release field is filled</td></tr>
+<tr><td><strong>Complete a request on Change &amp; Feature Requests</strong></td><td>Card moves to Completed</td></tr></tbody></table>
 
   <h2>Weekly rhythm</h2>
-  <div class="rhythm"><div class="rhythm-card qa-r"><div class="when">Any time</div><div class="what">Drop ideas in <strong>Master · Inbox</strong>. Ops submits the request form. QA files bugs on the bug boards.</div></div><div class="rhythm-card qa-r"><div class="when">Weekly · product grooming</div><div class="what">Open Master. Empty the <strong>Inbox</strong> and Change &amp; Feature Requests · <strong>Items to discuss</strong>. Each card leaves by one exit.</div></div><div class="rhythm-card uat-r"><div class="when">Weekly · biz and ops calls</div><div class="what">Walk <strong>To discuss</strong> and <strong>Decision pending</strong> on Master. Write each decision as a comment and move the card to Confirmed.</div></div></div>
+  <div class="rhythm"><div class="rhythm-card qa-r"><div class="when">Any time</div><div class="what">Drop ideas in <strong>Master · Inbox</strong>. Ops submits the request form. QA files bugs on the bug boards.</div></div><div class="rhythm-card qa-r"><div class="when">Weekly · product grooming</div><div class="what">Open Master. Empty the <strong>Inbox</strong> and Change &amp; Feature Requests · <strong>Items to discuss</strong>. Each card leaves by one exit.</div></div><div class="rhythm-card uat-r"><div class="when">Weekly · biz and ops calls</div><div class="what">Walk <strong>Biz: to discuss</strong> and <strong>Biz: decision pending</strong> on Master. Write each decision as a comment and move the card to <strong>Decided: brief the team</strong>.</div></div></div>
   <p style="margin-top:12px">Day-to-day status of work in build is read from the Roadmap and the product boards, not from Master.</p>
 
   <h2>Retired</h2>
-  <div class="kill"><h4>No longer used</h4><ul><li><strong>Ztor Management</strong> — archived. Its open cards are on Master.</li><li><strong>Core Standup</strong> — no longer a standup board. Renamed <strong>Ztor. Reference</strong>; it keeps the reference cards.</li><li><strong>Roadmap columns 1.17, 1.18, 1.19 and Archived</strong> — moved to Past Product Roadmap.</li></ul></div>
+  <div class="kill"><h4>No longer used</h4><ul><li><strong>Ztor Management</strong> — archived. Its open cards are on Master.</li><li><strong>Core Standup</strong> — no longer a standup board. Renamed <strong>Ztor. Reference</strong>; it keeps the reference cards.</li><li><strong>Roadmap columns 1.17, 1.18, 1.19 and Archived</strong> — moved to Past Product Roadmap.</li><li><strong>Roadmap · Triage</strong> — retired; its tickets are on the product boards.</li><li><strong>Ztor 2.0 — Feature Board</strong> — archived; its open cards are on the product boards or Ztor. Platform.</li><li><strong>Movie Data &amp; List Tooling</strong> — archived; replaced by Ztor. Movie Database.</li></ul></div>
 
-  <div class="footer">Ztor · Board Workflow · 2026-11-11 · draft for team review</div>
+  <div class="footer">Ztor · Board Workflow · updated 2026-11-16 · draft for team review</div>
 </div>
   <div class="lang-content lang-zh" hidden>
   <h1>Ztor 看板工作流程</h1>
-  <div class="sub">一張工單、多個看板 · 兩個入口 · 每週 grooming · 2026-11-11 · 給團隊審閱的草稿</div>
+  <div class="sub">一張工單、多個看板 · 兩個入口 · 每週 grooming · 2026-11-16 更新 · 給團隊審閱的草稿</div>
   <div class="legend"><div class="legend-item"><div class="swatch" style="background:var(--park)"></div>入口</div><div class="legend-item"><div class="swatch" style="background:var(--pre-dev)"></div>Grooming(產品團隊)</div><div class="legend-item"><div class="swatch" style="background:var(--biz)"></div>業務決策</div><div class="legend-item"><div class="swatch" style="background:var(--build)"></div>產品看板</div><div class="legend-item"><div class="swatch" style="background:var(--uat)"></div>發版(Roadmap)</div><div class="legend-item"><div class="swatch" style="background:var(--ship)"></div>已上線</div><div class="legend-item"><div class="swatch" style="background:var(--bug)"></div>Bug</div></div>
 
   <h2>兩個入口 — 依身分選擇</h2>
@@ -547,55 +548,56 @@
 
   <h2>工單怎麼走 — 一張工單,不複製</h2>
   <p>同一張工單會被加到下一個看板,留言、Status 和歷史紀錄都跟著走。</p>
-  <div class="small-flow"><div class="sf-pill" style="background: var(--park);"><span class="num">1</span>Master · Inbox</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--pre-dev);"><span class="num">2</span>每週 grooming</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">3</span>產品看板 · Backlog</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">4</span>Next up</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--uat);"><span class="num">5</span>Roadmap 發版欄</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">6</span>Live ✓</div></div>
+  <div class="small-flow"><div class="sf-pill" style="background: var(--park);"><span class="num">1</span>Master · Inbox</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--pre-dev);"><span class="num">2</span>每週 grooming</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">3</span>產品看板 · Inbox</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--build);"><span class="num">4</span>Next up</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--uat);"><span class="num">5</span>Roadmap 發版欄</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">6</span>Live ✓</div></div>
   <div class="biz-note"><strong>規則:</strong>會議或測試中發現的事項,不會直接進發版欄,一律先經過 grooming。</div>
 
   <h2>每週 grooming — Inbox 每張卡片都從一個出口離開</h2>
   <p>產品團隊每週一次,在業務與營運會議之前。每次都把 Inbox 清空。在 Master 上用 <code>Send to</code> 欄位選擇看板,卡片會自動移過去。</p>
   <table><thead><tr><th style="width:30%">這是…</th><th>去哪裡</th><th style="width:14%">誰負責</th></tr></thead><tbody><tr><td><strong>Bug</strong></td><td>Production 或 UAT bug 看板</td><td>Jeff</td></tr>
-<tr><td><strong>必須進目前開發中的版本</strong></td><td>Roadmap 上該版本的欄位。若影響範圍或日期,先進 <code>To discuss</code>。</td><td>Jeff + Eric</td></tr>
-<tr><td><strong>留給之後的版本</strong></td><td>產品看板 · <code>Backlog</code></td><td>Jeff</td></tr>
+<tr><td><strong>必須進目前開發中的版本</strong></td><td>Roadmap 上該版本的欄位。若影響範圍或日期,先進 <code>Biz: to discuss</code>。</td><td>Jeff + Eric</td></tr>
+<tr><td><strong>留給之後的版本</strong></td><td>產品看板 · <code>Inbox</code>,由負責人再分到 Backlog 或 Next up</td><td>Jeff</td></tr>
 <tr><td><strong>先在 lloud.club 快速試做</strong></td><td>LLOUD fast lane · <code>Open with L</code></td><td>Jeff + L</td></tr>
-<tr><td><strong>需要業務決定</strong></td><td>Master · <code>To discuss</code></td><td>Jeff</td></tr>
-<tr><td><strong>所屬範圍沒有產品看板</strong></td><td>Feature Board · <code>Ideas to discuss</code></td><td>Jeff</td></tr>
+<tr><td><strong>需要業務決定</strong></td><td>Master · <code>Biz: to discuss</code>(產品團隊內部決定則放 <code>Internal: to discuss</code>)</td><td>Jeff</td></tr>
+<tr><td><strong>所屬範圍沒有產品看板</strong></td><td>Ztor. Platform · <code>Inbox</code></td><td>Jeff</td></tr>
 <tr><td><strong>不做</strong></td><td>關閉,並留一句原因</td><td>Jeff</td></tr></tbody></table>
 
   <h2>業務決策 — 在 Master</h2>
-  <p>在任何看板把 Status 設為 <code>Management Decision</code>,工單就會出現在 Master · To discuss,等下一次業務會議。決定寫在工單留言裡。</p>
-  <div class="small-flow"><div class="sf-pill" style="background: var(--biz);"><span class="num">1</span>To discuss</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--biz);"><span class="num">2</span>Decision pending</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">3</span>Confirmed</div></div>
-  <div class="biz-note">Confirmed 的卡片 14 天後離開 Master,工單仍留在產品看板和發版欄。</div>
+  <p>在任何看板把 Status 設為 <code>Management Decision</code>,工單就會出現在 Master · Biz: to discuss,等下一次業務會議。決定寫在工單留言裡。</p>
+  <div class="small-flow"><div class="sf-pill" style="background: var(--biz);"><span class="num">1</span>Biz: to discuss</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--biz);"><span class="num">2</span>Biz: decision pending</div><div class="sf-arrow">→</div><div class="sf-pill" style="background: var(--ship);"><span class="num">3</span>Decided: brief the team</div></div>
+  <div class="biz-note">產品團隊內部的決定放 <code>Internal: to discuss</code>。決定後、團隊已知悉,卡片就離開 Master,工單仍留在產品看板和發版欄。</div>
 
   <h2>Bug</h2>
   <div class="biz-note"><strong>一般 bug 不經過 Master。</strong>只有需要討論時才加到 Master · Inbox:「是 bug 還是設計如此?」、修復會改變行為、範圍或發版日期,或其實是缺少的功能。它同時仍留在 bug 看板。</div>
 
   <h2>每個看板各司其職</h2>
-  <table><thead><tr><th style="width:26%">看板</th><th style="width:38%">唯一用途</th><th>欄位</th></tr></thead><tbody><tr><td><strong>Ztor. Master</strong></td><td><span class="pill feat">會議</span> Inbox、每週 grooming、業務決策</td><td>Inbox · To discuss · Decision pending · Confirmed</td></tr>
-<tr><td><strong>Ztor. Change &amp; Feature Requests</strong></td><td><span class="pill ops-p">入口</span> 營運提出的變更需求</td><td>Items to discuss · In progress · Backlog · Pending · Completed</td></tr>
-<tr><td><strong>[object Object]<br/><span style="color:var(--muted);font-size:12px;">eShop · Fans &amp; Loyalty · Crowdfunding · IP Bank · Creator Studio · Events</span></strong></td><td><span class="pill feat">做什麼</span> 單一產品跨版本的所有項目</td><td>Backlog · Next up · On LLOUD first · In a release · Live · Reference</td></tr>
-<tr><td><strong>Ztor Roadmap - 2026</strong></td><td><span class="pill ship-p">何時</span> 每個版本一欄</td><td>Triage · 各版本欄 · Decks</td></tr>
+  <table><thead><tr><th style="width:26%">看板</th><th style="width:38%">唯一用途</th><th>欄位</th></tr></thead><tbody><tr><td><strong>Ztor. Master</strong></td><td><span class="pill feat">會議</span> Inbox、每週 grooming、業務決策</td><td>Inbox · Biz: to discuss · Biz: decision pending · Internal: to discuss · Decided: brief the team</td></tr>
+<tr><td><strong>Ztor. Change &amp; Feature Requests</strong></td><td><span class="pill ops-p">入口</span> 營運提出的變更需求</td><td>Items to discuss · In progress · Backlog · Pending · Routed to product board · Completed</td></tr>
+<tr><td><strong>Product boards (12)<br/><span style="color:var(--muted);font-size:12px;">eShop · Fans &amp; Loyalty · Crowdfunding · IP Bank · Creator Studio · Events &amp; Ticketing · Auction · OTT · Watch Party · Movie Database · AI Competition · Platform</span></strong></td><td><span class="pill feat">做什麼</span> 單一產品跨版本的所有項目</td><td>Inbox · Backlog · Next up · Fast lane - LLOUD · In a release · Live · Reference</td></tr>
+<tr><td><strong>Ztor Roadmap - 2026</strong></td><td><span class="pill ship-p">何時</span> 每個版本一欄</td><td>各版本欄 · Decks</td></tr>
 <tr><td><strong>Past Product Roadmap</strong></td><td>超過 3 個月的舊版本</td><td>每個舊版本一個 section</td></tr>
 <tr><td><strong>LLOUD fast lane</strong></td><td>在進 Ztor 前先於 lloud.club 快速試做</td><td>Drop 欄 · Open with L</td></tr>
-<tr><td><strong>Ztor 2.0 — Feature Board</strong></td><td>跨產品功能拆解,以及沒有產品看板的範圍</td><td>依產品範圍分 section</td></tr>
-<tr><td><strong>[object Object]<br/><span style="color:var(--muted);font-size:12px;">Production · UAT · Creator Studio UAT</span></strong></td><td><span class="pill bug">Bug</span> 每個 bug 一筆</td><td>不變</td></tr>
+<tr><td><strong>Ztor. Platform</strong></td><td>不屬於任何產品的項目:後台、帳號、金流、編輯器</td><td>與產品看板相同</td></tr>
+<tr><td><strong>Bug boards<br/><span style="color:var(--muted);font-size:12px;">Production · UAT</span></strong></td><td><span class="pill bug">Bug</span> 每個 bug 一筆</td><td>不變</td></tr>
 <tr><td><strong>Ztor. Reference</strong></td><td>簡報、品牌、計畫、sitemap、測試範圍</td><td>Doc &amp; Info</td></tr></tbody></table>
 
   <h2>Asana 自動幫你做的事</h2>
   <p>這些規則正在設定中。規則上線前,先手動移動。</p>
   <table><thead><tr><th style="width:50%">你做</th><th>Asana 自動</th></tr></thead><tbody><tr><td><strong>提交需求表單</strong></td><td>卡片進入 Change &amp; Feature Requests · Items to discuss,指派給 Jeff</td></tr>
-<tr><td><strong>在 <code>Send to</code>(Master)或 <code>Route to</code>(Change &amp; Feature Requests)選擇看板</strong></td><td>卡片加到該看板並離開目前看板</td></tr>
-<tr><td><strong>把 Status 設為 <code>Management Decision</code></strong></td><td>卡片加到 Master · To discuss</td></tr>
+<tr><td><strong>在 <code>Send to</code>(Master)或 <code>Route to</code>(Change &amp; Feature Requests)選擇看板</strong></td><td>卡片加到該看板的 Inbox。從 Master 送出會離開 Master;Change &amp; Feature Requests 上的卡片會移到 Routed to product board</td></tr>
+<tr><td><strong>把 Status 設為 <code>Management Decision</code></strong></td><td>卡片加到 Master · Biz: to discuss</td></tr>
 <tr><td><strong>把產品看板卡片移到 <code>Next up</code></strong></td><td>Status 變成 Requirement</td></tr>
 <tr><td><strong>把產品看板卡片移到 <code>Live</code></strong></td><td>Status 變成 Launched,工單標記完成</td></tr>
-<tr><td><strong>完成工單</strong></td><td>卡片移到看板的 Done 或 Completed 欄</td></tr></tbody></table>
+<tr><td><strong>把卡片移到 Roadmap 發版欄</strong></td><td>自動填入 Release 欄位</td></tr>
+<tr><td><strong>完成 Change &amp; Feature Requests 上的需求</strong></td><td>卡片移到 Completed</td></tr></tbody></table>
 
   <h2>每週節奏</h2>
-  <div class="rhythm"><div class="rhythm-card qa-r"><div class="when">隨時</div><div class="what">把想法放進 <strong>Master · Inbox</strong>。營運提交需求表單。QA 把 bug 提到 bug 看板。</div></div><div class="rhythm-card qa-r"><div class="when">每週 · 產品 grooming</div><div class="what">打開 Master,清空 <strong>Inbox</strong> 以及 Change &amp; Feature Requests · <strong>Items to discuss</strong>。每張卡片從一個出口離開。</div></div><div class="rhythm-card uat-r"><div class="when">每週 · 業務與營運會議</div><div class="what">逐一看 Master 的 <strong>To discuss</strong> 和 <strong>Decision pending</strong>。把決定寫在留言,再把卡片移到 Confirmed。</div></div></div>
+  <div class="rhythm"><div class="rhythm-card qa-r"><div class="when">隨時</div><div class="what">把想法放進 <strong>Master · Inbox</strong>。營運提交需求表單。QA 把 bug 提到 bug 看板。</div></div><div class="rhythm-card qa-r"><div class="when">每週 · 產品 grooming</div><div class="what">打開 Master,清空 <strong>Inbox</strong> 以及 Change &amp; Feature Requests · <strong>Items to discuss</strong>。每張卡片從一個出口離開。</div></div><div class="rhythm-card uat-r"><div class="when">每週 · 業務與營運會議</div><div class="what">逐一看 Master 的 <strong>Biz: to discuss</strong> 和 <strong>Biz: decision pending</strong>。把決定寫在留言,再把卡片移到 <strong>Decided: brief the team</strong>。</div></div></div>
   <p style="margin-top:12px">開發中項目的日常狀態,請看 Roadmap 和產品看板,不是 Master。</p>
 
   <h2>已停用</h2>
-  <div class="kill"><h4>不再使用</h4><ul><li><strong>Ztor Management</strong> — 已封存,未完成的卡片都在 Master。</li><li><strong>Core Standup</strong> — 不再作為 standup 看板,已改名為 <strong>Ztor. Reference</strong>,保留參考資料卡片。</li><li><strong>Roadmap 的 1.17、1.18、1.19 與 Archived 欄</strong> — 已移到 Past Product Roadmap。</li></ul></div>
+  <div class="kill"><h4>不再使用</h4><ul><li><strong>Ztor Management</strong> — 已封存,未完成的卡片都在 Master。</li><li><strong>Core Standup</strong> — 不再作為 standup 看板,已改名為 <strong>Ztor. Reference</strong>,保留參考資料卡片。</li><li><strong>Roadmap 的 1.17、1.18、1.19 與 Archived 欄</strong> — 已移到 Past Product Roadmap。</li><li><strong>Roadmap · Triage</strong> — 已停用,工單都在產品看板上。</li><li><strong>Ztor 2.0 — Feature Board</strong> — 已封存,未完成的卡片在產品看板或 Ztor. Platform。</li><li><strong>Movie Data &amp; List Tooling</strong> — 已封存,由 Ztor. Movie Database 取代。</li></ul></div>
 
-  <div class="footer">Ztor · 看板工作流程 · 2026-11-11 · 給團隊審閱的草稿</div>
+  <div class="footer">Ztor · 看板工作流程 · 2026-11-16 更新 · 給團隊審閱的草稿</div>
 </div>
 </div>
 <script>
