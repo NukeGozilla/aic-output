@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0d1014">
+<title>Command center (mock)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+:root {
+  --bg: #0d1014;
+  --card: #171c22;
+  --raised: #1f262e;
+  --line: #2a323c;
+  --text: #f2f5f7;
+  --muted: #a3adb8;
+  --dim: #6c7783;
+  --go: #2be0a0;
+  --rest: #6fb7ff;
+  --warn: #ff6b57;
+  --flag: #ffb547;
+  --r-card: 16px;
+  --r-ctl: 12px;
+  --body: Inter, system-ui, -apple-system, sans-serif;
+  --number: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box }
+body { margin: 0; color: var(--text); background: var(--bg); font: 400 15px/1.5 var(--body); overflow-wrap: anywhere }
+button, a, input, select, textarea { font: inherit }
+button, a { -webkit-tap-highlight-color: transparent }
+button, a.button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-width: 44px; min-height: 44px; padding: 7px 12px; border: 1px solid var(--line); border-radius: var(--r-ctl); color: var(--text); background: var(--raised); cursor: pointer; text-align: left; font-weight: 600 }
+a { color: var(--rest); text-decoration: none }
+button:hover, a.button:hover { border-color: var(--muted) }
+:focus-visible { outline: 2px solid var(--rest); outline-offset: 3px }
+button[disabled] { opacity: .55; cursor: default }
+button.primary, a.primary { background: var(--go); border-color: var(--go); color: #071710 }
+button.quiet, a.quiet { background: transparent; border-color: transparent }
+button[aria-pressed="true"] { border-color: var(--rest); color: var(--rest) }
+svg { width: 19px; height: 19px; flex: none; vertical-align: middle }
+h1,h2,h3,p { margin: 0 }
+h1 { font-size: clamp(27px, 4vw, 36px); line-height: 1.13; letter-spacing: -.045em }
+h2 { font-size: 18px; line-height: 1.25; letter-spacing: -.02em }
+h3 { font-size: 17px; line-height: 1.3; font-weight: 600 }
+small,.meta { font-size: 13px; color: var(--muted) }
+.num { font: 700 1.2em/1 var(--number); font-variant-numeric: tabular-nums }
+.muted { color: var(--muted) }
+.archived { color: color-mix(in srgb, var(--dim) 58%, var(--text)) }
+.info { color: var(--rest) }
+.good { color: var(--go) }
+.blocking { color: var(--warn) }
+.clock { color: var(--flag) }
+.stack { display: grid; align-content: start; gap: 12px; min-width: 0 }
+.flow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px }
+.spread { justify-content: space-between }
+.stripe { display: flex; align-items: center; justify-content: center; gap: 6px; padding-inline: 12px; background: var(--raised); border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px }
+.stripe button { min-height: 44px; padding: 0 }
+.shell { min-height: 100dvh }
+.nav { position: fixed; z-index: 4; bottom: 0; inset-inline: 0; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); padding: 5px 6px calc(5px + env(safe-area-inset-bottom)); background: var(--card); border-top: 1px solid var(--line) }
+.nav a { display: grid; justify-items: center; align-content: center; gap: 3px; min-height: 52px; color: var(--muted); border-radius: var(--r-ctl); font-size: 11px; font-weight: 600 }
+.nav a[aria-current="page"] { background: var(--raised); color: var(--text) }
+.brand { display: none }
+.workspace { min-width: 0; padding: 0 14px 130px }
+.top { border-bottom: 1px solid var(--line); margin-bottom: 16px; padding: 15px 0 12px }
+.top > .flow { flex-wrap: nowrap }
+.eyebrow { font-size: 11px; line-height: 1.3; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--muted) }
+.top .num { color: var(--muted); font-size: 1em }
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none }
+.page { max-width: 850px }
+.card,.panel,.banner { padding: 13px; border: 1px solid var(--line); background: var(--card); border-radius: var(--r-card); min-width: 0 }
+.panel { padding: 16px }
+.banner { background: var(--raised) }
+.card { display: grid; gap: 7px }
+.card[data-level="Blocking"] { border-inline-start: 3px solid var(--warn) }
+.card[data-level="Has a clock"] { border-inline-start: 3px solid var(--flag) }
+.card.selected { outline: 1px solid var(--rest) }
+.card h3 { color: var(--text); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden }
+.kind { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600 }
+.pill { display: inline-flex; gap: 6px; align-items: center; padding: 2px 8px; border: 1px solid var(--line); background: var(--raised); border-radius: 99px; font-size: 12px; font-weight: 600; max-width: 100% }
+.why { font-size: 13px }
+.card .actions { margin-top: 2px }
+button.overflow { margin-inline-start: auto }
+.section { margin-top: 10px }
+.section-title { display: flex; align-items: center; gap: 8px; margin-bottom: 2px }
+.section-title .num { color: var(--muted) }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 56px; padding: 9px 12px; border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--card); color: var(--text); text-align: left; width: 100% }
+a.row:hover,button.row:hover { border-color: var(--muted) }
+.row strong, .row small { display: block }
+.row > span { min-width: 0 }
+.row .chev { flex: none; color: var(--rest); font-size: 20px }
+.glance .row { padding-block: 6px; min-height: 48px }
+.glance .row small { font-size: 12px }
+.empty { padding-block: 26px }
+.states { position: fixed; z-index: 5; bottom: calc(72px + env(safe-area-inset-bottom)); right: 14px; box-shadow: 0 4px 18px #0008; font-size: 13px }
+.toast { position: fixed; z-index: 9; bottom: calc(124px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); padding: 10px 15px; border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--raised); box-shadow: 0 4px 20px #0008 }
+.toast:empty { display: none }
+dialog .toast { bottom: 14px }
+dialog { width: min(100%, 570px); max-width: 100%; max-height: 88dvh; margin: auto auto 0; padding: 0; border: 1px solid var(--line); border-radius: var(--r-card) var(--r-card) 0 0; background: var(--card); color: var(--text); overscroll-behavior: contain }
+dialog::backdrop { background: #0009 }
+body:has(dialog[open]) { overflow: hidden }
+.sheet-body { padding: 14px 16px calc(18px + env(safe-area-inset-bottom)); gap: 14px }
+.sheet-top { display: flex; justify-content: space-between; align-items: center; gap: 8px }
+.sheet-top h2 { min-width: 0 }
+.grip { width: 32px; height: 4px; border-radius: 8px; background: var(--dim); margin: 0 auto }
+.detail { gap: 12px }
+.facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin: 0 }
+.facts div { border: 1px solid var(--line); padding: 8px; border-radius: var(--r-ctl) }
+.facts dt { font-size: 12px; color: var(--muted) }
+.facts dd { margin: 0 }
+.result { padding: 10px; background: var(--raised); border-radius: var(--r-ctl); font-weight: 600 }
+label { display: grid; gap: 4px }
+label.check { display: flex; align-items: center; gap: 10px; min-height: 44px }
+input, select, textarea { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--bg); color: var(--text); padding: 8px 10px }
+input[type="checkbox"],input[type="radio"] { width: 18px; min-height: 18px; accent-color: var(--go); flex: none; margin: 0 5px }
+textarea { resize: vertical }
+fieldset { min-width: 0; border: 1px solid var(--line); border-radius: var(--r-ctl); margin: 0; padding: 8px 12px }
+progress { width: 100%; height: 8px; accent-color: var(--go); display: block }
+.footer { margin-top: 18px }
+.desktop-detail,.wide-glance { display: none }
+.login { max-width: 420px; margin: 10vh auto 0 }
+@media (min-width: 900px) {
+  .shell { display: grid; grid-template-columns: 148px minmax(0,1fr) }
+  .brand { display: block; color: var(--text); font-size: 13px; font-weight: 700; padding: 9px 10px 19px }
+  .nav { position: sticky; top: 0; align-self: start; height: 100dvh; grid-template-columns: 1fr; align-content: start; gap: 4px; padding: 17px 10px; border: 0; border-right: 1px solid var(--line) }
+  .nav a { display: flex; justify-content: flex-start; padding-inline: 10px; gap: 9px; font-size: 13px }
+  .workspace { padding-inline: 22px }
+  .now-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 16px; align-items: start }
+  .desktop-detail { display: grid; position: sticky; top: 14px; max-height: calc(100dvh - 32px); overflow-y: auto }
+  .states { bottom: 18px }
+  .toast { bottom: 70px }
+  dialog { margin: auto; border-radius: var(--r-card) }
+  .grip { display: none }
+}
+@media (min-width: 1280px) {
+  .now-layout { grid-template-columns: minmax(0,1.05fr) minmax(0,1.15fr) minmax(220px,.65fr) }
+  .wide-glance { display: grid; position: sticky; top: 14px }
+  .below-glance { display: none }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important }
+}
+</style>
+</head>
+<body>
+<div id="strip"></div>
+<div id="app"></div>
+<dialog id="sheet" aria-labelledby="sheet-title"></dialog>
+<div class="toast" id="toast" role="status"></div>
+<script>
+"use strict";
+
+const paths = {
+  Now: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+  Work: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18"/>',
+  Goals: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  Record: '<path d="M5 3h12l2 2v16H5zM8 8h8M8 12h8M8 16h5"/>',
+  Memory: '<path d="M5 20V6a2 2 0 0 1 2-2h12v16H7a2 2 0 0 1 0-4h12M9 8h6"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="m10 3 4 0 1 3 3 1 3 3v4l-3 1-1 3-3 3h-4l-1-3-3-1-3-3v-4l3-1 1-3z"/>',
+  gate: '<path d="M4 21V4h16v17M8 19V8m4 11V8m4 11V8M4 15h16"/>',
+  draft: '<path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8m-8 4h6"/>',
+  proposal: '<path d="m3 7 2 2 3-4m3 3h10M3 15l2 2 3-4m3 3h10"/>',
+  saved: '<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v11h14V9m-9 4h4"/>',
+  incident: '<path d="M12 3 2 21h20zM12 9v5m0 3v1"/>',
+  usage: '<path d="M4 18a9 9 0 1 1 16 0zM12 15l4-5"/>',
+  asana: '<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16m-11 5h6"/>'
+};
+function icon(name) {
+  return '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + paths[name] + '</svg>';
+}
+
+const areas = {
+  Orbit: ['#a2a8e7','2 need you · 4 active · 1 blocked','Release 3.2 · Mar 14 · 4 mine'],
+  Kestrel: ['#89b9ba','1 needs you · 2 active','9 my Asana tasks · 2 overdue'],
+  Health: ['#a6bd8c','1 goal · 1 active','Feed comes in v1.1'],
+  Money: ['#c0a38a','1 goal','Rebalance savings plan'],
+  Family: ['#cfa6bc','2 memories','Sensitive'],
+  'Side projects': ['#a9a2b5','5 saved items','Weekly picks'],
+  Systems: ['#aab7c4','1 incident','Usage 71%']
+};
+const areaId = area => area.toLowerCase().replaceAll(' ', '-');
+const workArea = area => area === 'Orbit' || area === 'Kestrel';
+const tabs = ['Now','Work','Goals','Record','Memory'];
+const goals = [
+  {id:'paid-tier', title:'Ship Orbit paid tier', area:'Orbit', priority:1, value:2, target:5, unit:'milestones', parent:'paying-fans', why:'Give paying fans a clear upgrade path.'},
+  {id:'campaigns', title:'Kestrel: 3 campaigns live', area:'Kestrel', priority:2, value:0, target:3, unit:'campaigns', flag:'Stalled 9 d', why:'Get the first three campaigns live.'},
+  {id:'train', title:'Train 3× a week', area:'Health', priority:2, value:2.1, target:3, unit:'sessions per week', parent:'stay-strong', why:'Build a consistent training routine.'},
+  {id:'savings', title:'Rebalance savings plan', area:'Money', priority:3, value:0, target:3, unit:'milestones', flag:'No work', why:'Review the savings allocation.'},
+  {id:'paying-fans', title:'Orbit reaches 10k paying fans', area:'Orbit', priority:1, value:0, target:10000, unit:'paying fans', long:true, why:'Grow the paid fan base.'},
+  {id:'stay-strong', title:'Stay strong and healthy', area:'Health', priority:2, value:0, target:3, unit:'milestones', long:true, why:'Keep training consistently.'}
+];
+const followUps = ['Send Tom the asset list','Book venue call','Draft FAQ for backers','Check refund wording'];
+const saved = ['Article: pricing pages that convert','Video: hip mobility routine','Article: hosted checkout patterns','Guide: home router cleanup','Article: campaign launch checklist'];
+
+function item(id, kind, area, title, why, goal, level, summary) {
+  return {id, kind, area, title, why, goal, level, summary};
+}
+const queue = [
+  item('gate','gate','Orbit','Checkout redesign: design approval','Ada paused 2 d','paid-tier','Blocking','Ada is waiting for design approval before checkout moves into Build.'),
+  item('incident','incident','Systems','News fetch job down','Job down 6 h',null,'Blocking','The news fetch job has missed its scheduled runs for six hours.'),
+  item('studio','draft','Orbit','Rename Studio tab','Archives Sun','paid-tier','Has a clock','Give the Studio tab a clearer label.'),
+  item('trial','draft','Orbit','Trial length 7 days','Archives Sun','paid-tier','Has a clock','Give new paid-tier fans a seven-day trial.'),
+  item('coupons','draft','Orbit','Drop legacy coupons','Archives Sun','paid-tier','Has a clock','Retire legacy coupons before the new checkout rolls out.'),
+  item('footer','draft','Orbit','Support email in footer','Archives Sun','paid-tier','Has a clock','Put the support email in the checkout footer.'),
+  item('refund','draft','Kestrel','Refund window 14 days','Archives tomorrow','campaigns','Has a clock','Standardize the refund window at 14 days for campaign purchases.'),
+  item('saved','saved','Side projects','5 picks this week','Waiting 4 d',null,'Other','Triage each saved item.'),
+  item('proposal','proposal','Orbit','Priya meeting: 4 follow-ups','Closes in 2 d','paid-tier','Has a clock','Choose which follow-ups to track.'),
+  item('usage','usage','Systems','Weekly use 91%','Above the weekly 90% threshold',null,'Other','Review the weekly usage before starting another session.'),
+  item('fitness','gate','Health','Fitness app timer fix: merge gate','Ivy is waiting',null,'Blocking','Ivy paused at the merge gate for the timer fix.'),
+  item('release','asana','Orbit','Release 3.2: 4 tasks assigned to you','Mar 14 · 18 open','paid-tier','Has a clock','Review your open tasks for Release 3.2.')
+];
+const orbitDraftIds = ['studio','trial','coupons','footer'];
+const records = [
+  {id:'trial-length', month:'November', date:'Nov 12', area:'Orbit', title:'Trial length 7 days', status:'Accepted', body:'Use a seven-day trial for the paid tier.'},
+  {id:'kestrel-payout', month:'November', date:'Nov 10', area:'Kestrel', title:'Payout every 2 weeks', status:'Superseded', body:'The original two-week payout schedule was replaced after the payout call.', next:'weekly-payout'},
+  {id:'legacy-coupons', month:'November', date:'Nov 9', area:'Orbit', title:'Drop legacy coupons', status:'Draft', body:'Retire old coupons before the checkout rollout.', note:'Archives Sun'},
+  {id:'hosted-checkout', month:'November', date:'Nov 8', area:'PM', title:'Checkout redesign: use hosted checkout', status:'PM decision', body:'Use hosted checkout for the redesign.'},
+  {id:'weekly-payout', month:'October', date:'Oct 29', area:'Kestrel', title:'Weekly payout schedule', status:'Accepted', body:'Use a weekly payout schedule for campaign payouts.'},
+  {id:'refund-wording', month:'October', date:'Oct 17', area:'Kestrel', title:'Refund wording on campaign pages', status:'Archived', body:'Use a short summary of the refund policy on the campaign page.'}
+];
+const memories = [
+  ['orbit-name',"Say ‘Orbit’, not ‘Orbiter’",'Rules','Orbit','2 mo','Use Orbit in campaign and checkout copy.'],
+  ['campaign-flow','Kestrel campaign flow','Projects','Kestrel','3 wk','Review the campaign page, confirm the payout cadence and then launch.'],
+  ['server-access','Server access notes','Reference','Systems','5 mo','Review the home router setup before updating access notes.'],
+  ['family-calendar','Family calendar','About you','Family','2 wk','Check the shared calendar before booking a venue call.',true],
+  ['savings-review','Savings review','About you','Money','1 mo','Review the savings plan during the monthly check-in.',true],
+  ['checkout-context','Hosted checkout context','Projects','Orbit','1 wk','The checkout redesign uses hosted checkout.'],
+  ['timer-testing','Timer testing','Reference','Health','2 wk','Review timer behavior when a session is paused and resumed.'],
+  ['saved-picks','Weekly saved picks','Rules','Side projects','4 wk','Use Do, Keep or Drop to clear the weekly list.']
+].map(([id,title,type,area,age,body,sensitive]) => ({id,title,type,area,age,body,sensitive}));
+const freshness = ['PM gates','Objectives','Decision records','Weekly review queue','To-do proposals','Saved items','Fleet incidents','Usage','Agenda inbox','Asana','Clip gates','Memories','Goals','Meetings'];
+const devices = ['Phone','Mini','PC','MacBook'];
+const activity = ['Accepted “Trial length 7 days” · 09:14 · phone · committed'];
+const memoryFlags = new Map([['campaign-flow',{reason:'Out of date', note:'Check the payout step.'}]]);
+const ui = {
+  mode:'normal', fail:false, conflict:false, filter:'All', horizon:'Short', recordFilter:'All',
+  recordScope:'All', memoryType:'All', revealed:false, strip:true, selected:null, suggestion:'pending',
+  router:'pending', workoutLink:false, checked:new Set(), triage:{}, revoked:new Set(),
+  signError:false, draftGoal:null, goalError:false
+};
+
+const app = document.querySelector('#app');
+const strip = document.querySelector('#strip');
+const dialog = document.querySelector('#sheet');
+const desktop = matchMedia('(min-width: 900px)');
+let previousRoute;
+let dialogFocus;
+let toastTimer;
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char]);
+}
+const e = escapeHTML;
+const button = (label, action, value='', style='', extra='') =>
+  '<button type="button" class="' + style + '" data-action="' + action + '" data-value="' + e(value) + '" ' + extra + '>' + label + '</button>';
+const link = (label, route, style='quiet') => '<a class="button ' + style + '" href="#' + route + '">' + label + '</a>';
+const pill = (label, style='') => '<span class="pill ' + style + '">' + e(label) + '</span>';
+const areaChip = area => '<span class="pill"><i class="dot" style="color:' + (areas[area]?.[0] || 'var(--muted)') + '"></i>' + e(area) + '</span>';
+const number = value => '<span class="num">' + e(value) + '</span>';
+const rowLabel = (title, meta) => '<span><strong>' + e(title) + '</strong>' + (meta ? '<small>' + e(meta) + '</small>' : '') + '</span>';
+const arrow = '<span class="chev" aria-hidden="true">›</span>';
+const row = (title, meta, route) => '<a class="row" href="#' + route + '">' + rowLabel(title, meta) + arrow + '</a>';
+const actionRow = (title, meta, action, value) => button(rowLabel(title, meta) + arrow, action, value, 'row');
+const plainRow = (title, meta, badge='') => '<div class="row">' + rowLabel(title, meta) + badge + '</div>';
+const heading = (title, count) => '<h2 class="section-title">' + e(title) + (count === undefined ? '' : number(count)) + '</h2>';
+const choices = (options, current, action) => '<div class="flow">' + options.map(option => button(e(option),action,option,'','aria-pressed="' + (current === option) + '"')).join('') + '</div>';
+const route = () => location.hash.slice(1) || '/now';
+const overlay = () => history.state?.sheet;
+const getItem = id => queue.find(entry => entry.id === id);
+const getGoal = id => goals.find(goal => goal.id === id);
+const getRecord = id => records.find(record => record.id === id);
+const getMemory = id => memories.find(memory => memory.id === id);
+const goalBadge = id => {
+  const goal = getGoal(id);
+  return goal ? pill('P' + goal.priority + ' · ' + goal.title,'info') : pill('No goal','clock');
+};
+
+function navigate(path, replace=false) {
+  if (path === route() && !overlay()) return;
+  if (replace || overlay()) history.replaceState(null,'','#' + path);
+  else history.pushState(null,'','#' + path);
+  render();
+}
+function openSheet(type, id='') {
+  if (!overlay()) dialogFocus = document.activeElement;
+  history.pushState({sheet:{type,id}},'','#' + route());
+  render();
+}
+function closeSheet() {
+  if (overlay()) history.back();
+}
+function announce(message) {
+  const toast = dialog.open ? dialog.querySelector('.toast') : document.querySelector('#toast');
+  toast.textContent = message;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.textContent = ''; }, 3000);
+}
+function openItem(id) {
+  ui.selected = id;
+  if (desktop.matches && route() === '/now' && !overlay()) render();
+  else openSheet('item',id);
+}
+function navigateFromSheet(path) {
+  // Reuse the top entry so browser Back still returns to the queue.
+  history.replaceState(null,'','#' + path);
+  render();
+}
+
+function kindLabel(entry) {
+  const labels = {gate:'Gate', draft:'Draft', proposal:'Proposal', saved:'Saved items', incident:'Incident', usage:'Usage warning', asana:'Release'};
+  const tone = entry.level === 'Blocking' ? 'blocking' : entry.level === 'Has a clock' ? 'clock' : 'muted';
+  return '<span class="kind ' + tone + '">' + icon(entry.kind) + e(entry.group ? 'Drafts ×' + entry.count : labels[entry.kind]) + '</span>';
+}
+function card(entry,selectedId=ui.selected) {
+  const label = entry.group ? 'Review ' + entry.count : ({gate:'Open session',draft:'Review draft',proposal:'Review follow-ups',saved:'Triage'})[entry.kind] || 'Open';
+  const why = entry.snoozed ? 'Back at ' + entry.snoozed : entry.pinned ? 'Pinned' : entry.why;
+  const age = ui.mode === 'stale' && entry.kind === 'asana' ? '<span class="meta clock">as of 2 h</span>' : '';
+  return '<article class="card' + (selectedId === entry.id ? ' selected' : '') + '" data-card="' + entry.id + '" data-level="' + (entry.snoozed ? '' : entry.level) + '">' +
+    '<div class="flow spread">' + kindLabel(entry) + areaChip(entry.area) + '</div><h3>' + e(entry.title) + '</h3>' +
+    '<div class="flow why ' + (entry.snoozed ? 'archived' : 'muted') + '">' + e(why) + age + '</div><div>' + goalBadge(entry.goal) + '</div>' +
+    '<div class="flow actions">' + button(label,'item',entry.id,'primary') +
+    button('⋯','menu',entry.id,'overflow','aria-label="Options for ' + e(entry.title) + '"') + '</div></article>';
+}
+function activeQueue() {
+  if (ui.mode === 'empty') return [];
+  return queue.filter(entry => !entry.done && !entry.snoozed &&
+    !(groupState.snoozed && orbitDraftIds.includes(entry.id) && !entry.pinned));
+}
+function filterQueue(entries) {
+  return entries.filter(entry => ui.filter === 'All' || workArea(entry.area) === (ui.filter === 'Work'));
+}
+function groupCard(entries) {
+  const count = entries.filter(entry => orbitDraftIds.includes(entry.id) && !entry.pinned).length;
+  return {...item('orbit-drafts','draft','Orbit',count + ' Orbit drafts','Archive Sun','paid-tier','Has a clock',''),group:true,count,...groupState};
+}
+function nowCards(entries) {
+  const grouped = groupCard(entries);
+  const featuredIds = ['gate','incident','orbit-drafts','refund',ui.mode === 'stale' ? 'release' : 'saved'];
+  const byId = new Map(entries.map(entry => [entry.id,entry]));
+  if (grouped.count) byId.set(grouped.id,grouped);
+  for (const id of orbitDraftIds) if (!byId.get(id)?.pinned) byId.delete(id);
+  const pinned = [...byId.values()].filter(entry => entry.pinned).sort((a,b) => b.pinned-a.pinned);
+  const featured = featuredIds.map(id => byId.get(id)).filter(entry => entry && !entry.pinned);
+  const cards = [...pinned,...featured];
+  for (const entry of byId.values()) if (!cards.includes(entry) && cards.length < (ui.filter === 'All' ? 5 : 7)) cards.push(entry);
+  return cards.slice(0,7);
+}
+function flagsCount() {
+  return Number(ui.router === 'pending') + Number(!ui.workoutLink && !ui.workoutDismissed) + goals.filter(goal => goal.flag).length;
+}
+function alignment() {
+  return flagsCount() ? '<div class="banner flow spread"><span class="clock"><strong>' + flagsCount() + ' alignment flags</strong></span>' + link('View flags ›','/goals/flags') + '</div>' : '';
+}
+function glance() {
+  return '<section class="stack glance">' + heading('At a glance') +
+    ['Orbit','Kestrel','Health','Systems'].map(area => row(area,areas[area][1],'/work/' + areaId(area))).join('') + '</section>';
+}
+function nowScreen() {
+  const entries = filterQueue(activeQueue());
+  const cards = nowCards(entries);
+  const selected = ui.selected ? getItem(ui.selected) : cards[0];
+  const selection = ui.selected === 'orbit-drafts' || selected?.group ? groupDetail() :
+    selected ? itemDetail(selected) : '<p class="muted">Select an item to see its details.</p>';
+  return '<div class="now-layout"><div class="stack">' +
+    (ui.mode === 'empty' ? '<section class="panel empty"><h2>Nothing needs you</h2></section>' :
+      choices(['All','Work','Personal'],ui.filter,'queue-filter') +
+      (ui.mode === 'offline' ? '<div class="banner meta">Showing 09:12 data</div>' : '') +
+      (cards.length ? cards.map(entry => card(entry,ui.selected || (desktop.matches ? cards[0]?.id : null))).join('') : '<div class="panel">Nothing in this filter</div>') +
+      link('See all ' + number(entries.length) + ' →','/queue','') + '<div class="below-glance">' + alignment() + '</div>') +
+    '<div class="below-glance">' + glance() + '</div></div>' +
+    '<section class="panel stack desktop-detail" aria-label="Selected item">' + selection + '</section>' +
+    '<aside class="stack wide-glance">' + glance() + (ui.mode === 'empty' ? '' : '<section class="stack">' + heading('Flags') + alignment() + '</section>') + '</aside></div>';
+}
+function queueScreen() {
+  let active = filterQueue(activeQueue());
+  const group = groupCard(active);
+  if (group.pinned && group.count) {
+    active = active.filter(entry => !orbitDraftIds.includes(entry.id) || entry.pinned);
+    active.push(group);
+  }
+  const pinned = active.filter(entry => entry.pinned).sort((a,b) => b.pinned-a.pinned);
+  const snoozed = filterQueue(queue.filter(entry => entry.snoozed && !entry.done));
+  const snoozedGroup = groupCard(queue.filter(entry => !entry.done && !entry.snoozed));
+  if (groupState.snoozed && snoozedGroup.count && ui.filter !== 'Personal') snoozed.push(snoozedGroup);
+  const sections = ['Pinned','Blocking','Has a clock','Other','Snoozed'];
+  return choices(['All','Work','Personal'],ui.filter,'queue-filter') + sections.map(label => {
+    const entries = label === 'Pinned' ? pinned : label === 'Snoozed' ? snoozed : active.filter(entry => !entry.pinned && entry.level === label);
+    return '<section class="stack section">' + heading(label,entries.length) + (entries.length ? entries.map(entry => card(entry)).join('') : '<p class="meta">No items</p>') + '</section>';
+  }).join('');
+}
+
+function facts(entries) {
+  return '<dl class="facts">' + entries.map(([label,value]) => '<div><dt>' + e(label) + '</dt><dd>' + e(value) + '</dd></div>').join('') + '</dl>';
+}
+function source(label) { return button(e(label) + ' ↗','toast','Would open ' + label.toLowerCase(),'quiet info'); }
+function itemDetail(entry) {
+  const done = button('Done','close','','primary');
+  const args = entry.id;
+  let controls;
+  let context = [];
+  switch (entry.kind) {
+    case 'gate':
+      context = [['PM',args === 'gate' ? 'Ada' : 'Ivy'],['Since',args === 'gate' ? '2 d' : 'Today'],['Stage',args === 'gate' ? 'Design' : 'Merge'],['Repo',args === 'gate' ? 'orbit' : 'fitness-app']];
+      controls = button('Open session ↗','toast','Would open the session','primary') + button('Copy /pm resume','toast','Would copy /pm resume') + button('Hold 24 h','hold',args);
+      break;
+    case 'draft':
+      context = [['Archive',args === 'refund' ? 'Tomorrow' : 'Sun'],['Source','Decision record']];
+      controls = button('Accept','resolve',args + '|Accepted · committed','primary') + button('Reject','resolve',args + '|Rejected · committed') + button('Superseded by…','supersede',args);
+      break;
+    case 'proposal':
+      controls = button('Add selected','add-selected',args,'primary') + button('FYI only','resolve',args + '|Marked FYI · recorded');
+      break;
+    case 'saved':
+      controls = button('Finish triage','finish-triage',args,'primary');
+      break;
+    case 'incident':
+      context = [['Since','6 h ago'],['Source','Fleet incidents']];
+      controls = button('Open incident ↗','toast','Would open the incident','primary') + button('Acknowledge','resolve',args + '|Acknowledged');
+      break;
+    case 'usage':
+      context = [['Weekly use','91%'],['Threshold','90%']];
+      controls = button('Acknowledge','resolve',args + '|Acknowledged','primary') + button('Open usage ↗','toast','Would open the usage report');
+      break;
+    default:
+      context = [['Due','Mar 14'],['Assigned to you','4 tasks']];
+      controls = link('View Release 3.2','/work/orbit/release-3-2','primary');
+  }
+  const follows = followUps.map((title,index) => '<label class="check"><input type="checkbox" data-follow="' + index + '" ' + (ui.checked.has(index) ? 'checked' : '') + '>' + e(title) + '</label>').join('');
+  const picks = saved.map((title,index) => '<div class="panel stack"><strong>' + e(title) + '</strong><div class="flow">' +
+    ['Do','Keep','Drop'].map(choice => button(choice,'triage',index + '|' + choice,'','aria-pressed="' + (ui.triage[index] === choice) + '"')).join('') + '</div></div>').join('');
+  return '<div class="stack detail"><div class="flow spread">' + kindLabel(entry) + areaChip(entry.area) + '</div>' +
+    '<h2>' + e(entry.title) + '</h2><p class="meta">' + e(entry.pinned ? 'Pinned' : entry.why) + '</p><p>' + e(entry.summary) + '</p>' +
+    (context.length ? facts(context) : '') + '<div>' + goalBadge(entry.goal) + '</div>' +
+    (entry.result ? '<p role="status" class="result ' + (entry.error ? 'blocking' : 'good') + '">' + e(entry.result) + '</p>' : '') +
+    (entry.done ? (overlay()?.type === 'item' ? '<div>' + done + '</div>' : '') :
+      (entry.kind === 'proposal' ? '<fieldset><legend>Follow-ups</legend>' + follows + '</fieldset>' : '') +
+      (entry.kind === 'saved' ? picks : '') +
+      '<div class="flow">' + controls + '</div><div class="flow spread">' + source('Source') +
+      button('⋯','menu',args,'','aria-label="Item options"') + '</div>') + '</div>';
+}
+function groupDetail() {
+  const drafts = queue.filter(entry => orbitDraftIds.includes(entry.id) && !entry.done && !entry.snoozed && !entry.pinned);
+  return '<div class="stack"><div class="flow spread">' + kindLabel(groupCard(drafts)) + areaChip('Orbit') + '</div>' +
+    '<h2>' + drafts.length + ' Orbit drafts · archive Sun</h2>' +
+    (drafts.length ? drafts.map(entry => actionRow(entry.title,entry.why,'item',entry.id)).join('') : '<p class="muted">No drafts left in this group.</p>') + '</div>';
+}
+
+function workScreen(parts) {
+  const area = Object.keys(areas).find(name => areaId(name) === parts[1]);
+  if (!parts[1]) return row('Meetings','Next: Orbit weekly · Thu 10:00 · agenda ready','/meetings').replace('</small>','</small><small>This week: 4 held · 1 write-up pending · 2 follow-ups missing</small>') +
+    heading('Areas') + Object.keys(areas).map(name => row(name,areas[name].slice(1).join(' · '),'/work/' + areaId(name))).join('');
+  if (!area) return missing('/work');
+  const base = '/work/' + areaId(area);
+  if (parts[2] === 'checkout-redesign') {
+    return link('‹ Orbit',base) + '<div class="panel stack">' + areaChip('Orbit') +
+      '<p class="blocking">Needs you · Design · Ada</p><progress value="3" max="8" aria-label="3 of 8 tasks"></progress><p class="meta">3 of 8 tasks · paused 2 d</p>' +
+      '<div class="flow">' + source('Session') + button('View gate','item','gate','primary') + '</div><div>' + goalBadge('paid-tier') + '</div></div>' +
+      heading('Tasks') + plainRow('T01 Research','Done',pill('Done','good')) + plainRow('T02 Design mock','Done',pill('Done','good')) +
+      plainRow('T03 Build','To do') + heading('Decision log') + row('Use hosted checkout','Nov 8 · PM decision','/record/hosted-checkout');
+  }
+  if (parts[2] === 'release-3-2') {
+    return link('‹ Orbit',base) + '<div class="panel stack">' + areaChip('Orbit') + facts([['Due','Mar 14'],['Open','18'],['Mine','4'],['Source','Asana']]) +
+      '<div>' + goalBadge('paid-tier') + '</div><div>' + source('Asana release') + '</div></div>' + heading('My open tasks') +
+      ['Review checkout mock','Update pricing copy','Verify trial length','Check footer links'].map(title => plainRow(title,'Open')).join('');
+  }
+  if (area === 'Orbit') return link('‹ Work','/work') + heading('Objectives') +
+    row('Checkout redesign','Needs you · Design · 3/8 · Ada · 2 d',base + '/checkout-redesign') +
+    plainRow('Pricing page copy','In progress · Build · 5/7 · Rex · 1 h') + plainRow('Orbit pricing research','Done',pill('Done','good')) +
+    heading('Releases') + row('Release 3.2','Mar 14 · 18 open · 4 mine',base + '/release-3-2');
+  const detail = {
+    Kestrel:plainRow('Kestrel campaign page v2','In progress · 4/9'),
+    Health:actionRow('Fitness app timer fix','Merge gate · Ivy','item','fitness'),
+    Systems:actionRow('News fetch job down','Job down 6 h','item','incident') + plainRow('Home router cleanup','In progress · No goal'),
+    Money:row('Rebalance savings plan','P3 · No work','/goals/savings'),
+    Family:row('Family memories','Sensitive','/memory'),
+    'Side projects':actionRow('5 picks this week','Waiting 4 d','item','saved')
+  };
+  return link('‹ Work','/work') + '<div class="panel stack"><div>' + areaChip(area) + '</div><p>' + e(areas[area].slice(1).join(' · ')) + '</p></div>' + detail[area];
+}
+function meetingsScreen(detail) {
+  if (!detail) return link('‹ Work','/work') + heading('Coming up') + '<p class="meta">Next 7 days</p>' +
+    plainRow('Orbit weekly','Thu 10:00 · Orbit',pill('Ready','good')) +
+    plainRow('Kestrel campaign sync','Fri 14:00 · Kestrel',pill('3 topics queued','info')) +
+    plainRow('Priya 1:1','Mon 09:30 · Orbit',pill('No agenda')) +
+    heading('Recent') + '<p class="meta">Past 14 days</p>' +
+    row('Orbit requirements review','Tue · Orbit · Done · 5 done · 2 tracked · 1 missing','/meetings/orbit-requirements-review') +
+    plainRow('Kestrel payout call','Mon · Kestrel',pill('Pending','clock')) +
+    plainRow('Tom vendor call','Last Thu · Orbit · 3 done',pill('Done','good'));
+  return link('‹ Meetings','/meetings') +
+    '<div class="panel stack"><div class="flow">' + areaChip('Orbit') + pill('Write-up done','good') + '</div><p class="meta">Tue · 5 done · 2 tracked · 1 missing</p><div class="flow">' +
+    source('Meeting page') + source('Write-up') + '</div></div>' + heading('Agenda topics') +
+    ['Trial length','Coupons','Footer links'].map(title => plainRow(title,'')).join('') + heading('Follow-ups') +
+    actionRow('Send Tom the asset list','Priya · Missing · View proposal','item','proposal') +
+    plainRow('Update pricing copy','Rex',pill('Tracked','info')) + plainRow('Confirm trial length','You',pill('Done','good'));
+}
+
+const progressLabel = goal => goal.value + '/' + goal.target + ' ' + goal.unit;
+const goalProgress = goal => '<div class="stack"><span class="meta">' + number(goal.value + '/' + goal.target) + ' ' + e(goal.unit) + '</span>' +
+  '<progress value="' + goal.value + '" max="' + goal.target + '" aria-label="' + e(progressLabel(goal)) + '"></progress></div>';
+function goalsScreen() {
+  const long = ui.horizon === 'Long';
+  return '<div class="flow spread">' + choices(['Short','Long'],ui.horizon,'horizon') + link('+ New goal','/goals/new','primary') + '</div>' +
+    '<div class="flow">' + link('Flags · ' + number(flagsCount()),'/goals/flags','') + link('This week','/goals/week','') + '</div>' +
+    goals.filter(goal => Boolean(goal.long) === long && !goal.dropped).map(goal =>
+      '<a href="#/goals/' + goal.id + '" class="card"><div class="flow">' + areaChip(goal.area) + pill('P' + goal.priority,'info') +
+      (goal.flag ? pill(goal.flag,'clock') : '') + (goal.paused ? pill('Paused','archived') : '') + '</div><h3>' + e(goal.title) + '</h3>' + goalProgress(goal) + '</a>'
+    ).join('');
+}
+function goalDetail(goal) {
+  let linked = '';
+  if (goal.id === 'paid-tier') {
+    linked = row('Checkout redesign','Design · 3/8','/work/orbit/checkout-redesign');
+    if (ui.router === 'linked') linked += plainRow('Home router cleanup','Linked work',goalBadge(goal.id));
+    if (ui.suggestion === 'pending') linked += '<div class="panel stack"><div>' + pill('Suggested link','info') + '</div><strong>Pricing page copy</strong><div class="flow">' +
+      button('Confirm','suggestion','linked','primary') + button('Not this','suggestion','dismissed') + '</div></div>';
+    if (ui.suggestion === 'linked') linked += plainRow('Pricing page copy','Linked work',goalBadge(goal.id));
+  } else if (goal.id === 'train' && ui.workoutLink) {
+    linked = actionRow('Fitness app timer fix','Linked work','item','fitness');
+  } else if (goal.id === 'campaigns') {
+    linked = row('Kestrel campaign page v2','In progress · 4/9','/work/kestrel');
+  }
+  const children = goals.filter(child => child.parent === goal.id && !child.dropped);
+  return '<div class="flow spread">' + link('‹ Goals','/goals') + link('Edit goal','/goals/' + goal.id + '/edit','') + '</div>' +
+    '<div class="panel stack"><div class="flow">' + areaChip(goal.area) + pill('P' + goal.priority,'info') + (goal.flag ? pill(goal.flag,'clock') : '') +
+    '</div><h2>Why</h2><p>' + e(goal.why || 'No reason entered') + '</p>' + goalProgress(goal) +
+    '<div class="flow">' + (goal.unit === 'milestones' ? button('Tick milestone','goal-tick',goal.id,'primary') : button('Update metric','goal-metric',goal.id,'primary')) + '</div></div>' +
+    heading('Linked work') + (linked || '<p class="meta">No linked work</p>') +
+    (goal.parent && getGoal(goal.parent) ? heading('Parent goal') + row(getGoal(goal.parent).title,'Long-term goal','/goals/' + goal.parent) : '') +
+    (children.length ? heading('Child goals') + children.map(child => row(child.title,'Short-term goal','/goals/' + child.id)).join('') : '');
+}
+function flagsScreen() {
+  const unlinked = (title,meta,key) => '<div class="panel stack"><div>' + rowLabel(title,meta) + '</div><div class="flow">' +
+    button('Link','flag-link',key,'primary') + button('Leave unlinked','flag-dismiss',key) + '</div></div>';
+  const flaggedGoals = flag => goals.filter(goal => goal.flag?.startsWith(flag)).map(goal =>
+    row(goal.title,goal.flag,'/goals/' + goal.id)).join('') || '<p class="meta">No flags</p>';
+  return link('‹ Goals','/goals') + heading('Work with no goal') +
+    (ui.router === 'pending' ? unlinked('Home router cleanup','Objective · No goal','router') : '') +
+    (!ui.workoutLink && !ui.workoutDismissed ? unlinked('Fitness app timer fix','Objective · Suggested: Train 3× a week','workout') : '') +
+    (ui.router !== 'pending' && (ui.workoutLink || ui.workoutDismissed) ? '<p class="meta">No flags</p>' : '') +
+    heading('Goal with no work') + flaggedGoals('No work') + heading('Goal with stalled work') + flaggedGoals('Stalled');
+}
+function weekScreen() {
+  const moved = { 'paid-tier':'Checkout redesign moved into Design.', campaigns:'No activity in 9 d.', train:'2.1 sessions per week.', savings:'No linked work this week.' };
+  return link('‹ Goals','/goals') + '<div class="banner">Unaligned this week: ' + number('3 of 11') + ' active objectives (' + number('27%') + ')</div>' +
+    goals.filter(goal => !goal.long && !goal.dropped).map(goal =>
+      '<section class="panel stack"><h2>' + e(goal.title) + '</h2>' + goalProgress(goal) +
+      '<p>' + e(moved[goal.id] || 'No activity this week.') + '</p><div class="flow">' + (goal.flag ? pill(goal.flag,'clock') : '') +
+      (goal.paused ? pill('Paused','archived') : '') + (goal.review ? pill('Review ' + goal.review,'info') : '') + '</div><div class="flow">' +
+      (goal.unit === 'milestones' ? button('Tick milestone','goal-tick',goal.id,'primary') : button('Update metric','goal-metric',goal.id,'primary')) +
+      button('Push review date','goal-review',goal.id) + button(goal.paused ? 'Resume' : 'Pause','goal-pause',goal.id) + '</div></section>').join('');
+}
+function makeDraft(goal) {
+  return {id:goal?.id, title:goal?.title || '', area:goal?.area || 'Orbit', horizon:goal?.long ? 'Long' : 'Short',
+    period:goal?.period || (goal?.long ? '2027' : 'Q4 2026'), parent:goal?.parent || '', priority:goal?.priority || 2,
+    type:goal?.unit === 'milestones' || !goal ? 'Milestones' : 'Metric', milestones:goal?.milestones || '', metric:goal?.unit === 'milestones' ? '' : goal?.unit || '',
+    target:goal?.target || 3, why:goal?.why || '', keywords:goal?.keywords || '', review:goal?.review || ''};
+}
+function field(label,key,value,type='text',extra='') {
+  return '<label><span>' + label + '</span><input name="' + key + '" type="' + type + '" value="' + e(value) + '" ' + extra + '></label>';
+}
+function selectField(label,key,value,options) {
+  return '<label><span>' + label + '</span><select name="' + key + '">' + options.map(option => {
+    const [id,text] = Array.isArray(option) ? option : [option,option];
+    return '<option value="' + e(id) + '"' + (String(value) === String(id) ? ' selected' : '') + '>' + e(text) + '</option>';
+  }).join('') + '</select></label>';
+}
+function textareaField(label,key,value) {
+  return '<label><span>' + label + '</span><textarea name="' + key + '" rows="3">' + e(value) + '</textarea></label>';
+}
+function goalForm(goal) {
+  const draft = ui.draftGoal || (ui.draftGoal = makeDraft(goal));
+  const long = draft.horizon === 'Long';
+  return link('‹ ' + (goal ? 'Goal' : 'Goals'),goal ? '/goals/' + goal.id : '/goals') +
+    '<form class="panel stack" id="goal-form">' + field('Title','title',draft.title,'text','required') +
+    selectField('Area','area',draft.area,Object.keys(areas)) +
+    '<fieldset><legend>Horizon</legend>' + choices(['Short','Long'],draft.horizon,'form-horizon') + '</fieldset>' +
+    selectField('Period','period',draft.period,long ? ['2026','2027','2028'] : ['Q4 2026','Q1 2027','Q2 2027','Q3 2027','Q4 2027']) +
+    (long ? '' : selectField('Parent goal','parent',draft.parent,[['','None'],...goals.filter(entry => entry.long && !entry.dropped).map(entry => [entry.id,entry.title])])) +
+    '<fieldset><legend>Priority</legend>' + choices(['1','2','3'],String(draft.priority),'form-priority') + '</fieldset>' +
+    selectField('Progress type','type',draft.type,['Milestones','Metric']) +
+    (draft.type === 'Milestones' ? textareaField('Milestones (one per line)','milestones',draft.milestones) :
+      field('Metric name','metric',draft.metric) + field('Metric target','target',draft.target,'number','min="0.1" step="any" required')) +
+    textareaField('Why','why',draft.why) + field('Keywords','keywords',draft.keywords) + field('Review by','review',draft.review,'date') +
+    (ui.goalError ? '<div class="result blocking" role="alert">Changed on another machine. ' + button('Reload','goal-reload','','quiet') + '</div>' : '') +
+    '<div class="flow"><button type="submit" class="primary">Save goal</button>' +
+    (goal ? button('Drop goal','goal-drop',goal.id) : '') + '</div></form>';
+}
+
+const statusTone = status => ({Accepted:'good',Superseded:'archived',Draft:'clock','PM decision':'info',Archived:'archived',Rejected:'archived'})[status] || '';
+function searchBox(id,label,value,placeholder) {
+  return '<label class="meta" for="' + id + '">' + label + '<input id="' + id + '" type="search" value="' + e(value) + '" placeholder="' + e(placeholder) + '"></label>';
+}
+let recordQuery = '';
+let memoryQuery = '';
+function recordResults() {
+  const query = recordQuery.trim().toLowerCase();
+  const filtered = records.filter(record => (ui.recordScope === 'All' || ui.recordScope === record.area) &&
+    (ui.recordFilter === 'All' || (ui.recordFilter === 'Archived') === (record.status === 'Archived')) &&
+    (record.area + ' ' + record.title + ' ' + record.body).toLowerCase().includes(query));
+  return [...new Set(filtered.map(record => record.month))].map(month =>
+    '<section class="stack section">' + heading(month) + filtered.filter(record => record.month === month).map(record =>
+      '<a class="row" href="#/record/' + record.id + '">' + rowLabel(record.title,record.date + ' · ' + record.area +
+        (record.note ? ' · ' + record.note : '')) + pill(record.status,statusTone(record.status)) + '</a>'
+    ).join('') + '</section>').join('') || '<p class="meta">No matching records</p>';
+}
+function recordScreen(id) {
+  if (!id) return searchBox('record-search','Search decisions',recordQuery,'Search e.g. refund') +
+    choices(['All','Live','Archived'],ui.recordFilter,'record-filter') + choices(['All','Orbit','Kestrel','PM'],ui.recordScope,'record-scope') +
+    '<div id="record-results" class="stack">' + recordResults() + '</div>';
+  const record = getRecord(id);
+  if (!record) return missing('/record');
+  return link('‹ Record','/record') + '<div class="panel stack"><div class="flow">' + areaChip(record.area) + pill(record.status,statusTone(record.status)) +
+    '</div><p class="meta">' + e(record.date) + '</p><p>' + e(record.body) + '</p><div>' + source('Decision source') + '</div></div>' +
+    (record.next ? heading('Superseded by') + row(getRecord(record.next).title,'Accepted','/record/' + record.next) : '');
+}
+function memoryRow(memory) {
+  const badge = memoryFlags.has(memory.id) ? pill('Flagged','clock') : memory.age === '5 mo' ? pill('Old','archived') : arrow;
+  return '<a class="row" href="#/memory/' + memory.id + '">' + rowLabel(memory.title,memory.type + ' · ' + memory.area + ' · ' + memory.age) + badge + '</a>';
+}
+function memoryResults() {
+  const query = memoryQuery.trim().toLowerCase();
+  const filtered = memories.filter(memory => (ui.memoryType === 'All' || memory.type === ui.memoryType) &&
+    !memory.sensitive && (memory.title + ' ' + memory.area + ' ' + memory.id + ' ' + memory.body).toLowerCase().includes(query));
+  const groups = [...new Set(filtered.map(memory => memory.area))].map(area => '<section class="stack section">' +
+    heading(area) + filtered.filter(memory => memory.area === area).map(memoryRow).join('') + '</section>').join('');
+  const sensitive = !query && ['All','About you'].includes(ui.memoryType) ?
+    (ui.revealed ? '<section class="stack section">' + heading('Sensitive memories') + memories.filter(memory => memory.sensitive).map(memoryRow).join('') +
+      button('Hide sensitive memories','toggle-sensitive') + '</section>' : actionRow('Family · 2 memories (tap to show)','','toggle-sensitive','')) : '';
+  return groups + sensitive || '<p class="meta">No matching memories</p>';
+}
+function memoryScreen(id) {
+  if (!id) return searchBox('memory-search','Search memories',memoryQuery,'Search e.g. checkout') +
+    choices(['All','Rules','Projects','Reference','About you'],ui.memoryType,'memory-type') +
+    '<div>' + link('Flagged · ' + number(memoryFlags.size),'/memory/flagged','') + '</div><div id="memory-results" class="stack">' + memoryResults() + '</div>';
+  if (id === 'flagged') return link('‹ Memory','/memory') + [...memoryFlags].map(([key,flag]) => {
+    const memory = getMemory(key);
+    return row(memory.title,flag.reason + (flag.note ? ' · ' + flag.note : ''),'/memory/' + key);
+  }).join('');
+  const memory = getMemory(id);
+  if (!memory) return missing('/memory');
+  if (memory.sensitive && !ui.revealed) return link('‹ Memory','/memory') + actionRow('Reveal sensitive memory','','toggle-sensitive','');
+  const flag = memoryFlags.get(id);
+  return link('‹ Memory','/memory') + '<div class="panel stack"><div class="flow">' + areaChip(memory.area) + pill(memory.type) +
+    '</div><p>' + e(memory.body) + '</p>' + (flag ? '<div class="banner clock">Flagged · ' + e(flag.reason) + (flag.note ? ' · ' + e(flag.note) : '') + '</div>' : '') +
+    '<div>' + button('This is wrong','memory-flag',id) + '</div></div>' +
+    (memory.area === 'Orbit' ? heading('Related memory') + memoryRow(getMemory(id === 'checkout-context' ? 'orbit-name' : 'checkout-context')) : '') +
+    heading('History') + plainRow('Updated ' + memory.age + ' ago','Notes reviewed');
+}
+function settings() {
+  return link('‹ Now','/now') + heading('Freshness') +
+    freshness.map(name => {
+      const stale = name === 'Asana' && ui.mode === 'stale';
+      return plainRow(name,stale ? 'As of 2 h' : name === 'Clip gates' ? 'Failing since 09:10' : 'As of 12 min',
+        stale ? pill('Stale','clock') : name === 'Clip gates' ? pill('Read error','blocking') : pill('OK','good'));
+    }).join('') + heading('Activity log') + activity.map(entry => plainRow(entry,'')).join('') +
+    heading('Devices') + devices.map(device => plainRow(device,ui.revoked.has(device) ? 'Revoked' : device === 'Phone' ? 'This device' : 'Signed in',
+      ui.revoked.has(device) ? '' : button('Revoke','revoke',device))).join('') +
+    '<div>' + button('Sign out','signout') + '</div><footer class="meta footer">Visual system: workout-agent graphite (workout-agent/src/app/ui/app.css)</footer>';
+}
+function signIn() {
+  return '<main class="workspace"><form class="panel stack login" id="signin-form"><h1>Sign in</h1>' +
+    field('Passphrase','passphrase','','password','required autocomplete="off"' + (ui.signError ? ' aria-invalid="true" aria-describedby="signin-error"' : '')) +
+    '<label class="check"><input type="checkbox">Remember this device (30 days)</label>' +
+    (ui.signError ? '<p class="result blocking" role="alert" id="signin-error">Wrong passphrase. Try again.</p>' : '') +
+    '<button class="primary" type="submit">Sign in</button></form></main>';
+}
+function missing(path) { return '<p>Nothing to show here.</p>' + link('Go back',path); }
+
+function screen(parts) {
+  const [page,id,sub] = parts;
+  switch (page) {
+    case 'now': return ['Now',nowScreen(),filterQueue(activeQueue()).length];
+    case 'queue': return ['Full queue',link('‹ Now','/now') + queueScreen()];
+    case 'work': {
+      const name = Object.keys(areas).find(area => areaId(area) === id);
+      return [sub === 'checkout-redesign' ? 'Checkout redesign' : sub === 'release-3-2' ? 'Release 3.2' : name || 'Work',workScreen(parts)];
+    }
+    case 'meetings': return [id ? 'Orbit requirements review' : 'Meetings',meetingsScreen(id)];
+    case 'goals': {
+      const goal = getGoal(id);
+      if (id === 'new' || (goal && sub === 'edit')) return [goal ? 'Edit goal' : 'New goal',goalForm(goal)];
+      if (id === 'flags') return ['Flags',flagsScreen()];
+      if (id === 'week') return ['This week',weekScreen()];
+      if (goal) return [goal.title,goalDetail(goal)];
+      return ['Goals',id ? missing('/goals') : goalsScreen()];
+    }
+    case 'record': return [getRecord(id)?.title || 'Record',recordScreen(id)];
+    case 'memory': {
+      const memory = getMemory(id);
+      return [id === 'flagged' ? 'Flagged memories' : memory && (!memory.sensitive || ui.revealed) ? memory.title : 'Memory',memoryScreen(id)];
+    }
+    case 'settings': return ['Settings',settings()];
+    default: return ['Command center',missing('/now')];
+  }
+}
+function nav(page) {
+  const current = ({queue:'now',meetings:'work'})[page] || page;
+  return '<nav class="nav" aria-label="Main navigation"><span class="brand">Command center</span>' +
+    tabs.map(tab => '<a href="#/' + tab.toLowerCase() + '"' +
+      (current === tab.toLowerCase() ? ' aria-current="page"' : '') + '>' + icon(tab) + '<span>' + tab + '</span></a>').join('') + '</nav>';
+}
+function render() {
+  const path = route();
+  const changedRoute = path !== previousRoute;
+  const parts = path.split('/').slice(1);
+  if (changedRoute) {
+    ui.draftGoal = null;
+    ui.goalError = false;
+    previousRoute = path;
+  }
+  strip.innerHTML = ui.strip ? '<div class="stripe"><span>Mock · sample data · nothing here is real</span>' +
+    button('×','dismiss-strip','','quiet','aria-label="Dismiss mock notice"') + '</div>' : '';
+  if (parts[0] === 'signin') {
+    app.innerHTML = signIn();
+  } else {
+    const [title,content,count] = screen(parts);
+    const status = ui.mode === 'stale' ? ['clock','Asana source is stale'] : ui.mode === 'offline' ? ['archived','Offline'] : ['good','Sources updated'];
+    app.innerHTML = '<div class="shell">' + nav(parts[0]) + '<main class="workspace"><header class="top"><div class="flow spread">' +
+      '<div class="stack" style="gap:4px"><span class="eyebrow">Command center</span><h1>' + e(title) +
+      (count === undefined ? '' : ' <span class="num">· ' + count + '</span>') + '</h1></div>' +
+      '<a class="button quiet" href="#/settings" aria-label="Settings. ' + status[1] + '"><i class="dot ' + status[0] + '"></i>' + icon('settings') + '</a></div></header>' +
+      '<div class="stack' + (parts[0] === 'now' ? '' : ' page') + '">' + content + '</div></main></div>' +
+      button('States','states','','states','aria-label="States"');
+  }
+  renderSheet();
+  if (changedRoute && !overlay()) window.scrollTo(0,0);
+}
+function sheetContent(type,id) {
+  const entry = id === 'orbit-drafts' ? groupCard(queue.filter(entry => !entry.done && !entry.snoozed)) : getItem(id);
+  switch (type) {
+    case 'states':
+      return ['Demo states',
+        heading('Now') + choices(['Normal','Nothing needs you','One source stale','Offline'],
+          ({normal:'Normal',empty:'Nothing needs you',stale:'One source stale',offline:'Offline'})[ui.mode],'state-mode') +
+        heading('Next action') + choices(['Succeeds','Fails'],ui.fail ? 'Fails' : 'Succeeds','state-action') +
+        heading('Goal save conflict') + choices(['Off','On'],ui.conflict ? 'On' : 'Off','state-conflict')];
+    case 'item': return ['Queue item',entry?.group ? groupDetail() : entry ? itemDetail(entry) : 'Item unavailable'];
+    case 'menu':
+      return ['Item options', '<p class="muted">' + e(entry.title) + '</p>' +
+        (entry.snoozed ? actionRow('Unsnooze','Return to the queue','unsnooze',id) : actionRow('Snooze','Move out of Now','snooze-menu',id)) +
+        actionRow(entry.pinned ? 'Unpin' : 'Pin',entry.pinned ? 'Return to its original position' : 'Keep at the top of the queue','pin',id)];
+    case 'snooze':
+      return ['Snooze', '<p class="meta">' + (entry.kind === 'gate' ? 'PM gates use Hold 24 h. Holds end within 24 hours.' : 'Choose when the item returns to your queue.') + '</p>' +
+        ['3 h','Tomorrow 08:00','Monday 08:00'].map(label => actionRow(label,'','snooze',id + '|' + label)).join('') +
+        actionRow('Pick a date','','snooze-date',id)];
+    case 'snooze-date':
+      return ['Pick a date','<form id="snooze-form" class="stack">' + field('Return date','return-date','','date','required') +
+        '<button class="primary" type="submit">Snooze</button></form>'];
+    case 'supersede':
+      return ['Superseded by…','<p class="meta">Choose the decision that replaces this draft.</p>' +
+        records.filter(record => record.status === 'Accepted' || record.status === 'PM decision').map(record =>
+          actionRow(record.title,record.area + ' · ' + record.status,'pick-decision',record.id)).join('')];
+    case 'memory-flag':
+      return ['Flag memory','<form id="memory-form" class="stack"><fieldset><legend>Reason</legend>' +
+        ['Wrong','Out of date','Should be retired'].map((reason,index) => '<label class="check"><input type="radio" name="reason" value="' + reason +
+          '"' + (index === 0 ? ' checked' : '') + '>' + reason + '</label>').join('') + '</fieldset>' +
+        textareaField('Note (optional)','note','') + '<button class="primary" type="submit">Flag memory</button></form>'];
+    case 'metric':
+      return ['Update metric','<form id="metric-form" class="stack">' +
+        field(e(getGoal(id).unit),'metric-value',getGoal(id).value,'number','min="0" step="any" required') +
+        '<button class="primary" type="submit">Update metric</button></form>'];
+    case 'review':
+      return ['Push review date','<form id="review-form" class="stack">' + field('Review by','review',getGoal(id).review,'date','required') +
+        '<button class="primary" type="submit">Save review date</button></form>'];
+    default: return ['Details',''];
+  }
+}
+function renderSheet() {
+  const current = overlay();
+  if (!current) {
+    if (dialog.open) {
+      dialog.close();
+      const trigger = dialogFocus;
+      if (trigger?.isConnected) trigger.focus();
+      else if (trigger?.dataset.action) {
+        [...document.querySelectorAll('[data-action]')].find(element =>
+          element.dataset.action === trigger.dataset.action && element.dataset.value === trigger.dataset.value)?.focus();
+      }
+    }
+    return;
+  }
+  const [title,content] = sheetContent(current.type,current.id);
+  dialog.innerHTML = '<div class="sheet-body stack"><div class="grip" aria-hidden="true"></div>' +
+    '<div class="sheet-top"><h2 id="sheet-title">' + title + '</h2>' +
+    button('×','close','','quiet','aria-label="Close sheet"') + '</div>' + content + '<div class="toast" role="status"></div></div>';
+  if (!dialog.open) dialog.showModal();
+}
+function recordActivity(message) {
+  activity.unshift(message + ' · 09:15 · phone');
+}
+function resolveItem(id,message,replacement) {
+  const entry = getItem(id);
+  if (entry.done) return;
+  const failed = ui.fail;
+  ui.fail = false;
+  entry.error = failed;
+  entry.result = failed ? 'Action failed · please try again' : message;
+  if (!failed) {
+    entry.done = true;
+    entry.pinned = null;
+    recordActivity(message + ' · ' + entry.title);
+    const original = getRecord(id === 'refund' ? 'refund-wording' : id === 'trial' ? 'trial-length' : id === 'coupons' ? 'legacy-coupons' : '');
+    if (replacement) {
+      const record = original || {id:'decision-' + id, title:entry.title, area:entry.area, month:'November', date:'Nov 19', body:entry.summary};
+      if (!original) records.unshift(record);
+      record.status = 'Superseded';
+      record.next = replacement;
+    } else if (entry.kind === 'draft') {
+      const status = message.split(' · ')[0];
+      if (original) Object.assign(original,{status,note:''});
+      else records.unshift({id:'decision-' + id,title:entry.title,area:entry.area,month:'November',date:'Nov 19',status,body:entry.summary});
+    }
+  }
+  render();
+}
+let pinOrder = 0;
+function pin(id) {
+  const entry = id === 'orbit-drafts' ? groupState : getItem(id);
+  if (entry.pinned) {
+    entry.pinned = null;
+    closeSheet();
+  } else {
+    const count = [...queue,groupState].filter(item => item.pinned && !item.done && !item.snoozed).length;
+    if (count >= 3) {
+      closeSheet();
+      setTimeout(() => announce('Up to 3 items can be pinned'),0);
+      return;
+    }
+    entry.snoozed = null;
+    entry.pinned = ++pinOrder;
+    closeSheet();
+  }
+}
+function snooze(id,until,levels) {
+  const entry = id === 'orbit-drafts' ? groupState : getItem(id);
+  const sameItemBelow = id !== 'orbit-drafts' && entry.kind === 'gate' && levels === 0;
+  if (ui.fail) {
+    ui.fail = false;
+    if (sameItemBelow) {
+      entry.error = true;
+      entry.result = 'Action failed · please try again';
+      render();
+    } else {
+      if (levels) history.go(-levels);
+      setTimeout(() => announce('Action failed · please try again'),100);
+    }
+    return;
+  }
+  entry.pinned = null;
+  entry.snoozed = until;
+  if (sameItemBelow) {
+    entry.error = false;
+    entry.result = 'Held · back in 24 h';
+  }
+  recordActivity('Snoozed · ' + (id === 'orbit-drafts' ? 'Orbit drafts' : entry.title));
+  if (levels) history.go(-levels);
+  else render();
+}
+function updateForm(form) {
+  if (form) Object.assign(ui.draftGoal,Object.fromEntries(new FormData(form)));
+}
+function saveGoal(form) {
+  updateForm(form);
+  const draft = ui.draftGoal;
+  if (!draft.title.trim()) {
+    form.elements.title.focus();
+    return;
+  }
+  if (ui.conflict) {
+    ui.goalError = true;
+    render();
+    document.querySelector('[role="alert"]')?.scrollIntoView({block:'nearest'});
+    return;
+  }
+  const existing = getGoal(draft.id);
+  const id = existing?.id || 'new-' + goals.length;
+  const metric = draft.type === 'Metric';
+  const target = metric ? Number(draft.target) : draft.milestones.split('\n').filter(line => line.trim()).length || (existing?.unit === 'milestones' ? existing.target : 1);
+  const goal = {id, title:draft.title.trim(), area:draft.area, priority:Number(draft.priority), long:draft.horizon === 'Long',
+    parent:draft.horizon === 'Long' ? '' : draft.parent, period:draft.period, value:Math.min(existing?.value || 0,target),
+    target, unit:metric ? draft.metric.trim() || 'units' : 'milestones', why:draft.why,
+    keywords:draft.keywords, review:draft.review, milestones:draft.milestones};
+  if (existing) Object.assign(existing,goal);
+  else goals.push(goal);
+  ui.horizon = draft.horizon;
+  navigate('/goals/' + id,true);
+  announce('Goal saved');
+}
+
+const groupState = {};
+document.addEventListener('click',event => {
+  const anchor = event.target.closest('a[href^="#/"]');
+  if (anchor && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
+    event.preventDefault();
+    const path = anchor.hash.slice(1);
+    if (overlay()) navigateFromSheet(path);
+    else navigate(path);
+    return;
+  }
+  const control = event.target.closest('button[data-action]');
+  if (!control) {
+    const queueCard = event.target.closest('[data-card]');
+    if (queueCard) openItem(queueCard.dataset.card);
+    return;
+  }
+  const {action,value} = control.dataset;
+  const [id,label] = value.split('|');
+  const goal = getGoal(id);
+  switch (action) {
+    case 'dismiss-strip': ui.strip = false; strip.replaceChildren(); return;
+    case 'close': closeSheet(); return;
+    case 'toast': announce(value); return;
+    case 'states': updateForm(document.querySelector('#goal-form')); openSheet('states'); return;
+    case 'state-mode': ui.mode = ({Normal:'normal','Nothing needs you':'empty','One source stale':'stale',Offline:'offline'})[value]; ui.selected = null; break;
+    case 'state-action': ui.fail = value === 'Fails'; break;
+    case 'state-conflict': ui.conflict = value === 'On'; break;
+    case 'queue-filter': ui.filter = value; ui.selected = null; break;
+    case 'item': openItem(value); return;
+    case 'menu': openSheet('menu',value); return;
+    case 'snooze-menu': openSheet('snooze',value); return;
+    case 'snooze-date': openSheet('snooze-date',value); return;
+    case 'snooze': snooze(id,getItem(id)?.kind === 'gate' ? '24 h' : label === '3 h' ? '12:15' : label,2); return;
+    case 'hold': snooze(value,'24 h',0); return;
+    case 'unsnooze': (value === 'orbit-drafts' ? groupState : getItem(value)).snoozed = null; closeSheet(); return;
+    case 'pin': pin(value); return;
+    case 'resolve': resolveItem(id,label); return;
+    case 'supersede': openSheet('supersede',value); return;
+    case 'pick-decision': {
+      const entryId = overlay().id;
+      const entry = getItem(entryId);
+      // Return to the item's surface before showing the result.
+      history.back();
+      window.addEventListener('popstate',() => resolveItem(entry.id,'Superseded · committed',value),{once:true});
+      return;
+    }
+    case 'add-selected':
+      if (!ui.checked.size) { announce('Select at least one follow-up'); return; }
+      resolveItem(value,ui.checked.size + ' added · recorded'); return;
+    case 'triage': ui.triage[id] = label; break;
+    case 'finish-triage':
+      if (Object.keys(ui.triage).length < saved.length) { announce('Choose Do, Keep or Drop for every row'); return; }
+      resolveItem(value,'Triaged · recorded'); return;
+    case 'horizon': ui.horizon = value; break;
+    case 'suggestion': ui.suggestion = value; break;
+    case 'flag-link':
+      if (value === 'router') { ui.router = 'linked'; announce('Linked to Ship Orbit paid tier'); }
+      else { ui.workoutLink = true; getItem('fitness').goal = 'train'; announce('Linked to Train 3× a week'); }
+      break;
+    case 'flag-dismiss':
+      if (value === 'router') ui.router = 'dismissed';
+      else ui.workoutDismissed = true;
+      break;
+    case 'form-horizon':
+      updateForm(document.querySelector('#goal-form'));
+      ui.draftGoal.horizon = value;
+      ui.draftGoal.period = value === 'Long' ? '2027' : 'Q4 2026';
+      break;
+    case 'form-priority': updateForm(document.querySelector('#goal-form')); ui.draftGoal.priority = value; break;
+    case 'goal-reload': ui.goalError = false; ui.conflict = false; break;
+    case 'goal-tick': goal.value = Math.min(goal.target,goal.value + 1); announce('Milestone updated'); break;
+    case 'goal-metric': openSheet('metric',value); return;
+    case 'goal-review': openSheet('review',value); return;
+    case 'goal-pause': goal.paused = !goal.paused; break;
+    case 'goal-drop': goal.dropped = true; navigate('/goals'); return;
+    case 'record-filter': ui.recordFilter = value; break;
+    case 'record-scope': ui.recordScope = value; break;
+    case 'memory-type': ui.memoryType = value; break;
+    case 'toggle-sensitive': ui.revealed = !ui.revealed; break;
+    case 'memory-flag': openSheet('memory-flag',value); return;
+    case 'revoke': ui.revoked.add(value); recordActivity('Revoked ' + value); break;
+    case 'signout': ui.signError = false; navigate('/signin'); return;
+    default: return;
+  }
+  render();
+  const replacements = document.querySelectorAll('button[data-action]');
+  [...replacements].find(element => element.dataset.action === action && element.dataset.value === value)?.focus({preventScroll:true});
+});
+
+document.addEventListener('submit',event => {
+  event.preventDefault();
+  const form = event.target;
+  const data = new FormData(form);
+  const id = overlay()?.id;
+  switch (form.id) {
+    case 'signin-form': {
+      const passphrase = data.get('passphrase').trim();
+      ui.signError = !passphrase || passphrase.toLowerCase() === 'wrong';
+      if (ui.signError) {
+        render();
+        document.querySelector('[name="passphrase"]').focus();
+      } else {
+        navigate('/now',true);
+      }
+      break;
+    }
+    case 'goal-form': saveGoal(form); break;
+    case 'snooze-form': snooze(id,getItem(id)?.kind === 'gate' ? '24 h' : data.get('return-date'),3); break;
+    case 'memory-form': memoryFlags.set(id,{reason:data.get('reason'),note:data.get('note').trim()}); closeSheet(); break;
+    case 'metric-form': getGoal(id).value = Number(data.get('metric-value')); closeSheet(); break;
+    case 'review-form': getGoal(id).review = data.get('review'); closeSheet(); break;
+  }
+});
+document.addEventListener('input',event => {
+  if (event.target.id === 'record-search') {
+    recordQuery = event.target.value;
+    document.querySelector('#record-results').innerHTML = recordResults();
+  }
+  if (event.target.id === 'memory-search') {
+    memoryQuery = event.target.value;
+    document.querySelector('#memory-results').innerHTML = memoryResults();
+  }
+});
+document.addEventListener('change',event => {
+  const index = event.target.dataset.follow;
+  if (index !== undefined) {
+    if (event.target.checked) ui.checked.add(Number(index));
+    else ui.checked.delete(Number(index));
+  }
+  if (event.target.name === 'type' && event.target.form?.id === 'goal-form') {
+    updateForm(event.target.form);
+    render();
+    document.querySelector('#goal-form [name="type"]').focus();
+  }
+});
+document.addEventListener('click',event => {
+  if (event.target === dialog) closeSheet();
+});
+dialog.addEventListener('cancel',event => { event.preventDefault(); closeSheet(); });
+window.addEventListener('popstate',render);
+window.addEventListener('hashchange',() => { if (previousRoute !== route()) render(); });
+desktop.addEventListener('change',render);
+document.addEventListener('keydown',event => {
+  if (!desktop.matches || route() !== '/now' || overlay() || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest('input,textarea,select,button,a')) return;
+  const cards = nowCards(filterQueue(activeQueue()));
+  if (!cards.length) return;
+  const index = cards.findIndex(entry => entry.id === ui.selected);
+  const current = cards[Math.max(0,index)];
+  if (event.key === 'j' || event.key === 'k') {
+    const delta = event.key === 'j' ? 1 : -1;
+    ui.selected = cards[Math.max(0,Math.min(cards.length - 1,Math.max(0,index) + delta))].id;
+    render();
+    document.querySelector('[data-card="' + ui.selected + '"]')?.scrollIntoView({block:'nearest'});
+  } else if (event.key === 'Enter') openItem(current.id);
+  else if (event.key === 's') {
+    openSheet('menu',current.id);
+    openSheet('snooze',current.id);
+  } else if (event.key === 'p') {
+    openSheet('menu',current.id);
+    pin(current.id);
+  }
+  else if (current.kind === 'draft' && !current.group && (event.key === 'a' || event.key === 'r')) {
+    ui.selected = current.id;
+    resolveItem(current.id,(event.key === 'a' ? 'Accepted' : 'Rejected') + ' · committed');
+  } else return;
+  event.preventDefault();
+});
+
+if (!location.hash) history.replaceState(null,'','#/now');
+else if (overlay()) history.replaceState(null,'',location.hash);
+render();
+</script>
+</body>
+</html>
